@@ -15,3 +15,4 @@
 ![Bittly QQ](https://img.shields.io/badge/QQ-568109749-black)
 ![Wechat](https://img.shields.io/badge/Wechat-sige--5193-brightgreen)
 ![Email](https://img.shields.io/badge/Email-568109749%40qq.com-infornational)
+![Twitter](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Ftwitter.com%2Fsige_5193)
