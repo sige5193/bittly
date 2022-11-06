@@ -9,5 +9,3 @@
   
   <img src="https://res.bittly.sigechen.com/images/bittly-1.gif" alt="Bittly"/>
 </div>
-
-![](https://res.bittly.sigechen.com/images/bittly-1.gif)
