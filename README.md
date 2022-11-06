@@ -47,3 +47,17 @@
 
 ⏳ and more ...
 
+### Developing
+
+1. Setup nodejs environment
+2. Clone this repo with git `git clone https://github.com/sige5193/bittly.git`
+3. Install dependencies by npm `npm install`
+4. Start dev server by `npm run electron:serve`
+5. Run unit test by `npm run test:unit`
+6. Build app package by `npm run electron:build`
+
+### Contributing
+
+Please contribute using [Github Flow](https://docs.github.com/en/get-started/quickstart/github-flow), create a branch, commit and open a pull request.
+
+### License
