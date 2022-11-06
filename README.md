@@ -7,5 +7,7 @@
   
   [![Website](https://img.shields.io/website?url=https%3A%2F%2Fbittly.sigechen.com)](https://bittly.sigechen.com?from=github)
   
-  <img src="https://res.bittly.sigechen.com/images/bittly.gif" alt="Bittly"/>
+  <img src="https://res.bittly.sigechen.com/images/bittly-1.gif" alt="Bittly"/>
 </div>
+
+![](https://res.bittly.sigechen.com/images/bittly-1.gif)
