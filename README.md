@@ -4,6 +4,7 @@
   <br/>
   <p><h3><b>Bittly</b></h3></p>
   <p><b>A testing tool for serial port, network, bluetooth, http, websocket, ... </b></p>
+  
+  ![Website](https://img.shields.io/website?url=https%3A%2F%2Fbittly.sigechen.com)
+  
 </div>
-
-![Website](https://img.shields.io/website?url=https%3A%2F%2Fbittly.sigechen.com)
