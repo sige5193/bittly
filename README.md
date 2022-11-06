@@ -14,3 +14,4 @@
 ![Bittly QQ GROUP](https://img.shields.io/badge/QQ%20Group-1014521818-blue)
 ![Bittly QQ](https://img.shields.io/badge/QQ-568109749-black)
 ![Wechat](https://img.shields.io/badge/Wechat-sige--5193-brightgreen)
+![Email](https://img.shields.io/badge/Email-568109749%40qq.com-infornational)
