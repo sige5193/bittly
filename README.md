@@ -7,7 +7,10 @@
   
   [![Website](https://img.shields.io/website?url=https%3A%2F%2Fbittly.sigechen.com)](https://bittly.sigechen.com?from=github)
   
-  
-  
   <img src="https://res.bittly.sigechen.com/images/bittly-2.gif" alt="Bittly"/>
 </div>
+
+### Support 
+![Bittly QQ GROUP](https://img.shields.io/badge/QQ%20Group-1014521818-blue)
+![Bittly QQ](https://img.shields.io/badge/QQ-568109749-black)
+![Wechat](https://img.shields.io/badge/Wechat-sige--5193-brightgreen)
