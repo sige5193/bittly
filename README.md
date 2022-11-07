@@ -53,6 +53,8 @@
 
 📜 Generate project document from directive definations to pdf or markdown file.
 
+🌎 I18n: Experience the app in your language. (You can make a pull requests to help us to translate bittly) .
+
 ⏳ and more ...
 
 ### Install
