@@ -7,6 +7,8 @@
   
   [![Website](https://img.shields.io/website?url=https%3A%2F%2Fbittly.sigechen.com)](https://bittly.sigechen.com)
   
+  <p><a href="README.md">English</a> | 简体中文</p>
+  
   <img src="https://res.bittly.sigechen.com/images/bittly-2.gif" alt="Bittly"/>
 </div>
 
