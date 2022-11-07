@@ -61,3 +61,5 @@
 Please contribute using [Github Flow](https://docs.github.com/en/get-started/quickstart/github-flow), create a branch, commit and open a pull request.
 
 ### License
+
+This project is licensed under the `MIT` License - see the `LICENSE` file for details.
