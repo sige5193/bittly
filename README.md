@@ -11,8 +11,8 @@
 </div>
 
 ### Support 
-![Bittly QQ GROUP](https://img.shields.io/badge/QQ%20Group-1014521818-blue)
-![Bittly QQ](https://img.shields.io/badge/QQ-568109749-black)
+[![Bittly QQ GROUP](https://img.shields.io/badge/QQ%20Group-1014521818-blue)](https://qm.qq.com/cgi-bin/qm/qr?k=NqSWCMQAFL5RE-ic1tC8U0Fp5gtc1XwB&jump_from=webapi)
+[![Bittly QQ](https://img.shields.io/badge/QQ-568109749-black)](http://wpa.qq.com/msgrd?v=3&uin=568109749&site=qq&menu=yes)
 ![Wechat](https://img.shields.io/badge/Wechat-sige--5193-brightgreen)
 ![Email](https://img.shields.io/badge/Email-568109749%40qq.com-infornational)
 ![Twitter](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Ftwitter.com%2Fsige_5193)
