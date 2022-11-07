@@ -12,6 +12,11 @@
 
 # Table of Contents
 - [Support](#Support)
+- [Features](#Features)
+- [Install](#Install)
+- [Developing](#Developing)
+- [Contributing](#Contributing)
+- [License](#License)
 
 ### Support 
 [![Bittly QQ GROUP](https://img.shields.io/badge/QQ%20Group-1014521818-blue)](https://qm.qq.com/cgi-bin/qm/qr?k=NqSWCMQAFL5RE-ic1tC8U0Fp5gtc1XwB&jump_from=webapi)
