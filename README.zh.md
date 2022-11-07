@@ -16,6 +16,7 @@
 - [支持](#支持)
 - [功能](#功能)
 - [安装](#安装)
+- [文档](#文档)
 - [开发](#开发)
 - [Contributing](#Contributing)
 - [License](#License)
@@ -63,6 +64,10 @@
 1. 从 [https://bittly.sigechen.com/download](https://bittly.sigechen.com/download) 下载安装包或压缩文件 。
 2. 执行下载好的安装程序，或直接解压压缩包到合适位置。
 3. 然后点击 `Bittly` 即可启动程序来使用。
+
+### 文档
+
+您可以在 https://bittly.sigechen.com/manual 查阅使用文档。
 
 ### 开发
 
