@@ -62,4 +62,4 @@ Please contribute using [Github Flow](https://docs.github.com/en/get-started/qui
 
 ### License
 
-This project is licensed under the `MIT` License - see the `LICENSE` file for details.
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT) - see the `LICENSE` file for details.
