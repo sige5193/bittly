@@ -56,7 +56,7 @@
 ⏳ and more ...
 
 ### Install
-1. Download it from [https://bittly.sigechen.com/download] 
+1. Download it from [https://bittly.sigechen.com/download](https://bittly.sigechen.com/download) 
 2. Execute the installer program or unzip the zip file.
 3. Click `Bittly` and start to using it. 
 
