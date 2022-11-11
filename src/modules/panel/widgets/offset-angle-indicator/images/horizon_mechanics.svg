@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+    y="0px" width="400px" height="400px" viewBox="0 0 400 400" enable-background="new 0 0 400 400" xml:space="preserve">
+    <style>
+        .aim-marks {
+            fill: #FF4A24;
+            stroke: #FF4A24;
+        }
+
+        .aim-marks circle,
+        .aim-marks line {
+            fill: none;
+            stroke-width: 5;
+            stroke-linecap: round;
+            stroke-miterlimit: 10;
+        }
+
+        .static-marks {
+            fill: none;
+            stroke: white;
+            stroke-width: 4;
+            stroke-miterlimit: 10;
+        }
+    </style>
+    <filter filterUnits="objectBoundingBox" id="filter-shadow">
+        <feGaussianBlur stdDeviation="5" result="blur" in="SourceAlpha"></feGaussianBlur>
+        <feOffset dy="0" dx="0" result="offsetBlurredAlpha" in="blur"></feOffset>
+        <feMerge>
+            <feMergeNode in="offsetBlurredAlpha"></feMergeNode>
+            <feMergeNode in="SourceGraphic"></feMergeNode>
+        </feMerge>
+    </filter>
+    <clipPath id="circle-out-off">
+        <rect x="0" y="50%" width="100%" height="100%" />
+    </clipPath>
+    <clipPath id="triangle-left-cut-off">
+        <rect x="%50" y="60" width="49.5%" height="25" />
+    </clipPath>
+
+    <clipPath id="triangle-right-cut-off">
+        <rect x="50.5%" y="60" width="100%" height="25" />
+    </clipPath>
+
+    <g class="aim-marks">
+        <circle class="aim" cx="50%" cy="50%" r="25" clip-path="url(#circle-out-off)" />
+        <circle class="dot" cx="50%" cy="50%" r="1" />
+        <line x1="120" y1="50%" x2="175" y2="50%" />
+        <line x1="225" y1="50%" x2="280" y2="50%" />
+        <polygon points="185,60 215,60 200,98" clip-path="url(#triangle-left-cut-off)" />
+        <polygon points="185,60 215,60 200,98" clip-path="url(#triangle-right-cut-off)" />
+    </g>
+
+    <g filter="url(#filter-shadow)">
+        <path fill="#232323" d="M 80 298 A 155 155 0 0 0 320 298 Z" />
+        <path fill="none" stroke="#353535" stroke-width="1.3" stroke-miterlimit="10"
+            d="M 80 298 A 155 155 0 0 0 320 298 Z" />
+    </g>
+
+    <g class="static-marks" filter="url(#filter-shadow)">
+        <line x1="50%" y1="298" x2="50%" y2="330" />
+        <line x1="254" y1="298" x2="254" y2="308" />
+        <line x1="146" y1="298" x2="146" y2="308" />
+    </g>
+</svg>

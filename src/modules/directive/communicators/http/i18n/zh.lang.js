@@ -1,0 +1,18 @@
+module.exports = {
+    name : 'HTTP',
+    headerTableColumnName : '名称',
+    headerTableColumnValue : '取值',
+    headerTableColumnOperation : '操作',
+    cookieTableColumnName : '名称',
+    cookieTableColumnValue : '取值',
+    cookieTableColumnOperation : '操作',
+    queryTableColumnName : '名称',
+    queryTableColumnValue : '取值',
+    queryTableColumnOperation : '操作',
+    requestUrlCannotBeEmpty : '请输入请求链接',
+    settings : '设置',
+    followRedirect : '跟随重定向',
+    maxRedirectCount : '最大重定向次数',
+    showResponseHeaders : '显示响应头',
+    tooManyRedirects : '重定向次数已达到最大次数',
+};

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+    y="0px" width="400px" height="400px" viewBox="0 0 400 400" enable-background="new 0 0 400 400" xml:space="preserve">
+    <filter filterUnits="objectBoundingBox" id="filter-mask">
+        <feGaussianBlur stdDeviation="5" result="blur" in="SourceAlpha"></feGaussianBlur>
+        <feOffset dy="0" dx="0" result="offsetBlurredAlpha" in="blur"></feOffset>
+        <feMerge>
+            <feMergeNode in="offsetBlurredAlpha"></feMergeNode>
+            <feMergeNode in="SourceGraphic"></feMergeNode>
+        </feMerge>
+    </filter>
+    <g filter="url(#filter-mask)">
+        <path fill="none" stroke="#FF2A00" stroke-width="3" stroke-miterlimit="10" d="M 200 81.42 C 200 81.42 192.96 93.04 188.71 106.17 S 181.58 157.54 181.58 157.54 L 127.37 196.84 C 127.37 196.84 113.83 205.34 111.07 212.44 C 110.11 214.91 109.58 218.29 109.46 220.29 C 109.24 223.97 109.46 234.04 109.46 234.04 C 109.58 236.17 110.96 237.92 115.46 236.42 S 184.96 213.29 184.96 213.29 L 187.71 267.54 C 187.71 267.54 170.99 280.49 165.83 285.29 C 164.6 286.44 162.78 288.06 161.77 290.17 C 160.73 292.35 160.61 295.7 160.58 297.42 C 160.54 299.85 160.45 305.56 160.77 306.48 C 161.27 307.92 161.83 308.4 163.91 308.4 C 166.53 308.4 176.83 302.67 176.83 302.67 L 195.58 293.42 L 199.92 305.67 H 200 L 204.42 293.42 L 223.17 302.67 C 223.17 302.67 233.47 308.4 236.1 308.4 C 238.17 308.4 238.73 307.92 239.23 306.48 C 239.55 305.56 239.46 299.86 239.42 297.42 C 239.39 295.7 239.28 292.35 238.23 290.17 C 237.22 288.06 235.4 286.44 234.17 285.29 C 229.02 280.49 212.29 267.54 212.29 267.54 L 215.04 213.29 C 215.04 213.29 280.04 234.92 284.54 236.42 S 290.42 236.17 290.54 234.04 C 290.54 234.04 290.76 223.97 290.54 220.29 C 290.42 218.29 289.89 214.91 288.93 212.44 C 286.17 205.34 272.63 196.84 272.63 196.84 L 218.42 157.54 C 218.42 157.54 215.54 119.29 211.29 106.17 S 200 81.42 200 81.42 V 61 Z" />
+    </g>
+    <g filter="url(#filter-mask)">
+        <polygon fill="#FF2A00" points="200.381,332.311 194.542,344.439 206.542,344.439" />
+        <polygon fill="#FF2A00" points="68.291,200.382 56.291,194.604 56.291,206.477" />
+        <polygon fill="#FF2A00" points="332.311,200.285 344.44,206.125 344.441,194.125" />
+        <polygon fill="#FF2A00" points="200.619,68.022 206.458,55.893 194.458,55.892" />
+        <polygon fill="#FFFFFF" points="294.272,294.239 298.743,307.01 307.272,298.481" />
+        <polygon fill="#FFFFFF" points="105.938,294.771 94.146,298.898 102.02,306.771" />
+        <polygon fill="#FFFFFF" points="106.001,106.041 101.801,94.041 93.787,102.055" />
+        <polygon fill="#FFFFFF" points="294.731,105.894 306.519,101.767 298.646,93.894" />
+    </g>
+</svg>

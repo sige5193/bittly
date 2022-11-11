@@ -1,0 +1,28 @@
+.popover-trigger {
+    font-size: 0.9em;
+    display: inline-block;
+    margin-left: 5px;
+}
+.popover-trigger > .name {
+    display: inline-block;
+    background: #108ee9;
+    color: white;
+    padding: 1px 10px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+.popover-trigger > .name:hover {
+    background: #299ef3;
+}
+.popover-trigger > .action {
+    display: inline-block;
+    background: #c9c9c9;
+    padding: 1px 5px;
+    color: #898989;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    cursor: pointer;
+}
+.popover-trigger > .action:hover {
+    background: #dddddd;
+}

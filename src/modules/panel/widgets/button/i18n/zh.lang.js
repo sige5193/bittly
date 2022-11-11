@@ -1,0 +1,16 @@
+module.exports = {
+    widgetName : '按钮',
+    name : '名称',
+    icon : '图标',
+    type : '类型',
+    typePrimary : '主按钮',
+    typeDefault : '次按钮',
+    typeDashed : '虚线按钮',
+    typeDanger : '危险按钮',
+    size : '尺寸',
+    sizeLarge : '大',
+    sizeDefault : '默认',
+    sizeSmall : '小',
+    confirmMessage : '确认消息',
+    confirmTitle : '确认',
+};

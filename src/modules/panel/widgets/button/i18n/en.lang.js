@@ -1,0 +1,16 @@
+module.exports = {
+    widgetName : 'Button',
+    name : 'Name',
+    icon : 'Icon',
+    type : 'Type',
+    typePrimary : 'Primary',
+    typeDefault : 'Default',
+    typeDashed : 'Dashed',
+    typeDanger : 'Danger',
+    size : 'Size',
+    sizeLarge : 'Large',
+    sizeDefault : 'Default',
+    sizeSmall : 'Small',
+    confirmMessage : 'Confirm',
+    confirmTitle : 'Confirm',
+};

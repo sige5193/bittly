@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+    width="400px" height="400px" viewBox="0 0 400 400" enable-background="new 0 0 400 400" xml:space="preserve">
+    <style>
+        .marks {
+            transform: translate(50%, 50%);
+        }
+
+        .marks line {
+            fill: none;
+            stroke: white;
+            stroke-width: 4;
+            stroke-miterlimit: 10;
+        }
+
+        .marks polygon {
+            fill: white;
+        }
+
+        .marks line {
+            --base-angle: 270deg;
+            --base-stroke-width: 2;
+            transform: rotate(var(--base-angle));
+            stroke-width: var(--base-stroke-width);
+            fill: none;
+            stroke: white;
+            stroke-miterlimit: 10;
+        }
+
+        .marks .triangles polygon {
+            --base-angle: 0deg;
+            transform: rotate(var(--base-angle));
+        }
+
+        .marks .long-ticks .tick:nth-child(1) {
+            --base-angle: 210deg;
+        }
+
+        .marks .long-ticks .tick:nth-child(2) {
+            --base-angle: 240deg;
+        }
+
+        .marks .long-ticks .tick:nth-child(3) {
+            --base-angle: 300deg;
+        }
+
+        .marks .long-ticks .tick:nth-child(4) {
+            --base-angle: 330deg;
+        }
+
+        .marks .long-ticks .tick:nth-child(5) {
+            --base-angle: 0deg;
+        }
+
+        .marks .long-ticks .tick:nth-child(6) {
+            --base-angle: 180deg;
+        }
+
+        .marks .short-ticks .tick:nth-child(1) {
+            --base-angle: 260deg;
+        }
+
+        .marks .short-ticks .tick:nth-child(2) {
+            --base-angle: 250deg;
+        }
+
+        .marks .short-ticks .tick:nth-child(3) {
+            --base-angle: 280deg;
+        }
+
+        .marks .short-ticks .tick:nth-child(4) {
+            --base-angle: 290deg;
+        }
+
+        .marks .triangles polygon:nth-child(1) {
+            --base-angle: 180deg;
+        }
+
+        .marks .triangles polygon:nth-child(2) {
+            --base-angle: 225deg;
+        }
+
+        .marks .triangles polygon:nth-child(3) {
+            --base-angle: 135deg;
+        }
+    </style>
+    <filter filterUnits="objectBoundingBox" id="filter-shadow">
+        <feGaussianBlur stdDeviation="5" result="blur" in="SourceAlpha"></feGaussianBlur>
+        <feOffset dy="0" dx="0" result="offsetBlurredAlpha" in="blur"></feOffset>
+        <feMerge>
+            <feMergeNode in="offsetBlurredAlpha"></feMergeNode>
+            <feMergeNode in="SourceGraphic"></feMergeNode>
+        </feMerge>
+    </filter>
+    <linearGradient id="donut-gradient" gradientUnits="userSpaceOnUse" x1="50%" y1="350" x2="50%" y2="50">
+        <stop offset="0.5" style="stop-color:#503723" />
+        <stop offset="0.5" style="stop-color:#558EBB" />
+    </linearGradient>
+    <g id="donut">
+        <path fill="url(#donut-gradient)" filter="url(#filter-shadow)"
+            d="M 200 50 A 150 150 0 1 0 200 350 A 150 150 0 1 0 200 50 Z M 200 100 A 100 100 0 1 1 200 300 A 100 100 0 1 1 200 100 Z" />
+    </g>
+
+    <g class="marks">
+        <g class="triangles">
+            <polygon points="0,100 -15,140 15,140" />
+            <polygon points="0,100 -6,116 6,116" />
+            <polygon points="0,100 -6,116 6,116" />
+        </g>
+        <g class="long-ticks">
+            <line class="tick" x1="100" y1="0" x2="140" y2="0" />
+            <line class="tick" x1="100" y1="0" x2="140" y2="0" />
+            <line class="tick" x1="100" y1="0" x2="140" y2="0" />
+            <line class="tick" x1="100" y1="0" x2="140" y2="0" />
+
+            <line class="tick" x1="100" y1="0" x2="150" y2="0" />
+            <line class="tick" x1="100" y1="0" x2="150" y2="0" />
+        </g>
+        <g class="short-ticks">
+            <line class="tick" x1="100" y1="0" x2="120" y2="0" />
+            <line class="tick" x1="100" y1="0" x2="120" y2="0" />
+            <line class="tick" x1="100" y1="0" x2="120" y2="0" />
+            <line class="tick" x1="100" y1="0" x2="120" y2="0" />
+        </g>
+    </g>
+</svg>

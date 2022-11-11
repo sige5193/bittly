@@ -1,0 +1,16 @@
+module.exports = {
+    moduleName : '环境',
+    newEnvDefaultName : '未命名环境',
+    defualtEnvName : '默认环境',
+    namePlaceholder : '环境名称',
+    envDeleteConfirmMessage : '是否删除该环境 ?',
+    tableColumnName : '名称',
+    tableColumnValue : '取值',
+    tableColumnDesc : '描述',
+    tableColumnOperations : '操作',
+    envSaveSuccess : '环境配置已保存',
+    envSaveFailed : '环境配置保存失败',
+    envCopyName : '{0} 副本',
+    envChangeSaveConfirm : '环境配置已发生变更，是否保存？',
+    itemDeleteConfirm : '是否删除该配置项 ?',
+};

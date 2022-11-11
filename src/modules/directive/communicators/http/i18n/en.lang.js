@@ -1,0 +1,18 @@
+module.exports = {
+    name : 'HTTP',
+    headerTableColumnName : 'Name',
+    headerTableColumnValue : 'Value',
+    headerTableColumnOperation : 'Operations',
+    cookieTableColumnName : 'Name',
+    cookieTableColumnValue : 'Value',
+    cookieTableColumnOperation : 'Operations',
+    queryTableColumnName : 'Name',
+    queryTableColumnValue : 'Value',
+    queryTableColumnOperation : 'Operations',
+    requestUrlCannotBeEmpty : 'Please input request URL',
+    settings : 'Settings',
+    followRedirect : 'Follow Redirect',
+    maxRedirectCount : 'Max Redirect Count',
+    showResponseHeaders : 'Show Headers',
+    tooManyRedirects : 'Too many redirects.',
+};

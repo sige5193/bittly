@@ -1,0 +1,16 @@
+module.exports = {
+    moduleName : 'Environment',
+    newEnvDefaultName : 'New Environment',
+    defualtEnvName : 'Default Env',
+    namePlaceholder : 'Environment name',
+    envDeleteConfirmMessage : 'Are you sure you want to delete this environment ?',
+    tableColumnName : 'Name',
+    tableColumnValue : 'Value',
+    tableColumnDesc : 'Description',
+    tableColumnOperations : 'Operations',
+    envSaveSuccess : 'Environment saved',
+    envSaveFailed : 'Environment save failed',
+    envCopyName : '{0} Copy',
+    envChangeSaveConfirm : 'Environment has changed, would you like to save it ?',
+    itemDeleteConfirm : 'Are you sure you want to delete this item ?',
+};
