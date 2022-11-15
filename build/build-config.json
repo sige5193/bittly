@@ -1,0 +1,10 @@
+{
+    "windows" : {
+        "vmname" : "bittly-windows-10-x64",
+        "address" : "192.168.0.160",
+        "port" : 5985,
+        "user" : "bittly",
+        "password" : "bittly",
+        "workpath" : "C:\\Users\\bittly\\Desktop\\bittly"
+    }
+}

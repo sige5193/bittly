@@ -52,11 +52,36 @@ function update-server-runtime-variable ( $name, $value ) {
 # @param [String] $address
 function wait-for-build-server-ready ($address) {
     Write-Host "waiting for build server ready " -NoNewLine
+
+    $ping = New-Object System.Net.NetworkInformation.Ping
     while ( $true ) {
         Write-Host "." -NoNewLine
         Start-Sleep -s 2
-        if ( Test-Connection $address -Count 1 -Quiet ) {
+        $pingResult = $ping.send($address);
+        if ( $pingResult.Status -eq "Success" ) {
             break;
+        }
+    }
+    Write-Host ""
+}
+
+# wait for network connection available
+# @param [String] $address
+# @param [Integer] $port
+function wait-for-connection-available( $address, $port ) {
+    Write-Host "waiting for connection available : ${address}:${port} " -NoNewLine
+
+    $timeout = 1000;
+    while ( $true ) {
+        Write-Host "." -NoNewLine
+        
+        $requestCallback = $state = $null
+        $client = New-Object System.Net.Sockets.TcpClient
+        $beginConnect = $client.BeginConnect($address,$port,$requestCallback,$state)
+        Start-Sleep -milli $timeOut
+        if ($client.Connected) { 
+            $client.Close()
+            break
         }
     }
     Write-Host ""

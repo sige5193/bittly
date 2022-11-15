@@ -1,10 +1,18 @@
-﻿. utils/common.ps1
+﻿##
+# build app installer for windows.
+# To build test package, run `./build-windows.ps1`, or `./build-windows.ps1 prod` for
+# production package. 
+##
+. utils/common.ps1
+$config = (Get-Content "build-config.json") | ConvertFrom-Json
 
-$vmname = "Windows 10 64-bit 开发"
-$address = "192.168.43.184"
-$user = "sige"
-$password = ConvertTo-SecureString "sige" -AsPlainText -Force
+$vmname = $config.windows.vmname;
+$address = $config.windows.address;
+$winrmPort = $config.windows.port;
+$user = $config.windows.user;
+$password = ConvertTo-SecureString  $config.windows.password -AsPlainText -Force
 $packageJSON = (Get-Content "../package.json") | ConvertFrom-Json
+$workpath = $config.windows.workpath;
 $version = $packageJson.version;
 $filename = "bittly-setup-$version-win-amd64.exe"
 $mode = $args[0]
@@ -14,51 +22,38 @@ if ( $mode -eq "" ) {
 
 echo "start building vm"
 VBoxManage startvm $vmname --type gui
+wait-for-connection-available $address $winrmPort
 
-# 等待打包虚拟机开机
-echo "starting building vm"
-while ( $true ) {
-    Write-Host "." -NoNewLine
-    Start-Sleep -s 2
-    $ping = (ping -n 1 $address | Out-String);
-    if ( ! $ping.Contains("请求超时") -and ! $ping.Contains("无法访问目标主机" ) ) {
-        break;
-    }
-}
-echo ""
-echo "building vm started"
-
-# 登录到虚拟机
+# login to build server
 net start winrm
 Set-Item WSMan:\localhost\Client\TrustedHosts -Value $address -Force
 $credent = New-Object System.Management.Automation.PSCredential($user, $password)
 $session = New-PSSession -ComputerName $address -Credential $credent
 
-# 执行打包指令
+# build app
 Invoke-Command -Session $session -ScriptBlock { 
-    cd C:\Users\sige\Desktop\bittly\app\
+    cd $workpath
     Remove-Item dist_electron -Recurse
     echo "updating ..."
     git checkout package-lock.json
     git pull
-    sh .\build\utils\generate-release-notes.sh
     npm install
     echo "building ..."
     npm run electron:build
 }
 
-# 将安装包复制到本地
-Copy-Item "C:\Users\sige\Desktop\bittly\app\dist_electron\$filename" `
+# copy installer package to local
+Copy-Item "$workpath\dist_electron\$filename" `
   -Destination "..\dist_electron\$filename" -FromSession $session
 
-# 将更新信息复制到本地
-Copy-Item "C:\Users\sige\Desktop\bittly\app\dist_electron\latest.yml" `
+# copy update info to local 
+Copy-Item "$workpath\dist_electron\latest.yml" `
   -Destination "..\dist_electron\latest.yml" -FromSession $session
 
-# 关闭 虚拟机
+# close build vm
 Invoke-Command -Session $session -ScriptBlock { Stop-Computer -Force }
 
-# 删除会话
+# delete winrm session
 Disconnect-PSSession -Session $session
 
 upload-package-to-cdn $filename
