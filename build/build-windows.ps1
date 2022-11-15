@@ -32,13 +32,14 @@ $session = New-PSSession -ComputerName $address -Credential $credent
 
 # build app
 Invoke-Command -Session $session -ScriptBlock { 
-    cd $workpath
+    cd $Using:workpath
     Remove-Item dist_electron -Recurse
-    echo "updating ..."
+    echo "> update source code"
     git checkout package-lock.json
     git pull
+    echo "> install packages"
     npm install
-    echo "building ..."
+    echo "> build app package"
     npm run electron:build
 }
 
