@@ -160,6 +160,7 @@ export default {
      * - create chartjs instance
      */
     mounted() {
+        window.plotter = this;
         this.executorResizedCallback = () => this.onExecutorResized();
         this.$eventBus.$on('directive-executor-resized', this.executorResizedCallback);
         this.setupChart();
@@ -233,6 +234,8 @@ export default {
                                 enabled: true,
                                 mode: 'y',
                                 threshold: 10,
+                                onPan: () => this.handleChartZoom(),
+                                onPanComplete: () => this.handleChartZoom(),
                             },
                             zoom: {
                                 enabled: true,
@@ -241,11 +244,21 @@ export default {
                                 speed: 0.1,
                                 threshold: 2,
                                 sensitivity: 3,
+                                onZoom: () => this.handleChartZoom(),
+                                onZoomComplete: () => this.handleChartZoom(),
                             }
                         }
                     }
                 },
             });
+        },
+
+        /**
+         * event handler on chart zoom/zoomComplete pan/panComplete
+         */
+        handleChartZoom() {
+            this.chart.options.scales.xAxes[0].ticks.display = false;
+            this.chart.update(0);
         },
 
         /**
