@@ -41,7 +41,7 @@ Invoke-Command -Session $session -ScriptBlock {
     npm install
     echo "> build app package"
     npm run electron:build
-}
+} 2>$null
 
 # copy installer package to local
 Copy-Item "$workpath\dist_electron\$filename" `
