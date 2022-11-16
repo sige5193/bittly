@@ -6,5 +6,11 @@
         "user" : "bittly",
         "password" : "bittly",
         "workpath" : "C:\\Users\\bittly\\Desktop\\bittly"
+    },
+    "ubuntu" : {
+        "vmname" : "bittly-ubuntu-22.04.1-x64",
+        "address" : "192.168.0.161",
+        "user" : "bittly",
+        "workpath" : "/home/bittly/bittly"
     }
 }

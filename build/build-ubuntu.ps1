@@ -1,48 +1,49 @@
-﻿. utils/common.ps1
+﻿##
+# build app installer for ubuntu.
+# To build test package, run `./build-ubuntu.ps1`
+##
+. utils/common.ps1
+$config = (Get-Content "build-config.json") | ConvertFrom-Json
 
-$vmname = "Ubuntu 20.04 64-bit 开发"
-$address = "192.168.43.96"
-$user = "sige"
-$password = ConvertTo-SecureString "sige" -AsPlainText -Force
+$vmname = $config.ubuntu.vmname;
+$address = $config.ubuntu.address;
+$user = $config.ubuntu.user;
+$workpath = $config.ubuntu.workpath;
 $packageJSON = (Get-Content "../package.json") | ConvertFrom-Json
 $version = $packageJson.version;
 $filename = "bittly-$version-x86_64.AppImage"
 
-# 启动打包虚拟机
+# start build vm
 echo "start building vm"
 VBoxManage startvm $vmname --type gui
+wait-for-connection-available $address 22
 
-# 等待打包虚拟机开机
-wait-for-build-server-ready $address
-
-# 打包
+# build app package
 $depCommands = @()
-$depCommands += "cd /home/sige/projects/bittly/app";
+$depCommands += "cd ${workpath}";
 $depCommands += "git checkout package-lock.json";
 $depCommands += "git pull";
-$depCommands += "chmod u+x ./build/utils/generate-release-notes.sh"
-$depCommands += "./build/utils/generate-release-notes.sh"
-$depCommands += "export PATH=`$PATH:/home/sige/applications/node/bin/"
+$depCommands += "export PATH=`$PATH:/usr/local/node/bin"
 $depCommands += "npm install"
 $depCommands += "npm run electron:build"
 $depCommands = $depCommands -join ";"
 ssh $user@$address $depCommands
 
-# 将打包好的运行文件下载到本地
-echo "get /home/sige/projects/bittly/app/dist_electron/$filename" | sftp $user@$address
+# copy package to local
+echo "get ${workpath}/dist_electron/$filename" | sftp $user@$address
 if ( Test-Path ../dist_electron/$filename ) {
     Remove-Item ../dist_electron/$filename
 }
 Move-Item -Path $filename -Destination ../dist_electron
 
-# 下载更新文件
-echo "get /home/sige/projects/bittly/app/dist_electron/latest-linux.yml" | sftp $user@$address
+# copy update file to local
+echo "get ${workpath}/dist_electron/latest-linux.yml" | sftp $user@$address
 if ( Test-Path ../dist_electron/latest-linux.yml ) {
     Remove-Item ../dist_electron/latest-linux.yml
 }
 Move-Item -Path latest-linux.yml -Destination ../dist_electron
 
-# 关闭 虚拟机
+# close builder vm
 ssh $user@$address "sudo poweroff"
 
 upload-latest-yml "latest-linux.yml"
