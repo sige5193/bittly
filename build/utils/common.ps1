@@ -35,9 +35,11 @@ function upload-package-to-cdn ( $filename ) {
 # @param [String] $name
 # @param [String] $value
 function update-server-runtime-variable ( $name, $value ) {
+    $config = (Get-Content "build-config.json") | ConvertFrom-Json
+    
     [void][System.Reflection.Assembly]::LoadWithPartialName("MySql.Data")
     $connection = New-Object MySql.Data.MySqlClient.MySqlConnection
-    $connection.ConnectionString = "Server=106.15.62.251;Uid=bittlydep;Pwd=FpHWhG3DHbCtwHbDn1DfdicYue6Q;database=bittly;"
+    $connection.ConnectionString = "Server=$($config.server.dbAddress);Uid=$($config.server.dbUser);Pwd=$($config.server.dbPasswd);database=$(config.server.dbName);"
     $connection.Open()
 
     $insertcommand = New-Object MySql.Data.MySqlClient.MySqlCommand

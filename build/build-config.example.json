@@ -12,5 +12,11 @@
         "address" : "192.168.0.161",
         "user" : "bittly",
         "workpath" : "/home/bittly/bittly"
+    },
+    "server" : {
+        "dbAddress" : "/* address to server database address */",
+        "dbUser" : "/* user name to server database address */",
+        "dbPasswd" : "/* passwrod to server database address */",
+        "dbName" : "/* name of database */"
     }
 }
