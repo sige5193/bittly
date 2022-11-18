@@ -9,7 +9,11 @@
         width:`${widget.sizeWidth}px`,
         height:`${widget.sizeHeight}px`
       }"
-    ></div>
+    >
+      <a-result v-if="false === AMap" status="error"
+        :sub-title="$t('panel.widgets.map.failedToLoadMapScript')"
+      ></a-result>
+    </div>
 
     <modal-viewer-widget-setting ref="setting"
       :panel="panel"
@@ -33,13 +37,13 @@
 import AMapLoader from '@amap/amap-jsapi-loader';
 import WidgetMixin from '../WidgetEditMixin.js' 
 export default {
-    name : 'WidgetMap',
+    name : 'PanelWidgetMapEdit',
     mixins : [WidgetMixin],
     data() {
         return {
             /**
              * class of amap
-             * @property {Class}
+             * @property {Class|null}
              */
             AMap : null,
             /**
@@ -53,18 +57,38 @@ export default {
             },
             /**
              * instance of amap
-             * @property {Object}
+             * @property {Object|null|false}
              */
             map : null,
         };
     },
     async mounted() {
-        window._AMapSecurityConfig = {securityJsCode:'a40cc64f4f55fd1a663ff07cf1a0c216'};
-        this.AMap = await AMapLoader.load(this.amapLoaderOptions);
+        this.AMap = null;
+        this.map = null;
+
+        try {
+            window._AMapSecurityConfig = {securityJsCode:'a40cc64f4f55fd1a663ff07cf1a0c216'};
+            this.AMap = await AMapLoader.load(this.amapLoaderOptions);
+        } catch ( e ) {
+            this.AMap = false;
+            this.$message.error(this.$t('panel.widgets.map.failedToLoadMapScript'));
+            return;
+        }
+        
+        // if the map class is not loaded, and destoried by switching to edit-mode or other modules,
+        // we should not create the map instance.
+        if ( false === this.map ) {
+            console.log('PanelWidgetMapEdit has been destroied');
+            return ;
+        }
+        
         this.refreshMap();
     },
     beforeDestroy() {
-        this.map.destroy();
+        if ( null !== this.map ) {
+            this.map.destroy();
+        }
+        this.map = false;
     },
     methods : {
         /**
@@ -80,6 +104,10 @@ export default {
          * refresh map
          */
         refreshMap() {
+            if ( null === this.AMap || false === this.AMap ) {
+                return;
+            }
+
             this.map = new this.AMap.Map(this.$refs.mapContainer, {
                 zoom:11,
                 center: [116.397428, 39.90923],

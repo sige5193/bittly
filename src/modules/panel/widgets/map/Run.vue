@@ -1,26 +1,28 @@
 <template>
   <div>
-    <div 
-      ref="mapContainer" 
-      class="map-container" 
+    <div ref="mapContainer" class="map-container" 
       :style="{
         width:`${widget.sizeWidth}px`,
         height:`${widget.sizeHeight}px`
       }"
-    ></div>
+    >
+      <a-result v-if="false === AMap" status="error"
+        :sub-title="$t('panel.widgets.map.failedToLoadMapScript')"
+      ></a-result>
+    </div>
   </div>
 </template>
 <script>
 import AMapLoader from '@amap/amap-jsapi-loader';
 import WidgetViewerMixin from '../WidgetRunViewerMixin.js' 
 export default {
-    name : 'WidgetMap',
+    name : 'PanelWidgetMapRun',
     mixins : [WidgetViewerMixin],
     data() {
         return {
             /**
              * class of amap
-             * @property {Class}
+             * @property {Class|null|false}
              */
             AMap : null,
             /**
@@ -34,16 +36,40 @@ export default {
             },
             /**
              * instance of amap
-             * @property {Object}
+             * @property {Object|null|false}
              */
             map : null,
+            /**
+             * value of longitude
+             * @property {String|null}
+             */
             longitude:null,
+            /**
+             * value of latitude
+             * @property {String|null}
+             */
             latitude:null,
         };
     },
     async mounted() {
-        window._AMapSecurityConfig = {securityJsCode:'a40cc64f4f55fd1a663ff07cf1a0c216'};
-        this.AMap = await AMapLoader.load(this.amapLoaderOptions);
+        this.map = null;
+        
+        try {
+            window._AMapSecurityConfig = {securityJsCode:'a40cc64f4f55fd1a663ff07cf1a0c216'};
+            this.AMap = await AMapLoader.load(this.amapLoaderOptions);
+        } catch ( e ) {
+            this.AMap = false;
+            this.$message.error(this.$t('panel.widgets.map.failedToLoadMapScript'));
+            return;
+        }
+        
+        // if the map class is not loaded, and destoried by switching to edit-mode or other modules,
+        // we should not create the map instance.
+        if ( false === this.map ) {
+            console.log('PanelWidgetMapRun has been destroied');
+            return ;
+        }
+
         this.map = new this.AMap.Map(this.$refs.mapContainer, {
             zoom:11,
             center: [116.397428, 39.90923],
@@ -51,8 +77,10 @@ export default {
         this.refresh();
     },
     beforeDestroy() {
-        this.map.destroy();
-        this.map = null;
+        if ( null !== this.map ) {
+            this.map.destroy();
+        }
+        this.map = false;
     },
     methods : {
         /**
@@ -82,7 +110,7 @@ export default {
          * @override
          */
         updateWidget() {
-            if ( null === this.map ) {
+            if ( null === this.map || false === this.map ) {
                 return ;
             }
             
