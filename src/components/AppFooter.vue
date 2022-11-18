@@ -16,13 +16,15 @@
 
         <!-- contact : Wechat -->
         <a-popover placement="topLeft">
-          <template slot="title"><a-icon type="wechat" /> : sigech-- </template>
+          <template slot="title"><a-icon type="wechat" /> : sige-5193 </template>
           <template slot="content">
             <p><img src="../assets/sige-wechat.jpg" style="width:150px;height:150px;"></p>
           </template>
           <a-icon class="cursor-pointer ml-1" type="wechat" />
         </a-popover>
         
+        <a-icon class="cursor-pointer ml-2" type="github" @click="actionStartGithub"/>
+
         <app-feedback></app-feedback>
       </a-col>
 
@@ -77,7 +79,14 @@ export default {
          */
         actionStartQQ() {
             window.shell.openExternal("http://wpa.qq.com/msgrd?v=1&uin=568109749&site=qq&menu=yes");
-        }
+        },
+
+        /**
+         * start github page
+         */
+        actionStartGithub() {
+            window.shell.openExternal("https://github.com/sige5193/bittly");
+        },
     },
 }
 </script>
