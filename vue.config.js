@@ -12,6 +12,15 @@ module.exports = {
     configureWebpack: require('./webpack.config.js'),
 
     /**
+     * css options
+     */
+    css: {
+        extract : 'development' === process.env.NODE_ENV ? false : {
+            ignoreOrder: true
+        }
+    },
+
+    /**
      * build the app in multi-page mode
      * @property {Object}
      * @link https://cli.vuejs.org/config/#pages
