@@ -116,11 +116,20 @@ export default new Vuex.Store({
         /**
          * 设置当前活跃环境变量ID
          * @param {*} context 
-         * @param {*} id 
+         * @param {String|null} id 
          */
         async envActivedIdSet(context, id) {
-            let env = await MdbEnvironment.findOne(id);
-            context.commit('envVariablesSet', env.content);
+            let content = {};
+            if ( null !== id ) {
+                let env = await MdbEnvironment.findOne(id);
+                if ( null === env ) {
+                    console.trace(`Unable to find environment by given id ${id}`);
+                    throw Error(`Unable to find environment by given id ${id}`);
+                }
+                content = env.content;
+            }
+            
+            context.commit('envVariablesSet', content);
             context.commit('envActivedIdSet', id);
         },
     },

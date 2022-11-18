@@ -4,17 +4,17 @@
       <span class="app-dropdown-menu-title">{{$t('environment.moduleName')}}</span>
 
       <a-menu ref="menu" slot="overlay" @click="actionHandleMenuItemClicked">
-        <a-menu-item key="none">{{$t('environment.defualtEnvName')}}</a-menu-item>
+        <a-menu-item key="none">
+          <a-icon v-if="null === curIndex" type="check" /> 
+          {{$t('environment.defualtEnvName')}}
+        </a-menu-item>
         <a-menu-item v-for="(env, index) in envs" :key="index"
-        >{{env.name}}</a-menu-item>
+        >
+          <a-icon v-if="index==curIndex" type="check" /> 
+          {{env.name}}
+        </a-menu-item>
       </a-menu>
       
-      <!-- <a-button ref="btnDropdownTrigger" style="margin-left: 8px"> 
-        <span v-if="null === curIndex"> {{$t('environment.defualtEnvName')}} </span>
-        <span v-if="null !== curIndex">{{envs[curIndex].name}}</span>
-        <a-icon type="down" /> 
-      </a-button> -->
-
     </a-dropdown>
   </div>
 </template>
@@ -97,6 +97,7 @@ export default {
             if ( this.curIndex == event.key ) {
                 return ;
             }
+
             this.curIndex = event.key;
             this.$store.dispatch('envActivedIdSet', this.envs[this.curIndex].id);
         },
