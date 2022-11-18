@@ -69,6 +69,13 @@ export default {
     async mounted() {
         await this.refreshPanels();
     },
+    async beforeDestroy() {
+        // close all communicators
+        let coms = this.$store.getters.communicators;
+        for ( let comKey in coms ) {
+            await coms[comKey].close();
+        }
+    },
     methods : {
         /**
          * handle on project changed

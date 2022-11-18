@@ -15,7 +15,6 @@
         :data-key="'key'"
         :data-sources="requests"
         :data-component="entryItem"
-        :extra-props="{directive}"
       />
     </div>
   </div>
