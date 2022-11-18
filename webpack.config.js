@@ -11,4 +11,15 @@ module.exports = {
     devServer: {
         onListening: function () {},
     },
+
+    /**
+     * Configure how performance hints are shown.
+     * @link https://webpack.js.org/configuration/performance/
+     */
+    performance: {
+        hints: 'warning',
+        maxEntrypointSize: 50 * 1024 * 1024,
+        maxAssetSize: 30 * 1024 * 1024,
+        assetFilter: assetFilename => assetFilename.endsWith('.js'),
+    }
 };
