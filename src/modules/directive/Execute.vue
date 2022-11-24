@@ -197,6 +197,14 @@ export default {
     async created() {
         await this.initVModel();
     },
+    /**
+     * @link https://github.com/sige5193/bittly/issues/9
+     */
+    beforeDestroy() {
+        if ( null !== this.executor ) {
+            this.executor.onData(null);
+        }
+    },
     methods : {
         /**
          * init v-model
