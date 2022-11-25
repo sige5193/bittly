@@ -1,4 +1,5 @@
 import NodeBase from "../NodeBase";
+import {LiteGraph} from 'litegraph.js'
 /**
  * functional test flow node "variable"
  * the "variable" node read value from input, and execute the 
@@ -11,16 +12,20 @@ export default class Node extends NodeBase {
     constructor() {
         super();
         this.title = this.$t('name');
+        this.inputExec = this.$t('execute');
+        this.outputExec = this.$t('execute');
         this.inputName = this.$t('input');
         this.outputName = this.$t('output');
 
         // setup input and output
+        this.addInput(this.inputExec, LiteGraph.ACTION);
         this.addInput(this.inputName, 'string');
+        this.addOutput(this.outputExec, LiteGraph.EVENT);
         this.addOutput(this.outputName, 'string');
 
         // setup widget button for variable editting.
         this.onBtnSettingClicked = () => {};
-        this.btnDirectiveSelect = this.addWidget(
+        this.addWidget(
             'button',
             this.$t('setting'),
             null,
@@ -62,13 +67,14 @@ export default class Node extends NodeBase {
     }
 
     /**
-     * execute the node
+     * node action handler
+     * @returns {void}
      */
-    async executeAction () {
+    onAction() {
         this.valueWidget.value = '';
         this.refresh();
 
-        let value = this.getInputDataByName(this.inputName);
+        let value = this.getInputData(1);
         if ( undefined === value ) {
             value = this.options.defaultValue;
         }
@@ -85,7 +91,8 @@ export default class Node extends NodeBase {
         }
 
         this.valueWidget.value = value;
-        this.setOutputDataByName(this.outputName, value);
+        this.setOutputData(1, value);
         this.refresh();
+        this.triggerSlot(0);
     }
 }

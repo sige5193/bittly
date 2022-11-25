@@ -10,4 +10,5 @@ module.exports = {
     varName : 'Name',
     inputDefaultValue : 'Default Input Value',
     expression : 'Expression',
+    execute : 'Execute',
 };

@@ -10,4 +10,5 @@ module.exports = {
     varName : '变量名',
     inputDefaultValue : '输入默认值',
     expression : '表达式',
+    execute : '执行',
 };
