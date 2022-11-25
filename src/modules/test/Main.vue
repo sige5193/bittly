@@ -2,18 +2,31 @@
   <a-layout class="h-100">
     <!-- menu entry -->
     <a-layout-sider class="bg-white border-right" width="300">
-      <directive-entries
+      <a-tabs v-model="mode" class="h-100 d-flex flex-dir-column test-main-sider-tab" :tabBarStyle="{marginBottom:0}">
+        <a-tab-pane key="functional" tab="功能测试" class="h-100">
+          <functional-entrymenu ref="functionalEntryMenu" :getWorkspace="getWorkspace"/>
+        </a-tab-pane>
+        <a-tab-pane key="unit" tab="单元测试" force-render>单元测试</a-tab-pane>
+      </a-tabs>
+
+      <!-- <directive-entries
         ref="entries"
         :projectId="curProjectId"
         @directive-click="actionDirectiveClicked"
         @execute-all-testcases="actionExecuteAllTestcases"
         @execute-all-testcases-stop="actionExecuteAllTestcasesStop"
       ></directive-entries>
-      <modal-testcase-edit ref="modalTestcaseEdit"></modal-testcase-edit>
+      <modal-testcase-edit ref="modalTestcaseEdit"></modal-testcase-edit> -->
     </a-layout-sider>
     
+    <a-layout-content class="h-100 bg-white">
+      <component :is="`${mode}-workspace`" ref="workspace" 
+        :getFunctionalEntryMenu="getFunctionalEntryMenu"
+      ></component>
+    </a-layout-content>
+    
     <!-- no active directive -->
-    <a-layout-content v-if="null == directive" class="h-100 bg-white pt-5">
+    <!-- <a-layout-content v-if="null == directive" class="h-100 bg-white pt-5">
       <a-empty :description="false" />
     </a-layout-content>
 
@@ -31,10 +44,10 @@
             @click="actionExecCasesOfThisDirective"
           >{{$t('button.execute')}}</a-button>
         </template>
-      </a-page-header>
+      </a-page-header> -->
       
       <!-- testcase list -->
-      <div>
+      <!-- <div>
         <a-empty v-if="0 == testcases.length" :description="false" class="mt-5" />
         <block-testcase 
           ref="testcase"
@@ -46,7 +59,7 @@
           @testcase-delete="actionTestcaseDelete"
         ></block-testcase>
       </div>
-    </a-layout-content>
+    </a-layout-content> -->
 
     <!-- batch execute result summary modal -->
     <a-modal
@@ -83,6 +96,8 @@ import ProjectMixin from '../../utils/ProjectMixin.js'
 import Common from '../../utils/Common.js'
 import DirectiveEntries from './DirectiveEntries.vue'
 import TestcaseBlock from './Testcase.vue'
+import FunctionalEntryMenu from './functional/EntryMenu.vue'
+import FunctionalWorkspace from './functional/Workspace.vue'
 export default {
     name : 'TestMain',
     mixins : [ProjectMixin],
@@ -90,9 +105,19 @@ export default {
         'directive-entries' : DirectiveEntries,
         'modal-testcase-edit' : ModalTestcaseEdit,
         'block-testcase' : TestcaseBlock,
+        'functional-entrymenu' : FunctionalEntryMenu,
+        'functional-workspace' : FunctionalWorkspace,
     },
     data() {
         return {
+            /**
+             * mode name of test workspace
+             * @property {String}
+             */
+            mode : 'functional',
+            
+            
+            
             /**
              * indicate if user leaving test module
              * @property {Boolean}
@@ -112,6 +137,21 @@ export default {
         this.isDestroying = true;
     },
     methods : {
+        /**
+         * get workspace component
+         * @returns {Object}
+         */
+        getWorkspace() {
+            return this.$refs.workspace;
+        },
+
+        getFunctionalEntryMenu() {
+            return this.$refs.functionalEntryMenu;
+        },
+
+
+
+        
         /**
          * event handler on directive entry meny item clicked
          * @param {MdDirective} directive
@@ -317,3 +357,6 @@ export default {
     },
 }
 </script>
+<style>
+.test-main-sider-tab .ant-tabs-content {flex-grow:1;}
+</style>

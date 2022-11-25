@@ -34,6 +34,14 @@ export default {
             treeData : [],
         };
     },
+    watch : {
+        value() {
+            if ( this.directiveId != this.value ) {
+                this.directiveId = this.value;
+                this.setupTreeData();
+            }
+        }
+    },
     mounted() {
         this.directiveId = this.value;
         this.setupTreeData();

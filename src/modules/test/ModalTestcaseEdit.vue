@@ -133,8 +133,8 @@ import MdbTestcase from '../../models/MdbTestcase';
 import RequestParamStringEditor from '../directive/parameters/text/ValueEditor.vue'
 import RequestParamHexEditor from '../directive/parameters/hex/ValueEditor.vue'
 import RequestParamEditorForm from '../directive/parameters/form/ValueEditor.vue'
-import ResponseParamEditorForm from './ResponseParamEditorForm.vue'
 import RequestParamEditorFile from '../directive/parameters/file/ValueEditor.vue'
+import ResponseParamEditorForm from './ResponseParamEditorForm.vue'
 export default {
     name : 'ModalTestcaseEdit',
     components : {

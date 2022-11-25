@@ -18,8 +18,8 @@ module.exports = {
      */
     performance: {
         hints: 'warning',
-        maxEntrypointSize: 50 * 1024 * 1024,
-        maxAssetSize: 30 * 1024 * 1024,
+        maxEntrypointSize: 100 * 1024 * 1024,
+        maxAssetSize: 60 * 1024 * 1024,
         assetFilter: assetFilename => assetFilename.endsWith('.js'),
     }
 };

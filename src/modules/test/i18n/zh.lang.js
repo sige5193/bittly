@@ -22,6 +22,36 @@ module.exports = {
     afterScriptExecuteFailed : '后执行脚本执行失败：{0}',
     parameterFormat : '请求参数格式',
     responseFormat : '期待响应格式',
+    
+    // Functional test
+    functionalNode : {
+        Start : require('../functional/node/start/i18n/zh.lang.js'),
+        Variable : require('../functional/node/variable/i18n/zh.lang.js'),
+        ActHub : require('../functional/node/acthub/i18n/zh.lang.js'),
+    },
+
+    functionalFlowNodeExecuteDirective : '指令',
+    functionalFlowNodeExecuteDirectiveNotConfigured : '指令 (未选择)',
+    functionalFlowNodeExecuteDirectiveSetting : '指令配置',
+    functionalFlowNodeExecuteDirectiveExecInfo : '执行明细',
+    functionalFlowNodeExecuteScript : '脚本',
+    functionalFlowNodeExecuteRead : '读取',
+    functionalFlowNodeExecuteWrite : '写入',
+    functionalFlowNodeControlDelay : '延时',
+    functionalFlowNodeControlIf : '判断',
+    functionalFlowNodeControlLoop : '循环',
+    functionalFlowNodeLogicAnd : 'And',
+    functionalFlowNodeLogicOr : 'Or',
+    functionalFlowNodeLogicNot : 'Not',
+    functionalFlowNodeVariable : '变量',
+    functionalFlowNodeVariableSetting : '配置',
+    functionalFlowNodeVariableInput : '输入',
+    functionalFlowNodeVariableOutput : '输出',
+    functionalFlowNodeOutputExecute : '执行',
+    functionalFlowNodeOutputSuccess : '成功',
+    functionalFlowNodeOutputFailed : '失败',
+    functionalFlowNodeInputExecute : '执行',
+
     editModal : {
         title : '测试用例编辑',
         titleDefault : '{0} 测试 @ {1}',

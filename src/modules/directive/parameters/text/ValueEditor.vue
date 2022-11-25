@@ -36,6 +36,7 @@ export default {
          */
         actionContentChange() {
             this.$emit('input', this.content);
+            this.$emit('change');
         }
     }
 }

@@ -328,6 +328,7 @@ export default class Setup {
         require('../../migrations/m202208271017_insert_table_dict_add_param_format_none.js'),
         require('../../migrations/m202209221423_insert_table_app_runtime_variables_set_project_actived_id.js'),
         require('../../migrations/m202209231534_insert_demo_data.js'),
+        require('../../migrations/m202211212100_create_table_app_functional_testcases.js'),
     ];
 
     /**

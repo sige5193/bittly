@@ -22,6 +22,14 @@ module.exports = {
     afterScriptExecuteFailed : 'After script execute failed : {0}',
     parameterFormat : 'Param Formamt',
     responseFormat : 'Expect Response Format',
+    
+    // Functional test
+    functionalNode : {
+        Start : require('../functional/node/start/i18n/en.lang.js'),
+        Variable : require('../functional/node/variable/i18n/en.lang.js'),
+        ActHub : require('../functional/node/acthub/i18n/en.lang.js'),
+    },
+
     editModal : {
         title : 'Testcase Edit',
         titleDefault : '{0} Testcase @ {1}',

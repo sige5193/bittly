@@ -1,6 +1,6 @@
 <template>
   <div class="border p-1 rounded viewer h-100 overflow-auto">
-    <pre ref="textViewer" class="p-1 content">{{content}}</pre>
+    <pre ref="textViewer" class="p-1 content mb-0">{{content}}</pre>
   </div>
 </template>
 <script>
@@ -33,6 +33,6 @@ export default {
 }
 </script>
 <style scoped>
-.viewer {min-height:100px;background-color: #e9e9e9 !important;}
+.viewer {background-color: #e9e9e9 !important;}
 .content {white-space: pre-wrap;word-wrap: break-word;}
 </style>

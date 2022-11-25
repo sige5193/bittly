@@ -74,14 +74,15 @@ export default class Node extends NodeBase {
         this.valueWidget.value = '';
         this.refresh();
 
-        let value = this.getInputData(1);
-        if ( undefined === value ) {
-            value = this.options.defaultValue;
+        let inputValue = this.getInputData(1);
+        if ( undefined === inputValue ) {
+            inputValue = this.options.defaultValue;
         }
 
+        let value = null;
         if ( 0 != this.options.expression.trim().length ) {
             try {
-                let expr = this.options.expression.replaceAll('{{value}}', value);
+                let expr = this.options.expression.replaceAll('{{value}}', inputValue);
                 let exprFunc = Function(`return ${expr};`);
                 value = exprFunc.call({});
             } catch ( e ) {
@@ -93,6 +94,8 @@ export default class Node extends NodeBase {
         this.valueWidget.value = value;
         this.setOutputData(1, value);
         this.refresh();
+        
+        this.log(`input = ${inputValue}; output = ${value}`);
         this.triggerSlot(0);
     }
 }

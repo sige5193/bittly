@@ -286,6 +286,30 @@ export default class ResponseParser {
     }
 
     /**
+     * @param {*} name 
+     * @returns 
+     */
+    getReadableValueByName( name ) {
+        let index = -1;
+        for ( let i=0; i<this.directive.responseFormatter.fields.length; i++ ) {
+            let field = this.directive.responseFormatter.fields[i];
+            if ( field.name.trim() === name ) {
+                index = i;
+                break;
+            }
+        }
+
+        if ( -1 === index && '$' === name[0] ) {
+            index = parseInt(name.substr(1)) - 1;
+            if ( undefined === this.directive.responseFormatter.fields[index] ) {
+                index = -1;
+            }
+        }
+        
+        return this.getReadableValueByIndex(index);
+    }
+
+    /**
      * get value by given name
      * @param {String} name Form field name
      */

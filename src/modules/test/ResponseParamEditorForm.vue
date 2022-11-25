@@ -2,12 +2,12 @@
   <div>
     <a-row v-for="(item, index) in content" :key="index" class="mt-1">
       <!-- name -->
-      <a-col :span="6" style="line-height:32px;">
+      <a-col :span="6" style="line-height:43px;">
         {{item.name}} [ {{$t(`directive.parameter.form.dataType.${item.type}`)}} ]
       </a-col>
       
       <!-- opertaotr -->
-      <a-col :span="4">
+      <a-col :span="4" class="pr-1" style="line-height:43px;">
         <a-select v-model="content[index].comparator" class="w-100" @change="actionContentInput">
           <a-select-option value="Ignore">{{$t('test.editModal.comparatorIgnore')}}</a-select-option>
           <a-select-option value="Equal">{{$t('test.editModal.comparatorEqual')}}</a-select-option>

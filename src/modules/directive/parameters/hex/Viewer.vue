@@ -106,11 +106,11 @@ export default {
 }
 </script>
 <style scoped>
-.viewer {min-height:100px;background-color: #e9e9e9 !important;}
-.byte {display: inline-block;text-align: center;padding: 5px;cursor: default;width: 5%;}
+.viewer {background-color: #e9e9e9 !important;}
+.byte {display: inline-block;text-align: center;padding: 5px;cursor: default;width: 32px;}
 .byte.active {background: #c9c9c9;color: black;border-radius: 5px;text-align: center;}
 .byte:hover {background: #c9c9c9;color: black;border-radius: 5px;text-align: center;}
-.char {display: inline-block;text-align: center;padding: 5px;cursor: default;width: 5%;}
+.char {display: inline-block;text-align: center;padding: 5px;cursor: default;width: 32px;}
 .char:hover {background: #c9c9c9;color: black;border-radius: 5px;text-align: center;}
 .char.active {background: #c9c9c9;color: black;border-radius: 5px;text-align: center;}
 </style>
