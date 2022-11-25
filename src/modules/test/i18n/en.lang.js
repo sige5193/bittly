@@ -28,6 +28,7 @@ module.exports = {
         Start : require('../functional/node/start/i18n/en.lang.js'),
         Variable : require('../functional/node/variable/i18n/en.lang.js'),
         ActHub : require('../functional/node/acthub/i18n/en.lang.js'),
+        Delay : require('../functional/node/delay/i18n/en.lang.js'),
     },
 
     editModal : {
