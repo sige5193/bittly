@@ -29,6 +29,7 @@ module.exports = {
         Variable : require('../functional/node/variable/i18n/zh.lang.js'),
         ActHub : require('../functional/node/acthub/i18n/zh.lang.js'),
         Delay : require('../functional/node/delay/i18n/zh.lang.js'),
+        Script : require('../functional/node/script/i18n/zh.lang.js'),
     },
 
     functionalFlowNodeExecuteDirective : '指令',
