@@ -10,7 +10,6 @@ export default class Node extends NodeBase {
      */
     constructor() {
         super();
-        debugger
         this.title = this.$t('name');
         this.inputName = this.$t('input');
         this.outputName = this.$t('output');
