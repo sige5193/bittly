@@ -53,7 +53,7 @@ export default class Node extends NodeBase {
         return {
             name : this.$t('unnamed'),
             defaultValue : undefined,
-            expression : '',
+            expression : '{{value}}',
         };
     }
 
@@ -82,7 +82,7 @@ export default class Node extends NodeBase {
         let value = null;
         if ( 0 != this.options.expression.trim().length ) {
             try {
-                let expr = this.options.expression.replaceAll('{{value}}', inputValue);
+                let expr = this.options.expression.replaceAll('{{value}}', JSON.stringify(inputValue));
                 let exprFunc = Function(`return ${expr};`);
                 value = exprFunc.call({});
             } catch ( e ) {
@@ -96,6 +96,6 @@ export default class Node extends NodeBase {
         this.refresh();
         
         this.log(`input = ${inputValue}; output = ${value}`);
-        this.triggerSlot(0);
+        setTimeout(() => this.triggerSlot(0), 1);
     }
 }
