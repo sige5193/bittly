@@ -30,6 +30,7 @@ module.exports = {
         ActHub : require('../functional/node/acthub/i18n/en.lang.js'),
         Delay : require('../functional/node/delay/i18n/en.lang.js'),
         Script : require('../functional/node/script/i18n/en.lang.js'),
+        If : require('../functional/node/if/i18n/en.lang.js'),
     },
 
     editModal : {
