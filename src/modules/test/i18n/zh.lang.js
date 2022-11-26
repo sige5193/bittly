@@ -31,6 +31,7 @@ module.exports = {
         Delay : require('../functional/node/delay/i18n/zh.lang.js'),
         Script : require('../functional/node/script/i18n/zh.lang.js'),
         If : require('../functional/node/if/i18n/zh.lang.js'),
+        Loop : require('../functional/node/loop/i18n/zh.lang.js'),
     },
 
     functionalFlowNodeExecuteDirective : '指令',
