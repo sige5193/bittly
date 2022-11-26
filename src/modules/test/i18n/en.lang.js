@@ -32,6 +32,7 @@ module.exports = {
         Script : require('../functional/node/script/i18n/en.lang.js'),
         If : require('../functional/node/if/i18n/en.lang.js'),
         Loop : require('../functional/node/loop/i18n/en.lang.js'),
+        Directive : require('../functional/node/directive/i18n/en.lang.js'),
     },
 
     editModal : {
