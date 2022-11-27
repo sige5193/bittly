@@ -35,6 +35,7 @@ module.exports = {
         Directive : require('../functional/node/directive/i18n/en.lang.js'),
         Read : require('../functional/node/read/i18n/en.lang.js'),
         Expect : require('../functional/node/expect/i18n/en.lang.js'),
+        Done : require('../functional/node/done/i18n/en.lang.js'),
     },
 
     editModal : {

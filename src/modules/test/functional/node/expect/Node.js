@@ -13,8 +13,7 @@ export default class Node extends NodeBase{
         this.addInput(this.$t('execute'), LiteGraph.EVENT);
         this.addInput(this.$t('inputData'),'string');
         this.addOutput(this.$t('success'), LiteGraph.EVENT);
-        this.addOutput(this.$t('failed'), LiteGraph.EVENT);
-
+        
         // setup widget button for variable editting.
         this.onBtnSettingClicked = () => {};
         this.addWidget(
@@ -74,8 +73,11 @@ export default class Node extends NodeBase{
         case 'LessThan' : isValidate = actualValue < expectValue; break;
         case 'LessOrEqual' : isValidate = actualValue <= expectValue; break;
         }
+        
+        if ( !isValidate ) {
+            return this.alert('error', this.$t('validateFailed'));
+        }
 
-        let slot = isValidate ? 0 : 1;
-        setTimeout(() => this.triggerSlot(slot), 1);
+        setTimeout(() => this.triggerSlot(0), 1);
     }
 }
