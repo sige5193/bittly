@@ -73,6 +73,9 @@
               @change="actionExpectResponseValueChange"
             ></component>
           </a-form-item>
+          <a-form-item :label="$t('test.functionalNode.Directive.expectDataLength')" labelAlign="left" class="mb-0">
+            <a-input v-model="options.expectDataLength" @input="actionFroceUpdate"/>
+          </a-form-item>
           <a-form-item :label="$t('test.functionalNode.Directive.outputs')" labelAlign="left" class="mb-0">
             <a-input :value="options.outputs.join(',')" disabled/>
           </a-form-item>

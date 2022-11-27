@@ -28,4 +28,6 @@ module.exports = {
     comparisonName : '名称',
     comparisonAction : '对比',
     comparisonResult : '结果',
+    executor : '执行器',
+    expectDataLength : '期待数据长度',
 };

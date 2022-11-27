@@ -29,4 +29,6 @@ module.exports = {
     comparisonName : 'Name',
     comparisonAction : 'Compare',
     comparisonResult : 'Result',
+    executor : 'Executor',
+    expectDataLength : 'Expect Data Length',
 };

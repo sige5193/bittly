@@ -29,9 +29,10 @@ export default class Node extends NodeBase{
         this.comparator = null;
 
         // setup inputs and outputs
-        this.addInput(this.$t('execute'), LiteGraph.ACTION)
+        this.addInput(this.$t('execute'), LiteGraph.ACTION);
         this.addOutput(this.$t('success'), LiteGraph.EVENT);
         this.addOutput(this.$t('failed'), LiteGraph.EVENT);
+        this.addOutput(this.$t('executor'), 'string');
         
         // setup widget button for directive editting.
         this.onBtnSettingClicked = () => {};
@@ -97,7 +98,6 @@ export default class Node extends NodeBase{
      * @overide
      */
     async onAction () {
-        debugger
         this.btnDirectiveExecute.disabled = true;
         this.executor = null;
         this.comparator = null;
@@ -129,6 +129,7 @@ export default class Node extends NodeBase{
         this.refresh();
 
         if ( isSuccess ) {
+            this.setOutputData(2, this.executor);
             this.sendDataToOutputPins();
             setTimeout(() => this.triggerSlot(0), 1);
         } else {

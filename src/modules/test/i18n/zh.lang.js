@@ -33,6 +33,7 @@ module.exports = {
         If : require('../functional/node/if/i18n/zh.lang.js'),
         Loop : require('../functional/node/loop/i18n/zh.lang.js'),
         Directive : require('../functional/node/directive/i18n/zh.lang.js'),
+        Read : require('../functional/node/read/i18n/zh.lang.js'),
     },
 
     functionalFlowNodeExecuteDirective : '指令',
