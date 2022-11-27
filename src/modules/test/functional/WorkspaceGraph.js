@@ -1,6 +1,6 @@
 import {LGraph} from 'litegraph.js'
 import NodeStart from './node/start/Node.js'
-export default class Graph extends LGraph {
+export default class WorkspaceGraph extends LGraph {
     /**
      * @constructor
      */

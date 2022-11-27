@@ -19,11 +19,13 @@
       </a-col>
     </a-row>
 
+    <!-- node canvas and modals -->
     <div id="test-functional-flow-container" class="h-0 flex-grow position-relative">
       <canvas ref="graphCanvas" class="w-100 h-100" style="background: rgb(214, 214, 214);"></canvas>
       <node-registry :graph="graph" ref="nodeRegistry"/>
     </div>
 
+    <!-- toolbar  -->
     <div class="toolbox text-right p-2">
       <a-button @click="actionRun" class="mr-1"><a-icon type="play-circle" /></a-button>
     </div>
@@ -32,7 +34,7 @@
 <script>
 import ProjectMixin from '../../../utils/ProjectMixin.js'
 import NodeRegistry from './node/NodeRegistry.vue'
-import Graph from './Graph.js'
+import WorkspaceGraph from './WorkspaceGraph.js'
 import {LGraphCanvas} from 'litegraph.js'
 import MdbFunctionalTestcase from '../../../models/MdbFunctionalTestcase.js'
 require('litegraph.js/css/litegraph.css')
@@ -52,7 +54,7 @@ export default {
              */
             graphCanvas : null,
             /**
-             * @property {Graph}
+             * @property {WorkspaceGraph}
              */
             graph : null,
             /**
@@ -68,7 +70,7 @@ export default {
         };
     },
     created() {
-        this.graph = new Graph();
+        this.graph = new WorkspaceGraph();
     },
     mounted() {
         this.initWorkspace();
