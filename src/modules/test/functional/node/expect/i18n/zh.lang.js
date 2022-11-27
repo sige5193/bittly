@@ -1,0 +1,17 @@
+module.exports = {
+    name : '验证',
+    execute : '执行',
+    setting : '设置',
+    settingTitle : '验证设置',
+    inputData : '输入数据',
+    success : '成功',
+    failed : '失败',
+    validateMethod : '验证方式',
+    validateEqual : '等于',
+    validateNotEqual : '不等于',
+    validateGreaterThan : '大于',
+    validateGreaterOrEqual : '大于等于',
+    validateLessThan : '小于',
+    validateLessOrEqual : '小于等于',
+    expectValue : '期待值',
+};
