@@ -23,6 +23,12 @@ module.exports = {
     parameterFormat : '请求参数格式',
     responseFormat : '期待响应格式',
     
+    // functional
+    functional : {
+        create : '新建功能测试',
+        unnamed : '未命名',
+    },
+
     // Functional test
     functionalNode : {
         Start : require('../functional/node/start/i18n/zh.lang.js'),

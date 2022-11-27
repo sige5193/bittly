@@ -23,7 +23,13 @@ module.exports = {
     parameterFormat : 'Param Formamt',
     responseFormat : 'Expect Response Format',
     
-    // Functional test
+    // functional
+    functional : {
+        create : 'New Functional Testcase',
+        unnamed : 'Unnamed',
+    },
+
+    // Functional test node
     functionalNode : {
         Start : require('../functional/node/start/i18n/en.lang.js'),
         Variable : require('../functional/node/variable/i18n/en.lang.js'),
