@@ -22,11 +22,19 @@ module.exports = {
     afterScriptExecuteFailed : 'After script execute failed : {0}',
     parameterFormat : 'Param Formamt',
     responseFormat : 'Expect Response Format',
-    
+
     // functional
     functional : {
         create : 'New Functional Testcase',
         unnamed : 'Unnamed',
+        deleteConfirm : 'Are you sure to delete this testcase ?',
+        addNode : 'Add Node',
+        saveFailed : 'Failed to save testcase.',
+        saveSuccess : 'Testcase saved.',
+        deleteSuccess : 'Testcase has been deleted.',
+        contextMenuInput : 'Inputs',
+        contextMenuOutput : 'Outputs',
+        contextMenuRemove : 'Remove',
     },
 
     // Functional test node

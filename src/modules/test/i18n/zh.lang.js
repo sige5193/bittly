@@ -27,6 +27,14 @@ module.exports = {
     functional : {
         create : '新建功能测试',
         unnamed : '未命名',
+        deleteConfirm : '是否删除当前测试用例？',
+        addNode : '添加节点',
+        saveFailed : '测试用例保存失败',
+        saveSuccess : '测试用例保存成功',
+        deleteSuccess : '测试用例已删除',
+        contextMenuInput : '输入',
+        contextMenuOutput : '输出',
+        contextMenuRemove : '移除',
     },
 
     // Functional test
