@@ -86,10 +86,6 @@ export default {
             /**
              * @property {Number}
              */
-            startTime : 0,
-            /**
-             * @property {Number}
-             */
             duration : 0,
         }
     },
@@ -134,10 +130,9 @@ export default {
          * event handler on start button clicked.
          */
         async actionStart() {
-            this.startTime = (new Date()).getTime();
+            let startTime = (new Date()).getTime();
             this.duration = 0;
             this.isExecuting = true;
-            let intervalTimer = setInterval(() => this.duration = (new Date()).getTime() - this.startTime, 10);
 
             this.results = [];
             let workspace = this.getWorkspace();
@@ -153,11 +148,12 @@ export default {
                 result.testcase = testcase;
                 this.results.splice(this.activeIndex, 1, result);
                 
+                this.duration = (new Date()).getTime() - startTime;
                 let container = this.$refs.resultListContainer;
                 this.$nextTick(() => container.scrollTop = container.scrollHeight);
             }
             
-            clearInterval(intervalTimer);
+            this.duration = (new Date()).getTime() - startTime;
             this.isExecuting = false;
         },
 
