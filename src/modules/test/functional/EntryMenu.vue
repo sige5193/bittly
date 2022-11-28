@@ -12,20 +12,25 @@
       <a-button class="mr-1" block @click="actionCreateNewTestcase">{{$t('test.functional.create')}}</a-button>
       <a-dropdown>
         <a-button><a-icon type="menu" /></a-button>
-        <a-menu slot="overlay">
+        <a-menu slot="overlay" @click="actionActionMenuItemClicked">
           <a-menu-item key="ExecuteAll">{{$t('test.functional.executeAll')}}</a-menu-item>
         </a-menu>
       </a-dropdown>
     </div>
+    <modal-execute-all ref="modalExecuteAll" :getWorkspace="getWorkspace" />
   </div>
 </template>
 <script>
 import ProjectMixin from '../../../utils/ProjectMixin.js'
 import MdbFunctionalTestcase from '../../../models/MdbFunctionalTestcase.js'
 import MyDate from '../../../utils/datatype/MyDate.js';
+import ModalExecuteAll from './ModalExecuteAll.vue'
 export default {
     name : 'TestFunctionEntryMenu',
     mixins : [ProjectMixin],
+    components : {
+        'modal-execute-all' : ModalExecuteAll,
+    },
     props : {
         /**
          * @property {Function}
@@ -99,6 +104,22 @@ export default {
             let testcase = this.entries[event.key];
             this.getWorkspace().openTestcase(testcase);
         },
+
+        /**
+         * action handler on action menu item clicked
+         * @param {Event} event
+         */
+        actionActionMenuItemClicked( event ) {
+            let handle = `handleActionMenuItem${event.key}`;
+            this[handle]();
+        },
+
+        /**
+         * action handler to execute all testcases.
+         */
+        handleActionMenuItemExecuteAll() {
+            this.$refs.modalExecuteAll.open();
+        }
     },
 }
 </script>

@@ -27,6 +27,6 @@ export default class Node extends NodeBase{
      * @returns {void}
      */
     async onAction() {
-        this.alert('success', this.$t('finish'));
+        this.graph.execStartNodeResolve();
     }
 }

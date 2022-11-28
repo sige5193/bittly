@@ -138,6 +138,26 @@ export default {
         },
 
         /**
+         * execute current testcase
+         * @public 
+         */
+        async execute() {
+            let result = {};
+            let start = new Date();
+            try {
+                await this.graph.run();
+                result.success = true;
+                result.message = '';
+            } catch (e) {
+                result.success = false;
+                result.message = e.message;
+            } finally {
+                result.duration = (new Date()).getTime() - start.getTime();
+            }
+            return result;
+        },
+
+        /**
          * execute all the nodes
          */
         async actionRun() {

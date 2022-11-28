@@ -6,8 +6,14 @@ export default class WorkspaceGraph extends LGraph {
      */
     constructor() {
         super();
-        this.execQueueCurNodeIndex = 0;
-        this.execQueue = null;
+        /**
+         * @property {Function}
+         */
+        this.execStartNodeResolve = null;
+        /**
+         * @property {Function}
+         */
+        this.execStartNodeReject = null;
     }
 
     /**
@@ -35,16 +41,31 @@ export default class WorkspaceGraph extends LGraph {
     }
 
     /**
+     * execute start node
+     * @param {*} startNode 
+     * @returns {Promise}
+     */
+    executeStartNode( startNode ) {
+        return new Promise((resolve, reject) => {
+            this.execStartNodeResolve = resolve;
+            this.execStartNodeReject = reject;
+            startNode.start();
+        });
+    }
+
+    /**
      * execute nodes
      */
     async run() {
+        this.execStartNodeReject = null;
+        this.execStartNodeResolve = null;
         let nodes = this.computeExecutionOrder(false);
         for ( let i=0; i<nodes.length; i++ ) {
             let node = nodes[i];
             if ( !(node instanceof NodeStart) ) {
                 continue ;
             }
-            node.start();
+            await this.executeStartNode(node);
         }
     }
 }
