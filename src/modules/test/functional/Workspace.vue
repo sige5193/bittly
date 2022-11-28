@@ -95,6 +95,7 @@ export default {
             testcase.projectId = this.curProjectId;
             testcase.title = this.$t('test.functional.unnamed');
             this.openTestcase(testcase);
+            setTimeout(()=>this.graphCanvas.resize(),100);
         },
         
         /**
