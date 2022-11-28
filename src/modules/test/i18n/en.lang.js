@@ -22,9 +22,15 @@ module.exports = {
     afterScriptExecuteFailed : 'After script execute failed : {0}',
     parameterFormat : 'Param Formamt',
     responseFormat : 'Expect Response Format',
+    
+    // unit test
+    unit : {
+        title : 'Unit',
+    },
 
-    // functional
+    // functional test
     functional : {
+        title : 'Functional',
         create : 'New Functional Testcase',
         unnamed : 'Unnamed',
         deleteConfirm : 'Are you sure to delete this testcase ?',
@@ -36,7 +42,7 @@ module.exports = {
         contextMenuOutput : 'Outputs',
         contextMenuRemove : 'Remove',
     },
-
+    
     // Functional test node
     functionalNode : {
         Start : require('../functional/node/start/i18n/en.lang.js'),

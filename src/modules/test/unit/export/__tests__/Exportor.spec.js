@@ -1,4 +1,4 @@
-import TestCaseSetup from '../../../../utils/test/Setup.js';
+import TestCaseSetup from '../../../../../utils/test/Setup.js';
 import Exportor from '../Exportor.js'
 describe('@/src/modules/test/export/Exportor.js', () => {
     it('normal use', async () => {

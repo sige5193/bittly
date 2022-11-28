@@ -23,8 +23,14 @@ module.exports = {
     parameterFormat : '请求参数格式',
     responseFormat : '期待响应格式',
     
+    // unit test
+    unit : {
+        title : '单元测试',
+    },
+
     // functional
     functional : {
+        title : '功能测试',
         create : '新建功能测试',
         unnamed : '未命名',
         deleteConfirm : '是否删除当前测试用例？',

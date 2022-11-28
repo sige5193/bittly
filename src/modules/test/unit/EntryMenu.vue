@@ -46,19 +46,29 @@
         </template>
       </a-tree>
     </div>
+
+    <execute-all ref="executeAll" />
   </div>
 </template>
 <script>
 import { NIL as NIL_UUID } from 'uuid';
-import MdbDirectiveEntry from '../../models/MdbDirectiveEntry.js'
+import MdbDirectiveEntry from '../../../models/MdbDirectiveEntry.js'
+import ExecuteAll from './ExecuteAll.vue'
 export default {
     name : 'DirectiveEntries',
+    components : {
+        'execute-all' : ExecuteAll,
+    },
     props : {
         /**
          * id of project to list entries
          * @property {String}
          */
         projectId : String,
+        /**
+         * @property {Function}
+         */
+        getWorkspace : {type:Function,required:true},
     },
     data() {
         return {
@@ -176,7 +186,7 @@ export default {
             let item = this.entries[selectedKey];
             if ( 'directive' == item.entry.type ) {
                 let directive = item.target;
-                this.$emit('directive-click', directive);
+                this.getWorkspace().openDirective(directive);
             }
         },
 
@@ -206,7 +216,7 @@ export default {
             this.isBatchExecuting = true;
             this.menuExpandedKeys = [];
             this.directiveTestStatus = {};
-            this.$emit('execute-all-testcases');
+            this.$refs.executeAll.execute();
         },
 
         /**
@@ -214,7 +224,7 @@ export default {
          */
         handleQuickMenuClickExecuteAllTestcasesStop() {
             this.isBatchExecuting = false;
-            this.$emit('execute-all-testcases-stop');
+            this.$refs.executeAll.stop();
         },
         
         /**

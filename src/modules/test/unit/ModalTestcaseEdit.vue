@@ -129,12 +129,12 @@ require("codemirror/mode/javascript/javascript");
 require("codemirror/mode/lua/lua");
 require("codemirror/addon/hint/show-hint");
 require("codemirror/addon/hint/javascript-hint");
-import MdbTestcase from '../../models/MdbTestcase';
-import RequestParamStringEditor from '../directive/parameters/text/ValueEditor.vue'
-import RequestParamHexEditor from '../directive/parameters/hex/ValueEditor.vue'
-import RequestParamEditorForm from '../directive/parameters/form/ValueEditor.vue'
-import RequestParamEditorFile from '../directive/parameters/file/ValueEditor.vue'
-import ResponseParamEditorForm from './ResponseParamEditorForm.vue'
+import MdbTestcase from '../../../models/MdbTestcase.js';
+import RequestParamStringEditor from '../../directive/parameters/text/ValueEditor.vue'
+import RequestParamHexEditor from '../../directive/parameters/hex/ValueEditor.vue'
+import RequestParamEditorForm from '../../directive/parameters/form/ValueEditor.vue'
+import RequestParamEditorFile from '../../directive/parameters/file/ValueEditor.vue'
+import ResponseParamEditorForm from '../ResponseParamEditorForm.vue'
 export default {
     name : 'ModalTestcaseEdit',
     components : {

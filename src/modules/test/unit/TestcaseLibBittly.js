@@ -1,6 +1,6 @@
-import MdbDirective from '../../models/MdbDirective.js'
-import Common from '../../utils/Common.js'
-import DirectiveExecutor from '../directive/Executor.js'
+import MdbDirective from '../../../models/MdbDirective.js'
+import Common from '../../../utils/Common.js'
+import DirectiveExecutor from '../../directive/Executor.js'
 export default class TestcaseLibBittly {
     /**
      * constructor of lib

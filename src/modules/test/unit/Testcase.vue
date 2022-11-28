@@ -128,10 +128,10 @@
   </div>
 </template>
 <script>
-import DirectiveScriptExecutor from '../directive/script/Executor.js'
-import Common from '../../utils/Common.js'
-import DirectiveExecutor from '../directive/Executor.js'
-import Formatter from '../../utils/Formatter.js'
+import DirectiveScriptExecutor from '../../directive/script/Executor.js'
+import Common from '../../../utils/Common.js'
+import DirectiveExecutor from '../../directive/Executor.js'
+import Formatter from '../../../utils/Formatter.js'
 import TestcaseLibBittly from './TestcaseLibBittly.js'
 import ModalTestcaseEdit from './ModalTestcaseEdit.vue'
 export default {

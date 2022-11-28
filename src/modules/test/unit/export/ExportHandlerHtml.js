@@ -1,5 +1,5 @@
-import Dictionary from '../../../utils/Dictionary.js'
-import MdbProject from '../../../models/MdbProject.js'
+import Dictionary from '../../../../utils/Dictionary.js'
+import MdbProject from '../../../../models/MdbProject.js'
 export default class ExportHandlerHtml {
     /**
      * constructor of html export handler
