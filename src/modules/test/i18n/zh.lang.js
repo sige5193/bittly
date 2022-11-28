@@ -32,7 +32,7 @@ module.exports = {
     functional : {
         title : '功能测试',
         create : '新建功能测试',
-        unnamed : '未命名',
+        unnamed : '未命名测试用例 @ {0}',
         deleteConfirm : '是否删除当前测试用例？',
         addNode : '添加节点',
         saveFailed : '测试用例保存失败',

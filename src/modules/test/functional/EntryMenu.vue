@@ -12,6 +12,7 @@
 <script>
 import ProjectMixin from '../../../utils/ProjectMixin.js'
 import MdbFunctionalTestcase from '../../../models/MdbFunctionalTestcase.js'
+import MyDate from '../../../utils/datatype/MyDate.js';
 export default {
     name : 'TestFunctionEntryMenu',
     mixins : [ProjectMixin],
@@ -58,7 +59,7 @@ export default {
         actionCreateNewTestcase() {
             let testcase = new MdbFunctionalTestcase();
             testcase.projectId = this.curProjectId;
-            testcase.title = this.$t('test.functional.unnamed');
+            testcase.title = this.$t('test.functional.unnamed', [MyDate.formatAsShortKey(null)]);
             let workspace = this.getWorkspace();
             workspace.openTestcase(testcase);
         },

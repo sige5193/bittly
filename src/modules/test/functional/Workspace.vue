@@ -37,6 +37,7 @@ import NodeRegistry from './node/NodeRegistry.vue'
 import WorkspaceGraph from './WorkspaceGraph.js'
 import {LGraphCanvas} from 'litegraph.js'
 import MdbFunctionalTestcase from '../../../models/MdbFunctionalTestcase.js'
+import MyDate from '../../../utils/datatype/MyDate.js'
 require('litegraph.js/css/litegraph.css')
 export default {
     name : 'TestFunctionalWorkspace',
@@ -93,7 +94,7 @@ export default {
 
             let testcase = new MdbFunctionalTestcase();
             testcase.projectId = this.curProjectId;
-            testcase.title = this.$t('test.functional.unnamed');
+            testcase.title = this.$t('test.functional.unnamed',[MyDate.formatAsShortKey(null)]);
             this.openTestcase(testcase);
             setTimeout(()=>this.graphCanvas.resize(),100);
         },
@@ -133,7 +134,7 @@ export default {
 
             let testcase = new MdbFunctionalTestcase();
             testcase.projectId = this.curProjectId;
-            testcase.title = this.$t('test.functional.unnamed');
+            testcase.title = this.$t('test.functional.unnamed',[MyDate.formatAsShortKey(null)]);
             this.openTestcase(testcase);
         },
 

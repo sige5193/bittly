@@ -32,7 +32,7 @@ module.exports = {
     functional : {
         title : 'Functional',
         create : 'New Functional Testcase',
-        unnamed : 'Unnamed',
+        unnamed : 'Unnamed testcase @ {0}',
         deleteConfirm : 'Are you sure to delete this testcase ?',
         addNode : 'Add Node',
         saveFailed : 'Failed to save testcase.',
