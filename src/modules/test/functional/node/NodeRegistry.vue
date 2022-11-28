@@ -57,15 +57,15 @@ export default {
         LiteGraph.clearRegisteredTypes();
         LiteGraph.onNodeTypeRegistered = ( type, baseClass ) => this.onNodeTypeRegistered(type, baseClass);
         LiteGraph.registerNodeType("Start", NodeStart);
-        LiteGraph.registerNodeType("Variable", NodeVariable);
-        LiteGraph.registerNodeType("ActHub", NodeActHub);
-        LiteGraph.registerNodeType("Delay", NodeDelay);
+        LiteGraph.registerNodeType("Directive", NodeDirective);
         LiteGraph.registerNodeType("Script", NodeScript);
+        LiteGraph.registerNodeType("Variable", NodeVariable);
+        LiteGraph.registerNodeType("Expect", NodeExpect);
+        LiteGraph.registerNodeType("Delay", NodeDelay);
         LiteGraph.registerNodeType("If", NodeIf);
         LiteGraph.registerNodeType("Loop", NodeLoop);
-        LiteGraph.registerNodeType("Directive", NodeDirective);
         LiteGraph.registerNodeType("Read", NodeRead);
-        LiteGraph.registerNodeType("Expect", NodeExpect);
+        LiteGraph.registerNodeType("ActHub", NodeActHub);
         LiteGraph.registerNodeType("Done", NodeDone);
     },
     mounted() {
