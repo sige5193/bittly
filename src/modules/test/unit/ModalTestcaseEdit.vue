@@ -134,7 +134,7 @@ import RequestParamStringEditor from '../../directive/parameters/text/ValueEdito
 import RequestParamHexEditor from '../../directive/parameters/hex/ValueEditor.vue'
 import RequestParamEditorForm from '../../directive/parameters/form/ValueEditor.vue'
 import RequestParamEditorFile from '../../directive/parameters/file/ValueEditor.vue'
-import ResponseParamEditorForm from '../ResponseParamEditorForm.vue'
+import ResponseParamEditorForm from '../DataComparationEditorForm.vue'
 export default {
     name : 'ModalTestcaseEdit',
     components : {

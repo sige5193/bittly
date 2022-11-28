@@ -98,7 +98,7 @@ import RequestParamEditorForm from '../../../../directive/parameters/form/ValueE
 import RequestParamEditorFile from '../../../../directive/parameters/file/ValueEditor.vue'
 import RequestParamEditorText from '../../../../directive/parameters/text/ValueEditor.vue'
 import RequestParamEditorHex from '../../../../directive/parameters/hex/ValueEditor.vue'
-import ResponseParamEditorForm from '../../../ResponseParamEditorForm.vue'
+import ResponseParamEditorForm from '../../../DataComparationEditorForm.vue'
 import MdbDirective from '../../../../../models/MdbDirective.js'
 export default {
     components : {
