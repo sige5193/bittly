@@ -117,6 +117,7 @@ export default {
          * open execute all modal and prepare to execute
          */
         async open() {
+            this.duration = 0;
             this.activeIndex = 0;
             this.results = [];
             this.testcases = [];
