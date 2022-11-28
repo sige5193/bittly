@@ -41,6 +41,7 @@ module.exports = {
         contextMenuInput : '输入',
         contextMenuOutput : '输出',
         contextMenuRemove : '移除',
+        executeAll : '执行所有测试用例',
     },
 
     // Functional test

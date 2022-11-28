@@ -3,6 +3,7 @@
     <!-- Header -->
     <a-row class="p-2">
       <a-col :span="12">
+        <a-tag color="cyan" v-if="testcase.isNew">NEW</a-tag>
         <a-input v-if="enableTitleEdit" v-model="testcase.title" class="w-50 mr-1"/>
         <span v-else style="font-size:1.3em;padding-right:10px;">{{testcase.title}}</span> 
         <a-button v-if="!enableTitleEdit" @click="enableTitleEdit=true"><a-icon type="edit" /></a-button>
@@ -10,12 +11,14 @@
       </a-col>
       <a-col :span="12" class="text-right">
         <a-popconfirm
+          v-if="!testcase.isNew"
           :title="$t('test.functional.deleteConfirm')"
           :ok-text="$t('button.ok')"
           :cancel-text="$t('button.cancel')"
           @confirm="actionDelete"
-        ><a-button class="mr-1">{{$t('button.delete')}}</a-button></a-popconfirm>
-        <a-button @click="actionSave">{{$t('button.save')}}</a-button>
+        ><a-button type="danger" ghost class="mr-1">{{$t('button.delete')}}</a-button></a-popconfirm>
+        <a-button type="primary" ghost class="mr-1" @click="actionSave">{{$t('button.save')}}</a-button>
+        <a-button type="primary" @click="actionRun"><a-icon type="play-circle" /></a-button>
       </a-col>
     </a-row>
 
@@ -23,11 +26,6 @@
     <div id="test-functional-flow-container" class="h-0 flex-grow position-relative">
       <canvas ref="graphCanvas" class="w-100 h-100" style="background: rgb(214, 214, 214);"></canvas>
       <node-registry :graph="graph" ref="nodeRegistry"/>
-    </div>
-
-    <!-- toolbar  -->
-    <div class="toolbox text-right p-2">
-      <a-button @click="actionRun" class="mr-1"><a-icon type="play-circle" /></a-button>
     </div>
   </div>
 </template>
@@ -75,6 +73,7 @@ export default {
     },
     mounted() {
         this.initWorkspace();
+        window.workspace = this;
     },
     methods : {
         /**
@@ -121,7 +120,7 @@ export default {
             }
 
             this.$message.success(this.$t('test.functional.saveSuccess'));
-            await this.getFunctionalEntryMenu().refreshEntries();
+            await this.getFunctionalEntryMenu().refreshEntries(this.testcase.id);
         },
 
         /**
@@ -147,6 +146,3 @@ export default {
     },
 }
 </script>
-<style scoped>
-.toolbox {position:absolute;bottom:0;width:100%;}
-</style>

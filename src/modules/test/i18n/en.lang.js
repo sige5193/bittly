@@ -41,6 +41,7 @@ module.exports = {
         contextMenuInput : 'Inputs',
         contextMenuOutput : 'Outputs',
         contextMenuRemove : 'Remove',
+        executeAll : 'Execute all testcases',
     },
     
     // Functional test node

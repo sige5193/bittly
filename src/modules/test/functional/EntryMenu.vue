@@ -1,12 +1,22 @@
 <template>
   <div class="h-100 d-flex flex-dir-column">
     <a-empty v-if="0 == Object.keys(entries).length" :description="false" class="mt-5"/>
-    <a-menu class="flex-grow-1" @click="actionEntryMenuItemClicked">
+    <a-menu v-model="activedIds" class="flex-grow-1 h-0 overflow-y-auto" @click="actionEntryMenuItemClicked">
       <a-menu-item v-for="(entry,entryId) in entries" :key="entryId">
         {{entry.title}}
       </a-menu-item>
     </a-menu>
-    <a-button block @click="actionCreateNewTestcase">{{$t('test.functional.create')}}</a-button>
+    
+    <!-- toolbar -->
+    <div class="d-flex flex-dir-row p-1 border-top">
+      <a-button class="mr-1" block @click="actionCreateNewTestcase">{{$t('test.functional.create')}}</a-button>
+      <a-dropdown>
+        <a-button><a-icon type="menu" /></a-button>
+        <a-menu slot="overlay">
+          <a-menu-item key="ExecuteAll">{{$t('test.functional.executeAll')}}</a-menu-item>
+        </a-menu>
+      </a-dropdown>
+    </div>
   </div>
 </template>
 <script>
@@ -24,7 +34,14 @@ export default {
     },
     data() {
         return {
+            /**
+             * @property {Array<MdbFunctionalTestcase>}
+             */
             entries : [],
+            /**
+             * @property {String[]}
+             */
+            activedIds : [],
         };
     },
     mounted() {
@@ -35,11 +52,19 @@ export default {
          * load functional testcases.
          * @public
          */
-        async refreshEntries() {
+        async refreshEntries( activeId=null ) {
+            this.activedIds = [];
             this.entries = {};
+
             let list = await MdbFunctionalTestcase.findAll({project_id:this.curProjectId});
+            list.sort((itemA,itemB ) => itemA.title.localeCompare(itemB.title));
+
             for ( let i=0; i<list.length; i++ ) {
                 this.entries[list[i].id] = list[i];
+            }
+
+            if ( null !== activeId ) {
+                this.activedIds.push(activeId);
             }
             this.$forceUpdate();
         },
@@ -57,11 +82,13 @@ export default {
          * @event
          */
         actionCreateNewTestcase() {
+            this.activedIds = [];
             let testcase = new MdbFunctionalTestcase();
             testcase.projectId = this.curProjectId;
             testcase.title = this.$t('test.functional.unnamed', [MyDate.formatAsShortKey(null)]);
             let workspace = this.getWorkspace();
             workspace.openTestcase(testcase);
+            this.$forceUpdate();
         },
 
         /**
