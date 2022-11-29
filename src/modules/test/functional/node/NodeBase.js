@@ -177,4 +177,18 @@ export default class NodeBase extends LGraphNode {
             this[handlerMap[type].add](newNames[i], 'string', {isCustom:true});
         }
     }
+
+    /**
+     * 
+     * @override
+     * @param {*} slot 
+     * @param {*} param 
+     * @param {*} link_id 
+     */
+    triggerSlot(slot, param, link_id) {
+        if ( null !== this.graph.execError ) {
+            return ;
+        }
+        setTimeout(() => super.triggerSlot(slot, param, link_id), 1);
+    }
 }

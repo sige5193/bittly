@@ -10,6 +10,12 @@
         <a-button v-else @click="enableTitleEdit=false"><a-icon type="check" /></a-button>
       </a-col>
       <a-col :span="12" class="text-right">
+        <a-input-number class="mr-1" style="width:100px"
+          v-model="testcase.timeout" 
+          :min="0"
+          :step="100"
+          :formatter="value => `${value}ms`"
+        />
         <a-popconfirm
           v-if="!testcase.isNew"
           :title="$t('test.functional.deleteConfirm')"
@@ -145,7 +151,7 @@ export default {
             let result = {};
             let start = new Date();
             try {
-                await this.graph.run();
+                await this.graph.run(this.testcase.timeout);
                 result.success = true;
                 result.message = '';
             } catch (e) {
@@ -161,7 +167,20 @@ export default {
          * execute all the nodes
          */
         async actionRun() {
-            await this.graph.run();
+            try {
+                await this.graph.run(this.testcase.timeout);
+                this.$success({
+                    title: this.$t('test.functional.executeSuccess'),
+                    content: this.$t('test.functional.executeSuccessMessage'),
+                    okText : this.$t('button.ok')
+                });
+            } catch ( e ) {
+                this.$error({
+                    title: this.$t('test.functional.executeFailed'),
+                    content: e.message,
+                    okText : this.$t('button.ok')
+                });
+            }
         },
     },
 }

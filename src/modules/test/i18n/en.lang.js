@@ -47,6 +47,10 @@ module.exports = {
         contextMenuRemove : 'Remove',
         executeAll : 'Execute all testcases',
         executeAllCurIndex : 'Executing',
+        executeFailed : 'Execute Failed',
+        executeTimeout : 'Execution timeout, Time : {0}ms',
+        executeSuccess : 'Execute Success',
+        executeSuccessMessage : 'Execution finished successfully, all validation are matched.',
     },
     
     // Functional test node

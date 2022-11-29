@@ -47,6 +47,10 @@ module.exports = {
         contextMenuRemove : '移除',
         executeAll : '执行所有测试用例',
         executeAllCurIndex : '正在执行',
+        executeFailed : '验证未通过',
+        executeTimeout : '测试用例执行超时，配置超时时间 : {0}ms',
+        executeSuccess : '验证通过',
+        executeSuccessMessage : '测试用例执行完毕，所有验证成功执行。',
     },
 
     // Functional test

@@ -28,6 +28,7 @@ export default class MdbFunctionalTestcase extends ModelBase {
             projectId : {type:'string',default:''},
             title : {type:'string',default:''},
             content : {type:'string',default:'{}'},
+            timeout : {type:'string',default:'5000'},
         };
     }
 

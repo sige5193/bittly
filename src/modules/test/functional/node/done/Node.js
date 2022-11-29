@@ -27,6 +27,6 @@ export default class Node extends NodeBase{
      * @returns {void}
      */
     async onAction() {
-        this.graph.execStartNodeResolve();
+        this.graph.done();
     }
 }

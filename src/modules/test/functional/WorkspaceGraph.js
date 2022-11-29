@@ -14,6 +14,18 @@ export default class WorkspaceGraph extends LGraph {
          * @property {Function}
          */
         this.execStartNodeReject = null;
+        /**
+         * @property {Number}
+         */
+        this.execTimeoutTimer = null;
+        /**
+         * @property {Object|null}
+         */
+        this.execError = null;
+        /**
+         * @property {Number}
+         */
+        this.timeout = 0;
     }
 
     /**
@@ -56,10 +68,13 @@ export default class WorkspaceGraph extends LGraph {
     /**
      * execute nodes
      */
-    async run() {
+    async run(timeout) {
+        this.timeout = timeout;
+        this.execError = null;
         this.execStartNodeReject = null;
         this.execStartNodeResolve = null;
         let nodes = this.computeExecutionOrder(false);
+        this.execTimeoutTimer = setTimeout(()=>this.runTimeout(), timeout);
         for ( let i=0; i<nodes.length; i++ ) {
             let node = nodes[i];
             if ( !(node instanceof NodeStart) ) {
@@ -67,5 +82,26 @@ export default class WorkspaceGraph extends LGraph {
             }
             await this.executeStartNode(node);
         }
+    }
+
+    runTimeout() {
+        if ( null === this.execTimeoutTimer ) {
+            return ;
+        }
+        this.error(window.app.$t('test.functional.executeTimeout',[this.timeout]));
+    }
+
+    error(message) {
+        this.execError = {message};
+        this.execStartNodeReject(this.execError);
+    }
+
+    /**
+     * done executing
+     */
+    done() {
+        clearTimeout(this.execTimeoutTimer);
+        this.execTimeoutTimer = null;
+        this.execStartNodeResolve();
     }
 }

@@ -35,8 +35,8 @@
         >
           <a-descriptions :column="2">
             <a-descriptions-item :label="$t('test.execStatus')">
-              <a-tag v-if="result.success" color="green">{{$t('test.testcaseExecuteStatusPass')}}</a-tag>
-              <a-tag v-else color="red">{{$t('test.testcaseExecuteStatusNotPass')}}</a-tag>
+              <a-tag v-if="true === result.success" color="green">{{$t('test.testcaseExecuteStatusPass')}}</a-tag>
+              <a-tag v-else-if="false === result.success" color="red">{{$t('test.testcaseExecuteStatusNotPass')}}</a-tag>
             </a-descriptions-item>
             <a-descriptions-item :label="$t('test.duration')">{{result.duration}}ms</a-descriptions-item>
             <a-descriptions-item v-if="0 != result.message.length" :label="$t('test.message')" :span="2">
@@ -110,7 +110,7 @@ export default {
         failedCount() {
             let count = 0;
             for ( let i=0; i<this.results.length; i++ ) {
-                if ( !this.results[i].success ) {
+                if ( false === this.results[i].success ) {
                     count ++;
                 }
             }
