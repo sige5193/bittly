@@ -5,4 +5,5 @@ module.exports = {
     settingTitle : 'Delay Setting',
     executor : 'Executor',
     data : 'Data',
+    executorNotAvailable : 'Unable to execute "Read" node, executor is not available.',
 };

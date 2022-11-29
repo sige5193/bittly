@@ -194,4 +194,23 @@ export default class NodeBase extends LGraphNode {
         }
         setTimeout(() => super.triggerSlot(slot, param, link_id), 1);
     }
+
+    /**
+     * execute node action
+     */
+    action() {
+        return ;
+    }
+
+    /**
+     * node action handler
+     * @returns {void}
+     */
+    async onAction() {
+        try {
+            await this.action();
+        } catch ( e ) {
+            this.graph.error(e.message);
+        }
+    }
 }

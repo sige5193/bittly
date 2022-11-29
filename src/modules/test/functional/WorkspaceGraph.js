@@ -92,6 +92,7 @@ export default class WorkspaceGraph extends LGraph {
     }
 
     error(message) {
+        clearTimeout(this.execTimeoutTimer);
         this.execError = {message};
         this.execStartNodeReject(this.execError);
     }

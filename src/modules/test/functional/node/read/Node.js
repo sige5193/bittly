@@ -1,6 +1,7 @@
 import {LiteGraph} from 'litegraph.js'
 import NodeBase from '../NodeBase';
 import Common from '../../../../../utils/Common.js';
+import DirectiveExecutor from '../../../../directive/Executor.js'
 /**
  * The node use to start the flow
  */
@@ -49,13 +50,17 @@ export default class Node extends NodeBase{
     }
     
     /**
-     * node action handler
-     * @returns {void}
+     * execute node action
+     * @override
      */
-    async onAction() {
+    async action() {
         await Common.msleep(this.options.timeout);
 
         let executor = this.getInputData(1);
+        if ( ! ( executor instanceof DirectiveExecutor) ) {
+            throw Error(this.$t('executorNotAvailable'));
+        }
+        
         let data = null;
         if ( 'lines' === this.options.mode ) {
             data = this.readLines(executor);
@@ -64,7 +69,7 @@ export default class Node extends NodeBase{
         }
 
         this.setOutputData(1, data);
-        setTimeout(() => this.triggerSlot(0), 1);
+        this.triggerSlot(0);
     }
 
     /**
