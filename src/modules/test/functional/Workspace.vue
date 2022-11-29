@@ -24,7 +24,13 @@
           @confirm="actionDelete"
         ><a-button type="danger" ghost class="mr-1">{{$t('button.delete')}}</a-button></a-popconfirm>
         <a-button type="primary" ghost class="mr-1" @click="actionSave">{{$t('button.save')}}</a-button>
-        <a-button type="primary" @click="actionRun"><a-icon type="play-circle" /></a-button>
+        <a-button type="primary"
+          :disabled="isExecuting" 
+          @click="actionRun"
+        >
+          <a-icon v-if="!isExecuting" type="play-circle" />
+          <a-icon v-else type="loading" />
+        </a-button>
       </a-col>
     </a-row>
 
@@ -72,6 +78,10 @@ export default {
              * @property {Boolean}
              */
             enableTitleEdit : false,
+            /**
+             * @property {Boolean}
+             */
+            isExecuting : false,
         };
     },
     created() {
@@ -148,6 +158,7 @@ export default {
          * @public 
          */
         async execute() {
+            this.isExecuting = true;
             let result = {};
             let start = new Date();
             try {
@@ -160,6 +171,7 @@ export default {
             } finally {
                 result.duration = (new Date()).getTime() - start.getTime();
             }
+            this.isExecuting = false;
             return result;
         },
 
@@ -167,6 +179,7 @@ export default {
          * execute all the nodes
          */
         async actionRun() {
+            this.isExecuting = true;
             try {
                 await this.graph.run(this.testcase.timeout);
                 this.$success({
@@ -181,6 +194,7 @@ export default {
                     okText : this.$t('button.ok')
                 });
             }
+            this.isExecuting = false;
         },
     },
 }

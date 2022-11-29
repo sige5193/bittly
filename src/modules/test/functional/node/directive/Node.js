@@ -106,6 +106,7 @@ export default class Node extends NodeBase{
             return this.alert('error', this.$t('directiveNotBinded'));
         }
         
+        this.log(`start`);
         try {
             let executor = new DirectiveExecutor(this.directive);
             let parameterValue = this.applyInputVariablesToParameterValue();
@@ -129,11 +130,13 @@ export default class Node extends NodeBase{
         this.refresh();
 
         if ( isSuccess ) {
+            this.log(`success`);
             this.setOutputData(2, this.executor);
             this.sendDataToOutputPins();
-            setTimeout(() => this.triggerSlot(0), 1);
+            this.triggerSlot(0);
         } else {
-            setTimeout(() => this.triggerSlot(1), 1);
+            this.log(`failed`);
+            this.triggerSlot(1);
         }
     }
 

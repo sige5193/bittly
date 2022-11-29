@@ -35,6 +35,8 @@ export default class Node extends NodeBase {
         // value viewer
         this.valueWidget = this.addWidget('text',this.$t('value'),'',()=>{},{disabled:true});
         this.valueWidget.disabled = true;
+
+        this.onOptionUpdate();
     }
 
     /**

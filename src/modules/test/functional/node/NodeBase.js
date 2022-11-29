@@ -94,6 +94,9 @@ export default class NodeBase extends LGraphNode {
      * refresh the node
      */
     refresh() {
+        if ( null === this.graph ) {
+            return ;
+        }
         this.graph.list_of_graphcanvas[0].drawFrontCanvas();
     }
 
@@ -111,8 +114,8 @@ export default class NodeBase extends LGraphNode {
      * @param  {...any} message 
      */
     log(... message) {
-        message.unshift(`> [${this.title}] :`);
-        console.log(message.join(' '));
+        message.unshift(`%c> [${this.title}] :`);
+        console.log(message.join(' '), 'color:#108ee9;');
     }
 
     /**

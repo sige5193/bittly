@@ -55,7 +55,7 @@
           class="test-functional-expect-form-table" 
           bordered 
           :columns="expectFormTableColumns" 
-          :data-source="node.options.expectResponseValue" 
+          :data-source="getExpectResponseValueTableDataSource()" 
           :pagination="false"
         >
           <div slot="name" slot-scope="text, record">{{record.name}}</div>
@@ -89,7 +89,7 @@
         <a-table v-if="'form' == node.options.expectResponseFormat" bordered
           class="test-functional-expect-form-table" 
           :columns="compareFormTableColumns" 
-          :data-source="node.options.expectResponseValue" 
+          :data-source="getExpectResponseValueTableDataSource()" 
           :pagination="false"
         >
           <div slot="name" slot-scope="text, record">{{record.name}}</div>
@@ -136,6 +136,7 @@ import ParameterViewerText from '../../../../directive/parameters/text/Viewer.vu
 import ParameterViewerFile from '../../../../directive/parameters/file/Viewer.vue'
 import ResponseFormViewerReadOnly from '../../../../directive/response/form/ViewerReadOnly.vue'
 import NodeExecuteDirective from './Node.js'
+import MyObject from '../../../../../utils/datatype/MyObject.js'
 export default {
     components : {
         'parameter-viewer-form' : ParameterViewerForm,
@@ -197,7 +198,9 @@ export default {
             let pins = [];
             for ( let i=0; i<this.node[type].length; i++ ) {
                 let pin = this.node[type][i];
-                if ( LiteGraph.ACTION == pin.type || LiteGraph.EVENT == pin.type ) {
+                if ( LiteGraph.ACTION == pin.type 
+                || LiteGraph.EVENT == pin.type 
+                || true !== pin.isCustom ) {
                     continue ;
                 }
 
@@ -239,6 +242,10 @@ export default {
 
             let $this = this;
             this.$nextTick(() => {
+                if ( null === this.$el.parentElement ) {
+                    return ;
+                }
+
                 $this.$el.parentElement.style.display = 'block';
                 $this.$el.parentElement.style.position = 'absolute';
                 $this.$el.parentElement.style.top = '0';
@@ -308,6 +315,20 @@ export default {
             }
             return bytes;
         },
+
+        /**
+         * get table data source for expect response value table.
+         * @returns {Array<Object>}
+         */
+        getExpectResponseValueTableDataSource() {
+            let source = [];
+            for ( let i=0; i<this.node.options.expectResponseValue.length; i++ ) {
+                let item = MyObject.copy(this.node.options.expectResponseValue[i]);
+                item.key = `R_${i}`;
+                source.push(item);
+            }
+            return source;
+        }
     }
 }
 </script>

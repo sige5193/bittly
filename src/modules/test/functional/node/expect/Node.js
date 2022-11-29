@@ -26,6 +26,8 @@ export default class Node extends NodeBase{
         // value viewer
         this.expectWidget = this.addWidget('text','','',()=>{},{disabled:true});
         this.expectWidget.disabled = true;
+
+        this.onOptionUpdate();
     }
     
     /**

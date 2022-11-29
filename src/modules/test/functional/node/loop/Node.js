@@ -34,6 +34,8 @@ export default class Node extends NodeBase {
         // value viewer
         this.counterWidget = this.addWidget('text',this.$t('count'),'',()=>{},{disabled:true});
         this.counterWidget.disabled = true;
+
+        this.onOptionUpdate();
     }
 
     /**
@@ -67,7 +69,6 @@ export default class Node extends NodeBase {
      * @returns {void}
      */
     onAction() {
-        debugger
         if ( null === this.counter ) {
             this.counter = this.getInputData(2);
             if ( undefined === this.counter ) {
