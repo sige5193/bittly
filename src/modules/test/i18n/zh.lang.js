@@ -1,6 +1,10 @@
 module.exports = {
     moduleName : '测试',
     timeout : '响应超时',
+    duration : '耗时',
+    execStatus : '状态',
+    message : '消息',
+    buttonStart : '开始',
     beforeScript : '预执行脚本',
     afterScript : '后执行脚本',
     requestParams : '请求参数',
@@ -42,6 +46,7 @@ module.exports = {
         contextMenuOutput : '输出',
         contextMenuRemove : '移除',
         executeAll : '执行所有测试用例',
+        executeAllCurIndex : '正在执行',
     },
 
     // Functional test

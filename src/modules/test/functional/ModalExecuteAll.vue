@@ -7,18 +7,18 @@
   >
     <a-row>
       <a-col :span="8">
-        <a-statistic title="正在执行" :value="activeIndex" style="margin-right: 50px">
+        <a-statistic :title="$t('test.functional.executeAllCurIndex')" :value="activeIndex">
           <template #suffix><span> / {{testcases.length}}</span></template>
         </a-statistic>
       </a-col>
       <a-col :span="4">
-        <a-statistic title="成功" :value="successCount" class="demo-class"/>
+        <a-statistic :title="$t('test.testcaseExecuteStatusPass')" :value="successCount" class="demo-class"/>
       </a-col>
       <a-col :span="4">
-        <a-statistic title="失败" :value="failedCount" class="demo-class" />
+        <a-statistic :title="$t('test.testcaseExecuteStatusNotPass')" :value="failedCount" class="demo-class" />
       </a-col>
       <a-col :span="8">
-        <a-statistic title="耗时" :value="duration" :formatter="formatDuration" class="demo-class" />
+        <a-statistic :title="$t('test.duration')" :value="duration" :formatter="formatDuration" class="demo-class" />
       </a-col>
     </a-row>
   
@@ -34,9 +34,14 @@
           :header="result.testcase.title"
         >
           <a-descriptions :column="2">
-            <a-descriptions-item label="状态">{{result.success ? '成功' : '失败'}}</a-descriptions-item>
-            <a-descriptions-item label="耗时">{{result.duration}}ms</a-descriptions-item>
-            <a-descriptions-item v-if="0 != result.message.length" label="消息" :span="2">{{result.message}}</a-descriptions-item>
+            <a-descriptions-item :label="$t('test.execStatus')">
+              <a-tag v-if="result.success" color="green">{{$t('test.testcaseExecuteStatusPass')}}</a-tag>
+              <a-tag v-else color="red">{{$t('test.testcaseExecuteStatusNotPass')}}</a-tag>
+            </a-descriptions-item>
+            <a-descriptions-item :label="$t('test.duration')">{{result.duration}}ms</a-descriptions-item>
+            <a-descriptions-item v-if="0 != result.message.length" :label="$t('test.message')" :span="2">
+              {{result.message}}
+            </a-descriptions-item>
           </a-descriptions>
           <a-icon v-if="null === result.success" slot="extra" type="loading" />
         </a-collapse-panel>
@@ -44,8 +49,8 @@
     </div>
 
     <template slot="footer">
-      <a-button key="back" v-if="!isExecuting" @click="actionClose">取消</a-button>
-      <a-button type="primary" @click="actionStart" :disabled="isExecuting" :loading="isExecuting">开始</a-button>
+      <a-button key="back" v-if="!isExecuting" @click="actionClose">{{$t('button.cancel')}}</a-button>
+      <a-button type="primary" @click="actionStart" :disabled="isExecuting" :loading="isExecuting">{{$t('test.buttonStart')}}</a-button>
     </template>
   </a-modal>
 </template>

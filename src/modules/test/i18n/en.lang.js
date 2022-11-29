@@ -1,6 +1,10 @@
 module.exports = {
     moduleName : 'Test',
     timeout : 'Timeout',
+    duration : 'Duration',
+    execStatus : 'Status',
+    message : 'Message',
+    buttonStart : 'Start',
     beforeScript : 'Before script',
     afterScript : 'After script',
     requestParams : 'Request Params',
@@ -42,6 +46,7 @@ module.exports = {
         contextMenuOutput : 'Outputs',
         contextMenuRemove : 'Remove',
         executeAll : 'Execute all testcases',
+        executeAllCurIndex : 'Executing',
     },
     
     // Functional test node
