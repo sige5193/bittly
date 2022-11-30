@@ -1,25 +1,17 @@
 <template>
   <div class="h-100 d-flex flex-dir-column">
     <div class="menu-entry-container flex-grow h-0 overflow-y-auto" >
-      <div v-if="0 == menuData.length" class="mt-3">
-        <a-empty :description="false"/>
-      </div>
+      <a-empty v-if="0 == menuData.length" class="mt-3" :description="false"/>
       <!-- entry tree -->
-      <a-tree v-else show-icon blockNode
+      <a-tree ref="entryTree" v-else show-icon block-node show-line
         :tree-data="menuData"
-        :expandedKeys.sync="menuExpandedKeys"
+        :expandedKeys="menuExpandedKeys"
         @select="actionMenuItemSelected"
-      >
+      > 
         <a-icon slot="directive" type="thunderbolt" />
         <a-icon slot="folder" type="folder" />
-        <template #title="{title,test,key}">
-          <span :ref="`entryTitle_${key}`">
-            <span v-if="'testing' == test"><a-badge status="processing" />{{title}}</span>
-            <a-tag v-if="'error' == test" color="red">{{title}}</a-tag>
-            <a-tag v-if="'success' == test" color="green">{{title}}</a-tag>
-            <a-tag v-if="'warning' == test" color="orange">{{title}}</a-tag>
-            <span v-if="null == test">{{title}}</span> 
-          </span>
+        <template #title="{title}">
+          <div class="text-overflow-ellipsis">{{title}}</div>
         </template>
       </a-tree>
     </div>
@@ -27,7 +19,9 @@
     <div class="p-2 border-bottom border-right">
       <a-row>
         <a-col :span="19">
-          <a-input :placeholder="$t('button.search')" v-model="searchText" @input="actionSearchTextInput"/>
+          <a-input ref="txtSearch" :placeholder="$t('button.search')" 
+            v-model="searchText" @input="actionSearchTextInput"
+          />
         </a-col>
         <a-col :span="3">
           <!-- quick menu -->
@@ -57,15 +51,32 @@ export default {
     },
     props : {
         /**
+         * function to get workspace componment.
          * @property {Function}
          */
         getWorkspace : {type:Function,required:true},
     },
     data() {
         return {
+            /**
+             * searhc text to filter menu data
+             * @property {String}
+             */
             searchText : '',
+            /**
+             * entry list
+             * @property {Object<String:Object>}
+             */
             entries : {},
+            /**
+             * menu data for entry tree
+             * @property {Array<Object>}
+             */
             menuData : [],
+            /**
+             * list of expanded keys
+             * @property {Array<String>}
+             */
             menuExpandedKeys : [],
         };
     },
@@ -106,13 +117,11 @@ export default {
                 let menuItem = {};
                 menuItem.key = entryItem.entry.id;
                 menuItem.title = entryItem.target.name;
-                menuItem.slots = { icon: 'directive' };
+                menuItem.scopedSlots = { switcherIcon:'directive' };
                 menuItem.value = entryItem.entry.id;
                 menuItem.type = entryItem.entry.type;
-                menuItem.test = null;
-
                 if ( 'folder' == entryItem.entry.type ) {
-                    menuItem.slots = { icon: 'folder' };
+                    menuItem.scopedSlots = { switcherIcon: 'folder' };
                     menuItem.children = this.filterMenuItemChildren(entryItem.entry.id);
                 }
                 if ( '' == this.searchText ) {
@@ -137,23 +146,21 @@ export default {
         },
 
         /**
-         * event handler for directive entry menu item clicking,
-         * if item is an directive, it would emit an `directive-click` with
-         * directive model instance, so that the parent component could 
-         * listen this event and open directive to show detail.
-         * if batch executing is running, this click handler would not 
-         * emit any event.
+         * event handler for directive entry menu item clicking
          * @param {Array} selectedKeys
          * @event
          */
-        actionMenuItemSelected( selectedKeys ) {
-            if ( 0 == selectedKeys.length ) {
-                return;
-            }
-
-            let selectedKey = selectedKeys[0];
+        actionMenuItemSelected( selectedKeys, event ) {
+            let selectedKey = event.node.value;
             let item = this.entries[selectedKey];
-            if ( 'directive' == item.entry.type ) {
+            if ( 'folder' == item.entry.type ) {
+                let folderKeyIndex = this.menuExpandedKeys.indexOf(selectedKey);
+                if ( -1 === folderKeyIndex ) {
+                    this.menuExpandedKeys.push(selectedKey);
+                } else {
+                    this.menuExpandedKeys.splice(folderKeyIndex,1);
+                }
+            } else {
                 let directive = item.target;
                 this.getWorkspace().openDirective(directive);
             }

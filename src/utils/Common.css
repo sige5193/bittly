@@ -95,6 +95,7 @@
 .text-muted-2 {color: #c5c5c5 !important;}
 .text-small {font-size: 0.9em !important;}
 .text-large {font-size: 1.5em !important;}
+.text-overflow-ellipsis {text-overflow: ellipsis;overflow: hidden;}
 
 h1, .h1 {font-size: 2.5rem;}
 h2, .h2 {font-size: 2rem;}
