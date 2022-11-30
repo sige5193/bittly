@@ -69,6 +69,18 @@ export default {
         },
 
         /**
+         * expand testcase by given id
+         * @param {Number} id
+         */
+        expandTestcaseById( id ) {
+            for ( let i=0; i<this.testcases.length; i++ ) {
+                if ( this.testcases[i].id === id ) {
+                    this.$refs.testcase[i].expand();
+                }
+            }
+        },
+
+        /**
          * refresh testcase list of current directive
          */
         async refreshTestcaseList() {

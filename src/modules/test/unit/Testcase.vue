@@ -168,6 +168,13 @@ export default {
     },
     methods : {
         /**
+         * expand the body
+         */
+        expand() {
+            this.displayBody = 'block';
+        },
+
+        /**
          * toggle the visiable of testcase detail info
          */
         actionToggleBodyVisiable() {

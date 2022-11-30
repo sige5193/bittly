@@ -4,7 +4,7 @@ import MdbDirective from '../../../../models/MdbDirective.js'
 import MdbDirectiveEntry from '../../../../models/MdbDirectiveEntry.js'
 import MdbDirectiveFolder from '../../../../models/MdbDirectiveFolder';
 import { NIL as NIL_UUID } from 'uuid';
-describe('@/src/modules/directive/entry/PanelEntries.vue', () => {
+describe('@/src/modules/test/unit/EntryMenu.vue', () => {
     it('basic', async () => {
         let workspaceOpenDirective = jest.fn();
         let getWorkspace = jest.fn(() => {

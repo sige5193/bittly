@@ -26,7 +26,8 @@ module.exports = {
     afterScriptExecuteFailed : 'After script execute failed : {0}',
     parameterFormat : 'Param Formamt',
     responseFormat : 'Expect Response Format',
-    
+    stopOnError : 'Stop on error',
+
     // unit test
     unit : {
         title : 'Unit',

@@ -26,7 +26,8 @@ module.exports = {
     afterScriptExecuteFailed : '后执行脚本执行失败：{0}',
     parameterFormat : '请求参数格式',
     responseFormat : '期待响应格式',
-    
+    stopOnError : '遇到失败时停止',
+
     // unit test
     unit : {
         title : '单元测试',
