@@ -191,6 +191,7 @@ export default {
                 this.results.push(result);
 
                 await workspace.openDirective(directive);
+                await Common.msleep(300);
                 result = await workspace.execute();
                 result.directive = directive;
                 this.results.splice(this.activeIndex, 1, result);
