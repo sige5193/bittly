@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <a-empty v-if="null == directive" :description="false" />
+  <div class="h-100 d-flex flex-dir-column">
+    <a-empty v-if="null == directive" :description="false" class="mt-5"/>
     <template v-else>
       <a-page-header style="border: 1px solid rgb(235, 237, 240)" :title="directive.name">
         <template slot="extra">
@@ -18,7 +18,7 @@
       </a-page-header>
       
       <!-- testcase list -->
-      <div>
+      <div class="flex-grow overflow-y-auto">
         <a-empty v-if="0 == testcases.length" :description="false" class="mt-5" />
         <testcase ref="testcase"
           v-for="(testcase,index) in testcases" :key="index"
@@ -92,30 +92,41 @@ export default {
         },
 
         /**
-         * execute all the testcases of current directive
+         * execute all testcases
          */
-        async actionExecCasesOfThisDirective() {
-            if ( 0 >= this.testcases.length ) {
-                return null;
-            }
+        async execute() {
+            let result = {};
+            result.message = '';
+            result.success = true;
+            result.duration = 0;
+            result.testcases = [];
 
+            let startAt = (new Date()).getTime();
             this.isExecuting = true;
             let isAllPassed = true;
-            let testcases = this.$refs.testcase;
+            let testcases = this.$refs.testcase || [];
             for ( let i=0; i<testcases.length; i++ ) {
-                if ( this.isDestroying 
-                || (this.executeAll.isExecuting && this.executeAll.stopExecuting)
-                ) {
+                let executor = testcases[i];
+                if ( this.isDestroying ) {
                     isAllPassed = false;
                     break;
                 }
-                let isPassed = await testcases[i].execute();
+                let isPassed = await executor.execute();
+                result.testcases.push({testcase:executor.testcase,success:isPassed});
                 isAllPassed = isAllPassed && isPassed;
-
-                this.executeAllLogTestcase(testcases[i]);
             }
             this.isExecuting = false;
-            return isAllPassed;
+
+            result.duration = (new Date()).getTime() - startAt;
+            result.success = isAllPassed;
+            return result;
+        },
+
+        /**
+         * execute all the testcases of current directive
+         */
+        async actionExecCasesOfThisDirective() {
+            await this.execute();
         },
 
         /**
@@ -124,32 +135,6 @@ export default {
          */
         actionTestcaseDelete( index ) {
             this.testcases.splice(index, 1);
-        },
-
-        /**
-         * log testcase status after executing it.
-         * @param {VueComponent} testcaseRef
-         * @private
-         */
-        executeAllLogTestcase( testcaseRef ) {
-            if ( !this.executeAll.isExecuting || this.isDestroying ) {
-                return;
-            }
-
-            this.executeAll.exportor.logTestcase(
-                this.directive.id, 
-                testcaseRef.getTestcase(),
-                testcaseRef.getResult(),
-                testcaseRef.getResultStatus(),
-            );
-
-            let isPassed = testcaseRef.getResultStatus() == 'success';
-            this.executeAll.testcaseCount ++;
-            if ( true == isPassed ) {
-                this.executeAll.testcaseSuccessCount ++;
-            } else if ( false == isPassed ) {
-                this.executeAll.testcaseErrorCount ++;
-            }
         },
     },
 }

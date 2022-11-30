@@ -1,11 +1,5 @@
 <template>
-  <a-modal 
-    ref="modalEdit"
-    v-if="enable" 
-    :visible="enable" 
-    :title="$t('test.editModal.title')" 
-    :width="800"
-  >
+  <a-modal ref="modalEdit" v-if="enable" :width="800" :visible="enable" :title="$t('test.editModal.title')">
     <a-form :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
       <!-- title -->
       <a-input ref="inputTitle" v-model="testcase.title" :placeholder="$t('test.editModal.titlePlaceholder')"/>
@@ -13,10 +7,6 @@
       <a-tabs v-model="activeTab" class="mt-3">
         <!-- request parameter -->
         <a-tab-pane key="request-param" :tab="$t('test.requestParams')">
-          <template v-if="'none' === testcase.paramFormat">
-            <a-empty :description="$t('directive.parameter.none.notRequired')" />
-          </template>
-          <template v-else>
             <a-input-group compact style="width:300px;">
               <a-input class="w-50 text-body" :value="$t('test.parameterFormat')" disabled />
               <a-select class="w-50"
@@ -32,13 +22,15 @@
               </a-select>
             </a-input-group>
             <div class="mt-2">
-              <component
+              <template v-if="'none' === testcase.paramFormat">
+                <a-empty :description="$t('directive.parameter.none.notRequired')" />
+              </template>
+              <component v-else
                 :is="`request-param-editor-${testcase.paramFormat}`"
                 :directive="directive"
                 v-model="testcase.params.value"
               ></component>
             </div>
-          </template>
         </a-tab-pane>
         
         <!-- response editor -->

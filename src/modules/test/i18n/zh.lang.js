@@ -30,6 +30,8 @@ module.exports = {
     // unit test
     unit : {
         title : '单元测试',
+        executeAllCurIndex : '正在执行',
+        executeAll : '执行所有测试用例',
     },
 
     // functional

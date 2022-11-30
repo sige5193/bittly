@@ -24,7 +24,7 @@
       </a-col>
       
       <!-- value -->
-      <a-col :span="14">
+      <a-col :span="14" style="line-height: 40px;">
         <a-input 
           ref="inputValue"
           :addon-before="item.prefix" 

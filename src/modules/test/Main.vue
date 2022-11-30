@@ -64,5 +64,5 @@ export default {
 }
 </script>
 <style>
-.test-main-sider-tab .ant-tabs-content {flex-grow:1;height: 0;overflow: hidden;}
+.test-main-sider-tab .ant-tabs-content {flex-grow:1;height: 0;}
 </style>

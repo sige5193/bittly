@@ -30,6 +30,8 @@ module.exports = {
     // unit test
     unit : {
         title : 'Unit',
+        executeAllCurIndex : 'Executing',
+        executeAll : 'Execute all testcases',
     },
 
     // functional test

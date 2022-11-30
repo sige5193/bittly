@@ -1,39 +1,214 @@
 <template>
-  <a-modal
+  <a-modal v-model="enable" :closable="false" :maskClosable="false" :keyboard="false"
     :title="$t('test.testcaseExecuteSummaryTitle')"
-    v-if="executeAll.modalEnable"
-    :visible="executeAll.modalEnable"
   >
-    <p>{{$t('test.testcaseExecuteSummaryTotalCount')}} : {{executeAll.testcaseCount}}</p>
-    <p>
-      {{$t('test.testcaseExecuteSummaryStatusCount')}} : 
-      <a-tag color="green">{{$t('test.testcaseExecuteStatusPass')}} : {{executeAll.testcaseSuccessCount}}</a-tag>  
-      <a-tag color="red">{{$t('test.testcaseExecuteStatusNotPass')}} : {{executeAll.testcaseErrorCount}}</a-tag>
-    </p>
-    <p>{{$t('test.testcaseExecuteSummaryDuration')}} : {{executeAll.durationString}}</p>
+    <a-row>
+      <a-col :span="8">
+        <a-statistic :title="$t('test.unit.executeAllCurIndex')" :value="activeIndex">
+          <template #suffix><span> / {{directives.length}}</span></template>
+        </a-statistic>
+      </a-col>
+      <a-col :span="4">
+        <a-statistic :title="$t('test.testcaseExecuteStatusPass')" :value="successCount" class="demo-class"/>
+      </a-col>
+      <a-col :span="4">
+        <a-statistic :title="$t('test.testcaseExecuteStatusNotPass')" :value="failedCount" class="demo-class" />
+      </a-col>
+      <a-col :span="8">
+        <a-statistic :title="$t('test.duration')" :value="duration" :formatter="formatDuration" class="demo-class" />
+      </a-col>
+    </a-row>
+
+    <div class="mt-3">
+      <a-progress :percent="progressPercent" />
+    </div>
+
+    <div ref="resultListContainer" class="mt-3 overflow-y-auto" style="max-height:200px;">
+      <a-collapse>
+        <a-collapse-panel v-for="(result,index) in results" :key="index"
+          class="test-functional-execall-task-collapse-panel"
+          :class="{success:result.success==true,failed:result.success==false}"
+          :header="result.directive.name"
+        >
+          <a-descriptions :column="2">
+            <a-descriptions-item :label="$t('test.execStatus')">
+              <a-tag v-if="true === result.success" color="green">{{$t('test.testcaseExecuteStatusPass')}}</a-tag>
+              <a-tag v-else-if="false === result.success" color="red">{{$t('test.testcaseExecuteStatusNotPass')}}</a-tag>
+            </a-descriptions-item>
+            <a-descriptions-item :label="$t('test.duration')">{{result.duration}}ms</a-descriptions-item>
+            <a-descriptions-item v-if="0 != result.message.length" :label="$t('test.message')" :span="2">
+              {{result.message}}
+            </a-descriptions-item>
+          </a-descriptions>
+          <a-icon v-if="null === result.success" slot="extra" type="loading" />
+          
+          <ul class="p-3" v-if="0 < result.testcases.length">
+            <li v-for="(detail,index) in result.testcases" :key="index">
+              <a-icon v-if="detail.success" type="check-circle" style="color:green;"/>
+              <a-icon v-else type="close-circle" style="color:red;"/>
+              {{detail.testcase.title}} 
+            </li>
+          </ul>
+        </a-collapse-panel>
+      </a-collapse>
+    </div>
+
     <template slot="footer">
-      <a-button @click="actionCloseExecuteAllSummaryModal">{{$t('button.close')}}</a-button>
-      <a-dropdown :trigger="['click']">
-        <a-menu slot="overlay" @click="actionExecuteAllSummaryMenuExport">
-          <a-menu-item key="html">HTML</a-menu-item>
-          <a-menu-item key="excel">Excel</a-menu-item>
-        </a-menu>
-        <a-button type="primary" style="margin-left: 8px"> {{$t('test.exportTestReport')}} <a-icon type="down" /> </a-button>
-      </a-dropdown>
+      <a-button key="back" v-if="!isExecuting" @click="actionClose">{{$t('button.cancel')}}</a-button>
+      <a-button type="primary" @click="actionStart" :disabled="isExecuting" :loading="isExecuting">{{$t('test.buttonStart')}}</a-button>
     </template>
   </a-modal>
 </template>
 <script>
+import Common from '../../../utils/Common.js'
+import Formatter from '../../../utils/Formatter.js'
+import MdbDirective from '../../../models/MdbDirective';
 export default {
+    props : {
+        /**
+         * @property {Function}
+         */
+        getWorkspace : {type:Function,required:true},
+    },
     data() {
         return {
-            executeAll : { 
-                modalEnable : false, 
-                isExecuting : false,
-            },
+            /**
+             * @property {Boolean}
+             */
+            enable : false,
+            /**
+             * @property {Array<MdbDirective>}
+             */
+            directives : [],
+            /**
+             * @property {Boolean}
+             */
+            isExecuting : false,
+            /**
+             * @property {Array<Object>}
+             */
+            results : [],
+            /**
+             * @property {Number}
+             */
+            duration : 0,
+            /**
+             * @property {Number}
+             */
+            activeIndex : 0,
         };
     },
+    computed : {
+        progressPercent() {
+            return Math.round(this.activeIndex / this.directives.length * 100);
+        },
+        successCount() {
+            let count = 0;
+            for ( let i=0; i<this.results.length; i++ ) {
+                if ( this.results[i].success ) {
+                    count ++;
+                }
+            }
+            return count;
+        },
+        failedCount() {
+            let count = 0;
+            for ( let i=0; i<this.results.length; i++ ) {
+                if ( false === this.results[i].success ) {
+                    count ++;
+                }
+            }
+            return count;
+        },
+    },
     methods : {
+        /**
+         * open execute all modal
+         */
+        async open() {
+            this.directives = [];
+            let projectId = this.$store.getters.projectActivedId;
+            this.directives = await MdbDirective.findAll({project_id:projectId});
+            this.enable = true;
+        },
+
+        /**
+         * start to execute all testcases
+         */
+        async actionStart() {
+            let startTime = (new Date()).getTime();
+            this.duration = 0;
+            this.isExecuting = true;
+
+            this.results = [];
+            let workspace = this.getWorkspace();
+            for ( this.activeIndex=0; this.activeIndex<this.directives.length; this.activeIndex++ ) {
+                let result = {success:null,message:'',testcases:[]};
+                let directive = this.directives[this.activeIndex];
+                result.directive = directive;
+                this.results.push(result);
+
+                await workspace.openDirective(directive);
+                await Common.msleep(500);
+                result = await workspace.execute();
+                result.directive = directive;
+                this.results.splice(this.activeIndex, 1, result);
+                
+                this.duration = (new Date()).getTime() - startTime;
+                let container = this.$refs.resultListContainer;
+                this.$nextTick(() => container.scrollTop = container.scrollHeight);
+            }
+            
+            this.duration = (new Date()).getTime() - startTime;
+            this.isExecuting = false;
+        },
+
+        /**
+         * event handler to close model
+         */
+        actionClose() {
+            this.enable = false;
+        },
+
+        /**
+         * format as duration
+         * @returns {String}
+         */
+        formatDuration(h, value) {
+            return Formatter.asDurationMS(this.duration);
+        },
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         /**
          * execute all testcases
          * @public 
@@ -142,6 +317,34 @@ export default {
                     status = isPassed ? 'success' : 'error';
                 }
                 entries.directiveTestStatusUpdate(menu.key, status);
+            }
+        },
+
+
+
+        /**
+         * log testcase status after executing it.
+         * @param {VueComponent} testcaseRef
+         * @private
+         */
+        executeAllLogTestcase( testcaseRef ) {
+            if ( !this.executeAll.isExecuting || this.isDestroying ) {
+                return;
+            }
+
+            this.executeAll.exportor.logTestcase(
+                this.directive.id, 
+                testcaseRef.getTestcase(),
+                testcaseRef.getResult(),
+                testcaseRef.getResultStatus(),
+            );
+
+            let isPassed = testcaseRef.getResultStatus() == 'success';
+            this.executeAll.testcaseCount ++;
+            if ( true == isPassed ) {
+                this.executeAll.testcaseSuccessCount ++;
+            } else if ( false == isPassed ) {
+                this.executeAll.testcaseErrorCount ++;
             }
         },
     }

@@ -1,131 +1,133 @@
 <template>
-  <div class="border mt-1 bg-light p-1">
-    <!-- title -->
-    <div class="p-2" @click="actionToggleBodyVisiable">
-      <a-icon :type="'none'==displayBody ? 'right' : 'down'" /> &nbsp;
-      {{testcase.title}} &nbsp;&nbsp;
-      <a-badge v-if="null != resultStatus" :status="resultStatus" />
-    </div>
+  <a-spin :spinning="'processing' == resultStatus">
+    <div class="border mt-1 bg-light p-1">
+      <!-- title -->
+      <div class="p-2" @click="actionToggleBodyVisiable">
+        <a-icon :type="'none'==displayBody ? 'right' : 'down'" /> &nbsp;
+        {{testcase.title}} &nbsp;&nbsp;
+        <a-badge v-if="null != resultStatus" :status="resultStatus" />
+      </div>
 
-    <div :style="{display:displayBody}"> 
-      <a-row>
-        <!-- request parameters -->
-        <a-col :span="8" class="p-3">
-          <div><strong>{{ $t('test.requestParams') }}</strong></div>
-          <div class="mt-1">
-            <template v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','FORM',testcase.paramFormat)">
-              <div v-for="(param, pindex) in testcase.params.value" :key="pindex" class="mb-1">
-                <span v-if="0 < param.name.trim().length">{{param.name}}</span>
-                <span v-else>${{pindex}}</span>
-                <small class="ml-1">[{{$t(`directive.parameter.form.dataType.${param.type}`)}}]</small> : 
-                <a-tag>{{param.prefix}}{{param.value}}</a-tag>
-              </div>
-            </template>
-            <template v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','HEX',testcase.paramFormat)">
-              <div class="pre word-break-all">
-                {{testcase.params.value}}
-              </div>
-            </template>
-            <template v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','TEXT',testcase.paramFormat)">
-              <div class="pre word-break-all">
-                {{testcase.params.value}}
-              </div>
-            </template>
-            <template v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','FILE',testcase.paramFormat)">
-              <div class="pre word-break-all">
-                <a-icon type="file" /> {{testcase.params.value}}
-              </div>
-            </template>
-            <template v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','NONE',testcase.paramFormat)">
-              <a-empty :description="$t('directive.parameter.none.notRequired')" />
-            </template>
-          </div>
-        </a-col>
-        
-        <!-- expect response content -->
-        <a-col :span="8" class="p-3">
-          <div><strong>{{ $t('test.expectResponseContent') }}</strong></div>
-          <div class="mt-1">
-            <template v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','FORM',testcase.expectFormat)">
-              <div v-for="(param, eindex) in testcase.expect.value" :key="eindex" class="mb-1">
-                <span v-if="0 < param.name.trim().length">{{param.name}}</span>
-                <span v-else>${{eindex}}</span> 
-                <small class="ml-1">[{{$t(`directive.parameter.form.dataType.${param.type}`)}}]</small> : 
-                <a-tag>
-                  {{$t(`test.editModal.comparator${param.comparator}`)}}
-                  {{param.prefix}}
-                  {{param.value}}
-                </a-tag>
-              </div>
-            </template>
-            <template v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','HEX',testcase.expectFormat)">
-              <div class="pre word-break-all">{{testcase.expect.value}}</div>
-            </template>
-            <template v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','TEXT',testcase.expectFormat)">
-              <div class="pre word-break-all">{{testcase.expect.value}}</div>
-            </template>
-          </div>
-        </a-col>
-        
-        <!-- actual response content -->
-        <a-col :span="8" class="p-3">
-          <div><strong>{{ $t('test.actualResponseContent') }}</strong></div>
-          <div class="mt-1">
-            <template v-if="null == result">
-              <a-empty class="mt-2" :description="false" />
-            </template>
-            <template v-else>
-              <template v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','STRING',testcase.expectFormat)">
-                <div class="pre word-break-all">{{result}}</div>
-              </template>
-              <template v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','HEX',testcase.expectFormat)">
-                <div class="pre word-break-all">{{result}}</div>
-              </template>
-              <template v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','FORM',testcase.expectFormat)">
-                <div v-for="(param, aindex) in testcase.expect.value" :key="aindex" class="mb-1">
+      <div :style="{display:displayBody}"> 
+        <a-row>
+          <!-- request parameters -->
+          <a-col :span="8" class="p-3">
+            <div>
+              <strong>{{ $t('test.requestParams') }}</strong>
+              <small class="pl-1">({{$dict.name('DIRECTIVE_PARAM_FORMAT',testcase.paramFormat)}})</small>
+            </div>
+            <div class="mt-1">
+              <template v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','FORM',testcase.paramFormat)">
+                <div v-for="(param, pindex) in testcase.params.value" :key="pindex" class="mb-1">
                   <span v-if="0 < param.name.trim().length">{{param.name}}</span>
-                  <span v-else>${{aindex}}</span>
+                  <span v-else>${{pindex}}</span>
                   <small class="ml-1">[{{$t(`directive.parameter.form.dataType.${param.type}`)}}]</small> : 
-                  <a-tag :color="resultFormItemMatches[aindex].isSame ? '' : 'red'">
-                    {{param.prefix}}{{result.getValueByIndex(aindex)}}
+                  <a-tag>{{param.prefix}}{{param.value}}</a-tag>
+                </div>
+              </template>
+              <template v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','HEX',testcase.paramFormat)">
+                <div class="pre word-break-all">{{testcase.params.value}}</div>
+              </template>
+              <template v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','TEXT',testcase.paramFormat)">
+                <div class="pre word-break-all">{{testcase.params.value}}</div>
+              </template>
+              <template v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','FILE',testcase.paramFormat)">
+                <div class="pre word-break-all"><a-icon type="file" /> {{testcase.params.value.path}}</div>
+              </template>
+              <template v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','NONE',testcase.paramFormat)">
+                <a-empty :description="$t('directive.parameter.none.notRequired')" />
+              </template>
+            </div>
+          </a-col>
+        
+          <!-- expect response content -->
+          <a-col :span="8" class="p-3">
+            <div>
+              <strong>{{ $t('test.expectResponseContent') }}</strong>
+              <small class="pl-1">({{$dict.name('DIRECTIVE_PARAM_FORMAT',testcase.expectFormat)}})</small>
+            </div>
+            <div class="mt-1">
+              <template v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','FORM',testcase.expectFormat)">
+                <div v-for="(param, eindex) in testcase.expect.value" :key="eindex" class="mb-1">
+                  <span v-if="0 < param.name.trim().length">{{param.name}}</span>
+                  <span v-else>${{eindex}}</span> 
+                  <small class="ml-1">[{{$t(`directive.parameter.form.dataType.${param.type}`)}}]</small> : 
+                  <a-tag>
                     {{$t(`test.editModal.comparator${param.comparator}`)}}
-                    {{param.prefix}}{{param.value}}
+                    {{param.prefix}}
+                    {{param.value}}
                   </a-tag>
                 </div>
               </template>
-            </template>
-          </div>
-        </a-col>
-      </a-row>
-      
-      <!-- toolbar -->
-      <div>
-        <a-row>
-          <a-col :span="12">
-            <a-input 
-              :addon-before="$t('test.timeout')" 
-              :value="testcase.timeout" 
-              style="width:150px;"
-              disabled
-            />
+              <template v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','HEX',testcase.expectFormat)">
+                <div class="pre word-break-all">{{testcase.expect.value}}</div>
+              </template>
+              <template v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','TEXT',testcase.expectFormat)">
+                <div class="pre word-break-all">{{testcase.expect.value}}</div>
+              </template>
+            </div>
           </a-col>
-          <a-col :span="12" class="text-right">
-            <a-popconfirm 
-              :title="$t('test.testcaseDeleteConfirm')"
-              :ok-text="$t('button.yes')"
-              :cancel-text="$t('button.no')"
-              @confirm="actionDelete"
-            ><a-button type="danger"><a-icon type="delete" /></a-button></a-popconfirm>
-            &nbsp;
-            <a-button @click="actionEdit"><a-icon type="edit" /></a-button>
-            &nbsp;
-            <a-button ref="btnExecute" type="primary" @click="actionExecute"><a-icon type="play-circle" /></a-button>
+        
+          <!-- actual response content -->
+          <a-col :span="8" class="p-3">
+            <div><strong>{{ $t('test.actualResponseContent') }}</strong></div>
+            <div class="mt-1">
+              <template v-if="null == result">
+                <a-empty class="mt-2" :description="false" />
+              </template>
+              <template v-else>
+                <template v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','TEXT',testcase.expectFormat)">
+                  <div class="pre word-break-all">{{result}}</div>
+                </template>
+                <template v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','HEX',testcase.expectFormat)">
+                  <div class="pre word-break-all">{{result}}</div>
+                </template>
+                <template v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','FORM',testcase.expectFormat)">
+                  <div v-for="(param, aindex) in testcase.expect.value" :key="aindex" class="mb-1">
+                    <span v-if="0 < param.name.trim().length">{{param.name}}</span>
+                    <span v-else>${{aindex}}</span>
+                    <small class="ml-1">[{{$t(`directive.parameter.form.dataType.${param.type}`)}}]</small> : 
+                    <a-tag :color="resultFormItemMatches[aindex].isSame ? '' : 'red'">
+                      {{param.prefix}}{{result.getValueByIndex(aindex)}}
+                      {{$t(`test.editModal.comparator${param.comparator}`)}}
+                      {{param.prefix}}{{param.value}}
+                    </a-tag>
+                  </div>
+                </template>
+              </template>
+            </div>
           </a-col>
         </a-row>
+      
+        <!-- toolbar -->
+        <div>
+          <a-row>
+            <a-col :span="12">
+              <a-input 
+                :addon-before="$t('test.timeout')" 
+                :value="testcase.timeout" 
+                style="width:150px;"
+                disabled
+              />
+            </a-col>
+            <a-col :span="12" class="text-right">
+              <a-popconfirm 
+                :title="$t('test.testcaseDeleteConfirm')"
+                :ok-text="$t('button.yes')"
+                :cancel-text="$t('button.no')"
+                @confirm="actionDelete"
+              ><a-button type="danger"><a-icon type="delete" /></a-button></a-popconfirm>
+              &nbsp;
+              <a-button @click="actionEdit"><a-icon type="edit" /></a-button>
+              &nbsp;
+              <a-button ref="btnExecute" type="primary" @click="actionExecute"><a-icon type="play-circle" /></a-button>
+            </a-col>
+          </a-row>
+        </div>
+        <modal-testcase-edit ref="modalTestcaseEdit"></modal-testcase-edit>
       </div>
-      <modal-testcase-edit ref="modalTestcaseEdit"></modal-testcase-edit>
     </div>
-  </div>
+  </a-spin>
 </template>
 <script>
 import DirectiveScriptExecutor from '../../directive/script/Executor.js'
