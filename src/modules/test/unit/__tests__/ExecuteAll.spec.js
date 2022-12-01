@@ -3,7 +3,6 @@ import ExecuteAll from '../ExecuteAll.vue'
 import MdbDirective from '../../../../models/MdbDirective.js'
 import MdbDirectiveEntry from '../../../../models/MdbDirectiveEntry.js'
 import { NIL as NIL_UUID } from 'uuid';
-import MdbTestcase from '../../../../models/MdbTestcase.js';
 describe('@/src/modules/test/unit/ExecuteAll.vue', () => {
     it('basic', async () => {
         let workspaceOpenDirective = jest.fn().mockResolvedValueOnce({});

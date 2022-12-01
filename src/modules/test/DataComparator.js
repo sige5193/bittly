@@ -154,7 +154,7 @@ export default class DataComparator {
         }
 
         // handle between 
-        let expectRang = expectValue.split(',');
+        let expectRang = expectValue;
         switch ( expect.comparator ) {
         case 'Between' : return actualNumber >= expectRang[0] && actualNumber <= expectRang[1];
         case 'NotBetween' : return actualNumber < expectRang[0] || actualNumber > expectRang[1];

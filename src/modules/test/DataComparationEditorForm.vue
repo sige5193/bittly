@@ -8,7 +8,7 @@
       
       <!-- opertaotr -->
       <a-col :span="4" class="pr-1" style="line-height:43px;">
-        <a-select v-model="content[index].comparator" class="w-100" @change="actionContentInput">
+        <a-select v-model="content[index].comparator" class="w-100" @change="actionComparatorChange(index)">
           <a-select-option value="Ignore">{{$t('test.editModal.comparatorIgnore')}}</a-select-option>
           <a-select-option value="Equal">{{$t('test.editModal.comparatorEqual')}}</a-select-option>
           <a-select-option value="NotEqual">{{$t('test.editModal.comparatorNotEqual')}}</a-select-option>
@@ -25,8 +25,12 @@
       
       <!-- value -->
       <a-col :span="14" style="line-height: 40px;">
-        <a-input 
-          ref="inputValue"
+        <a-input-group compact v-if="-1 != ['Between','NotBetween'].indexOf(content[index].comparator)">
+          <a-input class="w-45" v-model.number="content[index].value[0]"/>
+          <a-input class="w-10 text-center" placeholder="~" disabled/>
+          <a-input class="w-45" v-model.number="content[index].value[1]"/>
+        </a-input-group>
+        <a-input v-else ref="inputValue"
           :addon-before="item.prefix" 
           v-model="content[index].value" 
           @input="actionContentInput" 
@@ -110,6 +114,18 @@ export default {
          */
         updateVModel() {
             this.$emit('input', this.content);
+        },
+
+        /**
+         * event handler on comparator changed
+         */
+        actionComparatorChange(index) {
+            if ( -1 != ['Between','NotBetween'].indexOf(this.content[index].comparator) ) {
+                this.content[index].value = ['',''];
+            } else {
+                this.content[index].value = '';
+            }
+            this.updateVModel();
         },
 
         /**

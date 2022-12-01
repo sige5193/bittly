@@ -7,46 +7,35 @@
       <a-tabs v-model="activeTab" class="mt-3">
         <!-- request parameter -->
         <a-tab-pane key="request-param" :tab="$t('test.requestParams')">
-            <a-input-group compact style="width:300px;">
-              <a-input class="w-50 text-body" :value="$t('test.parameterFormat')" disabled />
-              <a-select class="w-50"
-                v-model="testcase.paramFormat" 
-                @change="actionHandleParamFormatChange"
-               >
-                <a-select-option 
-                  v-for="(item,index) in $dict.items('DIRECTIVE_PARAM_FORMAT')"
-                  :key="index" 
-                  :value="item.value"
-                  :disabled="'form' == item.value && 'form' != directive.requestFormat"
-                >{{$t(`directive.parameter.${item.value}.name`)}}</a-select-option>
-              </a-select>
-            </a-input-group>
-            <div class="mt-2">
-              <template v-if="'none' === testcase.paramFormat">
-                <a-empty :description="$t('directive.parameter.none.notRequired')" />
-              </template>
-              <component v-else
-                :is="`request-param-editor-${testcase.paramFormat}`"
-                :directive="directive"
-                v-model="testcase.params.value"
-              ></component>
-            </div>
+          <a-input-group compact style="width:300px;">
+            <a-input class="w-50 text-body" :value="$t('test.parameterFormat')" disabled />
+            <a-select class="w-50" v-model="testcase.paramFormat" @change="actionHandleParamFormatChange">
+              <a-select-option v-for="(item,index) in $dict.items('DIRECTIVE_PARAM_FORMAT')"
+                :key="index" 
+                :value="item.value"
+                :disabled="'form' == item.value && 'form' != directive.requestFormat"
+              >{{$t(`directive.parameter.${item.value}.name`)}}</a-select-option>
+            </a-select>
+          </a-input-group>
+          <div class="mt-2">
+            <template v-if="'none' === testcase.paramFormat">
+              <a-empty :description="$t('directive.parameter.none.notRequired')" />
+            </template>
+            <component v-else :is="`request-param-editor-${testcase.paramFormat}`"
+              :directive="directive" v-model="testcase.params.value"
+            ></component>
+          </div>
         </a-tab-pane>
         
         <!-- response editor -->
         <a-tab-pane key="expect-response" :tab="$t('test.expectResponseContent')">
           <a-input-group compact style="width:300px;">
             <a-input class="w-50 text-body" :value="$t('test.responseFormat')" disabled />
-            <a-select class="w-50"
-              v-model="testcase.expectFormat"
-              @change="actionExpectFormatChange"
-            >
-              <a-select-option 
-                v-for="(item,index) in $dict.items('DIRECTIVE_PARAM_FORMAT')"
-                :key="index" 
-                :value="item.value"
-                :disabled="('form' == item.value && !expectFormatFormEnabled) || 'file' == item.value"
-              >{{$t(`directive.parameter.${item.value}.name`)}}</a-select-option>
+            <a-select class="w-50" v-model="testcase.expectFormat" @change="actionExpectFormatChange">
+              <a-select-option value="text">{{$t(`directive.parameter.text.name`)}}</a-select-option>
+              <a-select-option value="hex">{{$t(`directive.parameter.hex.name`)}}</a-select-option>
+              <a-select-option value="form" :disabled="undefined == directive.responseFormatter.fields"
+              >{{$t(`directive.parameter.form.name`)}}</a-select-option>
             </a-select>
           </a-input-group>
           <div class="mt-2">
@@ -67,23 +56,13 @@
         </a-tab-pane>
 
         <!-- before script -->
-        <a-tab-pane key="before-script" :tab="$t('test.beforeScript')">
-          <codemirror 
-            ref="editorBeforeScript" 
-            :options="scriptEditorOptions" 
-            v-model="testcase.beforeScript"
-            @input="actionScriptEditorInput('editorBeforeScript')"
-          ></codemirror>
+        <a-tab-pane key="before-script" :tab="$t('test.beforeScript')" style="height: 300px;">
+          <code-editor v-model="testcase.beforeScript"/>
         </a-tab-pane>
 
         <!-- after script -->
-        <a-tab-pane key="after-script" :tab="$t('test.afterScript')">
-          <codemirror 
-            ref="editorAfterScript" 
-            :options="scriptEditorOptions" 
-            v-model="testcase.afterScript"
-            @input="actionScriptEditorInput('editorAfterScript')"
-          ></codemirror>
+        <a-tab-pane key="after-script" :tab="$t('test.afterScript')" style="height: 300px;">
+          <code-editor v-model="testcase.afterScript"/>
         </a-tab-pane>
 
         <!-- options -->
@@ -113,29 +92,24 @@
   </a-modal>
 </template>
 <script>
+import CodeEditor from '../../../components/CodeEditor.vue'
 import TestcaseLibBittly from './TestcaseLibBittly.js'
-import { codemirror } from 'vue-codemirror'
-import "codemirror/theme/ambiance.css";
-import "codemirror/addon/hint/show-hint.css"
-require("codemirror/mode/javascript/javascript");
-require("codemirror/mode/lua/lua");
-require("codemirror/addon/hint/show-hint");
-require("codemirror/addon/hint/javascript-hint");
 import MdbTestcase from '../../../models/MdbTestcase.js';
 import RequestParamStringEditor from '../../directive/parameters/text/ValueEditor.vue'
 import RequestParamHexEditor from '../../directive/parameters/hex/ValueEditor.vue'
 import RequestParamEditorForm from '../../directive/parameters/form/ValueEditor.vue'
 import RequestParamEditorFile from '../../directive/parameters/file/ValueEditor.vue'
 import ResponseParamEditorForm from '../DataComparationEditorForm.vue'
+import MyDate from '../../../utils/datatype/MyDate';
 export default {
     name : 'ModalTestcaseEdit',
     components : {
+        'code-editor' : CodeEditor,
         'request-param-editor-text' : RequestParamStringEditor,
         'request-param-editor-hex' : RequestParamHexEditor,
         'request-param-editor-form' : RequestParamEditorForm,
         'request-param-editor-file' : RequestParamEditorFile,
         'response-param-editor-form' : ResponseParamEditorForm,
-        'codemirror' : codemirror,
     },
     data() {
         return {
@@ -146,17 +120,6 @@ export default {
             expectFormatFormEnabled : false,
             actResolve : null,
             actReject : null,
-            scriptEditorOptions : {
-                mode:'javascript',
-                theme: 'ambiance',
-                readOnly:false,
-                lineNumbers:true,
-                lineWrapping:true,
-                autofocus:true,
-                hintOptions : {
-                    completeSingle: false,
-                },
-            },
         };
     },
     methods : {
@@ -174,7 +137,7 @@ export default {
                 this.testcase.projectId = this.directive.projectId;
                 this.testcase.title = this.$t('test.editModal.titleDefault',[
                     this.directive.name, 
-                    (new Date()).getTime()
+                    MyDate.formatAsShortKey(null)
                 ]);
                 this.testcase.paramFormat = this.directive.requestFormat;
             }
@@ -183,7 +146,7 @@ export default {
             if ( this.expectFormatFormEnabled && this.testcase.isNew ) {
                 this.testcase.expectFormat = this.$dict.value('DIRECTIVE_PARAM_FORMAT','FORM');
             }
-
+            
             window.bittly = new TestcaseLibBittly({
                 projectId : this.$store.getters.projectActivedId
             });
@@ -192,6 +155,7 @@ export default {
             this.$nextTick(function() {
                 $this.$forceUpdate();
             });
+            
             return new Promise(function( resolve, reject ) {
                 $this.actResolve = resolve;
                 $this.actReject = reject;
@@ -242,18 +206,6 @@ export default {
         actionCancelModal() {
             this.enable = false;
             this.actReject();
-        },
-
-        /**
-         * event handler on script editor input
-         */
-        actionScriptEditorInput( editor ) {
-            let codemirror = this.$refs[editor].codemirror;
-            let cursor = codemirror.getCursor();
-            let token = codemirror.getTokenAt(cursor);
-            if ( token.string.match(/^[a-zA-Z0-9\\.\\$]+?$/) ) {
-                codemirror.showHint();
-            }
         },
     },
 }

@@ -1,8 +1,18 @@
-import TestCaseSetup from '@/utils/test/Setup.js';
+import UnitTester from '../../../../utils/test/UnitTester.js';
 import ModalTestcaseEdit from '../ModalTestcaseEdit.vue'
-import MdbDirective from '@/models/MdbDirective.js'
-describe('@/src/modules/test/ModalTestcaseEdit.vue', () => {
-    it('normal use', async ( done ) => {
+import MdbDirective from '../../../../models/MdbDirective.js'
+describe('@/src/modules/test/unit/ModalTestcaseEdit.vue', () => {
+    it('basic', async ( done ) => {
+        let tester = new UnitTester();
+        await tester.setup();
+        await tester.mount(ModalTestcaseEdit);
+        
+        let directive = new MdbDirective();
+        directive.responseFormatter.fields = [];
+        tester.wrapper.vm.open(directive);
+        done();
+        
+        
         // let setup = new TestCaseSetup();
         // await setup.setup();
 
@@ -10,7 +20,7 @@ describe('@/src/modules/test/ModalTestcaseEdit.vue', () => {
         // let wrapper = await setup.mount(ModalTestcaseEdit);
         // wrapper.vm.open(directive).then((testcase) => {
         //     expect(testcase.title).toBe('TEST-NAME');
-            done();
+
         // });
         // await setup.msleep(1000);
         
