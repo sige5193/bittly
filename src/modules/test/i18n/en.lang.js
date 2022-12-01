@@ -1,6 +1,11 @@
 module.exports = {
     moduleName : 'Test',
     timeout : 'Timeout',
+    duration : 'Duration',
+    execStatus : 'Status',
+    message : 'Message',
+    buttonStart : 'Start',
+    buttonStop : 'Stop',
     beforeScript : 'Before script',
     afterScript : 'After script',
     requestParams : 'Request Params',
@@ -22,6 +27,58 @@ module.exports = {
     afterScriptExecuteFailed : 'After script execute failed : {0}',
     parameterFormat : 'Param Formamt',
     responseFormat : 'Expect Response Format',
+    stopOnError : 'Stop on error',
+
+    // unit test
+    unit : {
+        title : 'Unit',
+        executeAllCurIndex : 'Executing',
+        executeAll : 'Execute all testcases',
+        totalCount : 'Total',
+        successCount : 'Success',
+        failedCount : 'Failed',
+        duration : 'Duration',
+        interval : 'Interval',
+        count : 'Count',
+        executeRepeatedly : 'Execute Repeatedly',
+    },
+
+    // functional test
+    functional : {
+        title : 'Functional',
+        create : 'New Functional Testcase',
+        unnamed : 'Unnamed testcase @ {0}',
+        deleteConfirm : 'Are you sure to delete this testcase ?',
+        addNode : 'Add Node',
+        saveFailed : 'Failed to save testcase.',
+        saveSuccess : 'Testcase saved.',
+        deleteSuccess : 'Testcase has been deleted.',
+        contextMenuInput : 'Inputs',
+        contextMenuOutput : 'Outputs',
+        contextMenuRemove : 'Remove',
+        executeAll : 'Execute all testcases',
+        executeAllCurIndex : 'Executing',
+        executeFailed : 'Execute Failed',
+        executeTimeout : 'Execution timeout, Time : {0}ms',
+        executeSuccess : 'Execute Success',
+        executeSuccessMessage : 'Execution finished successfully, all validation are matched.',
+    },
+    
+    // Functional test node
+    functionalNode : {
+        Start : require('../functional/node/start/i18n/en.lang.js'),
+        Variable : require('../functional/node/variable/i18n/en.lang.js'),
+        ActHub : require('../functional/node/acthub/i18n/en.lang.js'),
+        Delay : require('../functional/node/delay/i18n/en.lang.js'),
+        Script : require('../functional/node/script/i18n/en.lang.js'),
+        If : require('../functional/node/if/i18n/en.lang.js'),
+        Loop : require('../functional/node/loop/i18n/en.lang.js'),
+        Directive : require('../functional/node/directive/i18n/en.lang.js'),
+        Read : require('../functional/node/read/i18n/en.lang.js'),
+        Expect : require('../functional/node/expect/i18n/en.lang.js'),
+        Done : require('../functional/node/done/i18n/en.lang.js'),
+    },
+
     editModal : {
         title : 'Testcase Edit',
         titleDefault : '{0} Testcase @ {1}',

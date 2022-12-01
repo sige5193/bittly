@@ -3,6 +3,10 @@ class Formatter {
      * @param {*} time 
      */
     static asDurationMS( time ) {
+        if ( undefined === time ) {
+            time = 0;
+        }
+        
         let ms = time % 1000;
         
         time = (time - ms) / 1000;

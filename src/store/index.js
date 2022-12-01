@@ -132,5 +132,16 @@ export default new Vuex.Store({
             context.commit('envVariablesSet', content);
             context.commit('envActivedIdSet', id);
         },
+
+        /**
+         * close all communicators
+         * @param {*} context 
+         */
+        async closeAllCommunicators ( context ) {
+            let coms = context.getters.communicators;
+            for ( let comKey in coms ) {
+                await coms[comKey].close();
+            }
+        }
     },
 })

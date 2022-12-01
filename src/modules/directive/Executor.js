@@ -39,6 +39,11 @@ export default class Executor {
          * @property {Buffer}
          */
         this.responseBuffer = null;
+        /**
+         * the cursor where to start reading
+         * @property {Number}
+         */
+        this.responseReadCursor = 0;
     }
 
     /**
@@ -151,4 +156,23 @@ export default class Executor {
     getResponseAsForm() {
         return new ResponseFormParser(this.directive, this.responseBuffer);
     }
+
+    setCursor( pos ) {
+        this.responseReadCursor = pos;
+    }
+    moveCursor( offset ) {
+        this.responseReadCursor += offset * 1;
+    }
+    read(length) {
+        if ( this.responseReadCursor >= this.responseBuffer.length ) {
+            return Buffer.alloc(0);
+        }
+
+        return this.responseBuffer.slice(
+            this.responseReadCursor,
+            this.responseReadCursor+length
+        );
+    }
+
+    write(data) {}
 }

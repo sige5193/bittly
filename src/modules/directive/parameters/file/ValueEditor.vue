@@ -9,16 +9,17 @@
     >
       <a-button> <a-icon type="file" /> {{$t('directive.parameter.file.select')}} </a-button>
     </a-upload>
-    <span class="ml-2">{{filepath}}</span>
+    <span class="ml-2">{{file.path}}</span>
   </div>
 </template>
 <script>
+import MyObject from '../../../../utils/datatype/MyObject';
 export default {
     name : 'DirectiveParamValueEditorFile',
     props : ['value'],
     data() {
         return {
-            filepath : null,
+            file : {},
         };
     },
     mounted() {
@@ -29,9 +30,9 @@ export default {
          * init vmodel
          */
         initVModel() {
-            this.filepath = this.value;
-            if ( 'string' != typeof(this.value) ) {
-                this.filepath = '';
+            this.file = this.value;
+            if ( null === this.file ) {
+                this.file = {};
             }
         },
 
@@ -39,8 +40,10 @@ export default {
          * update v-model
          */
         actionFileChanged(info) {
-            this.filepath = info.file.path;
-            this.$emit('input', this.filepath);
+            this.file.path = info.file.path;
+            this.file.sendMode = 'All';
+            this.$emit('input', MyObject.copy(this.file));
+            this.$forceUpdate();
         }
     }
 }

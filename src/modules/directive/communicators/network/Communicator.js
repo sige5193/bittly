@@ -116,12 +116,11 @@ export default class Communicator extends CommunicatorBase {
         let $this = this;
         return new Promise(( resolve ) => {
             if ( 'TCP' == $this.options.protocol ) {
-                $this.connection.end();
                 $this.connection.destroy();
+                resolve();
             } else if ( 'UDP' == $this.options.protocol ) {
-                $this.connection.close();
+                $this.connection.close(() => resolve());
             }
-            resolve();
         });
     }
 
