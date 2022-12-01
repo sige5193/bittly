@@ -5,6 +5,7 @@ module.exports = {
     execStatus : 'Status',
     message : 'Message',
     buttonStart : 'Start',
+    buttonStop : 'Stop',
     beforeScript : 'Before script',
     afterScript : 'After script',
     requestParams : 'Request Params',
@@ -33,6 +34,13 @@ module.exports = {
         title : 'Unit',
         executeAllCurIndex : 'Executing',
         executeAll : 'Execute all testcases',
+        totalCount : 'Total',
+        successCount : 'Success',
+        failedCount : 'Failed',
+        duration : 'Duration',
+        interval : 'Interval',
+        count : 'Count',
+        executeRepeatedly : 'Execute Repeatedly',
     },
 
     // functional test

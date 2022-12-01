@@ -5,6 +5,7 @@ module.exports = {
     execStatus : '状态',
     message : '消息',
     buttonStart : '开始',
+    buttonStop : '停止',
     beforeScript : '预执行脚本',
     afterScript : '后执行脚本',
     requestParams : '请求参数',
@@ -33,6 +34,13 @@ module.exports = {
         title : '单元测试',
         executeAllCurIndex : '正在执行',
         executeAll : '执行所有测试用例',
+        totalCount : '次数',
+        successCount : '成功',
+        failedCount : '失败',
+        duration : '耗时',
+        interval : '间隔',
+        count : '次数',
+        executeRepeatedly : '重复执行',
     },
 
     // functional

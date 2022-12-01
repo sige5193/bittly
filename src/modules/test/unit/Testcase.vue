@@ -112,15 +112,15 @@
                 :ok-text="$t('button.yes')"
                 :cancel-text="$t('button.no')"
                 @confirm="actionDelete"
-              ><a-button type="danger"><a-icon type="delete" /></a-button></a-popconfirm>
-              &nbsp;
-              <a-button @click="actionEdit"><a-icon type="edit" /></a-button>
-              &nbsp;
-              <a-button ref="btnExecute" type="primary" @click="actionExecute"><a-icon type="play-circle" /></a-button>
+              ><a-button type="danger" class="mr-1"><a-icon type="delete" /></a-button></a-popconfirm>
+              <a-button @click="actionEdit" class="mr-1"><a-icon type="edit" /></a-button>
+              <a-button ref="btnExecute" type="primary" class="mr-1" @click="actionExecute"><a-icon type="play-circle" /></a-button>
+              <a-button type="primary" @click="actionExecuteRepeatedly"><a-icon type="sync" /></a-button>
             </a-col>
           </a-row>
         </div>
-        <modal-testcase-edit ref="modalTestcaseEdit"></modal-testcase-edit>
+        <modal-testcase-edit ref="modalTestcaseEdit" />
+        <modal-execute-repeatedly ref="modalExecuteRepeatedly"/>
       </div>
     </div>
   </a-spin>
@@ -130,13 +130,14 @@ import DataComparator from '../DataComparator.js'
 import DirectiveScriptExecutor from '../../directive/script/Executor.js'
 import Common from '../../../utils/Common.js'
 import DirectiveExecutor from '../../directive/Executor.js'
-import Formatter from '../../../utils/Formatter.js'
 import TestcaseLibBittly from './TestcaseLibBittly.js'
 import ModalTestcaseEdit from './ModalTestcaseEdit.vue'
+import ExecuteRepeatedly from './ExecuteRepeatedly.vue'
 export default {
     name : 'TestcaseBlock',
     components : {
         'modal-testcase-edit' : ModalTestcaseEdit,
+        'modal-execute-repeatedly' : ExecuteRepeatedly,
     },
     props : {
         /**
@@ -201,6 +202,46 @@ export default {
          */
         async actionExecute() {
             await this.execute();
+        },
+        
+        /**
+         * execute testcase repeatedly
+         */
+        actionExecuteRepeatedly() {
+            this.$refs.modalExecuteRepeatedly.open(this);
+        },
+
+        /**
+         * execute testcase quietly
+         * @returns {Boolean}
+         */
+        async executeQuietly() {
+            // execute before script
+            let isBeforeScriptSuccessed = await this.executeScript(this.testcase.beforeScript,'before');
+            if ( !isBeforeScriptSuccessed ) {
+                return false;
+            }
+            
+            // execute directive
+            let executor = new DirectiveExecutor(this.directive);
+            executor.setCustomParams(this.testcase.paramFormat, this.testcase.params.value);
+            try {
+                await executor.execute();
+            } catch {
+                return false;
+            }
+
+            // check response
+            await Common.msleep(this.testcase.timeout);
+            let comparator = new DataComparator();
+            comparator.type = this.testcase.expectFormat;
+            comparator.executor = executor;
+            comparator.expectData = this.testcase.expect.value;
+            let isSuccess = comparator.compare();
+
+            // execute after script.
+            await this.executeScript(this.testcase.afterScript, 'after');
+            return isSuccess;
         },
 
         /**
