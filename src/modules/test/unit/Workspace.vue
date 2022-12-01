@@ -20,11 +20,8 @@
       <!-- testcase list -->
       <div class="flex-grow overflow-y-auto">
         <a-empty v-if="0 == testcases.length" :description="false" class="mt-5" />
-        <testcase ref="testcase"
-          v-for="(testcase,index) in testcases" :key="index"
-          :index="index"
-          :testcase="testcase"
-          :directive="directive"
+        <testcase ref="testcase" v-for="(testcase,index) in testcases" :key="index"
+          :index="index" :testcase="testcase" :directive="directive"
           @testcase-delete="actionTestcaseDelete"
         ></testcase>
       </div>
@@ -123,7 +120,12 @@ export default {
                     isAllPassed = false;
                     break;
                 }
-                let isPassed = await executor.execute();
+                let isPassed = false;
+                try {
+                    isPassed = await executor.execute(true);
+                } catch ( e ) {
+                    isPassed = false;
+                }
                 result.testcases.push({testcase:executor.testcase,success:isPassed});
                 isAllPassed = isAllPassed && isPassed;
             }
@@ -138,7 +140,16 @@ export default {
          * execute all the testcases of current directive
          */
         async actionExecCasesOfThisDirective() {
-            await this.execute();
+            this.isExecuting = true;
+            let testcases = this.$refs.testcase || [];
+            for ( let i=0; i<testcases.length; i++ ) {
+                let executor = testcases[i];
+                if ( this.isDestroying ) {
+                    break;
+                }
+                await executor.execute();
+            }
+            this.isExecuting = false;
         },
 
         /**

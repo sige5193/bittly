@@ -44,6 +44,12 @@ export default {
             mode : 'functional',
         };
     },
+    /**
+     * 
+     */
+    async beforeDestroy() {
+        await this.$store.dispatch('closeAllCommunicators');
+    },
     methods : {
         /**
          * get workspace component

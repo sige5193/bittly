@@ -54,8 +54,7 @@
                   <small class="ml-1">[{{$t(`directive.parameter.form.dataType.${param.type}`)}}]</small> : 
                   <a-tag>
                     {{$t(`test.editModal.comparator${param.comparator}`)}}
-                    {{param.prefix}}
-                    {{param.value}}
+                    {{param.prefix}}{{param.value}}
                   </a-tag>
                 </div>
               </template>
@@ -87,7 +86,7 @@
                     <span v-if="0 < param.name.trim().length">{{param.name}}</span>
                     <span v-else>${{aindex}}</span>
                     <small class="ml-1">[{{$t(`directive.parameter.form.dataType.${param.type}`)}}]</small> : 
-                    <a-tag :color="resultFormItemMatches[aindex].isSame ? '' : 'red'">
+                    <a-tag :color="resultFormItemMatches[aindex] ? '' : 'red'">
                       {{param.prefix}}{{result.getValueByIndex(aindex)}}
                       {{$t(`test.editModal.comparator${param.comparator}`)}}
                       {{param.prefix}}{{param.value}}
@@ -103,11 +102,8 @@
         <div>
           <a-row>
             <a-col :span="12">
-              <a-input 
-                :addon-before="$t('test.timeout')" 
-                :value="testcase.timeout" 
-                style="width:150px;"
-                disabled
+              <a-input :addon-before="$t('test.timeout')" disabled
+                :value="testcase.timeout" style="width:150px;"
               />
             </a-col>
             <a-col :span="12" class="text-right">
@@ -130,6 +126,7 @@
   </a-spin>
 </template>
 <script>
+import DataComparator from '../DataComparator.js'
 import DirectiveScriptExecutor from '../../directive/script/Executor.js'
 import Common from '../../../utils/Common.js'
 import DirectiveExecutor from '../../directive/Executor.js'
@@ -209,11 +206,8 @@ export default {
         /**
          * execute this testcase
          */
-        async execute() {
-            if ( 'test' !== window.envName ) {
-                console.log('[module test] exec testcase ', this.testcase.title);
-            }
-            
+        async execute( throwError=false ) {
+            console.log('[module test] exec testcase ', this.testcase.title);
             this.resultStatus = 'processing';
             this.result = null;
 
@@ -230,30 +224,34 @@ export default {
             } catch ( e ) {
                 console.log('testcase execute directive failed',e);
                 this.resultStatus = 'error';
-                let message = ('string' == typeof(e)) ? e : e.message;
-                this.$message.error(this.$t('test.directiveExecutorError',[message]));
-                return false;
+                await this.$store.dispatch('closeAllCommunicators');
+                if ( throwError ) {
+                    throw e;
+                } else {
+                    let message = ('string' == typeof(e)) ? e : e.message;
+                    this.$message.error(this.$t('test.directiveExecutorError',[message]));
+                    return false;
+                }
             }
             
             await Common.msleep(this.testcase.timeout);
 
-            if ( 'text' == this.testcase.expectFormat ) {
-                this.result = executor.getResponseAsString();
-                this.resultCompareString();
-            } else if ( 'hex' == this.testcase.expectFormat ) {
-                this.result = executor.getResponseAsBytes();
-                this.result = Formatter.asHexString(this.result);
-                this.resultCompareHex();
-            } else if ( 'form' == this.testcase.expectFormat ) {
-                this.result = executor.getResponseAsForm();
-                this.resultCompareForm();
-            } else {
-                this.$message.error(this.$t('test.testcaseResponseFormatEmpty'));
-            }
-            
+            let comparator = new DataComparator();
+            comparator.type = this.testcase.expectFormat;
+            comparator.executor = executor;
+            comparator.expectData = this.testcase.expect.value;
+            let isSuccess = comparator.compare();
+
             await this.executeScript(this.testcase.afterScript, 'after');
+            this.resultFormItemMatches = comparator.matchResult;
+            this.resultStatus = isSuccess ? 'success' : 'error';
             
-            let isSuccess = this.resultStatus == 'success';
+            this.result = comparator.actualData;
+            if ( 'hex' == this.testcase.expectFormat ) {
+                this.result = Common.convertBufferToHexString(this.result);
+            }
+
+            await this.$store.dispatch('closeAllCommunicators');
             return isSuccess;
         },
 
@@ -305,96 +303,6 @@ export default {
             let message = 'string' === typeof(exception) ? exception : exception.message;
             let content = this.$t(`test.${type}ScriptExecuteFailed`,[message]);
             this.$error({title: this.$t('messages.dialogTitle.error'), content: content});
-        },
-
-        /**
-         * compare result with format string handler
-         */
-        resultCompareString() {
-            let isSame = this.testcase.expect.value == this.result;
-            this.resultStatus = isSame ? 'success' : 'error';
-        },
-
-        /**
-         * compare result with format hex handler
-         */
-        resultCompareHex() {
-            if ( undefined == this.testcase.expect.value ) {
-                this.resultStatus = 'error';
-                return ;
-            }
-
-            let expect = this.testcase.expect.value.replaceAll(/\s/g,'');
-            let actual = this.result.replaceAll(/\s/g,'');
-            let isSame = expect == actual;
-            this.resultStatus = isSame ? 'success' : 'error';
-        },
-
-        /**
-         * comparent result with format form handler
-         */
-        resultCompareForm() {
-            if ( undefined == this.testcase.expect.value ) {
-                this.resultStatus = 'error';
-                return ;
-            }
-
-            let isSame = true;
-            this.resultFormItemMatches = [];
-            for ( let i=0; i<this.testcase.expect.value.length; i++ ) {
-                let isMatched = this.resultCompareFormItem(i);
-                this.resultFormItemMatches[i] = {isSame:isMatched};
-                isSame = isSame && isMatched;
-            }
-            this.resultStatus = isSame ? 'success' : 'error';
-        },
-
-        /**
-         * compare form item
-         * @param {Number} index
-         * @returns {Boolean}
-         */
-        resultCompareFormItem(index) {
-            let expect = this.testcase.expect.value[index];
-            let expectValue = expect.value;
-            let actualValue = this.result.getValueByIndex(index);
-            if ( undefined == actualValue ) {
-                return false;
-            }
-
-            if ( this.$dict.match('DIRECTIVE_PARAM_DATATYPE','BYTES', expect.type) ) {
-                expectValue = expectValue.replaceAll(/\s/g,'');
-                actualValue = actualValue.replaceAll(/\s/g,'');
-            }
-
-            // raw compare (string)
-            switch( expect.comparator ) {
-            case 'Ignore' : return true;
-            case 'Equal'  : return expectValue === actualValue;
-            case 'NotEqual' : return expectValue !== actualValue;
-            case 'Contains' : return -1 != actualValue.indexOf(expectValue);
-            case 'NotContains' : return -1 == actualValue.indexOf(expectValue);
-            }
-
-            // convert to number and compare
-            let expectNumber = expectValue * 1;
-            let actualNumber = actualValue * 1;
-            switch ( expect.comparator ) {
-            case 'Greater' : return actualNumber > expectNumber;
-            case 'GreaterOrEqual' : return actualNumber >= expectNumber;
-            case 'Less' : return actualNumber < expectNumber;
-            case 'LessOrEqual' : return actualNumber <= expectNumber;
-            }
-
-            // handle between 
-            let expectRang = expectValue.split(',');
-            switch ( expect.comparator ) {
-            case 'Between' : return actualNumber >= expectRang[0] && actualNumber <= expectRang[1];
-            case 'NotBetween' : return actualNumber < expectRang[0] || actualNumber > expectRang[1];
-            }
-
-            // unable to handle the comparation
-            return false;
         },
 
         /**

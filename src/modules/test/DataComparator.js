@@ -85,7 +85,6 @@ export default class DataComparator {
      * compare result with format hex handler
      */
     compareHex() {
-        debugger
         let expectData = Common.convertStringToHex(this.expectData);
         let length = Math.max(expectData.length, this.actualData.length);
         
