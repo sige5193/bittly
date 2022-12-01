@@ -42,6 +42,7 @@
     "jest-css-modules": "^2.1.0",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.5.23",
+    "litegraph.js": "^0.7.10",
     "modbus-serial": "git+https://git.sigechen.com/sige/node-modbus-serial.git",
     "mqtt": "^4.3.7",
     "serialport": "^10.3.0",
