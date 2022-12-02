@@ -29,6 +29,19 @@ export default class WorkspaceGraph extends LGraph {
     }
 
     /**
+     * add node to graph
+     * @override
+     * @param {*} node 
+     * @param {*} skip_compute_order 
+     */
+    add(node, skip_compute_order) {
+        if ( node.beforeAdded && !node.beforeAdded(this)) {
+            return ;
+        }
+        super.add(node, skip_compute_order);
+    }
+
+    /**
      * update node context menu
      * @param {*} options 
      * @param {*} node 

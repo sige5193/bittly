@@ -42,10 +42,11 @@
   </div>
 </template>
 <script>
+import Common from '../../../utils/Common.js'
 import ProjectMixin from '../../../utils/ProjectMixin.js'
 import NodeRegistry from './node/NodeRegistry.vue'
 import WorkspaceGraph from './WorkspaceGraph.js'
-import {LGraphCanvas} from 'litegraph.js'
+import {LGraphCanvas,LiteGraph} from 'litegraph.js'
 import MdbFunctionalTestcase from '../../../models/MdbFunctionalTestcase.js'
 import MyDate from '../../../utils/datatype/MyDate.js'
 require('litegraph.js/css/litegraph.css')
@@ -89,13 +90,12 @@ export default {
     },
     mounted() {
         this.initWorkspace();
-        window.workspace = this;
     },
     methods : {
         /**
          * init workspace
          */
-        initWorkspace() {
+        async initWorkspace() {
             this.graphCanvas = new LGraphCanvas(this.$refs.graphCanvas, this.graph, {autoresize:true});
             this.graphCanvas.background_image = false;
             this.graphCanvas.render_canvas_border = false;
@@ -111,7 +111,8 @@ export default {
             testcase.projectId = this.curProjectId;
             testcase.title = this.$t('test.functional.unnamed',[MyDate.formatAsShortKey(null)]);
             this.openTestcase(testcase);
-            setTimeout(()=>this.graphCanvas.resize(),100);
+            await Common.msleep(100);
+            this.graphCanvas.resize();
         },
         
         /**
@@ -122,6 +123,11 @@ export default {
             this.testcase = testcase;
             let content = JSON.parse(testcase.content);
             this.graph.configure(content);
+            if ( testcase.isNew ) {
+                let startNode = LiteGraph.createNode('Start');
+                startNode.pos = this.graphCanvas.ds.convertCanvasToOffset([100, 100]);
+                this.graph.add(startNode);
+            }
         },
         
         /**
