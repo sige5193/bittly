@@ -7,4 +7,6 @@ module.exports = {
     executorNotAvailable : '无法执行写入操作，执行器无效',
     modeText : '文本',
     modeHex : 'HEX',
+    unnamed : '未命名',
+    title : '标题',
 };

@@ -19,7 +19,7 @@
           <a-select-option value="Lines">{{$t('test.functionalNode.Read.modeLines')}}</a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item :label="$t('test.functionalNode.Read.length')">
+      <a-form-item v-if="-1 == ['AllChars','AllBytes'].indexOf(options.mode)" :label="$t('test.functionalNode.Read.length')">
         <a-input v-model="options.length"/>
       </a-form-item>
       <a-form-item :label="$t('test.functionalNode.Read.timeout')">

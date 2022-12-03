@@ -25,6 +25,8 @@ export default class Node extends NodeBase{
             null,
             () => this.onBtnSettingClicked(this)
         );
+
+        this.onOptionUpdate();
     }
     
     /**
@@ -41,9 +43,18 @@ export default class Node extends NodeBase{
      */
     getInitOptions() {
         return {
+            title : '',
             mode : 'text',
             content : '',
         };
+    }
+
+    /**
+     * handler on option updated
+     */
+    onOptionUpdate() {
+        this.title = `${this.$t('name')} : ${this.$t('unnamed')}`;
+        this.refresh();
     }
     
     /**

@@ -47,7 +47,7 @@ export default class Node extends NodeBase{
     getInitOptions() {
         return {
             title : this.$t('unnamed'),
-            mode : 'all',
+            mode : 'AllChars',
             length : 1,
             timeout : 1000,
         };

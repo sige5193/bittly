@@ -7,4 +7,6 @@ module.exports = {
     executorNotAvailable : 'Unable to execute "Write" node, executor is not available.',
     modeText : 'TEXT',
     modeHex : 'HEX',
+    unnamed : 'Unnamed',
+    title : 'Title',
 };

@@ -6,7 +6,11 @@
     @cancel="actionCancel" 
     @ok="actionOk"
   >
-    <a-form :label-col="{ span: 5 }" :wrapper-col="{ span: 17 }">
+    <a-form :label-col="{ span: 3 }" :wrapper-col="{ span: 20 }">
+      <a-form-item :label="$t('test.functionalNode.Write.title')" labelAlign="left">
+        <a-input v-model="options.title"/>
+      </a-form-item>
+
       <a-radio-group v-model="options.mode" button-style="solid">
         <a-radio-button value="hex">{{$t('test.functionalNode.Write.modeHex')}}</a-radio-button>
         <a-radio-button value="text">{{$t('test.functionalNode.Write.modeText')}}</a-radio-button>
