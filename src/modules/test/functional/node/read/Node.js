@@ -15,6 +15,7 @@ export default class Node extends NodeBase{
         this.addInput(this.$t('execute'), LiteGraph.EVENT);
         this.addInput(this.$t('executor'), 'string');
         this.addOutput(this.$t('execute'), LiteGraph.EVENT);
+        this.addOutput(this.$t('executor'), 'string');
         this.addOutput(this.$t('data'),'string');
 
         this.size = [120,30];
@@ -27,6 +28,8 @@ export default class Node extends NodeBase{
             null,
             () => this.onBtnSettingClicked(this)
         );
+
+        this.onOptionUpdate();
     }
     
     /**
@@ -43,35 +46,87 @@ export default class Node extends NodeBase{
      */
     getInitOptions() {
         return {
-            mode : 'lines',
+            title : this.$t('unnamed'),
+            mode : 'all',
             length : 1,
             timeout : 1000,
         };
     }
     
     /**
+     * handler on option updated
+     */
+    onOptionUpdate() {
+        this.title = `${this.$t('name')} : ${this.$t('unnamed')}`;
+        this.refresh();
+    }
+
+    /**
      * execute node action
      * @override
      */
     async action() {
         await Common.msleep(this.options.timeout);
-
+        
+        debugger
         let executor = this.getInputData(1);
         if ( ! ( executor instanceof DirectiveExecutor) ) {
             throw Error(this.$t('executorNotAvailable'));
         }
         
         let data = null;
-        if ( 'lines' === this.options.mode ) {
-            data = this.readLines(executor);
-        } else if ( 'bytes' === this.options.mode ) {
-            data = this.readBytes(executor);
-        }
+        let readHandler = `read${this.options.mode}`;
+        data = this[readHandler](executor);
 
-        this.setOutputData(1, data);
+        this.setOutputData(1, executor);
+        this.setOutputData(2, data);
         this.triggerSlot(0);
     }
 
+    /**
+     * read all as text
+     * @param {DirectiveExecutor} executor 
+     */
+    readAllChars(executor) {
+        let data = executor.read(null);
+        executor.moveCursor(data.length);
+        data = data.toString();
+        return data;
+    }
+
+    /**
+     * read all as bytes
+     * @param {DirectiveExecutor} executor 
+     */
+    readAllBytes(executor) {
+        let data = executor.read(null);
+        executor.moveCursor(data.length);
+        data = data.toString('hex').toUpperCase();
+        return data;
+    }
+
+    /**
+     * read chars from executor
+     * @param {*} executor 
+     * @returns 
+     */
+    readChars(executor) {
+        let bytes = [];
+        let length = this.options.length;
+        for ( let i=0; i<length; i++ ) {
+            let char = executor.read(1);
+            if ( 0 == char.length ) {
+                break;
+            }
+            char = char[0];
+            bytes.push(char);
+            executor.moveCursor(1);
+        }
+        let buffer = Buffer.from(bytes);
+        let text = buffer.toString();
+        return text;
+    }
+ 
     /**
      * read bytes from executor
      * @param {*} executor 

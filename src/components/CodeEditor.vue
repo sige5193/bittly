@@ -81,11 +81,13 @@ export default {
         actionInput() {
             this.$emit('input', this.content);
             
-            let codemirror = this.$refs.editor.codemirror;
-            let cursor = codemirror.getCursor();
-            let token = codemirror.getTokenAt(cursor);
-            if ( token.string.match(/^[a-zA-Z0-9\\.\\$]+?$/) ) {
-                codemirror.showHint();
+            if ( 'javascript' === this.mode ) {
+                let codemirror = this.$refs.editor.codemirror;
+                let cursor = codemirror.getCursor();
+                let token = codemirror.getTokenAt(cursor);
+                if ( token.string.match(/^[a-zA-Z0-9\\.\\$]+?$/) ) {
+                    codemirror.showHint();
+                }
             }
         },
 

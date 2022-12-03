@@ -44,6 +44,10 @@ export default class Executor {
          * @property {Number}
          */
         this.responseReadCursor = 0;
+        /**
+         * @property {Object}
+         */
+        this.communicator = null;
     }
 
     /**
@@ -66,6 +70,7 @@ export default class Executor {
         await this.paramBuilder.init();
         this.paramBuilder.setCustomParams(this.customParamFormat, this.customParams);
         await communicator.write(this.paramBuilder.getRequestData());
+        this.communicator = communicator;
     }
 
     /**
@@ -168,11 +173,22 @@ export default class Executor {
             return Buffer.alloc(0);
         }
 
+        let endpos = this.responseReadCursor+length;
+        if ( null === length ) {
+            endpos = undefined;
+        }
+
         return this.responseBuffer.slice(
             this.responseReadCursor,
-            this.responseReadCursor+length
+            endpos
         );
     }
 
-    write(data) {}
+    /**
+     * write data to communicator
+     * @param {*} data 
+     */
+    async write(data) {
+        await this.communicator.write(data);
+    }
 }
