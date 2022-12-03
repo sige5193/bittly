@@ -9,6 +9,7 @@
     <node-directive-execution />
     <node-setting-read />
     <node-setting-expect />
+    <node-setting-write />
   </div>
 </template>
 <script>
@@ -20,6 +21,7 @@ import NodeSettingIf from './if/Setting.vue'
 import NodeSettingLoop from './loop/Setting.vue'
 import NodeSettingRead from './read/Setting.vue'
 import NodeSettingExpect from './expect/Setting.vue'
+import NodeSettingWrite from './write/Setting.vue'
 import NodeSettingDirective from './directive/Setting.vue'
 import NodeDirectiveExecution from './directive/Execution.vue'
 import NodeStart from './start/Node.js'
@@ -33,6 +35,7 @@ import NodeDirective from './directive/Node.js'
 import NodeRead from './read/Node.js'
 import NodeExpect from './expect/Node.js'
 import NodeDone from './done/Node.js'
+import NodeWrite from './write/Node.js'
 export default {
     components : {
         'node-setting-variable' : NodeVariableSetting,
@@ -44,6 +47,7 @@ export default {
         'node-directive-execution' : NodeDirectiveExecution,
         'node-setting-read' : NodeSettingRead,
         'node-setting-expect' : NodeSettingExpect,
+        'node-setting-write' : NodeSettingWrite,
     },
     props : {
         graph : {},
@@ -65,6 +69,7 @@ export default {
         LiteGraph.registerNodeType("If", NodeIf);
         LiteGraph.registerNodeType("Loop", NodeLoop);
         LiteGraph.registerNodeType("Read", NodeRead);
+        LiteGraph.registerNodeType("Write",NodeWrite);
         LiteGraph.registerNodeType("ActHub", NodeActHub);
         LiteGraph.registerNodeType("Done", NodeDone);
     },

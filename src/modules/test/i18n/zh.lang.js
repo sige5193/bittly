@@ -77,6 +77,7 @@ module.exports = {
         Read : require('../functional/node/read/i18n/zh.lang.js'),
         Expect : require('../functional/node/expect/i18n/zh.lang.js'),
         Done : require('../functional/node/done/i18n/zh.lang.js'),
+        Write : require('../functional/node/write/i18n/zh.lang.js'),
     },
 
     functionalFlowNodeExecuteDirective : '指令',
