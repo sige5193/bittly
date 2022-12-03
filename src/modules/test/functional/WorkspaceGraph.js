@@ -71,9 +71,10 @@ export default class WorkspaceGraph extends LGraph {
      * @returns {Promise}
      */
     executeStartNode( startNode ) {
+        let $this = this;
         return new Promise((resolve, reject) => {
-            this.execStartNodeResolve = resolve;
-            this.execStartNodeReject = reject;
+            $this.execStartNodeResolve = resolve;
+            $this.execStartNodeReject = reject;
             startNode.start();
         });
     }
@@ -82,19 +83,27 @@ export default class WorkspaceGraph extends LGraph {
      * execute nodes
      */
     async run(timeout) {
-        this.timeout = timeout;
-        this.execError = null;
-        this.execStartNodeReject = null;
-        this.execStartNodeResolve = null;
+        let startNode = null;
         let nodes = this.computeExecutionOrder(false);
-        this.execTimeoutTimer = setTimeout(()=>this.runTimeout(), timeout);
         for ( let i=0; i<nodes.length; i++ ) {
             let node = nodes[i];
             if ( !(node instanceof NodeStart) ) {
                 continue ;
             }
-            await this.executeStartNode(node);
+            startNode = node;
+            break;
         }
+        
+        if ( null === startNode ) {
+            throw Error(window.app.$t('test.functional.startNodeRequired'));
+        }
+
+        this.timeout = timeout;
+        this.execError = null;
+        this.execStartNodeReject = null;
+        this.execStartNodeResolve = null;
+        this.execTimeoutTimer = setTimeout(()=>this.runTimeout(), timeout);
+        await this.executeStartNode(startNode);
     }
 
     runTimeout() {

@@ -62,6 +62,7 @@ module.exports = {
         executeTimeout : '测试用例执行超时，配置超时时间 : {0}ms',
         executeSuccess : '验证通过',
         executeSuccessMessage : '测试用例执行完毕，所有验证成功执行。',
+        startNodeRequired : '测试流程需要【开始】节点来执行测试流程',
     },
 
     // Functional test

@@ -62,6 +62,7 @@ module.exports = {
         executeTimeout : 'Execution timeout, Time : {0}ms',
         executeSuccess : 'Execute Success',
         executeSuccessMessage : 'Execution finished successfully, all validation are matched.',
+        startNodeRequired : 'Start node is required to start the test flow.',
     },
     
     // Functional test node
