@@ -26,7 +26,8 @@ export default class Node extends NodeBase{
         // value viewer
         this.expectWidget = this.addWidget('text','','',()=>{},{disabled:true});
         this.expectWidget.disabled = true;
-
+        
+        this.onValidateFailed = () => {};
         this.onOptionUpdate();
     }
     
@@ -53,7 +54,12 @@ export default class Node extends NodeBase{
      * handler on option updated
      */
     onOptionUpdate() {
-        this.expectWidget.value = this.options.expectValue;
+        let expectValue = this.options.expectValue;
+        if ( 5 < expectValue.length ) {
+            expectValue = expectValue.substring(0, 5) + '...';
+        }
+
+        this.expectWidget.value = expectValue;
         this.expectWidget.name = this.$t(`validate${this.options.operator}`);
         this.refresh();
     }
@@ -63,6 +69,7 @@ export default class Node extends NodeBase{
      * @returns {void}
      */
     async onAction() {
+        debugger
         let actualValue = this.getInputData(1);
         let expectValue = this.options.expectValue;
 
@@ -74,12 +81,32 @@ export default class Node extends NodeBase{
         case 'GreaterOrEqual' : isValidate = actualValue >= expectValue; break;
         case 'LessThan' : isValidate = actualValue < expectValue; break;
         case 'LessOrEqual' : isValidate = actualValue <= expectValue; break;
+        default : {
+                let handler = `validate${this.options.operator}`;
+                isValidate = this[handler](expectValue,actualValue);
+                break;
+            }
         }
         
         if ( !isValidate ) {
-            return this.alert('error', this.$t('validateFailed'));
+            this.onValidateFailed({
+                operator : this.options.operator,
+                actual:actualValue, 
+                expect:expectValue
+            });
+            this.graph.error({message:this.$t('validateFailed'), isModalDisplayed:true});
         }
 
-        setTimeout(() => this.triggerSlot(0), 1);
+        this.triggerSlot(0);
+    }
+
+    /**
+     * validate by regex
+     * @param {*} expect 
+     * @param {*} actual 
+     */
+    validateRegex( expect, actual ) {
+        let regex = new RegExp(expect,'g');
+        return regex.test(actual);
     }
 }

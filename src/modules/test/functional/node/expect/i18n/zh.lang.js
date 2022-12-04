@@ -15,4 +15,6 @@ module.exports = {
     validateLessOrEqual : '小于等于',
     expectValue : '期待值',
     validateFailed : '验证失败',
+    validateRegex : '正则表达式',
+    actualValue : '实际值',
 };

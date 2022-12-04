@@ -26,6 +26,10 @@ export default class WorkspaceGraph extends LGraph {
          * @property {Number}
          */
         this.timeout = 0;
+        /**
+         * @property {Boolean}
+         */
+        this.isBatchMode = false;
     }
 
     /**
@@ -113,9 +117,12 @@ export default class WorkspaceGraph extends LGraph {
         this.error(window.app.$t('test.functional.executeTimeout',[this.timeout]));
     }
 
-    error(message) {
+    error(error) {
         clearTimeout(this.execTimeoutTimer);
-        this.execError = {message};
+        this.execError = {message:error};
+        if ( 'object' === typeof(error) ) {
+            this.execError = error;
+        }
         this.execStartNodeReject(this.execError);
     }
 

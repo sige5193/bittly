@@ -168,6 +168,7 @@ export default {
             let result = {};
             let start = new Date();
             try {
+                this.graph.isBatchMode = true;
                 await this.graph.run(this.testcase.timeout);
                 result.success = true;
                 result.message = '';
@@ -187,18 +188,22 @@ export default {
         async actionRun() {
             this.isExecuting = true;
             try {
+                this.graph.isBatchMode = false;
                 await this.graph.run(this.testcase.timeout);
+                await Common.msleep(1000);
                 this.$success({
                     title: this.$t('test.functional.executeSuccess'),
                     content: this.$t('test.functional.executeSuccessMessage'),
                     okText : this.$t('button.ok')
                 });
             } catch ( e ) {
-                this.$error({
-                    title: this.$t('test.functional.executeFailed'),
-                    content: e.message,
-                    okText : this.$t('button.ok')
-                });
+                if ( undefined == e.isModalDisplayed || false == e.isModalDisplayed ) {
+                    this.$error({
+                        title: this.$t('test.functional.executeFailed'),
+                        content: e.message,
+                        okText : this.$t('button.ok')
+                    });
+                }
             }
             this.isExecuting = false;
         },

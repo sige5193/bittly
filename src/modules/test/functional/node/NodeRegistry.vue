@@ -10,6 +10,7 @@
     <node-setting-read />
     <node-setting-expect />
     <node-setting-write />
+    <node-expect-failed />
   </div>
 </template>
 <script>
@@ -24,6 +25,7 @@ import NodeSettingExpect from './expect/Setting.vue'
 import NodeSettingWrite from './write/Setting.vue'
 import NodeSettingDirective from './directive/Setting.vue'
 import NodeDirectiveExecution from './directive/Execution.vue'
+import NodeExpectFailed from './expect/FailedModal.vue'
 import NodeStart from './start/Node.js'
 import NodeVariable from './variable/Node.js'
 import NodeActHub from './acthub/Node.js'
@@ -48,6 +50,7 @@ export default {
         'node-setting-read' : NodeSettingRead,
         'node-setting-expect' : NodeSettingExpect,
         'node-setting-write' : NodeSettingWrite,
+        'node-expect-failed' : NodeExpectFailed,
     },
     props : {
         graph : {},

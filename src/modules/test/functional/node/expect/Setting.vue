@@ -15,10 +15,11 @@
           <a-select-option value="GreaterOrEqual">{{$t('test.functionalNode.Expect.validateGreaterOrEqual')}}</a-select-option>
           <a-select-option value="LessThan">{{$t('test.functionalNode.Expect.validateLessThan')}}</a-select-option>
           <a-select-option value="LessOrEqual">{{$t('test.functionalNode.Expect.validateLessOrEqual')}}</a-select-option>
+          <a-select-option value="Regex">{{$t('test.functionalNode.Expect.validateRegex')}}</a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item :label="$t('test.functionalNode.Expect.expectValue')">
-        <a-input v-model="options.expectValue" />
+        <a-textarea v-model="options.expectValue" :rows="4" />
       </a-form-item>
     </a-form>
   </a-modal>
