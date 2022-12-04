@@ -10,10 +10,6 @@
     @change="actionChange"
     @select="actionSelect"
   ></a-tree-select>
-  <!-- <a-tree-select
-    @change="actionForceUpdate"
-    @select="actionDirectiveTreeSelectSelect"
-  ></a-tree-select> -->
 </template>
 <script>
 import { NIL as NIL_UUID } from 'uuid';
@@ -110,6 +106,7 @@ export default {
                     selectable : 'directive' === entries[i].type,
                     entry : entries[i],
                     value : entries[i].target,
+                    type : entries[i].type,
                 };
                 if ( 'folder' == entries[i].type ) {
                     item.value = `${entries[i].type}:${entries[i].target}`;
