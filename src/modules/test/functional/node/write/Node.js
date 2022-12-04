@@ -53,7 +53,7 @@ export default class Node extends NodeBase{
      * handler on option updated
      */
     onOptionUpdate() {
-        this.title = `${this.$t('name')} : ${this.$t('unnamed')}`;
+        this.title = `${this.$t('name')} : ${this.options.title}`;
         this.refresh();
     }
     
