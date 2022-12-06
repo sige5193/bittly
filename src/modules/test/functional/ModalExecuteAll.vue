@@ -161,6 +161,7 @@ export default {
             
             this.duration = (new Date()).getTime() - startTime;
             this.isExecuting = false;
+            await this.$store.dispatch('closeAllCommunicators');
         },
 
         /**
