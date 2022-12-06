@@ -15,6 +15,7 @@
           :min="0"
           :step="100"
           :formatter="value => `${value}ms`"
+          :parser="value => value.replace('ms', '')"
         />
         <a-popconfirm
           v-if="!testcase.isNew"
@@ -206,6 +207,7 @@ export default {
                 }
             }
             this.isExecuting = false;
+            await this.$store.dispatch('closeAllCommunicators');
         },
     },
 }
