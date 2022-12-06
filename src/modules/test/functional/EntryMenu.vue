@@ -10,14 +10,16 @@
     <!-- toolbar -->
     <div class="d-flex flex-dir-row p-1 border-top">
       <a-button class="mr-1" block @click="actionCreateNewTestcase">{{$t('test.functional.create')}}</a-button>
-      <a-dropdown>
+      <a-dropdown :trigger="['click']">
         <a-button><a-icon type="menu" /></a-button>
         <a-menu slot="overlay" @click="actionActionMenuItemClicked">
           <a-menu-item key="ExecuteAll">{{$t('test.functional.executeAll')}}</a-menu-item>
+          <a-menu-item key="Import">{{$t('test.functional.import')}}</a-menu-item>
         </a-menu>
       </a-dropdown>
     </div>
     <modal-execute-all ref="modalExecuteAll" :getWorkspace="getWorkspace" />
+    <modal-import ref="modalImport"/>
   </div>
 </template>
 <script>
@@ -25,11 +27,13 @@ import ProjectMixin from '../../../utils/ProjectMixin.js'
 import MdbFunctionalTestcase from '../../../models/MdbFunctionalTestcase.js'
 import MyDate from '../../../utils/datatype/MyDate.js';
 import ModalExecuteAll from './ModalExecuteAll.vue'
+import ModalImport from './ModalImport.vue'
 export default {
     name : 'TestFunctionEntryMenu',
     mixins : [ProjectMixin],
     components : {
         'modal-execute-all' : ModalExecuteAll,
+        'modal-import' : ModalImport,
     },
     props : {
         /**
@@ -72,6 +76,14 @@ export default {
                 this.activedIds.push(activeId);
             }
             this.$forceUpdate();
+        },
+
+        /**
+         * open testcase by given id
+         */
+        openTestcaseById( id ) {
+            let testcase = this.entries[id];
+            this.getWorkspace().openTestcase(testcase);
         },
 
         /**
@@ -119,6 +131,13 @@ export default {
          */
         handleActionMenuItemExecuteAll() {
             this.$refs.modalExecuteAll.open();
+        },
+
+        /**
+         * action handler for import
+         */
+        handleActionMenuItemImport() {
+            this.$refs.modalImport.open();
         }
     },
 }
