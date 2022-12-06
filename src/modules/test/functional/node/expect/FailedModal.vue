@@ -71,5 +71,5 @@ export default {
 }
 </script>
 <style scoped>
-.value-viewer {background: #d4d4d4;padding: 7px;border-radius: 5px;color: #5f5f5f;}
+.value-viewer {background: #d4d4d4;padding: 7px;border-radius: 5px;color: #5f5f5f;user-select: text;}
 </style>
