@@ -63,6 +63,12 @@ module.exports = {
         executeSuccess : 'Execute Success',
         executeSuccessMessage : 'Execution finished successfully, all validation are matched.',
         startNodeRequired : 'Start node is required to start the test flow.',
+        import : 'Import',
+        importFile : 'Import File',
+        importSelectFile : 'Select Import File',
+        importFileIsRequired : 'Please select import file',
+        importDirective : 'Operate Directive',
+        importSuccess : 'Import Successfully',
     },
     
     // Functional test node

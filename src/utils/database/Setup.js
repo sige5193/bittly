@@ -329,7 +329,8 @@ export default class Setup {
         require('../../migrations/m202209221423_insert_table_app_runtime_variables_set_project_actived_id.js'),
         require('../../migrations/m202209231534_insert_demo_data.js'),
         require('../../migrations/m202211212100_create_table_app_functional_testcases.js'),
-        require('../../migrations/m202211290850_alter_table_app_functional_testcases_add_timeout.js')
+        require('../../migrations/m202211290850_alter_table_app_functional_testcases_add_timeout.js'),
+        require('../../migrations/m202212051012_update_table_app_dictionary_update_charset_values.js'),
     ];
 
     /**

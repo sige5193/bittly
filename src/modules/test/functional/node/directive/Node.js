@@ -68,6 +68,7 @@ export default class Node extends NodeBase{
      */
     getInitOptions() {
         return {
+            title : '',
             directiveId : null,
             inputs : [],
             outputs : [],
@@ -86,7 +87,7 @@ export default class Node extends NodeBase{
     async onOptionUpdate() {
         if ( undefined !== this.options.directiveId ) {
             this.directive = await MdbDirective.findOne(this.options.directiveId);
-            this.title = `指令 ${this.directive.name}`;
+            this.title = `${this.$t('name')} ${this.options.title}`;
         }
         this.updateDataPinsByNameList('input', this.options.inputs);
         this.updateDataPinsByNameList('output', this.options.outputs);
@@ -114,7 +115,8 @@ export default class Node extends NodeBase{
             await executor.execute();
             this.executor = executor;
         } catch ( e ) {
-            return this.alert('error', this.$t('directiveError', e.message));
+            this.graph.error(this.$t('directiveError', [e.message]));
+            return ;
         }
         
         await Common.msleep(this.options.timeout);
@@ -123,6 +125,7 @@ export default class Node extends NodeBase{
         comparator.executor = this.executor;
         comparator.expectData = this.options.expectResponseValue;
         comparator.dataLength = this.options.expectDataLength;
+        comparator.textRegexEnable = this.options.expectResponseTextRegexEnable;
         let isSuccess = comparator.compare();
         
         this.comparator = comparator;
@@ -134,10 +137,16 @@ export default class Node extends NodeBase{
             this.setOutputData(2, this.executor);
             this.sendDataToOutputPins();
             this.triggerSlot(0);
-        } else {
-            this.log(`failed`);
-            this.triggerSlot(1);
+            return;
         }
+        
+        this.log(`failed`);
+        if ( null !== this.getOutputNodes(1) ) {
+            this.triggerSlot(1);
+            return ;
+        }
+        
+        this.graph.error(this.$t('responseValidateFailed',[this.directive.name]));
     }
 
     /**
@@ -186,7 +195,8 @@ export default class Node extends NodeBase{
                 let value = response.getReadableValueByName(name);
                 this.setOutputDataByName(name, value);
             }
-        } else if ( 'text' === this.options.expectResponseFormat ) {
+        } else if ( 'text' === this.options.expectResponseFormat 
+        && true === this.options.expectResponseTextRegexEnable) {
             let regex = new RegExp(`^${this.options.expectResponseValue}$`, 'gm');
             let match = regex.exec(response);
             if ( null != match && undefined != match.groups ) {

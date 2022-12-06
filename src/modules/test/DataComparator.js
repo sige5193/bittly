@@ -42,6 +42,10 @@ export default class DataComparator {
          * @property {Array}
          */
         this.matchResult = [];
+        /**
+         * @property {Boolean}
+         */
+        this.textRegexEnable = false;
     }
 
     /**
@@ -75,10 +79,14 @@ export default class DataComparator {
      * compare result with format string handler
      */
     compareText( ) {
-        this.matchResult = [];
-        let regex = new RegExp(`^${this.expectData}$`, 'gm');
-        let match = regex.exec(this.actualData);
-        return null != match;
+        if ( this.textRegexEnable ) {
+            this.matchResult = [];
+            let regex = new RegExp(`^${this.expectData}$`, 'gm');
+            let match = regex.exec(this.actualData);
+            return null != match;
+        } else {
+            return this.expectData == this.actualData;
+        }
     }
 
     /**

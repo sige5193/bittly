@@ -9,6 +9,13 @@
     @ok="actionOk"
   >
     <a-form :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
+      <!-- title -->
+      <a-form-item labelAlign="left" class="pl-3 pr-3 pt-3 mb-0"
+        :label="$t('test.functionalNode.Directive.title')" 
+      >
+        <a-input v-model="options.title"/>
+      </a-form-item>
+
       <!-- directive -->
       <a-form-item labelAlign="left" class="pl-3 pr-3 pt-3 mb-0"
         :label="$t('test.functionalNode.Directive.directive')" 
@@ -68,6 +75,15 @@
               :directive="directive"
               v-model="options.expectResponseValue"
             ></response-param-editor-form>
+            <div v-else-if="$dict.match('DIRECTIVE_PARAM_FORMAT','TEXT', options.expectResponseFormat)">
+              <request-param-editor-text 
+                v-model="options.expectResponseValue"
+                @change="actionExpectResponseValueChange"
+              />
+              <a-checkbox v-model="options.expectResponseTextRegexEnable">
+                {{$t('test.functionalNode.Directive.comparisonTextRegexEnable')}}
+              </a-checkbox>
+            </div>
             <component v-else :is="`request-param-editor-${options.expectResponseFormat}`"
               v-model="options.expectResponseValue"
               @change="actionExpectResponseValueChange"
@@ -188,6 +204,10 @@ export default {
         actionDirectiveTreeSelectSelect( directive ){
             this.directive = directive;
             this.options.parameterFormat = directive.requestFormat;
+            this.options.parameterValue = directive.requestContent[directive.requestFormat];
+            if ( 0 === this.options.title.trim().length ) {
+                this.options.title = directive.name;
+            }
             this.$forceUpdate();
         },
 
@@ -222,7 +242,7 @@ export default {
          * event handler on expect response value changed
          */
         actionExpectResponseValueChange() {
-            if ( 'text' === this.options.expectResponseFormat ) {
+            if ( 'text' === this.options.expectResponseFormat && this.options.expectResponseTextRegexEnable ) {
                 let outputs = [];
                 let regex = /\?<(?<name>.*?)>/gm;
                 let match = null;

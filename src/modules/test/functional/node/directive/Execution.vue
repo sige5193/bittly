@@ -113,11 +113,20 @@
             <div class="actual">{{byte.actual}}</div>
           </div>
         </div>
-        <div v-else-if="'text' == node.options.expectResponseFormat"
+        
+        <!-- compare text with regex mode enabled -->
+        <div v-else-if="'text' == node.options.expectResponseFormat && node.options.expectResponseTextRegexEnable"
           class="pre-content border rounded p-1"
         >
           <div>{{$t('test.functionalNode.Directive.comparisonTextRegex')}} : {{node.comparator.expectData}}</div>
           <div>{{$t('test.functionalNode.Directive.comparisonTextData')}} : {{getResponseTextContent()}}</div>
+        </div>
+        <!-- compare text without regex mode enabled -->
+        <div v-else-if="'text' == node.options.expectResponseFormat"
+          class="pre-content border rounded p-1"
+        >
+          <div>{{$t('test.functionalNode.Directive.expectResponseContent')}} : {{node.comparator.expectData}}</div>
+          <div>{{$t('test.functionalNode.Directive.actualResponseContent')}} : {{getResponseTextContent()}}</div>
         </div>
   
         <div class="mt-4 text-right">

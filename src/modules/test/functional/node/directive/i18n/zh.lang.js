@@ -30,4 +30,7 @@ module.exports = {
     comparisonResult : '结果',
     executor : '执行器',
     expectDataLength : '期待数据长度',
+    comparisonTextRegexEnable : '正则匹配',
+    responseValidateFailed : '指令【{0}】响应验证失败。',
+    title : '标题',
 };

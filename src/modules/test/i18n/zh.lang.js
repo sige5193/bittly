@@ -63,6 +63,12 @@ module.exports = {
         executeSuccess : '验证通过',
         executeSuccessMessage : '测试用例执行完毕，所有验证成功执行。',
         startNodeRequired : '测试流程需要【开始】节点来执行测试流程',
+        import : '导入',
+        importFile : '导入文件',
+        importSelectFile : '请选择导入文件',
+        importFileIsRequired : '请选择导入文件',
+        importDirective : '操作指令',
+        importSuccess : '导入成功',
     },
 
     // Functional test

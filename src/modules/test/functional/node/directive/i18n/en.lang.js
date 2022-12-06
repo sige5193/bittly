@@ -31,4 +31,6 @@ module.exports = {
     comparisonResult : 'Result',
     executor : 'Executor',
     expectDataLength : 'Expect Data Length',
+    responseValidateFailed : 'Directive "{0}" response validate failed.',
+    title : 'Title',
 };
