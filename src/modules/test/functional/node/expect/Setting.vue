@@ -19,7 +19,7 @@
         </a-select>
       </a-form-item>
       <a-form-item :label="$t('test.functionalNode.Expect.expectValue')">
-        <a-textarea v-model="options.expectValue" :rows="4" />
+        <a-textarea v-model="options.expectValue" :rows="4" auto-size/>
       </a-form-item>
     </a-form>
   </a-modal>
