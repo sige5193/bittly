@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-textarea 
+    <a-textarea auto-size
       ref="inputText"
       v-model="content" 
       :placeholder="$t('directive.parameter.text.editorPlaceholder')"
