@@ -35,11 +35,14 @@ class Dictionary {
     }
 
     /**
-     * 获取条目
-     * @param {*} group 
-     * @returns {array}
+     * get group items
+     * @param {String} group 
+     * @returns {Array<String>}
      */
     static getItems( group ) {
+        if ( undefined === Dictionary.dict[group] ) {
+            throw Error(`unable to get items from dictionary group "${group}"`);
+        }
         return Dictionary.dict[group].items;
     }
 
