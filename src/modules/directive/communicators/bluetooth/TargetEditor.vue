@@ -177,6 +177,8 @@ export default {
             this.bleHistoryServiceIds = await MdbRuntimeVariable.getVarValue('bluetooth_ble_history_service_ids',null);
             if ( null != this.bleHistoryServiceIds ) {
                 this.bleHistoryServiceIds = JSON.parse(this.bleHistoryServiceIds);
+            } else {
+                this.bleHistoryServiceIds = [];
             }
         },
 
