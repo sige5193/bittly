@@ -99,7 +99,7 @@ export default class Runtime {
      * refresh runtime and all the widgets
      */
     refresh() {
-        this.component.refresh();
+        this.component.refreshPanel();
         let widgets = this.component.$refs.widgets;
         for ( let i=0; i<widgets.length; i++ ) {
             widgets[i].refresh();

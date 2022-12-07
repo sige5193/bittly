@@ -145,7 +145,7 @@ export default {
         /**
          * refresh panel
          */
-        refresh() {
+        refreshPanel() {
             this.$forceUpdate();
             this.$refs.requestLogViewer.refresh();
         },
@@ -154,10 +154,7 @@ export default {
          * switch to edit mode
          */
         async actionModeSwitch() {
-            let coms = window.app.$store.getters.communicators;
-            for ( let comKey in coms ) {
-                await coms[comKey].close();
-            }
+            await this.$store.dispatch('closeAllCommunicators');
             this.$emit('switch-mode-to-edit');
         },
     },
