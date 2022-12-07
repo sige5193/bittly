@@ -68,13 +68,14 @@ export default {
     },
     async mounted() {
         await this.refreshPanels();
+        this.$log('done');
     },
+    /**
+     * hook handler before componment destroyed.
+     */
     async beforeDestroy() {
-        // close all communicators
-        let coms = this.$store.getters.communicators;
-        for ( let comKey in coms ) {
-            await coms[comKey].close();
-        }
+        await this.$store.dispatch('closeAllCommunicators');
+        this.$log('done');
     },
     methods : {
         /**

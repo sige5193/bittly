@@ -10,6 +10,7 @@ import store from './store/index.js'
 import i18n from './i18n/index.js'
 import VueThermometer from 'vuejs-thermometer'
 import BittlyApiClient from './utils/BittlyApiClient';
+import Logger from './utils/Logger.js'
 
 /**
  * send log message to main process console
@@ -37,6 +38,7 @@ Vue.use(Antd);
 Vue.use(VueCodeMirror);
 Vue.use(VueThermometer)
 
+Logger.setupVue(Vue);
 Dictionary.setupVue(Vue);
 BittlyApiClient.setupVue(Vue);
 window.app = new Vue({
