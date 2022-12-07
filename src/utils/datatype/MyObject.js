@@ -35,29 +35,27 @@ export default class MyObject {
      * @returns {Boolean}
      */
     static isEqual( objA, objB ) {
+        if ( typeof(objA) !== typeof(objB) ) {
+            return false;
+        }
+        if ( 'object' !== typeof(objA) ) {
+            return objA === objB;
+        }
+        if ( null === objA || null === objB ) {
+            return objA === objB;
+        }
+        
         let keysA = Object.keys(objA);
         let keysB = Object.keys(objB);
         if ( keysA.length != keysB.length ) {
             return false;
         }
-
+        
         for ( let key of keysA ) {
-            let datatype = typeof(objA[key]);
-            if ( datatype != typeof(objB[key]) ) {
+            if ( !MyObject.isEqual(objA[key], objB[key]) ) {
                 return false;
             }
-            
-            if ( 'object' === datatype ) {
-                if ( !MyObject.isEqual(objA[key], objB[key]) ) {
-                    return false;
-                }
-            } else {
-                if ( objA[key] !== objB[key] ) {
-                    return false;
-                }
-            }
         }
-
         return true;
     }
 }
