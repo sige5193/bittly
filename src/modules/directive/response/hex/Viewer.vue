@@ -175,14 +175,11 @@ export default {
          */
         pushContentLineData( address, data ) {
             this.lineNoCounter ++;
-
-            let colSize = this.hexOptions.colSize * 1;
-            let lineData = Buffer.concat([data, Buffer.alloc(colSize - data.length, 0)]);
-            
             let line = {};
             line.no = this.lineNoCounter;
-            line.data = lineData;
+            line.data = data;
             line.address = address;
+            line.colSize = this.hexOptions.colSize * 1;
             this.lines.push(line);
         },
 

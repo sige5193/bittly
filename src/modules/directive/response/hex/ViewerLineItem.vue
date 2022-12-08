@@ -8,20 +8,20 @@
     <a-col :span="22" class="d-flex flex-dir-row">
       <!-- hex -->
       <div class="line-hex border-right">
-        <span v-for="(byte, index) in source.data" :key="index" 
+        <span v-for="(byte, index) in hexList" :key="index" 
           class="directive-response-hex-byte" 
           :data-line="source.no" 
           :data-col="index"
-        >{{renderHex(byte)}}</span>
+        >{{byte}}</span>
       </div>
       
       <!-- text -->
       <div class="line-text">
-        <span v-for="(byte,index) in source.data" :key="index" 
+        <span v-for="(char,index) in charList" :key="index" 
           class="directive-response-hex-byte" 
           :data-line="source.no" 
           :data-col="index"
-          v-html="renderChar(byte)"
+          v-html="char"
         ></span>
       </div>
     </a-col>
@@ -46,7 +46,37 @@ export default {
        */
       lineNumberRadix : {type:String,default:'hex'},
     },
+    data() {
+        return {
+            hexList : [],
+            charList : [],
+        };
+    },
+    created() {
+        this.refreshContent();
+    },
     methods : {
+        /**
+         * refresh render content
+         */
+        refreshContent() {
+            this.hexList = [];
+            this.charList = [];
+            
+            // real bytes and chars
+            for ( let i=0; i<this.source.data.length; i++ ) {
+                this.hexList.push(this.renderHex(this.source.data[i]));
+                this.charList.push(this.renderChar(this.source.data[i]));
+            }
+
+            // placeholders
+            let blankLen = this.source.colSize - this.source.data.length;
+            for ( let i=0; i<blankLen; i++ ) {
+                this.hexList.push('--');
+                this.charList.push('.');
+            }
+        },
+
         /**
          * convert byte number to hex string 
          * @returns {String}
