@@ -108,6 +108,23 @@ export default {
                 callback: LGraphCanvas.onMenuAdd
             }];
 
+            this.graphCanvas.adjustMouseEvent = function(e) {
+                if (this.canvas) {
+                    var b = this.canvas.getBoundingClientRect();
+                    e.localX = e.clientX - b.left;
+                    e.localY = e.clientY - b.top;
+                } else {
+                    e.localX = e.clientX;
+                    e.localY = e.clientY;
+                }
+
+                this.last_mouse_position[0] = e.localX;
+                this.last_mouse_position[1] = e.localY;
+
+                e.canvasX = e.localX / this.ds.scale - this.ds.offset[0];
+                e.canvasY = e.localY / this.ds.scale - this.ds.offset[1];
+            };
+
             let testcase = new MdbFunctionalTestcase();
             testcase.projectId = this.curProjectId;
             testcase.title = this.$t('test.functional.unnamed',[MyDate.formatAsShortKey(null)]);
