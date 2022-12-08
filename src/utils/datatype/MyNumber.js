@@ -16,11 +16,11 @@ class MyNumber {
      * @param {String} radix 
      * @returns {Number}
      */
-    static parseNumberByRadixName( value, radix ) {
+    static parseNumberByRadixName( value, radix, bigInt=false ) {
         let prefixMap = {bin:'0b',oct:'0o',dec:'',hex:'0x'};
         let number = `${prefixMap[radix]}${value}`;
         number = number.replace(/\s/g,'');
-        return Number(number);
+        return bigInt ? BigInt(number) : Number(number);
     }
 
     /**

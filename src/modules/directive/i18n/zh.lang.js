@@ -76,6 +76,9 @@ module.exports = {
             propValueMustBeAnInstanceOfMdbDirective : '属性 v-model 的值必须是一个 MdbDirective 实例',
             preserveFieldFilter : '属性过滤',
             dataTypeLabel : '数据类型',
+            dataTypeBitsLength : '位数',
+            dataTypeBitsOverLenght : '位组(bits)取值 [{0}] 超出指定长度 [{1}]',
+            dataTypeBitsNotMatchToByte : '位组(bits)数据拼装长度必须为8的整数倍',
             dataType : {
                 byte : '字节 (uint8)',
                 char_int : '单字节整型 (int8)',
@@ -94,6 +97,7 @@ module.exports = {
                 string : '字符串',
                 bytes : '字节组',
                 file : '文件',
+                bits : '位组(bits)'
             },
         },
         hex : {

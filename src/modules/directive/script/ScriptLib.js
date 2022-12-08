@@ -90,17 +90,15 @@ export default class ScriptLib {
      * @returns {Buffer}
      */
     generateCRCData( data ) {
-        let calDataBuffers = [];
+        let items = [];
         for ( let i=0; i<data.length; i++ ) {
             let item = data[i];
             if ( 'string' == typeof(item) ) {
                 item = {type : 'string', value : item};
             }
-            let buffer = FormBuildHandler.convertFormItemToBin(this.directive, item);
-            calDataBuffers.push(buffer);
+            items.push(item);
         }
-
-        return Buffer.concat(calDataBuffers);
+        return FormBuildHandler.packItemsToBuffer(this.directive, items);
     }
 
     /**

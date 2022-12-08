@@ -24,19 +24,29 @@
       
       <!-- field type -->
       <div slot="type" slot-scope="text, record, index">
-        <a-select size="small" class="w-100 border-none"
+        <a-select size="small" class="border-none"
+          :class="{'w-100':('bits'!==record.type),'w-80':('bits'===record.type)}"
           v-model="fields[index]['type']" 
           :ref="`selectDataType_${index}`"
           :tab-index="index*1000+2"
           :dropdownMatchSelectWidth="false"
           @change="actionTypeChange(index, $event)"
         >
-          <a-select-option 
-            v-for="(item, itemKey) in $dict.items('DIRECTIVE_PARAM_DATATYPE')"
-            :key="itemKey"
-            :value="item.value"
-          >{{ $t(`directive.parameter.form.dataType.${item.value}`)}}</a-select-option>
+          <a-select-option v-for="dataType in dataTypes"
+            :key="dataType" :value="dataType"
+          >{{ $t(`directive.parameter.form.dataType.${dataType}`)}}</a-select-option>
         </a-select>
+
+        <!-- bits length -->
+        <div class="w-20 pl-1 d-inline-block" v-if="$dict.match('DIRECTIVE_PARAM_DATATYPE','BITS',record.type)">
+          <a-input-number size="small" v-model="fields[index]['length']"
+            class="w-100 border-none"
+            :min="1"
+            :placeholder="$t('directive.parameter.form.dataTypeBitsLength')"
+            :ref="`inputDataLength_${index}`"
+            @change="actionDataLengthInput(index)"
+          />
+        </div>
       </div>
       
       <!-- field value -->
@@ -236,6 +246,15 @@ export default {
              * @property {Array<Object>}
              */
             valueAutoCompleteItems : [],
+            /**
+             * list of data type names
+             * @property {Array<String>}
+             */
+            dataTypes : [
+                'bits','byte','char_int','char','unsigned_char','short','unsigned_short',
+                'int','unsigned_int','long','unsigned_long','long_long','unsigned_long_long',
+                'float','double','string','bytes','file'
+            ],
         };
     },
     provide() {
@@ -248,7 +267,7 @@ export default {
         tableColumns() {
             return [
                 {title: this.$t('directive.parameter.form.fieldName'), dataIndex: 'name',scopedSlots: { customRender: 'name' }},
-                {title: this.$t('directive.parameter.form.filedType'),dataIndex: 'type',scopedSlots: { customRender: 'type' }},
+                {title: this.$t('directive.parameter.form.filedType'),dataIndex: 'type',scopedSlots: { customRender: 'type' },width:'250px'},
                 {title: this.$t('directive.parameter.form.filedValue'),dataIndex: 'value',scopedSlots: { customRender: 'value' }},
                 {title: this.$t('directive.parameter.form.filedDesc'),dataIndex: 'desc',scopedSlots: { customRender: 'desc' }},
                 {title: this.$t('directive.parameter.form.filedOperations'), key: 'action',scopedSlots: { customRender: 'action' }, className:'text-right'},
@@ -318,7 +337,26 @@ export default {
             }
             this.fields[index].format = 'hex';
             this.fields[index].value = '';
+            
+            if ( 'bits' === this.fields[index].type ) {
+                let len = this.fields[index].length || 1;
+                this.fields[index].length = len;
+            }
             this.updateVModel();
+        },
+
+        /**
+         * event handler for field data length input
+         * @param {Number} index
+         */
+        actionDataLengthInput(index){
+            let length = parseInt(this.fields[index].length || 0);
+            if ( isNaN(length) || 0 >= length ) {
+                length = 1;
+            }
+            this.fields[index].length = length;
+            this.updateVModel();
+            this.$forceUpdate();
         },
 
         /**

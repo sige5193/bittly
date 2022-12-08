@@ -76,6 +76,9 @@ module.exports = {
             propValueMustBeAnInstanceOfMdbDirective : 'value of prop v-model must be an instance of MdbDirective.',
             preserveFieldFilter : 'Field Filter',
             dataTypeLabel : 'Data Type',
+            dataTypeBitsLength : 'Length',
+            dataTypeBitsOverLenght : 'value of Bits "{0}" is longer than given length "{1}"',
+            dataTypeBitsNotMatchToByte : 'Bits length must be a multiple of 8',
             dataType : {
                 byte : 'Byte (uint8)',
                 char_int : 'Mini Int (int8)',
@@ -94,6 +97,7 @@ module.exports = {
                 string : 'String',
                 bytes : 'Bytes',
                 file : 'File',
+                bits : 'Bits'
             },
         },
         hex : {

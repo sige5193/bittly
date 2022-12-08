@@ -68,7 +68,7 @@
           >
             <template v-for="(item, itemKey) in $dict.items('DIRECTIVE_PARAM_DATATYPE')">
               <a-select-option 
-                v-if="'file' != item.value"
+                v-if="'file' != item.value && 'bits' != item.value"
                 :key="itemKey"
                 :value="item.value"
               >{{ $t(`directive.parameter.form.dataType.${item.value}`)}}</a-select-option>
