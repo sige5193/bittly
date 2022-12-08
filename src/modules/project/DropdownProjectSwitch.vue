@@ -20,29 +20,65 @@
 <script>
 import ModalProjectCreate from './ModalProjectCreate.vue'
 import MdbProject from '../../models/MdbProject.js'
+import ComponentProjectMixin from '../../utils/ComponentProjectMixin.js'
 export default {
     name : 'DropdownProjectSwitch',
+    mixins : [ComponentProjectMixin],
     components : {
         'modal-project-create' : ModalProjectCreate,
     },
     data() {
         return {
+            /**
+             * list of projects.
+             * @property {Array<MdbProject>}
+             */
             projects : [],
+            /**
+             * index of active project
+             * @property {Number}
+             */
             activeProjectIndex : -1,
         };
     },
     async mounted() {
         await this.refreshProjects();
-        
-        let $this = this;
-        this.$eventBus.$on('project-current-update', function() {
-            $this.projectCurUpdate();
-        });
-        this.$eventBus.$on('project-current-delete', function() {
-            $this.refreshProjects();
-        });
+        this.$eventBus.$on('project-current-update', () => this.projectCurUpdate());
+        this.$eventBus.$on('project-current-delete', () => this.refreshProjects());
     },
     methods : {
+        /**
+         * callback hander on project reloaded.
+         * @override 
+         */
+        onProjectReloaded() {
+            this.refreshActiveProjectIndex();
+        },
+
+        /**
+         * refresh project list.
+         * @method
+         */
+        async refreshProjects() {
+            this.projects = [];
+            this.projects = await MdbProject.findAll();
+            this.refreshActiveProjectIndex();
+        },
+
+        /**
+         * refresh active project index
+         */
+        refreshActiveProjectIndex() {
+            this.activeProjectIndex = -1;
+            let activeId = this.$store.getters.projectActivedId;
+            for ( let i=0; i<this.projects.length; i++ ) {
+                if ( this.projects[i].id == activeId ) {
+                    this.activeProjectIndex = i;
+                    break;
+                }
+            }
+        },
+
         /**
          * 更新当前项目
          */
@@ -50,26 +86,6 @@ export default {
             let id = this.projects[this.activeProjectIndex].id;
             this.projects[this.activeProjectIndex] = await MdbProject.findOne(id);
             this.$forceUpdate();
-        },
-
-        /**
-         * 加载项目列表
-         * @method
-         */
-        async refreshProjects() {
-            this.activeProjectIndex = -1;
-            this.projects = [];
-            this.projects = await MdbProject.findAll();
-
-            let activeId = this.$store.getters.projectActivedId;
-            if ( null != activeId ) {
-                for ( let i=0; i<this.projects.length; i++ ) {
-                    if ( this.projects[i].id == activeId ) {
-                        this.activeProjectIndex = i;
-                        break;
-                    }
-                }
-            }
         },
 
         /**
