@@ -48,6 +48,7 @@ module.exports = {
         widgetDeleteConfirm : '是否删除该组件 ?',
         widgetPanelTitle : '组件',
         variablePanelTitle : '变量',
+        widgetZindex : 'Z-Index',
         widgetMoveFrontOneLayer : '前置一层',
         widgetMoveBackOneLayer : '后置一层',
         widgetDataSourceExprUnableToReadVariable : '组件表达式运行失败, 无法获取变量 "{0}"',

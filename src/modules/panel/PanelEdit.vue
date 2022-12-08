@@ -97,6 +97,7 @@
             <a-menu-item key="Setting"><a-icon type="setting" /> {{$t('button.setting')}}</a-menu-item>
             <a-menu-item key="Delete"><a-icon type="delete" /> {{$t('button.delete')}}</a-menu-item>
             <a-menu-divider />
+            <a-menu-item key="ZIndex" disabled><a-icon type="border-verticle" />{{$t('panel.editMode.widgetZindex')}} : {{widget.zindex}}</a-menu-item>
             <a-menu-item key="MoveToFront"><a-icon type="block" />{{$t('panel.editMode.widgetMoveFrontOneLayer')}}</a-menu-item>
             <a-menu-item key="MoveToBack"><a-icon type="block" :rotate="90" />{{$t('panel.editMode.widgetMoveBackOneLayer')}}</a-menu-item>
           </a-menu>

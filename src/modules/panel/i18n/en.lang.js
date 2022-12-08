@@ -48,6 +48,7 @@ module.exports = {
         widgetDeleteConfirm : 'Are you sure you want to delete this widget ?',
         widgetPanelTitle : 'Widget',
         variablePanelTitle : 'Variable',
+        widgetZindex : 'Z-Index',
         widgetMoveFrontOneLayer : 'Move to front one layer',
         widgetMoveBackOneLayer : 'Move to back one layer',
         widgetDataSourceExprUnableToReadVariable : 'Failed to execute expression, unable to access variable "{0}"',
