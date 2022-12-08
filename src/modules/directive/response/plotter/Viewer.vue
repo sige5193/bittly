@@ -173,6 +173,7 @@ export default {
     beforeDestroy() {
         this.$eventBus.$off('directive-executor-resized', this.executorResizedCallback);
         this.chart.chart.destroy();
+        this.chart = null;
     },
     methods : {
         /**
@@ -257,6 +258,9 @@ export default {
          * event handler on chart zoom/zoomComplete pan/panComplete
          */
         handleChartZoom() {
+            if ( null === this.chart ) {
+                return ;
+            }
             this.chart.options.scales.xAxes[0].ticks.display = false;
             this.chart.update(0);
         },
