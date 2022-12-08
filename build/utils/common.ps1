@@ -39,7 +39,7 @@ function update-server-runtime-variable ( $name, $value ) {
     
     [void][System.Reflection.Assembly]::LoadWithPartialName("MySql.Data")
     $connection = New-Object MySql.Data.MySqlClient.MySqlConnection
-    $connection.ConnectionString = "Server=$($config.server.dbAddress);Uid=$($config.server.dbUser);Pwd=$($config.server.dbPasswd);database=$(config.server.dbName);"
+    $connection.ConnectionString = "Server=$($config.server.dbAddress);Uid=$($config.server.dbUser);Pwd=$($config.server.dbPasswd);database=$($config.server.dbName);"
     $connection.Open()
 
     $insertcommand = New-Object MySql.Data.MySqlClient.MySqlCommand
