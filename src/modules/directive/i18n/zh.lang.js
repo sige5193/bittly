@@ -79,6 +79,7 @@ module.exports = {
             dataTypeBitsLength : '位数',
             dataTypeBitsOverLenght : '位组(bits)取值 [{0}] 超出指定长度 [{1}]',
             dataTypeBitsNotMatchToByte : '位组(bits)数据拼装长度必须为8的整数倍',
+            fieldNotConfigured : '表单未配置',
             dataType : {
                 byte : '字节 (uint8)',
                 char_int : '单字节整型 (int8)',

@@ -1,5 +1,9 @@
 <template>
   <div>
+    <!-- empty -->
+    <a-empty v-if="0 == content.length" :description="$t('directive.parameter.form.fieldNotConfigured')"/>
+
+    <!-- form value editor -->
     <a-row v-for="(item, index) in content" :key="index" class="mt-1 bg-light pl-1 rounded" style="line-height:30px !important;">
       <!-- column name -->
       <a-col :span="6" style="line-height: 32px;">
@@ -67,17 +71,12 @@ export default {
          */
         quickInput : {default:null},
     },
-    watch : {
-        value() {
-            this.initVModel();
-        },
-        directive() {
-            this.initVModel();
-        },
-    },
     data() {
         return {
-            content : null,
+            /**
+             * @property {Array<Object>}
+             */
+            content : [],
         };
     },
     mounted() {

@@ -131,6 +131,10 @@ class Common {
      * @returns 
      */
     static convertStringToHex(content) {
+        if ( undefined === content ) {
+            return new Uint8Array(0);
+        }
+
         content = content.trim().replace(/\s*/g,'');
         content = content.toUpperCase();
         content = content.split('');

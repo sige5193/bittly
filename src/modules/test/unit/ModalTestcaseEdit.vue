@@ -151,11 +151,9 @@ export default {
                 projectId : this.$store.getters.projectActivedId
             });
             this.enable = true;
-            let $this = this;
-            this.$nextTick(function() {
-                $this.$forceUpdate();
-            });
             
+            this.$nextTick(() => this.$forceUpdate());
+            let $this = this;
             return new Promise(function( resolve, reject ) {
                 $this.actResolve = resolve;
                 $this.actReject = reject;

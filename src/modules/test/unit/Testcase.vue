@@ -193,8 +193,9 @@ export default {
         async actionEdit() {
             try {
                 await this.$refs.modalTestcaseEdit.open(this.directive, this.testcase);
-                this.$forceUpdate();
             } catch { return; }
+            this.resultStatus = null;
+            this.$forceUpdate();
         },
 
         /**
