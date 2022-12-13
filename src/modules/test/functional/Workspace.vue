@@ -97,6 +97,20 @@ export default {
          * init workspace
          */
         async initWorkspace() {
+            let LibLiteGraph = LiteGraph;
+            // override the triiger function to fix "strict mode" error
+            LibLiteGraph.ContextMenu.trigger = function(element, event_name, params, origin) {
+                var evt = document.createEvent("CustomEvent");
+                evt.initCustomEvent(event_name, true, true, params);
+                if (element.dispatchEvent) {
+                    element.dispatchEvent(evt);
+                } else if (element.__events) {
+                    element.__events.dispatchEvent(evt);
+                }
+                //else nothing seems binded here so nothing to do
+                return evt;
+            };
+
             this.graphCanvas = new LGraphCanvas(this.$refs.graphCanvas, this.graph, {autoresize:true});
             this.graphCanvas.background_image = false;
             this.graphCanvas.render_canvas_border = false;
