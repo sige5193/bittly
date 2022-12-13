@@ -270,11 +270,11 @@ export default {
             if ( action.dropToGap ) {
                 parentId = NIL_UUID;
             } else {
-                let dest = action.node.$vnode.data.props;
-                if ( 'folder' != dest.type ) {
+                if ( undefined === action.node.$vnode 
+                || 'folder' != action.node.$vnode.data.props.type ) {
                     return;
                 }
-                parentId = dest.value;
+                parentId = action.node.$vnode.data.props.value;
             }
             
             let source = action.dragNode.$vnode.data.props;
