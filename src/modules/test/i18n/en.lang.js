@@ -69,6 +69,10 @@ module.exports = {
         importFileIsRequired : 'Please select import file',
         importDirective : 'Operate Directive',
         importSuccess : 'Import Successfully',
+        importFailed : 'Failed to import file : {0}',
+        importParameterFormatIsRequired : 'Default parameter format is required',
+        importResponseFormatIsRequired : 'Default response format is required',
+        importFileInvalid : 'Unable to parse excel file.',
     },
     
     // Functional test node

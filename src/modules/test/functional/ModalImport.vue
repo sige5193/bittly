@@ -3,6 +3,7 @@
     <a-form :label-col="{ span: 5 }" :wrapper-col="{ span: 17 }">
       <a-form-item :label="$t('test.functional.importFile')">
         <a-upload
+          accept=".xlsx"
           :directory="false" 
           :multiple="false" 
           :showUploadList="false"
@@ -92,83 +93,100 @@ export default {
          * start do import testcase.
          */
         async actionImport() {
-            if ( null === this.filepath ) {
-                this.$message.error(this.$t('test.functional.importFileIsRequired'));
-                return ;
-            }
-
-            let workbook = new Excel.Workbook();
-            let content = Common.fileGetContent(this.filepath);
-            await workbook.xlsx.load(content);
-            let sheet = workbook.getWorksheet(1);
-            
-            let testcase = new MdbFunctionalTestcase();
-            testcase.projectId = this.$store.getters.projectActivedId;
-            testcase.title = sheet.getCell('B2').value;
-            
-            let graphflow = {};
-            this.import.graphflow = graphflow;
-            graphflow.last_node_id = 1;
-            graphflow.last_link_id = 1;
-            graphflow.nodes = [];
-            graphflow.links = [];
-            graphflow.groups = [];
-            graphflow.config = {};
-            graphflow.extra = {};
-            graphflow.version = 0.4;
-            
-            // start node
-            this.createStep();
-            this.setupLastNodeAsStartNode();
-
-            let parameterFormat = sheet.getCell('B3').value.toLowerCase();
-            let responseFormat = sheet.getCell('B4').value.toLowerCase();
-            let nodeRowItemCounter = 0;
-            let row = null;
-            let rowNumber = 7;
-            do {
-                row = sheet.getRow(rowNumber);
-                if ( !row.hasValues ) {
-                    break;
+            try {
+                if ( null === this.filepath ) {
+                    throw Error(this.$t('test.functional.importFileIsRequired'));
                 }
 
-                let rowOpt = this.parseStepOptions(row.values[4]);
-                let nodeOptions = {
-                    title: row.values[1],
-                    parameterValue: row.values[2],
-                    expectResponseValue: row.values[3],
-                    timeout: rowOpt.Timeout || 1000,
-                    directiveId: this.directiveId,
-                    expectDataLength: 0,
-                    parameterFormat: rowOpt.ParameterFormat || parameterFormat,
-                    expectResponseFormat: rowOpt.ResponseFormat || responseFormat,
-                    inputs: [],
-                    outputs: [],
-                };
+                let workbook = new Excel.Workbook();
+                let content = Common.fileGetContent(this.filepath);
+                await workbook.xlsx.load(content);
+                let sheet = workbook.getWorksheet(1);
+                if ( undefined === sheet ) {
+                    throw Error('test.functional.importFileInvalid');
+                }
+
+                let testcase = new MdbFunctionalTestcase();
+                testcase.projectId = this.$store.getters.projectActivedId;
+                testcase.title = sheet.getCell('B2').value;
                 
+                let graphflow = {};
+                this.import.graphflow = graphflow;
+                graphflow.last_node_id = 1;
+                graphflow.last_link_id = 1;
+                graphflow.nodes = [];
+                graphflow.links = [];
+                graphflow.groups = [];
+                graphflow.config = {};
+                graphflow.extra = {};
+                graphflow.version = 0.4;
+                
+                // start node
                 this.createStep();
-                this.setupLastNodeAsDirectiveNode(nodeOptions);
+                this.setupLastNodeAsStartNode();
 
-                this.import.nodePositionY += 230;
-                nodeRowItemCounter ++;
-                if ( 0 === nodeRowItemCounter%5 ) {
-                    this.import.nodePositionX += 200;
-                    this.import.nodePositionY = 50;
+                // import content
+                let parameterFormat = sheet.getCell('B3').value;
+                if ( null === parameterFormat ) {
+                    throw Error(this.$t('test.functional.importParameterFormatIsRequired'));
                 }
-                rowNumber ++;
-            } while ( row.hasValues );
+                parameterFormat = parameterFormat.toLowerCase();
 
-            // done node
-            this.createStep();
-            this.setupLastNodeAsDoneNode();
+                let responseFormat = sheet.getCell('B4').value;
+                if ( null === responseFormat ) {
+                    throw Error(this.$t('test.functional.importResponseFormatIsRequired'));
+                }
+                responseFormat = responseFormat.toLowerCase();
 
-            testcase.content = JSON.stringify(graphflow);
-            await testcase.save();
+                let nodeRowItemCounter = 0;
+                let row = null;
+                let rowNumber = 7;
+                do {
+                    row = sheet.getRow(rowNumber);
+                    if ( !row.hasValues ) {
+                        break;
+                    }
 
-            await this.$parent.refreshEntries();
-            this.$parent.openTestcaseById(testcase.id);
-            this.enable = false;
-            this.$message.success(this.$t('test.functional.importSuccess'));
+                    let rowOpt = this.parseStepOptions(row.values[4]);
+                    let nodeOptions = {
+                        title: row.values[1],
+                        parameterValue: row.values[2],
+                        expectResponseValue: row.values[3],
+                        timeout: rowOpt.Timeout || 1000,
+                        directiveId: this.directiveId,
+                        expectDataLength: 0,
+                        parameterFormat: rowOpt.ParameterFormat || parameterFormat,
+                        expectResponseFormat: rowOpt.ResponseFormat || responseFormat,
+                        inputs: [],
+                        outputs: [],
+                    };
+                    
+                    this.createStep();
+                    this.setupLastNodeAsDirectiveNode(nodeOptions);
+
+                    this.import.nodePositionY += 230;
+                    nodeRowItemCounter ++;
+                    if ( 0 === nodeRowItemCounter%5 ) {
+                        this.import.nodePositionX += 200;
+                        this.import.nodePositionY = 50;
+                    }
+                    rowNumber ++;
+                } while ( row.hasValues );
+
+                // done node
+                this.createStep();
+                this.setupLastNodeAsDoneNode();
+
+                testcase.content = JSON.stringify(graphflow);
+                await testcase.save();
+
+                await this.$parent.refreshEntries();
+                this.$parent.openTestcaseById(testcase.id);
+                this.enable = false;
+                this.$message.success(this.$t('test.functional.importSuccess'));
+            } catch ( e ) {
+                this.$message.error(this.$t('test.functional.importFailed',[e.message]));
+            }
         },
 
         /**

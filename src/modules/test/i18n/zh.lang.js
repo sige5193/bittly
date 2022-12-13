@@ -69,6 +69,10 @@ module.exports = {
         importFileIsRequired : '请选择导入文件',
         importDirective : '操作指令',
         importSuccess : '导入成功',
+        importFailed : '文件导入失败 : {0}',
+        importParameterFormatIsRequired : '默认请求参数格式未定义',
+        importResponseFormatIsRequired : '默认响应格式未定义',
+        importFileInvalid : '无法解析导入文件',
     },
 
     // Functional test
