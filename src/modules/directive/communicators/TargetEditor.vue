@@ -215,6 +215,7 @@ export default {
         if ( null != this.autoSendRuntime ) {
             clearTimeout(this.autoSendRuntime.timer);
         }
+        this.$log("done");
     },
     methods : {
         /**

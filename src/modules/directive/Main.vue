@@ -158,12 +158,7 @@ export default {
     async beforeDestroy() {
         this.$eventBus.$off('directive-new-temp-create', this.callbacks.newTempDirective);
         this.$eventBus.$off('directive-delete', this.callbacks.directiveDeleted);
-
-        // close all communicators
-        let coms = this.$store.getters.communicators;
-        for ( let comKey in coms ) {
-            await coms[comKey].close();
-        }
+        await this.$store.dispatch('closeAllCommunicators');
     },
     methods : {
         /**

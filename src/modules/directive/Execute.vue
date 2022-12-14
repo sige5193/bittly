@@ -204,6 +204,7 @@ export default {
         if ( null !== this.executor ) {
             this.executor.onData(null);
         }
+        this.$log("done");
     },
     methods : {
         /**
@@ -330,12 +331,11 @@ export default {
             this.$refs.responseViewer.startNewResponse()
 
             let executor = new Executor(this.directive);
+            this.executor = executor;
             executor.onData(( data ) => this.handleExecutorEventOnData(data));
-            
             let isSuccess = true;
             try {
                 await executor.execute();
-                this.executor = executor;
                 this.$refs.responseViewer.newRequestData(executor.getRequestBuffer());
             } catch ( e ) {
                 this.responseData = null;
