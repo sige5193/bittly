@@ -4,17 +4,22 @@ module.exports = {
      * @property {Object}
      */
     directive : require('@/modules/directive/i18n/en.lang.js'),
-    
+    /**
+     * translation for module panel
+     * @property {Object}
+     */
     panel : require('@/modules/panel/i18n/en.lang.js'),
     test : require('@/modules/test/i18n/en.lang.js'),
     document : require('@/modules/document/i18n/en.lang.js'),
     environment : require('@/modules/environment/i18n/en.lang.js'),
     project : require('@/modules/project/i18n/en.lang.js'),
+    plugin : require('@/modules/plugin/i18n/en.lang.js'),
     app : {
         initLoadingStepDatabaseSetup : 'Setup Database',
         initLoadingStepServerSetup : 'Setup Server',
         initLoadingStepI18nSetup : 'Setup I18n',
         initLoadingStepDirectionarySetup : 'Loading Directionary',
+        initLoadingPlugins : 'Loading Plugins',
 
         about : 'About',
         quitConfirm : 'Are you sure to exit the app ?',

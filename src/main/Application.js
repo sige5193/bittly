@@ -207,9 +207,7 @@ export default class Application {
      */
     async windowOpen( event, data ) {
         let uri = data.uri;
-        delete data.uri;
-        let options = data.options || {};
-        
+        let options = data;
         await this.windowMan.createWindow(uri, options);
     }
 
