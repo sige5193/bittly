@@ -66,6 +66,9 @@ export default {
             panels : [],
         };
     },
+    created() {
+        this.$eventBus.$emit('app-module-panel-init', this);
+    },
     async mounted() {
         await this.refreshPanels();
         this.$log('done');
@@ -78,6 +81,18 @@ export default {
         this.$log('done');
     },
     methods : {
+        /**
+         * register widget element
+         * @public
+         * @param {Object} widget 
+         */
+        widgetsElemRegister( name, elemClass ) {
+            let elemName = `panel-widget-${name}`;
+            if ( undefined === window.customElements.get(elemName) ) {
+                window.customElements.define(elemName, elemClass);
+            }
+        },
+
         /**
          * handle on project changed
          * @see {ProjectMixin.handleCurProjectIdChanged()}

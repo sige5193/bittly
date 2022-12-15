@@ -104,7 +104,7 @@ export default {
     },
     created() {
         this.menuInit();
-        this.$eventBus.$emit('app-title-created', this);
+        this.$eventBus.$emit('app-title-init', this);
     },
     methods : {
         /**

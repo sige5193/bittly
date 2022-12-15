@@ -84,6 +84,15 @@ export default {
     },
     methods : {
         /**
+         * push 
+         * @public
+         * @param {Object} widget 
+         */
+        widgetsRegister( widget ) {
+            this.widgets.push(widget);
+        },
+
+        /**
          * get if widget is resizable, default to false.
          * @param {String} widgetName 
          * @returns {Boolean}

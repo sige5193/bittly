@@ -60,7 +60,15 @@
           :key="index" class="r-widget" 
           :style="{top:`${widget.pos.y}px`,left:`${widget.pos.x}px`}"
         >
-          <component :is="`widget-${widget.name}`" 
+          <custom-widget-trigger 
+            v-if="undefined != widget.isCustom && true == widget.isCustom && 'trigger' == widget.type"
+            :name="widget.name"
+            :panel="panel" 
+            :widget="panel.widgets[index]"
+            :runtime="runtime"
+            ref="widgets"
+          />
+          <component v-else :is="`widget-${widget.name}`" 
             :panel="panel" 
             :widget="panel.widgets[index]"
             :runtime="runtime"
@@ -75,12 +83,14 @@
 import RequestLogViewer from './RequestLogViewer.vue'
 import Runtime from './Runtime.js'
 import WidgetRegisterMixin from './widgets/WidgetRunRegisterMixin.js'
+import CustomWidgetRunTrigger from './widgets/CustomWidgetRunTrigger.vue'
 export default {
     name : 'PanelPanelRun',
     props : ['panel'],
     mixins : [WidgetRegisterMixin],
     components : {
         'request-log-viewer' : RequestLogViewer,
+        'custom-widget-trigger' : CustomWidgetRunTrigger,
     },
     data() {
         return {
