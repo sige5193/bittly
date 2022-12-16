@@ -4,11 +4,10 @@
     <a-row>
       <a-col :span="12" class="mt-3">
         <a-radio-group button-style="solid" v-model="responseFormat">
-          <a-radio-button value="stream">{{$t('directive.response.stream.name')}}</a-radio-button>
-          <a-radio-button value="text">{{$t('directive.response.text.name')}}</a-radio-button>
-          <a-radio-button value="hex">{{$t('directive.response.hex.name')}}</a-radio-button>
-          <a-radio-button value="form">{{$t('directive.response.form.name')}}</a-radio-button>
-          <a-radio-button value="plotter">{{$t('directive.response.plotter.name')}}</a-radio-button>
+          <a-radio-button v-for="(viewer,viewerName) in viewers" 
+            :key="viewerName" 
+            :value="viewerName"
+          >{{viewer.label}}</a-radio-button>
         </a-radio-group>
       </a-col>
  
@@ -47,6 +46,12 @@
     <viewer-stream v-else-if="'stream' == responseFormat" 
       ref="streamViewer"
       v-model="directive"
+    />
+    
+    <!-- custom viewer -->
+    <custom-viewer-wrapper 
+      v-else-if="undefined != viewers[responseFormat].isCustom && true == viewers[responseFormat].isCustom" 
+      :name="responseFormat"
     />
 
     <!-- preserve response data list viewer -->
@@ -97,8 +102,10 @@ import PreserveViewerForm from './form/PreserveViewer.vue'
 import PreserveViewerPlotter from './plotter/PreserveViewer.vue'
 import ViewerPlotter from './plotter/Viewer.vue'
 import MdbTestcase from '../../../models/MdbTestcase'
+import CustomViewerWrapper from './CustomViewerWrapper.vue'
 export default {
     components : {
+        'custom-viewer-wrapper' : CustomViewerWrapper,
         'viewer-stream' : ViewerStream,
         'viewer-form' : ViewerForm,
         'viewer-text' : ViewerText,
@@ -131,6 +138,11 @@ export default {
     data() {
         return {
             /**
+             * options of viewers
+             * @property {Object<String:Object>}
+             */
+            viewers : {},
+            /**
              * indicate preserve response data or data.
              * @property {Boolean}
              */
@@ -161,12 +173,36 @@ export default {
             this.onResponseDataChange();
         }
     },
+    created() {
+        this.viewers = {};
+        this.viewers.stream = {name:'stream',label:this.$t('directive.response.stream.name')};
+        this.viewers.text = {name:'text',label:this.$t('directive.response.text.name')};
+        this.viewers.hex =  {name:'hex',label:this.$t('directive.response.hex.name')};
+        this.viewers.form = {name:'form',label:this.$t('directive.response.form.name')};
+        this.viewers.plotter = {name:'plotter',label:this.$t('directive.response.plotter.name')};
+        this.$eventBus.$emit('app-directive-response-viewer-init', this);
+    },
     mounted() {
         this.responseDataLength = 0;
         this.isPreserveResponseData = false;
         this.preservedResponseData = [];
     },
     methods : {
+        /**
+         * register response viewer
+         * @public
+         * @param {Object} viewer
+         * @param {Class} elemClass
+         */
+        viewerCustomRegister( viewer, elemClass ) {
+            this.viewers[viewer.name] = viewer;
+            viewer.isCustom = true;
+            let elemName = `directive-response-viewer-${viewer.name}`;
+            if ( undefined === window.customElements.get(elemName) ) {
+                window.customElements.define(elemName, elemClass);
+            }
+        },
+
         /**
          * event handler for menu item clicked
          */
