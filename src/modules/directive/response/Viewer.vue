@@ -194,7 +194,7 @@ export default {
          * @param {Object} viewer
          * @param {Class} elemClass
          */
-        viewerCustomRegister( viewer, elemClass ) {
+        customViewerRegister( viewer, elemClass ) {
             this.viewers[viewer.name] = viewer;
             viewer.isCustom = true;
             let elemName = `directive-response-viewer-${viewer.name}`;
