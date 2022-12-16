@@ -329,7 +329,8 @@ export default {
      */
     editorConfig() {
         return {
-            name : window.app.$t('directive.communicator.http.name'),
+            name : 'Http',
+            label : window.app.$t('directive.communicator.http.name'),
             defaultDataType:'string',
             defaultResponseViewer : 'text'
         };

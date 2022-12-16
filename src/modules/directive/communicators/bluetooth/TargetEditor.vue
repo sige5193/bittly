@@ -347,7 +347,8 @@ export default {
      */
     editorConfig() {
         return { 
-            name : window.app.$t('directive.communicator.bluetooth.name'), 
+            name : 'Bluetooth',
+            label : window.app.$t('directive.communicator.bluetooth.name'), 
             defaultDataType:'byte', 
             defaultResponseViewer:'hex'
         };

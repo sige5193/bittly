@@ -285,7 +285,8 @@ export default {
      */
     editorConfig() {
         return {
-            name : window.app.$t('directive.communicator.mqtt.name'),
+            name : 'Mqtt',
+            label : window.app.$t('directive.communicator.mqtt.name'),
             defaultDataType:'byte',
             defaultResponseViewer : 'hex'
         };

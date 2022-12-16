@@ -194,7 +194,8 @@ export default {
      */
     editorConfig() {
         return {
-            name : window.app.$t('directive.communicator.serialport.name'),
+            name : 'SerialPort',
+            label : window.app.$t('directive.communicator.serialport.name'),
             defaultDataType:'byte',
             defaultResponseViewer : 'hex'
         };
