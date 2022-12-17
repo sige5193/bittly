@@ -20,11 +20,9 @@
           </a-menu>
         </a-dropdown>
 
-        <!-- Project -->
-        <project-menu></project-menu>
-
-        <!-- Environment -->
-        <env-menu></env-menu>
+        <project-menu />
+        <env-menu />
+        <plugin-menu />
 
         <!-- Configurable Menus -->
         <a-dropdown v-for="(menuEntry, menuKey) in menus" :key="menuKey" class="mr-2" :trigger="['click']">
@@ -77,6 +75,7 @@ import ProjectSwitch from '../modules/project/DropdownProjectSwitch.vue'
 import DropdownEnvSwitch from '../modules/environment/DropdownEnvSwitch.vue'
 import AppSetting from './AppSetting.vue'
 import AppAbout from './AppAbout.vue'
+import PluginTitleMenu from '../modules/plugin/TitleMenu.vue'
 export default {
     name : 'AppMenu',
     components : {
@@ -85,6 +84,7 @@ export default {
         'project-menu' : ProjectSwitch,
         'env-menu' : DropdownEnvSwitch,
         'user-login' : AppUserLogin,
+        'plugin-menu' : PluginTitleMenu,
     },
     data() {
         return {

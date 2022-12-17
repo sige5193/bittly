@@ -1,5 +1,24 @@
 export default class PluginBase {
     /**
+     * @param {*} options 
+     */
+    constructor(options) {
+        this.options = options;
+    }
+
+    /**
+     * @param {*} path 
+     * @returns 
+     */
+    getPath( path ) {
+        if ( undefined === path ) {
+            return this.options.basepath;
+        } else {
+            return `${this.options.basepath}/${path}`;
+        }
+    }
+
+    /**
      * execute on installing plugin
      * @returns {void}
      */

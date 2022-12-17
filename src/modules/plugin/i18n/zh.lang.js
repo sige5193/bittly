@@ -1,3 +1,18 @@
 module.exports = {
+    moduleName : '插件',
+    name : '名称',
+    version : '版本',
+    description : '描述',
+    operations : '操作',
+    manager : '插件管理',
+    btnInstall : '安装新插件',
     loadFailed : '插件【{0}】加载失败 : {1}',
+    uninstallTitle : '移除插件',
+    uninstallConfirm : '是否移除该插件？ 移除后Bittly将会自动重启并应用。',
+    installFailed : '插件安装失败 : {0}',
+    installManifestJsonNotExists : '无法读取 "manifest.json" 文件',
+    installIndexJsNotExists : '无法读取 "index.js" 文件',
+    installFailedToLoad : '无法加载插件',
+    installSuccess : '插件安装完成',
+    installSuccessMessage : '点击 【确定】 按钮重新启动 Bittly 以应用插件',
 };

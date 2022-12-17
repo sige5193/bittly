@@ -1,6 +1,8 @@
 import Common from '../../utils/Common.js'
 import PluginBase from './PluginBase.js';
 import PluginExec from './PluginExec.js';
+import JSZip, { folder } from 'jszip'
+import { v4 as uuidV4 } from 'uuid';
 export default class Manager {
     /**
      * @property {Manager}
@@ -16,10 +18,18 @@ export default class Manager {
     }
 
     /**
+     * @returns {Manager}
+     */
+    static getManager() {
+        return Manager.instance;
+    }
+
+    /**
      * constructor of plugin manager
      */
     constructor() {
-        this.plugins = [];
+        this.basepath = 'D:/Flashin/bittly-dev/plugins';
+        this.plugins = {};
         window.BittlyPluginExec = (exec) => this.executePluginExec(exec);
     }
     
@@ -35,33 +45,43 @@ export default class Manager {
      * start to load plugins
      */
     async load() {
-        let pluginsDir = await this.opendir("D:/Flashin/bittly-dev/plugins");
-        let pluginNames = [];
+        let pluginsDir = await this.opendir(this.basepath);
+        let pluginIds = [];
         for await (const pluginDirent of pluginsDir ) {
-            pluginNames.push(pluginDirent.name);
+            pluginIds.push(pluginDirent.name);
         }
-        for ( let i=0; i<pluginNames.length; i++ ) {
-            await this.loadPluginByName(pluginNames[i]);
+        for ( let i=0; i<pluginIds.length; i++ ) {
+            let plugin = await this.loadPluginById(pluginIds[i]);
+            if ( false === plugin ) {
+                continue;
+            }
+            await plugin.onLoad();
         }
     }
 
     /**
      * load plugin by given name
-     * @param {String} name 
+     * @param {String} id 
      */
-    async loadPluginByName( name ) {
-        console.log(`loading plugin : ${name}`);
-        let pluginEntryContent = Common.fileGetContent(`D:/Flashin/bittly-dev/plugins/${name}/index.js`).toString();
+    async loadPluginById( id ) {
+        console.log(`loading plugin : ${id}`);
+        let manifest = Common.fileGetContent(`${this.basepath}/${id}/manifest.json`).toString();
+        manifest = JSON.parse(manifest);
+
+        let pluginEntryContent = Common.fileGetContent(`${this.basepath}/${id}/index.js`).toString();
         let template = `return ${pluginEntryContent};`;
         let pluginFunc = new Function('BittlyPlugin', template);
         let pluginClass = pluginFunc(PluginBase);
         
         try {
-            let plugin = new pluginClass();
-            await plugin.onLoad();
-            this.plugins.push(plugin);
+            let plugin = new pluginClass({
+                basepath : `${this.basepath}/${id}`
+            });
+            this.plugins[id] = {manifest:manifest,instance:plugin};
+            return plugin;
         } catch ( e ) {
-            window.app.$message.warning(window.app.$t('app.plugin.loadFailed',[name, e.message]));
+            window.app.$message.warning(window.app.$t('app.plugin.loadFailed',[id, e.message]));
+            return false;
         }
     }
 
@@ -82,4 +102,84 @@ export default class Manager {
         });
     }
 
+    /**
+     * @param {*} path 
+     * @returns 
+     */
+    rmdir( path ) {
+        return new Promise((resolve, reject) => {
+            window.fs.rmdir(path, {recursive:true}, ( err ) => {
+                if ( err ) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
+        });
+    }
+
+    /**
+     * delete pplugin by id
+     * @param {*} id 
+     */
+    pluginDeleteById( id ) {
+        let $this = this;
+        return new Promise((resolve, reject) => {
+            let plugin = $this.plugins[id].instance;
+            let basepath = plugin.getPath();
+            plugin.onUninstall().then(() => {
+                window.fs.rmdir(basepath, {recursive:true}, ( err ) => {
+                    if ( err ) {
+                        reject(err);
+                    } else {
+                        window.remote.app.relaunch();
+                        window.remote.app.quit();
+                        resolve();
+                    }
+                });
+            }).catch((err) => reject(err));
+        });
+    }
+
+    /**
+     * @param {*} fileData 
+     */
+    async pluginInstallByFileData( fileData ) {
+        let zip = new JSZip();
+        await zip.loadAsync(fileData);
+        let manifest = zip.file("manifest.json");
+        if ( null === manifest ) {
+            throw Error(window.app.$t('plugin.installManifestJsonNotExists'));
+        }
+        
+        let id = uuidV4();
+        let pluginRoot = `${this.basepath}/${id}`;
+        window.fs.mkdirSync(pluginRoot);
+        let folders = zip.filter((relativePath, file) => file.dir);
+        for ( let i=0; i<folders.length; i++ ) {
+            let folder = folders[i];
+            window.fs.mkdirSync(`${pluginRoot}/${folder.name}`,{recursive:true});
+        }
+
+        let files = zip.filter((relativePath, file) => !file.dir);
+        for ( let i=0; i<files.length; i++ ) {
+            let file = files[i];
+            let path = `${pluginRoot}/${file.name}`;
+            let data = await file.async("arraybuffer");
+            data = Buffer.from(data);
+            window.fs.writeFileSync(path, data);
+        }
+
+        let plugin = null;
+        try {
+            plugin = await this.loadPluginById(id);
+            if ( false === plugin ) {
+                throw Error(window.app.$t('plugin.installFailedToLoad'));
+            }
+            await plugin.onInstall();
+        } catch ( e ) {
+            await this.rmdir(pluginRoot);
+            throw e;
+        }
+    }
 }
