@@ -27,6 +27,7 @@ module.exports = {
             changedDirectiveCloseConfirm : 'this directive has changed, do you want to save it ?',
             directiveNameCopySuccessed : 'Directive name copied.',
             directivePathNameCopySuccessed : 'Directive path name copied.',
+            directivePathNameCopyFailedUnsaved : 'Failed to copy directive path name : directive unsaved',
         },
         
     name : 'Name',

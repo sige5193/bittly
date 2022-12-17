@@ -27,6 +27,7 @@ module.exports = {
         changedDirectiveCloseConfirm : '该指令已经发生改变，是否保存 ？',
         directiveNameCopySuccessed : '指令名称已复制到剪切板',
         directivePathNameCopySuccessed : '指令路径名称已复制到剪切板',
+        directivePathNameCopyFailedUnsaved : '指令路径名称复制失败 : 指令未保存',
     },
 
     name : '名称',

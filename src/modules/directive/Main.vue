@@ -563,6 +563,12 @@ export default {
             let path = [];
             path.unshift(name);
 
+            let directive = this.openedDirectives[index].model;
+            if ( directive.isNew ) {
+                this.$message.error(this.$t('directive.main.directivePathNameCopyFailedUnsaved'));
+                return;
+            }
+
             let directiveId = this.openedDirectives[index].model.id;
             let entry = await MdbDirectiveEntry.findOne({type:'directive',target:directiveId});
             do {
