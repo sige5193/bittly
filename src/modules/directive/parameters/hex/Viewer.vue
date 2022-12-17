@@ -63,7 +63,12 @@ export default {
                 return [];
             }
 
-            let buffer = paramBuilder.getRequestBuffer();
+            let buffer = null;
+            try {
+                buffer = paramBuilder.getRequestBuffer();
+            } catch {
+                buffer = Buffer.alloc(0);
+            }
             let list = [];
             for ( let i=0; i<buffer.length; i++ ) {
                 let byte = buffer[i].toString(16);
