@@ -274,8 +274,8 @@ export default {
         handleSerialportOpen( error ) {
             if (error) {
                 let messageKey = 'directive.communicator.serialport.unableToOpen';
-                let message = $this.$t(messageKey,[this.path, error.message]);
-                $this.$message.error(message);
+                let message = this.$t(messageKey,[this.path, error.message]);
+                this.$message.error(message);
                 return;
             }
 
