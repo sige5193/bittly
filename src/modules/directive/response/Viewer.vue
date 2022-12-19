@@ -52,6 +52,7 @@
     <custom-viewer-wrapper 
       v-else-if="undefined != viewers[responseFormat].isCustom && true == viewers[responseFormat].isCustom" 
       :name="responseFormat"
+      :content="responseData"
     />
 
     <!-- preserve response data list viewer -->

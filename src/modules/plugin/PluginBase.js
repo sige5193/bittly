@@ -1,9 +1,12 @@
+import Common from '../../utils/Common.js'
+import DirectiveResponseViewer from './base-handlers/DirectiveResponseViewer.js'
 export default class PluginBase {
     /**
      * @param {*} options 
      */
     constructor(options) {
         this.options = options;
+        this.loadedClasses = {};
     }
 
     /**
@@ -59,5 +62,26 @@ export default class PluginBase {
     winOpen( uri, options ) {
         options.uri = uri;
         window.ipcRenderer.send("window-open", options);
+    }
+
+    /**
+     * @param {*} path 
+     * @returns {Function}
+     */
+    loadClass(path) {
+        if ( undefined != this.loadedClasses[path] ) {
+            return this.loadedClasses[path];
+        }
+
+        let Bittly = {
+            DirectiveResponseViewer
+        };
+        let filepath = this.getPath(`${path}.js`);
+        let classContent = Common.fileGetContent(filepath).toString();
+        let template = `return ${classContent};`;
+        let loaderFunc = new Function('Bittly', template);
+        let pluginClass = loaderFunc(Bittly);
+        this.loadedClasses[path] = pluginClass;
+        return pluginClass;
     }
 }
