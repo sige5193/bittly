@@ -1,5 +1,7 @@
 import Common from '../../utils/Common.js'
 import DirectiveResponseViewer from './base-handlers/DirectiveResponseViewer.js'
+import DirectiveParameterEditor from './base-handlers/DirectiveParameterEditor.js';
+import DirectiveParameterBuilder from './base-handlers/DirectiveParameterBuilder.js';
 export default class PluginBase {
     /**
      * @param {*} options 
@@ -74,7 +76,9 @@ export default class PluginBase {
         }
 
         let Bittly = {
-            DirectiveResponseViewer
+            DirectiveResponseViewer,
+            DirectiveParameterEditor,
+            DirectiveParameterBuilder
         };
         let filepath = this.getPath(`${path}.js`);
         let classContent = Common.fileGetContent(filepath).toString();

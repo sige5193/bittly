@@ -12,6 +12,11 @@ import Executor from '../script/Executor.js';
  */
 export default class Builder {
     /**
+     * @property {Object|null}
+     */
+    static buildHandlers = null;
+
+    /**
      * constructor of param builder
      * @param {MdbDirective} directive 
      */
@@ -287,17 +292,32 @@ export default class Builder {
      * @returns {Object}
      */
     getBuildHandler() {
+        if ( null === Builder.buildHandlers ) {
+            Builder.buildHandlers = {};
+            Builder.buildHandlers.text = TextBuildHandler;
+            Builder.buildHandlers.hex = HexBuildHandler;
+            Builder.buildHandlers.form = FormBuildHandler;
+            Builder.buildHandlers.file = FileBuildHandler;
+            Builder.buildHandlers.none = NoneBuilderHandler;
+            window.app.$eventBus.$emit('app-directive-parameter-build-handler-list-init', this);
+        }
+
         if ( null == this.buildHandler ) {
-            switch ( this.paramFormat ) {
-            case 'text' : this.buildHandler = new TextBuildHandler(this); break;
-            case 'hex' : this.buildHandler = new HexBuildHandler(this); break;
-            case 'form' : this.buildHandler = new FormBuildHandler(this); break;
-            case 'file' : this.buildHandler = new FileBuildHandler(this); break;
-            case 'none' : this.buildHandler = new NoneBuilderHandler(this); break;
-            default : throw Error(window.app.$t('directive.parameter.buildHandlerNotAvailable', [this.paramFormat]));
+            if ( undefined === Builder.buildHandlers[this.paramFormat] ) {
+                throw Error(window.app.$t('directive.parameter.buildHandlerNotAvailable', [this.paramFormat]));
             }
+            let handler = Builder.buildHandlers[this.paramFormat];
+            this.buildHandler = new handler(this);
         }
         return this.buildHandler;
+    }
+
+    /**
+     * @param {*} name 
+     * @param {*} handlerClass 
+     */
+    registerBuildHandler( name, handlerClass ) {
+        Builder.buildHandlers[name] = handlerClass;
     }
 
     /**

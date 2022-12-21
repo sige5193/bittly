@@ -38,14 +38,20 @@
       </div>
 
       <div class="mt-1 pb-3 content">
+        <!-- editor is not available -->
+        <a-result status="error"
+          v-if="undefined === editors[directive.requestFormat]"
+          :sub-title="$t('directive.parameter.editorNotAvailable')"
+        ></a-result>
         <!-- custom viewer -->
         <custom-viewer-wrapper 
-          v-if="
+          v-else-if="
             !rawViewerEnable 
             && undefined != editors[directive.requestFormat].isCustom 
             && true == editors[directive.requestFormat].isCustom
           "
           :name="directive.requestFormat"
+          v-model="directive"
         />
         <!-- Parameter Editor -->
         <component 
