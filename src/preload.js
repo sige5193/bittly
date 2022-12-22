@@ -21,6 +21,7 @@ window.request = require('request');
 let userDataPath = remote.app.getPath('userData');
 let databasePath = `${userDataPath}/bittly.db`;
 const sqlite3 = require('sqlite3').verbose()
+window.sqlite3 = sqlite3;
 window.database = new sqlite3.Database(databasePath);
 
 // 经典蓝牙

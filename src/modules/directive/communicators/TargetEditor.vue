@@ -20,6 +20,8 @@
         <target-editor-custom-wrapper
           v-if=" undefined != targetEditors[target.type].isCustom && true == targetEditors[target.type].isCustom"
           :name="target.type"
+          v-model="target"
+          @change="actionTargetConfigChanged"
         />
         <component v-else
           ref="targetEditor"

@@ -5,6 +5,7 @@ import WebsocketCommunicator from './websocket/Communicator.js'
 import HttpCommunicator from './http/Communicator.js'
 import MqttCommunicator from './mqtt/Communicator.js'
 import ModbusCommunicator from './modbus/Communicator.js'
+import Logger from '../../../utils/Logger.js'
 /**
  * an factory class to generate communicators
  * @author sige
@@ -23,7 +24,7 @@ export default class CommunicatorFactory {
         if ( null === CommunicatorFactory.factory ) {
             CommunicatorFactory.factory = new CommunicatorFactory();
         }
-        return CommunicatorFactory.factory.getCommunicatorByTarget(target);
+        return await CommunicatorFactory.factory.getCommunicatorByTarget(target);
     }
 
     /**
@@ -46,7 +47,7 @@ export default class CommunicatorFactory {
      * @param {*} name 
      * @returns {Function}
      */
-    getCommunicatorByTarget( target ) {
+    async getCommunicatorByTarget( target ) {
         if ( undefined === target.type ) {
             throw Error('communicator target type is not defined.');
         }
@@ -54,7 +55,7 @@ export default class CommunicatorFactory {
         if ( undefined === this.coms[type] ) {
             throw Error(`communicator type ${type} is not supported`);
         }
-        return this.coms[type](target);
+        return await this.coms[type](target);
     }
 
     /**
@@ -63,6 +64,7 @@ export default class CommunicatorFactory {
      * @param {*} getter 
      */
     communicatorGetterRegister( name, getter ) {
+        Logger.log(name);
         this.coms[name] = getter;
     }
 }
