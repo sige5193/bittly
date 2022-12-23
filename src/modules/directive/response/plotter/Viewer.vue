@@ -361,6 +361,8 @@ export default {
          * update chart content by given display range
          */
         refreshChartContent() {
+            let datasets = this.chart.data.datasets;
+            
             let start = this.xAxisRange[0] || 1;
             if ( this.renderedXAxisRange[0] < start-1 ) {
                 this.chart.data.labels.reverse();
@@ -402,12 +404,14 @@ export default {
                 }
             }
 
+            // append new data to end of list of each channels
             if ( this.renderedXAxisRange[1] < this.xAxisRange[1] ) {
+                if ( this.renderedXAxisRange[1] < this.xAxisRange[0] ) {
+                    this.renderedXAxisRange[1] = this.xAxisRange[0] - 1;
+                }
                 for ( let i=this.renderedXAxisRange[1]; i<this.xAxisRange[1]; i++ ) {
                     this.chart.data.labels.push(this.timelineItems[i]);
-                    for ( let ci=0; ci<this.channelDataList.length; ci++ ) {
-                        this.chart.data.datasets[ci].data.push(this.channelDataList[ci][i]);
-                    }
+                    this.channelDataList.forEach((cd,ci) => datasets[ci].data.push(cd[i]), this);
                     this.renderedXAxisRange[1]++;
                 }
             }
