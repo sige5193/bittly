@@ -9,8 +9,20 @@
       :actions="widget.actions"
       :defaultAction="widget.defaultAction"
       :tooltipAvailable="widget.tooltipAvailable"
+
+      :dataSources="widget.dataSources"
+      :dataSourceVars="widget.dataSourceVars"
+      :dataSourceExprs="widget.dataSourceExprs"
+      :resizable="widget.resizable"
     >
       <a-form-item v-for="(widgetProp, widgetPropIndex) in widget.properties" :key="widgetPropIndex" :label="widgetProp.label">
+        <!-- variable selector -->
+        <variable-selector v-if="'variable' == widgetProp.editor"
+          v-model="widget[widgetProp.name]" 
+          :panel="panel" 
+          @change="actionForceUpdate" 
+        />
+
         <!-- number input -->
         <a-input-number v-if="'input-number' == widgetProp.editor" 
           class="w-100" 
@@ -73,10 +85,14 @@
   </div>
 </template>
 <script>
+import VariableSelector from '../variable/Selector.vue'
 import WidgetEditMixin from './WidgetEditMixin.js'
 export default {
     name : 'PanelWidgetCustomWidgetEdit',
     mixins : [WidgetEditMixin],
+    components : {
+        'variable-selector' : VariableSelector,
+    },
     props : {
         /**
          * name of widget 
@@ -97,15 +113,17 @@ export default {
             settingComponent : 'modal-action-widget-setting',
         };
     },
+    mounted() {
+        if ( 'trigger' != this.widget.type ) {
+            this.settingComponent = 'modal-viewer-widget-setting';
+        }
+    },
     methods : {
         /**
          * init widget if widget is new or have not inited
          * @override
          */
         initWidget() {
-            if ( 'trigger' != this.widget.type ) {
-                this.settingComponent = 'modal-viewer-widget-setting';
-            }
             for ( let i=0; i<this.widget.properties.length; i++ ) {
                 let prop = this.widget.properties[i];
                 if ( undefined != prop.default ) {

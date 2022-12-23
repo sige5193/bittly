@@ -4,10 +4,10 @@
   </div>
 </template>
 <script>
-import WidgetRunMixin from './WidgetRunMixin.js'
+import WidgetRunViewerMixin from './WidgetRunViewerMixin.js'
 export default {
-    name : 'PanelWidgetCustomWidgetRunTrigger',
-    mixins : [WidgetRunMixin],
+    name : 'PanelWidgetCustomWidgetRunViewer',
+    mixins : [WidgetRunViewerMixin],
     props : {
         /**
          * name of widget 
@@ -18,13 +18,13 @@ export default {
     mounted() {
         this.$refs.widget.setWrapper(this);
     },
-    methods: {
+    methods : {
         /**
-         * 
+         * refresh the widget
          */
-        valueGet() {
-            return this.$refs.widget.valueGet();
-        }
+        refresh() {
+            this.$refs.widget.refresh();
+        },
     }
 }
 </script>

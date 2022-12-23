@@ -4,6 +4,7 @@ import DirectiveParameterEditor from './base-handlers/DirectiveParameterEditor.j
 import DirectiveParameterBuilder from './base-handlers/DirectiveParameterBuilder.js';
 import DirectiveTargetEditor from './base-handlers/DirectiveTargetEditor.js';
 import DirectiveCommunicator from './base-handlers/DirectiveCommunicator.js';
+import PanelWidget from './base-handlers/PanelWidget.js';
 export default class PluginBase {
     /**
      * @param {*} options 
@@ -83,6 +84,7 @@ export default class PluginBase {
             DirectiveParameterBuilder,
             DirectiveTargetEditor,
             DirectiveCommunicator,
+            PanelWidget,
         };
         let filepath = this.getPath(`${path}.js`);
         let classContent = Common.fileGetContent(filepath).toString();
@@ -91,5 +93,15 @@ export default class PluginBase {
         let pluginClass = loaderFunc(Bittly);
         this.loadedClasses[path] = pluginClass;
         return pluginClass;
+    }
+
+    /**
+     * load resource as base64 string
+     * @param {*} path 
+     */
+    loadResource(path) {
+        let filepath = this.getPath(path);
+        let content = Common.fileGetContent(filepath).toString('base64');
+        return content;
     }
 }
