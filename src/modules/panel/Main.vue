@@ -6,7 +6,7 @@
         <div class="border-bottom p-2">
           <a-button @click="actionCreateNew"> {{$t('button.create')}} </a-button>
         </div>
-        <a-menu class="h-0 flex-grow overflow-auto" mode="inline" :selectedKeys="[panelActiveIndex]">
+        <a-menu class="h-0 flex-grow overflow-y-auto overflow-x-hidden" mode="inline" :selectedKeys="[panelActiveIndex]">
           <a-menu-item ref="menuItemPanel"
             v-for="(panel, index) in panels" 
             :key="index"

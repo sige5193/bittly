@@ -153,6 +153,7 @@ body {user-select: none;}
 .overflow-x-auto {overflow-x: auto !important;}
 .overflow-auto {overflow: auto !important;}
 .overflow-hidden {overflow: hidden !important;}
+.overflow-x-hidden {overflow-x: hidden !important;}
 .white-space-pre {white-space: pre !important;}
 .rounded {border-radius: 0.25rem !important;}
 .rounded-none {border-radius: 0 !important;}
