@@ -11,13 +11,19 @@
           <a-select-option v-for="(targetEditor, teKey) in targetEditors" 
             :key="teKey" 
             :value="teKey"
-          > {{targetEditor.name}} </a-select-option>
+          > {{targetEditor.label}} </a-select-option>
         </a-select>
       </a-col>
       
       <!-- target editor -->
       <a-col :span="19" class="pr-1">
-        <component
+        <target-editor-custom-wrapper
+          v-if=" undefined != targetEditors[target.type].isCustom && true == targetEditors[target.type].isCustom"
+          :name="target.type"
+          v-model="target"
+          @change="actionTargetConfigChanged"
+        />
+        <component v-else
           ref="targetEditor"
           :is="`target-${target.type}`"
           v-model="target"
@@ -161,9 +167,13 @@ import Common from '@/utils/Common.js'
 import TargetEditorRegistryMixin from './TargetEditorRegistryMixin.js'
 import MyNumber from '../../../utils/datatype/MyNumber.js'
 import MyObject from '../../../utils/datatype/MyObject.js'
+import TargetEditorCustomWrapper from './TargetEditorCustomWrapper.vue'
 export default {
     name : 'BlockTargetConfig',
     mixins : [TargetEditorRegistryMixin,ProjectMixin],
+    components : {
+        'target-editor-custom-wrapper' : TargetEditorCustomWrapper,
+    },
     props : {
         /**
          * callback handler to execute directive
@@ -206,6 +216,7 @@ export default {
         };
     },
     async created() {
+        this.$eventBus.$emit('app-directive-communicator-editor-init', this);
         await this.initVModel();
     },
     /**

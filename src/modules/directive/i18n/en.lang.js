@@ -63,6 +63,7 @@ module.exports = {
         quickFunctionNameInvalid : 'invalid quick function name : {0}',
         buildHandlerNotAvailable : 'invalid parameter build handler : {0}',
         notRequired : 'Parameter is not required',
+        editorNotAvailable : 'Parameter editor is not available',
         none : {
             name : 'None',
             notRequired : 'Parameter is not required.',

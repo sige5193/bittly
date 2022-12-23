@@ -29,6 +29,11 @@
           <a-button ref="btnExtAction" icon="ellipsis" size="small"></a-button>
           <a-menu ref="menuBtnExtAction" slot="overlay" @click="actionDirectiveMoreMenuItemClicked">
             <a-menu-item key="directiveExtActionShare"><a-icon type="share-alt" /> {{$t('directive.share.button')}}</a-menu-item>
+            <a-menu-item v-for="(extAction,extActionIndex) in extActions" 
+              :key="`directiveExtAction_${extActionIndex}`"
+              data-is-custom="yes"
+              :data-index="extActionIndex"
+            > <a-icon type="block" /> {{extAction.label}}</a-menu-item>
           </a-menu>
         </a-dropdown>
         
@@ -121,6 +126,10 @@ export default {
     data() {
         return {
             /**
+             * @property {Array<Object>}
+             */
+            extActions : [],
+            /**
              * enable parameter editor or not
              * @property {Boolean}
              */
@@ -195,6 +204,7 @@ export default {
      * init v-model after mounted
      */
     async created() {
+        this.$eventBus.$emit('app-directive-execute-init',this);
         await this.initVModel();
     },
     /**
@@ -207,6 +217,15 @@ export default {
         this.$log("done");
     },
     methods : {
+        /**
+         * register ext action of directive
+         * @public
+         * @param {Object} action
+         */
+        extActionsRegister( action ) {
+            this.extActions.push(action);
+        },
+        
         /**
          * init v-model
          */
@@ -364,7 +383,14 @@ export default {
          * @param {Event} event
          */
         actionDirectiveMoreMenuItemClicked( event ) {
-            this.$refs[event.key].execute();
+            let data = event.domEvent.target.dataset;
+            if ( undefined !== data.isCustom && 'yes' == data.isCustom ) {
+                let index = data.index * 1;
+                let action = this.extActions[index].action;
+                action(this.directive, this);
+            } else {
+                this.$refs[event.key].execute();
+            }
         },
 
         /**

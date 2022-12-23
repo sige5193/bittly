@@ -30,12 +30,7 @@
 
       <!-- communicators -->
       <a-col :span="16" class="text-right pr-2">
-        &nbsp;
-        <component ref="communicators" v-for="(com, comKey) in communicators" 
-          :key="comKey"
-          :is="`device-popover-${com.getDeviceType()}`"
-          :device="com"
-        ></component>
+        <communicator-popovers />
       </a-col>
 
     </a-row>
@@ -45,35 +40,16 @@
 import AppUpdate from './AppUpdate.vue'
 import AppFeedback from './AppFeedback.vue'
 import AppErrorHandler from './AppErrorHandler.vue'
-import DevicePopoverRegistryMixin from '../modules/directive/communicators/PopoverRegistryMixin.js'
+import CommunicatorPopovers from '../modules/directive/communicators/CommunicatorPopovers.vue'
 export default {
     name : 'AppFooter',
     components : {
         'app-update' : AppUpdate,
         'app-feedback' : AppFeedback,
         'app-error-handler' : AppErrorHandler,
-    },
-    mixins : [DevicePopoverRegistryMixin],
-    data() {
-        return {
-            communicators : {}
-        };
-    },
-    created() {
-        this.$eventBus.$on('communicator-online', () => this.refreshCommunicators());
-        this.$eventBus.$on('communicator-offline', () => this.refreshCommunicators());
+        'communicator-popovers' : CommunicatorPopovers,
     },
     methods : {
-        /**
-         * refresh communicators
-         */
-        refreshCommunicators() {
-            this.communicators = {};
-            let list = this.$store.getters.communicators;
-            for ( let key in list ) {
-                this.communicators[key] = list[key];
-            }
-        },
         /**
          * open QQ link
          */

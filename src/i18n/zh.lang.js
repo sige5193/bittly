@@ -1,21 +1,25 @@
 module.exports = {
     /**
-     * translation for directive module
+     * translation for module directive
      * @property {Object}
      */
     directive : require('@/modules/directive/i18n/zh.lang.js'),
-
+    /**
+     * translation for module panel
+     * @property {Object}
+     */
     panel : require('@/modules/panel/i18n/zh.lang.js'),
     test : require('@/modules/test/i18n/zh.lang.js'),
     document : require('@/modules/document/i18n/zh.lang.js'),
     environment : require('@/modules/environment/i18n/zh.lang.js'),
     project : require('@/modules/project/i18n/zh.lang.js'),
-    
+    plugin : require('@/modules/plugin/i18n/zh.lang.js'),
     app : {
         initLoadingStepDatabaseSetup : '正在配置数据库',
         initLoadingStepServerSetup : '正在配置服务器',
         initLoadingStepI18nSetup : '加载国际化配置',
         initLoadingStepDirectionarySetup : '加载数据字典',
+        initLoadingPlugins : '加载插件',
 
         about : '关于',
         quitConfirm : '是否退出应用？',

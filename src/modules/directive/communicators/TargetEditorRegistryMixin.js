@@ -18,13 +18,9 @@ export default {
         'target-Mqtt' : MqttTargetEditor,
         'target-Modbus' : ModbusTargetEditor
     },
-    /**
-     * editor configurations
-     * @returns {Object}
-     */
-    computed : {
-        targetEditors() {
-            return {
+    data() {
+        return {
+            targetEditors : {
                 SerialPort : SerialPortTargetEditor.editorConfig(),
                 Network    : NetworkTargetEditor.editorConfig(),
                 Bluetooth  : BluetoothTargetEditor.editorConfig(),
@@ -32,7 +28,23 @@ export default {
                 Http       : HttpTargetEditor.editorConfig(),
                 Mqtt       : MqttTargetEditor.editorConfig(),
                 Modbus     : ModbusTargetEditor.editorConfig(),
-            };
-        }
+            },
+        };
+    },
+    methods : {
+        /**
+         * register communicator target editor
+         * @public
+         * @param {Object} editor
+         * @param {Class} elemClass
+         */
+        customEditorRegister( editor, elemClass ) {
+            this.targetEditors[editor.name] = editor;
+            editor.isCustom = true;
+            let elemName = `directive-target-editor-${editor.name}`;
+            if ( undefined === window.customElements.get(elemName) ) {
+                window.customElements.define(elemName, elemClass);
+            }
+        },
     },
 };

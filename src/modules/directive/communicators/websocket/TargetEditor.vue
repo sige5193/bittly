@@ -145,7 +145,8 @@ export default {
      */
     editorConfig() {
         return {
-            name : window.app.$t('directive.communicator.websocket.name'),
+            name : 'Websocket',
+            label : window.app.$t('directive.communicator.websocket.name'),
             defaultDataType:'byte',
             defaultResponseViewer : 'hex'
         };

@@ -20,22 +20,19 @@
           </a-menu>
         </a-dropdown>
 
-        <!-- Project -->
-        <project-menu></project-menu>
+        <project-menu />
+        <env-menu />
+        <plugin-menu />
 
-        <!-- Environment -->
-        <env-menu></env-menu>
-
-        <!-- Tool -->
-        <a-dropdown class="mr-2" :trigger="['click']">
-          <span class="app-dropdown-menu-title" ref="dmenuTriggerTool">{{$t('app.menu.tool.label')}}</span>
-          <a-menu ref="menuTool" slot="overlay" @click="actionMenuItemClick">
-            <a-menu-item key="ToolSerialportServer" data-act="new-window" data-path="/tool-serialport-server.html">{{$t('app.menu.tool.serialportServer')}}</a-menu-item>
-            <a-menu-item key="ToolTcpServer" data-act="new-window" data-path="/tool-tcp-server.html">{{$t('app.menu.tool.tcpServer')}}</a-menu-item>
-            <a-menu-item key="ToolUdpServer" data-act="new-window" data-path="/tool-udp-server.html">{{$t('app.menu.tool.udpServer')}}</a-menu-item>
-            <a-menu-item key="ToolWsServer" data-act="new-window" data-path="/tool-ws-server.html">{{$t('app.menu.tool.wsServer')}}</a-menu-item>
-            <a-menu-item key="ToolTerminal" data-act="new-window" data-path="/tool-terminal.html">{{$t('app.menu.tool.terminal')}}</a-menu-item>
-            <a-menu-item key="ToolCalculator" data-act="new-window" data-path="/tool-calculator.html">{{$t('app.menu.tool.calculator')}}</a-menu-item>
+        <!-- Configurable Menus -->
+        <a-dropdown v-for="(menuEntry, menuKey) in menus" :key="menuKey" class="mr-2" :trigger="['click']">
+          <span class="app-dropdown-menu-title">{{menuEntry.title}}</span>
+          <a-menu slot="overlay" @click="actionConfigurableMenuItemClick">
+            <a-menu-item v-for="(menuEntryItem,menuEntryItemIndex) in menuEntry.items" 
+              :key="menuEntryItem.key"
+              :data-menu-key="menuKey"
+              :data-item-index="menuEntryItemIndex"
+            >{{menuEntryItem.title}}</a-menu-item>
           </a-menu>
         </a-dropdown>
 
@@ -78,6 +75,7 @@ import ProjectSwitch from '../modules/project/DropdownProjectSwitch.vue'
 import DropdownEnvSwitch from '../modules/environment/DropdownEnvSwitch.vue'
 import AppSetting from './AppSetting.vue'
 import AppAbout from './AppAbout.vue'
+import PluginTitleMenu from '../modules/plugin/TitleMenu.vue'
 export default {
     name : 'AppMenu',
     components : {
@@ -86,6 +84,7 @@ export default {
         'project-menu' : ProjectSwitch,
         'env-menu' : DropdownEnvSwitch,
         'user-login' : AppUserLogin,
+        'plugin-menu' : PluginTitleMenu,
     },
     data() {
         return {
@@ -97,16 +96,102 @@ export default {
              * @property {String}
              */
             appVersion : PackageInfo.version,
+            /**
+             * @property {Object<String:Object>}
+             */
+            menus : {},
         };
     },
+    created() {
+        this.menuInit();
+        this.$eventBus.$emit('app-title-init', this);
+    },
     methods : {
+        /**
+         * init menus
+         * @private
+         */
+        menuInit() {
+            this.menuAdd('tools', this.$t('app.menu.tool.label'));
+            this.menuItemPush('tools', {
+                key:'ToolSerialportServer',
+                title:this.$t('app.menu.tool.serialportServer'),
+                action:()=>this.newWindow('/tool-serialport-server.html')
+            });
+            this.menuItemPush('tools', {
+                key:'ToolTcpServer',
+                title:this.$t('app.menu.tool.tcpServer'),
+                action:()=>this.newWindow('/tool-tcp-server.html')
+            });
+            this.menuItemPush('tools', {
+                key:'ToolUdpServer',
+                title:this.$t('app.menu.tool.udpServer'),
+                action:()=>this.newWindow('/tool-udp-server.html')
+            });
+            this.menuItemPush('tools', {
+                key:'ToolWsServer',
+                title:this.$t('app.menu.tool.wsServer'),
+                action:()=>this.newWindow('/tool-ws-server.html')
+            });
+            this.menuItemPush('tools', {
+                key:'ToolTerminal',
+                title:this.$t('app.menu.tool.terminal'),
+                action:()=>this.newWindow('/tool-terminal.html')
+            });
+            this.menuItemPush('tools', {
+                key:'ToolCalculator',
+                title:this.$t('app.menu.tool.calculator'),
+                action:()=>this.newWindow('/tool-calculator.html')
+            });
+        },
+
+        /**
+         * add menu
+         * @public
+         * @param {String} key
+         * @param {String} title
+         */
+        menuAdd(key, title) {
+            this.menus[key] = {};
+            this.menus[key].title = title;
+            this.menus[key].items = [];
+        },
+
+        /**
+         * add menu item
+         * @public
+         * @param {String} menuKey
+         * @param {Object} item
+         */
+        menuItemPush(menuKey, item) {
+            this.menus[menuKey].items.push(item);
+        },
+
+        /**
+         * open new window by given link
+         * @parma {String} link
+         */
+        newWindow( link ) {
+            window.ipcRenderer.send("window-open", {uri:link});
+        },
+
+        /**
+         * event handler on configurable menu item clicked
+         * @parma {Event} event
+         */
+        actionConfigurableMenuItemClick( event ) {
+            let eventData = event.domEvent.target.dataset;
+            let item = this.menus[eventData.menuKey].items[eventData.itemIndex];
+            item.action();
+        },
+
         /**
          * event handler on menu item clicked
          */
         actionMenuItemClick( event ) {
             let eventData = event.domEvent.target.dataset;
             if ( 'new-window' === eventData.act ) {
-                window.ipcRenderer.send("window-open", {uri:eventData.path});
+                this.newWindow(eventData.path);
             } else {
                 let handler = `handle${event.key}`;
                 this[handler]();

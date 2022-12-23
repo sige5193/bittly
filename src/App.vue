@@ -1,6 +1,6 @@
 <template>
   <div id="mainApp" class="h-100 d-flex flex-dir-column">
-    <app-title></app-title>
+    <app-title v-if="!isLoading"></app-title>
     
     <!-- init -->
     <div v-if="isLoading" class="loading"> 
@@ -49,6 +49,7 @@ import ModuleDocumentMain from './modules/document/Main.vue'
 import ModuleEnvironmentMain from './modules/environment/Main.vue'
 import ModuleSettingMain from './modules/project/Setting.vue'
 import PageProjectIndex from './modules/project/PageProjectIndex.vue'
+import PluginManager from './modules/plugin/Manager.js'
 require('./utils/Common.css');
 export default {
     name: 'App',
@@ -117,6 +118,9 @@ export default {
 
             this.loadingTitle = 'initLoadingStepDirectionarySetup';
             await Dictionary.load();
+
+            this.loadingTitle = 'initLoadingPlugins';
+            await PluginManager.start();
 
             let activeProjectId = await MdbRuntimeVariable.findOne({key:'project_actived_id'});
             if ( null != activeProjectId && null != activeProjectId.value) {

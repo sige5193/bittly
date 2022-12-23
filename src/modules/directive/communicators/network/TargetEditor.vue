@@ -76,7 +76,8 @@ export default {
      */
     editorConfig() {
         return {
-            name : window.app.$t('directive.communicator.network.name'),
+            name : 'Network',
+            label : window.app.$t('directive.communicator.network.name'),
             defaultDataType:'byte',
             defaultResponseViewer : 'hex'
         };

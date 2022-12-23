@@ -20,13 +20,13 @@ export default class WindowManager {
      * @param {*} options 
      */
     async createWindow( uri, options ) {
-        let windowOptions = Object.assign({
+        let windowOptions = {
             title : "Bittly",
-            width: 800,
-            height: 600,
-            frame : false,
+            width: options.width || 800,
+            height: options.height || 600,
+            frame : (undefined===options.frame) ? false : options.frame,
             icon:path.join(__dirname, 'icon.ico'),
-            autoHideMenuBar: true,
+            autoHideMenuBar: (undefined===options.autoHideMenuBar) ? true : options.autoHideMenuBar,
             webPreferences: {
                 spellcheck: false,
                 webSecurity : false,
@@ -35,8 +35,8 @@ export default class WindowManager {
                 contextIsolation: false,
                 preload: path.join(__dirname, 'preload.js')
             }
-        }, options);
-        
+        };
+
         // @link https://stackoverflow.com/questions/57543680/electron-linux-appimage-is-not-showing-the-icon-while-deb-is
         if (process.platform === "linux") {
             // 图标文件一定要放到 public 文件夹下面
@@ -45,8 +45,10 @@ export default class WindowManager {
     
         let win = new BrowserWindow(windowOptions);
         require("@electron/remote/main").enable(win.webContents)
-    
-        if (process.env.WEBPACK_DEV_SERVER_URL) {
+        
+        if ( 'file://' == uri.substring(0,7) ) {
+            await win.loadURL(uri);
+        } else if (process.env.WEBPACK_DEV_SERVER_URL) {
             await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL + uri);
         } else {
             createProtocol('app')

@@ -135,7 +135,7 @@ export default {
          */
         panel : {type:Object,required:true},
         /**
-         * name of data source
+         * name of data sources, data source supports : variable, script, expression
          * @property {String|String[]|null}
          */
         dataSources : {type:[String, Array], default:null},

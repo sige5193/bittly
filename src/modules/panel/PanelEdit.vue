@@ -84,13 +84,18 @@
             @resizestop="(x, y, width, height) => actionWidgetResizeStop(x, y, width, height, index)"
           >
             <div @dblclick="actionWidgetDoubleClick($event, index)">
-              <component
-                ref="widgets"
+              <custom-widget v-if="undefined !== widget.isCustom && true == widget.isCustom" ref="widgets"
+                :name="panel.widgets[index].name"
                 v-model="panel.widgets[index]"
                 :panel="panel"
-                :is="`widget-${widget.name}`"
                 @panel-change="onPanelChagned"
-              ></component>
+              />
+              <component v-else ref="widgets" 
+                v-model="panel.widgets[index]"
+                :is="`widget-${widget.name}`" 
+                :panel="panel" 
+                @panel-change="onPanelChagned"
+              />
             </div>
           </vue-draggable-resizable>
           <a-menu slot="overlay" @click="({ key: menuKey }) => actionWidgetContextMenuItemClicked(menuKey, index)">
@@ -107,6 +112,7 @@
   </div>
 </template>
 <script>
+import CustomWidget from './widgets/CustomWidgetEdit.vue'
 import VueDraggableResizable from 'vue-draggable-resizable'
 import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
 import VariableManager from './variable/Manager.vue'
@@ -117,7 +123,8 @@ export default {
     mixins : [WidgetRegisterMixin],
     components : {
         'variable-manager' : VariableManager,
-        'vue-draggable-resizable' : VueDraggableResizable
+        'vue-draggable-resizable' : VueDraggableResizable,
+        'custom-widget' : CustomWidget,
     },
     props : {
         /**
@@ -158,6 +165,7 @@ export default {
         },
     },
     created() {
+        this.$eventBus.$emit('app-panel-edit-init', this);
         this.initVModel();
     },
     destroyed() {
@@ -222,6 +230,7 @@ export default {
 
             let $this = this;
             this.$nextTick(function() {
+                debugger
                 let lastWidgetIndex = $this.panel.widgets.length - 1;
                 $this.$refs.widgets[lastWidgetIndex].setting();
             });

@@ -11,10 +11,8 @@
           v-model="directive.requestFormat" 
           @change="actionRequestFormatChange"
         >
-          <a-radio value="hex"> {{$t('directive.parameter.hex.name')}} </a-radio>
-          <a-radio value="text"> {{$t('directive.parameter.text.name')}} </a-radio>
-          <a-radio value="file"> {{$t('directive.parameter.file.name')}} </a-radio>
-          <a-radio value="form"> {{$t('directive.parameter.form.name')}} </a-radio>
+          <a-radio v-for="(editor, editorName) in editors" :key="editorName" :value="editorName"
+          > {{editor.label}} </a-radio>
         </a-radio-group>
       
         <a-switch 
@@ -40,16 +38,31 @@
       </div>
 
       <div class="mt-1 pb-3 content">
+        <!-- editor is not available -->
+        <a-result status="error"
+          v-if="undefined === editors[directive.requestFormat]"
+          :sub-title="$t('directive.parameter.editorNotAvailable')"
+        ></a-result>
+        <!-- custom viewer -->
+        <custom-viewer-wrapper 
+          v-else-if="
+            !rawViewerEnable 
+            && undefined != editors[directive.requestFormat].isCustom 
+            && true == editors[directive.requestFormat].isCustom
+          "
+          :name="directive.requestFormat"
+          v-model="directive"
+        />
         <!-- Parameter Editor -->
         <component 
+          v-else-if="!rawViewerEnable && directive.requestFormat"
           v-model="directive"
-          v-if="directive.requestFormat && !rawViewerEnable"
           :is="`editor-${directive.requestFormat}`"
           :defaultDataType="formDefaultDataType"
         ></component>
         <!-- Raw Data Viewer -->
         <component
-          v-if="rawViewerEnable"
+          v-else
           :is="`viewer-${rawViewerFormat}`"
           :directive="directive"
           :executor="executor"
@@ -59,6 +72,7 @@
   </div>
 </template>
 <script>
+import CustomViewerWrapper from './CustomViewerWrapper.vue'
 import FormViewer from './form/Viewer.vue'
 import FormEditor from './form/Editor.vue'
 import HexViewer from './hex/Viewer.vue'
@@ -77,6 +91,7 @@ export default {
         'viewer-form' : FormViewer,
         'viewer-hex' : HexViewer,
         'viewer-text' : TextViewer,
+        'custom-viewer-wrapper' : CustomViewerWrapper,
     },
     props : {
         /**
@@ -106,11 +121,40 @@ export default {
     },
     data() {
         return {
+            /**
+             * list of editors
+             * @property {Object<String:Object>}
+             */
+            editors : {},
+
             rawViewerEnable : false,
             rawViewerFormat : 'hex',
         };
     },
+    created() {
+        this.editors = {};
+        this.editors.hex = {name:'hex',label:this.$t('directive.parameter.hex.name')};
+        this.editors.text = {name:'text',label:this.$t('directive.parameter.text.name')};
+        this.editors.file = {name:'file',label:this.$t('directive.parameter.file.name')};
+        this.editors.form = {name:'form',label:this.$t('directive.parameter.form.name')};
+        this.$eventBus.$emit('app-directive-parameter-editor-init', this);
+    },
     methods : {
+        /**
+         * register response viewer
+         * @public
+         * @param {Object} editor
+         * @param {Class} elemClass
+         */
+        customEditorRegister( editor, elemClass ) {
+            this.editors[editor.name] = editor;
+            editor.isCustom = true;
+            let elemName = `directive-parameter-editor-${editor.name}`;
+            if ( undefined === window.customElements.get(elemName) ) {
+                window.customElements.define(elemName, elemClass);
+            }
+        },
+
         /**
          * trigger event on request format change.
          * @emit directive-request-format-change

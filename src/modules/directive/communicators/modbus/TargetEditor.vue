@@ -329,7 +329,8 @@ export default {
      */
     editorConfig() {
         return {
-            name : window.app.$t('directive.communicator.modbus.name'),
+            name : 'Modbus',
+            label : window.app.$t('directive.communicator.modbus.name'),
             defaultDataType:'short',
             defaultResponseViewer : 'hex'
         };

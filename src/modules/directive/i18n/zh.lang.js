@@ -63,6 +63,7 @@ module.exports = {
         quickFunctionNameInvalid : '无效的快捷函数名 : {0}',
         buildHandlerNotAvailable : '无效的参数构建器 : {0}',
         notRequired : '无需配置请求参数',
+        editorNotAvailable : '参数编辑器不可用',
         none : {
             name : '无',
             notRequired : '无需配置请求参数',
