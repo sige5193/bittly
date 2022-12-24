@@ -28,7 +28,8 @@ export default class Manager {
      * constructor of plugin manager
      */
     constructor() {
-        this.basepath = 'D:/Flashin/bittly-dev/plugins';
+        let userDataPath = window.remote.app.getPath('userData');
+        this.basepath = `${userDataPath}/plugins`;
         this.plugins = {};
         window.BittlyPluginExec = (exec) => this.executePluginExec(exec);
     }
@@ -45,6 +46,7 @@ export default class Manager {
      * start to load plugins
      */
     async load() {
+        window.fs.mkdirSync(this.basepath, {recursive:true});
         let pluginsDir = await this.opendir(this.basepath);
         let pluginIds = [];
         for await (const pluginDirent of pluginsDir ) {
@@ -154,7 +156,7 @@ export default class Manager {
         
         let id = uuidV4();
         let pluginRoot = `${this.basepath}/${id}`;
-        window.fs.mkdirSync(pluginRoot);
+        window.fs.mkdirSync(pluginRoot, {recursive:true});
         let folders = zip.filter((relativePath, file) => file.dir);
         for ( let i=0; i<folders.length; i++ ) {
             let folder = folders[i];

@@ -17,7 +17,7 @@
           ><a-button type="primary">{{$t('plugin.btnInstall')}}</a-button></a-upload>
         </a-col>
         <a-col :span="12">
-          <a-button>{{$t('button.cancel')}}</a-button>
+          <a-button @click="actionCancel">{{$t('button.cancel')}}</a-button>
         </a-col>
       </a-row>
     </template>
@@ -116,6 +116,13 @@ export default {
         open () {
             this.refresh();
             this.enable = true;
+        },
+
+        /**
+         * 
+         */
+        actionCancel() {
+            this.enable = false;
         }
     },
 }
