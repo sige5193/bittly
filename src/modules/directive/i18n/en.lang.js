@@ -178,6 +178,7 @@ module.exports = {
             preserveExportRowTime : 'Time',
             parseToLast : 'Parse to end',
             saveAsExcelFieldListEmpty : 'Unable to export excel file because format field list is empty.',
+            expression : 'Expression',
         },
         plotter : {
             name : 'Plotter',

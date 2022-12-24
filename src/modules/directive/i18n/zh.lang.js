@@ -178,6 +178,7 @@ module.exports = {
             preserveExportRowTime : '时间',
             parseToLast : '解析到末尾',
             saveAsExcelFieldListEmpty : '格式化配置为空，无法导出Excel',
+            expression : '表达式',
         },
         plotter : {
             name : '绘图',

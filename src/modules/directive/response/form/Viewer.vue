@@ -90,7 +90,10 @@
         <!-- Field Value -->
         <div slot="value" slot-scope="text, record, index">
           <a-input size="small" class="border-none"
-            v-if="$dict.match('DIRECTIVE_PARAM_DATATYPE','STRING',record.type)" 
+            v-if="
+              $dict.match('DIRECTIVE_PARAM_DATATYPE','STRING',record.type)
+              || record.expression
+            " 
             v-model="values[index]"
             disabled
             :ref="`inputValueString_${index}`"
@@ -133,6 +136,14 @@
       
         <!-- Field Operations -->
         <div slot="action" slot-scope="text, record, index">
+          <a-popover :title="$t('directive.response.form.expression')" placement="topRight" trigger="click">
+            <template slot="content">
+              <a-input size="small" v-model="fields[index]['expression']" style="width:250px;" 
+                @input="actionExpressionInput(index)"
+              />
+            </template>
+            <a-icon :theme="record.expression ? 'twoTone' : 'outlined'" type="calculator" class="mr-1"/>
+          </a-popover>
           <a-icon :ref="`iconRowInsert_${index}`" type="plus-square" @click="actionRowInsert(index)" class="mr-1" />
           <a-icon :ref="`iconRowDelete_${index}`" type="delete" class="mr-1"
             :data-text="text" 
@@ -323,6 +334,16 @@ export default {
          * @param {Number} index
          */
         actionDescInput( index ) {
+            if ( index*1 === this.fields.length - 1 ) {
+                this.appendNewField();
+            }
+            this.updateVModel();
+        },
+
+        /**
+         * event handler on field expression updated
+         */
+        actionExpressionInput(index) {
             if ( index*1 === this.fields.length - 1 ) {
                 this.appendNewField();
             }

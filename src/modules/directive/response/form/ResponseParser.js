@@ -118,12 +118,33 @@ export default class ResponseParser {
     }
 
     /**
+     * execute field expression
+     * @param {*} field 
+     * @param {*} value 
+     */
+    executeExpression(field, value) {
+        if ( !field.expression ) {
+            return value;
+        }
+        try {
+            let expression = field.expression.replaceAll('{{value}}', 'value');
+            expression = `return ${expression};`;
+            let func = new Function('value', expression);
+            return func(value);
+        } catch ( e ) {
+            return 'Expression Error';
+        }
+    }
+
+    /**
      * parse as char
      * @return {Number} 
      */
     parseAsChar(field, index) {
         let byte = this.responseBuffer[index];
-        this.values.push(String.fromCharCode(byte));
+        let char = String.fromCharCode(byte);
+        char = this.executeExpression(field, char);
+        this.values.push(char);
         return index + 1;
     }
 
@@ -139,6 +160,7 @@ export default class ResponseParser {
         }
         let isLittleEndian = 'little-endian' == this.directive.endianness;
         let value = dataView[getter](index, isLittleEndian);
+        value = this.executeExpression(field, value);
         this.values.push(value.toString());
         return index + dataTypeLength;
     }
@@ -160,6 +182,7 @@ export default class ResponseParser {
         
         let isLittleEndian = 'little-endian' == this.directive.endianness;
         let value = dataView[getter](index, isLittleEndian);
+        value = this.executeExpression(field, value);
         this.values.push(value.toString());
         return index + length;
     }
@@ -176,6 +199,13 @@ export default class ResponseParser {
         }
         let isLittleEndian = 'little-endian' == this.directive.endianness;
         let value = dataView[getter](index,isLittleEndian);
+        
+        if ( field.expression ) {
+            value = this.executeExpression(field, value);
+            this.values.push(value);
+            return index + dataTypeLength;
+        }
+
         let radixMap = {bin:2,oct:8,dec:10,hex:16};
         value = value.toString(radixMap[field.format]).toUpperCase();
         
@@ -203,7 +233,9 @@ export default class ResponseParser {
         }
 
         let buf = this.responseBuffer.slice(index, index+length);
-        this.values.push(Formatter.asHexString(buf));
+        let value = Formatter.asHexString(buf);
+        value = this.executeExpression(field, value);
+        this.values.push(value);
         index += buf.length;
         return index;
     }
@@ -237,6 +269,7 @@ export default class ResponseParser {
             value = value.toString();
         }
 
+        value = this.executeExpression(field, value);
         this.values.push(value);
         return index;
     }
