@@ -167,7 +167,9 @@ export default {
          */
         refreshPanel() {
             this.$forceUpdate();
-            this.$refs.requestLogViewer.refresh();
+            if ( undefined != this.$refs.requestLogViewer ) {
+                this.$refs.requestLogViewer.refresh();
+            }
         },
 
         /**
