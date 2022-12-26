@@ -119,7 +119,7 @@ export default class DataComparator {
 
         let isSame = true;
         for ( let i=0; i<fields.length; i++ ) {
-            let isMatched = this.compareFormItem(fields[i]);
+            let isMatched = this.compareFormItem(fields[i], i);
             isSame = isSame && isMatched;
             this.matchResult.push(isMatched);
         }
@@ -131,7 +131,7 @@ export default class DataComparator {
      * @param {any} expect
      * @returns {Boolean}
      */
-    compareFormItem(expect) {
+    compareFormItem(expect, index) {
         let expectValue = expect.value;
         let actualValue = this.actualData.getValueByIndex(index);
         if ( undefined == actualValue ) {
