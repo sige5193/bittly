@@ -332,6 +332,7 @@ export default class Setup {
         require('../../migrations/m202211290850_alter_table_app_functional_testcases_add_timeout.js'),
         require('../../migrations/m202212051012_update_table_app_dictionary_update_charset_values.js'),
         require('../../migrations/m202212081217_insert_table_dict_add_param_datatype_bits.js'),
+        require('../../migrations/m202212261035_update_table_directive_update_reqest_content_file.js'),
     ];
 
     /**
