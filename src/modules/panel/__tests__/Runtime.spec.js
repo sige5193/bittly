@@ -13,7 +13,7 @@ describe('@/modules/panel/Runtime.js', () => {
             $refs : {
                 widgets : [{refresh:widgetRefresh}],
             },
-            refresh() {}
+            refreshPanel() {}
         };
         let runtime = new Runtime(panel, component);
         runtime.addVariableWatcher('var001', valueWatcher);

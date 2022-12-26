@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 export default class Runtime {
     /**
      * constructor of panel runtime
@@ -5,9 +8,16 @@ export default class Runtime {
      * @param {VueComponent} component
      */
     constructor( panel, component ) {
+        /**
+         * instance of panel modal.
+         * @property {MdbPanel}
+         */
         this.panel = panel;
+        /**
+         * instance of component running panel.
+         * @property {VueComponent}
+         */
         this.component = component;
-
         /**
          * history of requests
          * @property {Object[]}
@@ -18,7 +28,6 @@ export default class Runtime {
          * @property {Number}
          */
         this.requestKeyCounter = 0;
-
         /**
          * variables of runtime
          * @property {Object}
@@ -97,6 +106,7 @@ export default class Runtime {
 
     /**
      * refresh runtime and all the widgets
+     * @returns {void}
      */
     refresh() {
         this.component.refreshPanel();
