@@ -113,7 +113,7 @@ export default class DataComparator {
     compareForm() {
         this.matchResult = [];
         let fields = this.expectData;
-        if ( null === this.expectData ) {
+        if ( null === this.expectData || undefined === this.expectData ) {
             fields = [];
         }
 
