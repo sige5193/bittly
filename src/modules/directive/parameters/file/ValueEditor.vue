@@ -31,7 +31,7 @@ export default {
          */
         initVModel() {
             this.file = this.value;
-            if ( null === this.file ) {
+            if ( null === this.file || 'object' != typeof(this.value) ) {
                 this.file = {};
             }
         },
