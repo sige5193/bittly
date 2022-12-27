@@ -1,5 +1,6 @@
 <template>
   <div class="win-request-log border h-0 flex-grow d-flex flex-dir-column">
+    <!-- header -->
     <a-row class="header">
       <a-col :span="2" class="table-cell">{{$t('panel.runMode.requestLog.headerTime')}}</a-col>
       <a-col :span="4" class="table-cell">{{$t('panel.runMode.requestLog.headerDirective')}}</a-col>
@@ -8,6 +9,7 @@
       <a-col :span="8" class="table-cell">{{$t('panel.runMode.requestLog.headerResponse')}}</a-col>
     </a-row>
 
+    <!-- content -->
     <div class="request-log-list flex-grow h-0" ref="requestLogList">
       <a-empty v-if="0 == requests.length" class="mt-5" :description="false"/>
       <virtual-list v-else ref="virtualList" class="h-100 overflow-y-auto"
@@ -29,7 +31,7 @@ export default {
     },
     props : {
         /**
-         * @property {Object}
+         * @property {Runtime}
          */
         runtime : Object,
     },
@@ -50,6 +52,7 @@ export default {
     methods : {
         /**
          * refresh logs from runtime, and append new request to request list.
+         * @public
          */
         refresh() {
             for ( let i=this.requests.length; i<this.runtime.requests.length; i++ ) {
@@ -65,13 +68,7 @@ export default {
 }
 </script>
 <style scoped>
-.win-request-log .table-cell {
-    border-right: solid 1px #d6d6d6;
-    padding-left: 0.25rem !important;
-    white-space: pre;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+.win-request-log .table-cell {border-right: solid 1px #d6d6d6;padding-left: 0.25rem !important;white-space: pre;overflow: hidden;text-overflow: ellipsis;}
 .win-request-log .request-log-list {overflow-y: scroll;color: #979797;}
 .win-request-log .header {font-weight:600;border-bottom:solid 1px #bfbfbf;padding-right: 5px;}
 </style>

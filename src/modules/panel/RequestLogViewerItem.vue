@@ -44,7 +44,7 @@ export default {
        * data entry object
        * @property {Object}
        */
-      source: {type: Object,default () {return {}}},
+      source: {type: Object},
     },
     filters : {
         time (value) {
