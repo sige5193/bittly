@@ -194,7 +194,7 @@ export default {
         applyParamValuesToContent( content ) {
             let newContent = content;
             let widgetValue = this.valueGet();
-            if ( undefined != widgetValue ) {
+            if ( undefined != widgetValue && 'string' == typeof(newContent) ) {
                 newContent = newContent.replaceAll('{{value}}', widgetValue)
             }
             

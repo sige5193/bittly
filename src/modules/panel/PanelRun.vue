@@ -51,32 +51,15 @@
         :headerStyle="{display:'none'}"
         :body-style="{padding:0,height:'100%',overflow: 'auto',display: 'flex',flexDirection: 'column'}"
         :afterVisibleChange="actionLogDrawerVisibleChange"
-      >
-        <request-log-viewer ref="requestLogViewer" :runtime="runtime"/>
-      </a-drawer>
+      ><request-log-viewer ref="requestLogViewer" :runtime="runtime"/></a-drawer>
       
+      <!-- widgets -->
       <div ref="widget-panel" class="widget-panel">
-        <div v-for="(widget, index) in panel.widgets" 
-          :key="index" class="r-widget" 
+        <div v-for="(widget, index) in panel.widgets" :key="index" class="position-absolute" 
           :style="{top:`${widget.pos.y}px`,left:`${widget.pos.x}px`}"
         >
-          <custom-widget-trigger 
-            v-if="undefined != widget.isCustom && true == widget.isCustom && 'trigger' == widget.type"
+          <component :is="getWidgetComponentName(widget)" 
             :name="widget.name"
-            :panel="panel" 
-            :widget="panel.widgets[index]"
-            :runtime="runtime"
-            ref="widgets"
-          />
-          <custom-widget-viewer 
-            v-else-if="undefined != widget.isCustom && true == widget.isCustom && 'viewer' == widget.type"
-            :name="widget.name"
-            :panel="panel" 
-            :widget="panel.widgets[index]"
-            :runtime="runtime"
-            ref="widgets"
-          />
-          <component v-else :is="`widget-${widget.name}`" 
             :panel="panel" 
             :widget="panel.widgets[index]"
             :runtime="runtime"
@@ -122,13 +105,11 @@ export default {
             logDrawerWrapStyle : {},
         };
     },
-    watch : {
-        panel() {
-            this.initRuntime();
-        },
-    },
     created() {
         this.initRuntime();
+    },
+    async beforeDestroy() {
+        await this.$store.dispatch('closeAllCommunicators');
     },
     methods : {
         /**
@@ -136,6 +117,23 @@ export default {
          */
         initRuntime() {
             this.runtime = new Runtime(this.panel, this);
+        },
+
+        /**
+         * get component name by given widget options.
+         * @param {Object} widget
+         * @returns {String}
+         */
+        getWidgetComponentName( widget ) {
+            if ( undefined != widget.isCustom && true == widget.isCustom ) {
+                if ( 'trigger' == widget.type ) {
+                    return 'custom-widget-trigger';
+                } else {
+                    return 'custom-widget-viewer';
+                }
+            } else {
+                return `widget-${widget.name}`;
+            }
         },
 
         /**
@@ -164,6 +162,7 @@ export default {
 
         /**
          * refresh panel
+         * @public
          */
         refreshPanel() {
             this.$forceUpdate();
@@ -176,7 +175,6 @@ export default {
          * switch to edit mode
          */
         async actionModeSwitch() {
-            await this.$store.dispatch('closeAllCommunicators');
             this.$emit('switch-mode-to-edit');
         },
     },
@@ -184,7 +182,6 @@ export default {
 </script>
 <style scoped>
 .widget-panel {background: #f7f7f7;height: 100%;position: relative;overflow: hidden;}
-.r-widget {position: absolute;}
 .var-content {white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}
 .var-key {white-space: nowrap;word-break: keep-all;overflow: hidden;text-overflow: ellipsis;}
 </style>

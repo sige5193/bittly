@@ -50,6 +50,7 @@
 .bg-light-2 {background-color: #f6f6f6 !important;}
 .bg-light-2 .ant-select-selection {background-color: #f6f6f6 !important;}
 .position-relative {position: relative;}
+.position-absolute {position: absolute;}
 
 .mt-0 {margin-top: 0 !important; }
 .mt-1 { margin-top: 0.25rem !important;}
