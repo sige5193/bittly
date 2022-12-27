@@ -313,6 +313,9 @@ export default class ResponseParser {
         if ( -1 !== rawTypes.indexOf(field.type) ) {
             return value;
         }
+        if ( field.expression ) {
+            return value;
+        }
         
         let number = MyNumber.parseNumberByRadixName(value, field.format);
         return number.toString();

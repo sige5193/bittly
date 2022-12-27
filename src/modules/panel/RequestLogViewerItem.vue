@@ -176,6 +176,10 @@ export default {
                 if ( true == this.$dict.voption('DIRECTIVE_PARAM_DATATYPE',fields[i].type,'unsigned', false) ) {
                     prefix = prefixMap[fields[i].format];
                 }
+                if ( fields[i].expression ) {
+                    prefix = '';
+                }
+
                 let value = response.getValueByIndex(i);
                 if ( undefined == value ) {
                     value = '';
