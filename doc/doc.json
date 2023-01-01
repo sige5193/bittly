@@ -1,0 +1,164 @@
+{
+    "index" : "quick-start/index",
+    "toc" : [{
+            "name" : "快速开始",
+            "link" : "quick-start/index",
+            "children" : [
+                {"name":"安装与更新","link":"quick-start/install"},
+                {"name":"界面说明","link":"quick-start/ui-layout"},
+                {"name":"数据发送与接收","link":"quick-start/send-receive"},
+                {"name":"数据格式化与解析","link":"quick-start/structural-format"},
+                {"name":"数据绘图分析","link":"quick-start/plotter"},
+                {"name":"控制面板","link":"quick-start/panel"},
+                {"name":"自动化测试","link":"quick-start/testing"},
+                {"name":"问题反馈与支持","link":"quick-start/feedback"}
+            ]
+        },{
+            "name":"指令管理",
+            "link":"directive",
+            "children" : [{
+                    "name":"目录操作",
+                    "link":"directive-toc"
+                }, {
+                    "name":"指令执行",
+                    "link":"directive-execute"
+                }, {
+                    "name":"通讯方式",
+                    "link":"directive-communicators",
+                    "children" : [
+                        {"name":"串口","link":"directive-communicator-serialport"},
+                        {"name":"网络","link":"directive-communicator-network"},
+                        {"name":"蓝牙","link":"directive-communicator-bluetooth"},
+                        {"name":"HTTP","link":"directive-communicator-http"},
+                        {"name":"Websocket","link":"directive-communicator-websocket"},
+                        {"name":"MQTT","link":"directive-communicator-mqtt"},
+                        {"name":"Modbus","link":"directive-communicator-modbus"}
+                    ]
+                }, {
+                    "name":"参数构建",
+                    "link":"directive-parameter",
+                    "children" : [
+                        {"name":"表单","link":"directive-parameter-form"},
+                        {"name":"HEX","link":"directive-parameter-hex"},
+                        {"name":"文本","link":"directive-parameter-text"},
+                        {"name":"文件","link":"directive-parameter-file"},
+                        {"name":"字符串类型数据","link":"directive-parameter-datatype-string"}
+                    ]
+                }, {
+                    "name":"请求脚本",
+                    "link":"directive-script",
+                    "children" : [
+                        {"name":"内置函数","link":"directive-script-buildin"}
+                    ]
+                }, {
+                    "name":"响应查看",
+                    "link":"directive-response",
+                    "children" : [
+                        {"name":"文本","link":"directive-response-text"},
+                        {"name":"HEX","link":"directive-response-hex"},
+                        {"name":"格式化","link":"directive-response-form"},
+                        {"name":"绘图","link":"directive-response-plotter"}
+                    ]
+                }, {
+                    "name":"配置指令",
+                    "link":"directive-config"
+                }
+            ]
+        },
+        {
+            "name":"面板管理",
+            "link":"panel",
+            "children" : [{
+                "name":"组件",
+                "link":"panel-widgets",
+                "children" : [
+                    {"name":"按钮","link":"panel-widget-button"},
+                    {"name":"开关","link":"panel-widget-switch"},
+                    {"name":"文本输入","link":"panel-widget-text-input"},
+                    {"name":"数值输入","link":"panel-widget-number-input"},
+                    {"name":"滑动条","link":"panel-widget-slider"},
+                    {"name":"单选","link":"panel-widget-radio"},
+                    {"name":"下拉框","link":"panel-widget-select"},
+                    {"name":"标签","link":"panel-widget-label"},
+                    {"name":"进度条","link":"panel-widget-progress-bar"},
+                    {"name":"文本查看","link":"panel-widget-text-viewer"},
+                    {"name":"数值查看","link":"panel-widget-number-viewer"},
+                    {"name":"电池","link":"panel-widget-battery"},
+                    {"name":"温度计","link":"panel-widget-thermometer"},
+                    {"name":"仪表盘","link":"panel-widget-gauge"},
+                    {"name":"LED 灯","link":"panel-widget-led"},
+                    {"name":"折线图","link":"panel-widget-line-chart"},
+                    {"name":"定时器","link":"panel-widget-timer"},
+                    {"name":"水球","link":"panel-widget-liquidfill"},
+                    {"name":"终端","link":"panel-widget-terminal"},
+                    {"name":"角度指示器","link":"panel-widget-angle-indicator"},
+                    {"name":"偏移角度指示器","link":"panel-widget-offset-angle-indicator"},
+                    {"name":"分组框","link":"panel-widget-groupbox"},
+                    {"name":"地图","link":"panel-widget-map"},
+                    {"name":"3D姿态查看器","link":"panel-widget-3d-orientation-viewer"}
+                ]
+            },{
+                "name":"指令配置",
+                "link":"panel-widgets-directive-config"
+            },{
+                "name":"组件脚本",
+                "link":"panel-widgets-script"
+            }]
+        },
+        {
+            "name":"测试管理",
+            "link":"test",
+            "children" : [{
+                "name":"测试用例编辑",
+                "link":"test-testcase-edit"
+            }]
+        },
+        {
+            "name":"文档管理",
+            "link":"document"
+        },
+        {
+            "name":"环境变量",
+            "link":"env"
+        },
+        {
+            "name":"项目管理",
+            "link":"project",
+            "children" : [{
+                "name":"基础配置",
+                "link":"project-base"
+            },{
+                "name":"脚本",
+                "link":"project-script"
+            },{
+                "name":"发布",
+                "link":"project-publish"
+            },{
+                "name":"更新",
+                "link":"project-update"
+            },{
+                "name":"成员",
+                "link":"project-member"
+            },{
+                "name":"删除",
+                "link":"project-delete"
+            }]
+        },{
+            "name":"小工具",
+            "link":"tools",
+            "children" : [{
+                "name":"串口服务端",
+                "link":"tool-serialport-server"
+            },{
+                "name":"TCP 服务端",
+                "link":"tool-tcp-server"
+            },{
+                "name":"UDP 服务端",
+                "link":"tool-udp-server"
+            },{
+                "name":"Web Socket 服务端",
+                "link":"tool-ws-server"
+            }]
+        }
+    ]
+}
