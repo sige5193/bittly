@@ -7,13 +7,15 @@ jobs:
     
     runs-on: ubuntu-latest
     steps:
-    - run: sudo apt install python2
-    - run: sudo apt-get install libbluetooth-dev
-    - uses: actions/checkout@v1
-    - name: Setup node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: 16.14.2
-        architecture: x64
-    - run: npm install --python=python2.7
-    - run: npm run electron:build
+    # - run: sudo apt install python2
+    # - run: sudo apt-get install libbluetooth-dev
+    # - uses: actions/checkout@v1
+    # - name: Setup node.js
+    #   uses: actions/setup-node@v1
+    #   with:
+    #     node-version: 16.14.2
+    #     architecture: x64
+    # - run: npm install --python=python2.7
+    # - run: npm run electron:build
+    - run: wget https://devtools.qiniu.com/qshell-v2.9.2-linux-386.tar.gz
+    - run: tar -zxvf qshell-v2.9.2-linux-386.tar.gz
