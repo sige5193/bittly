@@ -21,6 +21,6 @@ jobs:
     - run: tar -zxvf qshell-v2.9.2-linux-386.tar.gz
     - run: chmod u+x qshell
     - run: ./qshell --version
-    - run: ./qshell account ${{secret.QINIU_AK}} ${{secret.QINIU_SK}} ${{secret.QINIU_ACCOUNT_NAME}}
+    - run: ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
     - run: ./qshell account
 
