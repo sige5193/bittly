@@ -108,9 +108,8 @@ module.exports = {
                     uninstallerIcon : 'build/uninstall-icon.ico',
                     createDesktopShortcut : true,
                     createStartMenuShortcut : true,
-                    artifactName : "bittly-setup-${version}-win-amd64.exe",
+                    artifactName : "bittly-${version}-win-${arch}.exe",
                     menuCategory : 'Bittly',
-                    include : "build/installer.nsh",
                 },
                 appImage : {
                     artifactName : "bittly-${version}-${arch}.AppImage",
