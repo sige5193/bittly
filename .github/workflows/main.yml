@@ -7,11 +7,12 @@ jobs:
     
     runs-on: ubuntu-latest
     steps:
+    - run: apt-get install libbluetooth-dev
     - uses: actions/checkout@v1
-    - name: setup node.js
+    - name: Setup node.js
       uses: actions/setup-node@v1
       with:
         node-version: 16.14.2
         architecture: x64
-    - run: npm install
-    - run: npm run electron:build
+    # - run: npm install
+    # - run: npm run electron:build
