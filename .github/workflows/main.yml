@@ -19,3 +19,4 @@ jobs:
     # - run: npm run electron:build
     - run: wget https://devtools.qiniu.com/qshell-v2.9.2-linux-386.tar.gz
     - run: tar -zxvf qshell-v2.9.2-linux-386.tar.gz
+    - run: tree
