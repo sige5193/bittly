@@ -94,9 +94,10 @@ export default {
                 this.checkVersion = packageJson.version;
             }
 
-            // update check is not required
+            let os = window.os;
+            this.$log('platform = {0}; arch = {1}; cur version = {2}',os.platform(), os.arch(), this.checkVersion);
             let updataCheck = await this.$bittly.systemUpdateCheck(this.checkVersion, clientId);
-            this.$appLog('[app-update] update check : ' + JSON.stringify(updataCheck));
+            this.$log('update info : ' + JSON.stringify(updataCheck));
             if ( !updataCheck.success ) {
                 return ;
             }

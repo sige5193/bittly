@@ -14,7 +14,7 @@ $password = ConvertTo-SecureString  $config.windows.password -AsPlainText -Force
 $packageJSON = (Get-Content "../package.json") | ConvertFrom-Json
 $workpath = $config.windows.workpath;
 $version = $packageJson.version;
-$filename = "bittly-setup-$version-win-amd64.exe"
+$filename = "bittly-$version-win-x64.exe"
 $mode = $args[0]
 if ( $mode -eq "" ) {
     $mode = "dev"
@@ -58,9 +58,9 @@ Invoke-Command -Session $session -ScriptBlock { Stop-Computer -Force }
 Disconnect-PSSession -Session $session
 
 upload-package-to-cdn $filename
-upload-latest-yml "latest.yml"
-
 if ( $mode -eq "prod" ) {
+    upload-latest-yml "latest.yml" "win32" "x64"
+
     # update service info
     update-server-runtime-variable 'windows_installer_version' $version
 

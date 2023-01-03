@@ -1,9 +1,7 @@
-import fs from 'fs';
-import child_process from 'child_process'
 import { autoUpdater } from "electron-updater"
-import { app, dialog, ipcMain } from 'electron'
+import { ipcMain } from 'electron'
 import Application from './Application';
-const remote = require('@electron/remote/main');
+const os = require('os');
 export default class AppUpdator {
     /**
      * 配置更新
@@ -30,7 +28,7 @@ export default class AppUpdator {
         ipcMain.on('app-update-check',() => this.updateCheck() );
         
         let websiteUrl = Application.app().websiteUrl;
-        autoUpdater.setFeedURL(`${websiteUrl}/app-update/`);
+        autoUpdater.setFeedURL(`${websiteUrl}/app-update/${os.platform()}/${os.arch()}/`);
         autoUpdater.on('checking-for-update', () => this.sendEventMessage('app-update-checking',null));
         autoUpdater.on('update-not-available', () => this.sendEventMessage('app-update-not-available', null));
         autoUpdater.on('update-available', (info) => this.sendEventMessage('app-update-available', info) );

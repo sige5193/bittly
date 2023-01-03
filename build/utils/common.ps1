@@ -1,6 +1,6 @@
 # upload latest.yml file to server
 # @param [String] $filename
-function upload-latest-yml ( $filename )  {
+function upload-latest-yml ( $filename, $platform, $arch )  {
     Write-Host "uploading $filename to server"
 
     $package = (Get-Content "../package.json") | ConvertFrom-Json
@@ -14,7 +14,7 @@ function upload-latest-yml ( $filename )  {
     $updateContent | Out-File -Encoding UTF8 "..\dist_electron\$filename"
 
     # upload file to server
-    echo "put ../dist_electron/$filename /usr/local/bittly/server/web/app-update" | sftp root@bittly.sigechen.com
+    echo "put ../dist_electron/$filename /usr/local/bittly/server/web/app-update/$platform/$arch" | sftp root@bittly.sigechen.com
     chcp 936 | Out-Null
 }
 
