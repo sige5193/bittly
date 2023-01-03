@@ -7,7 +7,7 @@ jobs:
     
     runs-on: ubuntu-latest
     steps:
-    - run: apt-get install libbluetooth-dev
+    - run: sudo apt-get install libbluetooth-dev
     - uses: actions/checkout@v1
     - name: Setup node.js
       uses: actions/setup-node@v1
