@@ -15,5 +15,5 @@ jobs:
       with:
         node-version: 16.14.2
         architecture: x64
-    - run: npm install
-    # - run: npm run electron:build
+    - run: npm install --python=python2.7
+    - run: npm run electron:build
