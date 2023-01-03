@@ -8,4 +8,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - run: pwd && ls && echo "Hello"
+    - name: setup node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: 16.14.2
+        architecture: x64
+    - run: npm install
+    - run: npm run electron:build
