@@ -9,7 +9,7 @@ jobs:
     steps:
     # - run: sudo apt install python2
     # - run: sudo apt-get install libbluetooth-dev
-    # - uses: actions/checkout@v1
+    - uses: actions/checkout@v1
     # - name: Setup node.js
     #   uses: actions/setup-node@v1
     #   with:
