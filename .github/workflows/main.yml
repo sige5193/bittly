@@ -17,12 +17,10 @@ jobs:
     #     architecture: x64
     # - run: npm install --python=python2.7
     # - run: npm run electron:build
-
     - name: get-npm-version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@main
     - run: echo ${{ steps.package-version.outputs.current-version}}
-    
     # - run: wget https://devtools.qiniu.com/qshell-v2.9.2-linux-386.tar.gz
     # - run: tar -zxvf qshell-v2.9.2-linux-386.tar.gz
     # - run: chmod u+x qshell
