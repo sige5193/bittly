@@ -1,6 +1,9 @@
 name: Build App
 
-on: push
+on: 
+  repository_dispatch:
+    types:
+      - build-packages
 
 jobs:
   # build mac packages
