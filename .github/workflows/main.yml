@@ -20,6 +20,8 @@ jobs:
         with:
           vs-version: 15.9
       - run: npm install --python=python2.7
+      - run: npm run electron:build -- --ia32
+      - run: ls .\dist_electron\
 
   # build-linux-package:
   #   runs-on: ubuntu-22.04
