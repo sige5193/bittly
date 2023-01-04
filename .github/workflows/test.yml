@@ -1,0 +1,55 @@
+name: Build App
+
+on: push
+
+jobs:
+  # build mac packages
+  build-mac-packages:
+    runs-on: macos-latest
+    steps:
+      # node.js
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.14.2
+      
+      # python2
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 2.7 
+
+      # python3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      
+      # checkout 
+      - uses: actions/checkout@v1
+
+      # get version
+      - name: Extract version
+        id: package-json
+        uses: Saionaro/extract-package-version@v1.0.6
+
+      # install qshell to upload packages to qiniu
+      - run: wget https://devtools.qiniu.com/qshell-v2.9.2-darwin-amd64.tar.gz
+      - run: tar -zxvf qshell-v2.9.2-darwin-amd64.tar.gz
+      - run: chmod u+x qshell
+      - run: ./qshell --version
+      - run: ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
+
+      # install deps
+      - run: npm install --python=python2.7
+
+      # build package and upload
+      - run: npm run electron:build
+      # - run: >
+      #     ./qshell rput ${{secrets.QINIU_BUCKET}} 
+      #     download/${{steps.package-json.outputs.version}}/bittly-${{steps.package-json.outputs.version}}-win-x86.exe 
+      #     ./dist_electron/bittly-${{steps.package-json.outputs.version}}-win-ia32.exe
+
+      # update server variables
+      - run: >
+          curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
+          --form 'key="mac_released_at"' 
+          --form "value=$(date '+%Y-%m-%d')" 
+          --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s

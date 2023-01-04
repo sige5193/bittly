@@ -1,10 +1,10 @@
 name: Build App
 
-on: push
+on: release
 
 jobs:
   # build windows packages for 32 and 64 bit.
-  build-window-package:
+  build-window-packages:
     runs-on: windows-2022
     steps:
       # node.js
@@ -48,14 +48,14 @@ jobs:
       - run: npm run electron:build -- --ia32
       - run: >
           ./qshell rput ${{secrets.QINIU_BUCKET}} 
-          download/${{steps.package-json.outputs.version}}/bittly-${{steps.package-json.outputs.version}}-win-x86.exe 
+          download/${{steps.package-json.outputs.version}}/bittly-${{steps.package-json.outputs.version}}-x86.exe 
           ./dist_electron/bittly-${{steps.package-json.outputs.version}}-win-ia32.exe
 
       # build 64bit package and upload
       - run: npm run electron:build -- --x64
       - run: >
           ./qshell fput ${{secrets.QINIU_BUCKET}} 
-          download/${{steps.package-json.outputs.version}}/bittly-${{steps.package-json.outputs.version}}-win-x64.exe 
+          download/${{steps.package-json.outputs.version}}/bittly-${{steps.package-json.outputs.version}}-x64.exe 
           ./dist_electron/bittly-${{steps.package-json.outputs.version}}-win-x64.exe 
 
       # update server variables
@@ -66,7 +66,7 @@ jobs:
           --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
 
   # build linux packages
-  build-linux-package:
+  build-linux-packages:
     runs-on: ubuntu-22.04
     steps:
     - run: sudo apt install python2
@@ -96,14 +96,14 @@ jobs:
     - run: npm run electron:build -- --ia32
     - run: >
         ./qshell fput ${{secrets.QINIU_BUCKET}} 
-        download/${{steps.package-version.outputs.current-version}}/bittly-${{steps.package-version.outputs.current-version}}-i386.AppImage 
+        download/${{steps.package-version.outputs.current-version}}/bittly-${{steps.package-version.outputs.current-version}}-x86.AppImage 
         ./dist_electron/bittly-${{steps.package-version.outputs.current-version}}-i386.AppImage
 
     # build 64bit package and upload
     - run: npm run electron:build -- --x64
     - run: >
         ./qshell fput ${{secrets.QINIU_BUCKET}} 
-        download/${{steps.package-version.outputs.current-version}}/bittly-${{steps.package-version.outputs.current-version}}-x86_64.AppImage 
+        download/${{steps.package-version.outputs.current-version}}/bittly-${{steps.package-version.outputs.current-version}}-x64.AppImage 
         ./dist_electron/bittly-${{steps.package-version.outputs.current-version}}-x86_64.AppImage
     
     # update server variables

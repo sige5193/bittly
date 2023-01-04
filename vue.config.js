@@ -114,6 +114,9 @@ module.exports = {
                 appImage : {
                     artifactName : "bittly-${version}-${arch}.AppImage",
                 },
+                dmg: {
+                    // artifactName : "bittly-${version}-${arch}.AppImage",
+                },
                 extraFiles : [
                     
                 ],
