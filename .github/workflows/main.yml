@@ -38,8 +38,8 @@ jobs:
       - run: npm run electron:build -- --ia32
       - run: >
           ./qshell fput ${{secrets.QINIU_BUCKET}} 
-          download/${{steps.package-version.outputs.version}}/bittly-${{steps.package-version.outputs.version}}-win-ia32.exe 
-          ./dist_electron/bittly-${{steps.package-version.outputs.version}}.exe
+          download/${{steps.package-version.outputs.version}}/bittly-${{steps.package-version.outputs.version}}.exe 
+          ./dist_electron/bittly-${{steps.package-version.outputs.version}}-win-ia32.exe
 
   # build-linux-package:
   #   runs-on: ubuntu-22.04
