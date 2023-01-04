@@ -10,6 +10,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.14.2
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 2.7 
 
   # build-linux-package:
   #   runs-on: ubuntu-22.04
