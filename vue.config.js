@@ -116,6 +116,7 @@ module.exports = {
                 },
                 dmg: {
                     // artifactName : "bittly-${version}-${arch}.AppImage",
+                    icon : "build/icon/Icon-512x512.png",
                 },
                 extraFiles : [
                     
