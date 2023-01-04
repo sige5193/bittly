@@ -3,50 +3,58 @@ name: Build App
 on: push
 
 jobs:
-  build:
-    
-    runs-on: ubuntu-latest
+  build-window-package:
+    runs-on: windows-2022
     steps:
-    - run: sudo apt install python2
-    - run: sudo apt-get install libbluetooth-dev
-    - uses: actions/checkout@v1
-    - name: Setup node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: 16.14.2
+      - uses: actions/checkout@v1
+      - name: Setup node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.14.2
 
-    # install qshell to upload packages to qiniu
-    - run: wget https://devtools.qiniu.com/qshell-v2.9.2-linux-386.tar.gz
-    - run: tar -zxvf qshell-v2.9.2-linux-386.tar.gz
-    - run: chmod u+x qshell
-    - run: ./qshell --version
-    - run: ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
+  # build-linux-package:
+  #   runs-on: ubuntu-22.04
+  #   steps:
+  #   - run: sudo apt install python2
+  #   - run: sudo apt-get install libbluetooth-dev
+  #   - uses: actions/checkout@v1
+  #   - name: Setup node.js
+  #     uses: actions/setup-node@v1
+  #     with:
+  #       node-version: 16.14.2
+
+  #   # install qshell to upload packages to qiniu
+  #   - run: wget https://devtools.qiniu.com/qshell-v2.9.2-linux-386.tar.gz
+  #   - run: tar -zxvf qshell-v2.9.2-linux-386.tar.gz
+  #   - run: chmod u+x qshell
+  #   - run: ./qshell --version
+  #   - run: ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
     
-    # get package.json version
-    - name: get-npm-version
-      id: package-version
-      uses: martinbeentjes/npm-get-version-action@main
+  #   # get package.json version
+  #   - name: get-npm-version
+  #     id: package-version
+  #     uses: martinbeentjes/npm-get-version-action@main
 
-    # install deps
-    - run: npm install --python=python2.7
+  #   # install deps
+  #   - run: npm install --python=python2.7
 
-    # build 32bit package and upload
-    - run: npm run electron:build -- --ia32
-    - run: >
-        ./qshell fput ${{secrets.QINIU_BUCKET}} 
-        download/${{steps.package-version.outputs.current-version}}/bittly-${{steps.package-version.outputs.current-version}}-i386.AppImage 
-        ./dist_electron/bittly-${{steps.package-version.outputs.current-version}}-i386.AppImage
+  #   # build 32bit package and upload
+  #   - run: npm run electron:build -- --ia32
+  #   - run: >
+  #       ./qshell fput ${{secrets.QINIU_BUCKET}} 
+  #       download/${{steps.package-version.outputs.current-version}}/bittly-${{steps.package-version.outputs.current-version}}-i386.AppImage 
+  #       ./dist_electron/bittly-${{steps.package-version.outputs.current-version}}-i386.AppImage
 
-    # build 64bit package and upload
-    - run: npm run electron:build -- --x64
-    - run: >
-        ./qshell fput ${{secrets.QINIU_BUCKET}} 
-        download/${{steps.package-version.outputs.current-version}}/bittly-${{steps.package-version.outputs.current-version}}-x86_64.AppImage 
-        ./dist_electron/bittly-${{steps.package-version.outputs.current-version}}-x86_64.AppImage
+  #   # build 64bit package and upload
+  #   - run: npm run electron:build -- --x64
+  #   - run: >
+  #       ./qshell fput ${{secrets.QINIU_BUCKET}} 
+  #       download/${{steps.package-version.outputs.current-version}}/bittly-${{steps.package-version.outputs.current-version}}-x86_64.AppImage 
+  #       ./dist_electron/bittly-${{steps.package-version.outputs.current-version}}-x86_64.AppImage
     
-    # update server variables
-    - run: >
-        curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
-        --form 'key="linux_released_at"' 
-        --form "value=$(date '+%Y-%m-%d')" 
-        --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
+  #   # update server variables
+  #   - run: >
+  #       curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
+  #       --form 'key="linux_released_at"' 
+  #       --form "value=$(date '+%Y-%m-%d')" 
+  #       --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
