@@ -21,25 +21,29 @@ jobs:
           vs-version: 15.9
 
       # get package.json version
-      - name: get-npm-version
+      - name: get-version-from-package-json
+        uses: polyseam/get-version-from-package-json@v.1.0.0
         id: package-version
-        uses: martinbeentjes/npm-get-version-action@main
+        with:
+          path-to-file: './package.json'
+      - name: print-version
+        run: echo "The version key in your json is ${{steps.package-version.outputs.version}}"
 
-      # setup qshell
-      - run: Invoke-RestMethod -Uri 'https://devtools.qiniu.com/qshell-v2.9.2-windows-386.zip' -OutFile 'qshell.zip'
-      - run: Expand-Archive -LiteralPath qshell.zip -DestinationPath ./
-      - run: ./qshell --version
-      - run: ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
+      # # setup qshell
+      # - run: Invoke-RestMethod -Uri 'https://devtools.qiniu.com/qshell-v2.9.2-windows-386.zip' -OutFile 'qshell.zip'
+      # - run: Expand-Archive -LiteralPath qshell.zip -DestinationPath ./
+      # - run: ./qshell --version
+      # - run: ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
 
-      # install deps
-      - run: npm install --python=python2.7
+      # # install deps
+      # - run: npm install --python=python2.7
 
-      # build 32bit package and upload
-      - run: npm run electron:build -- --ia32
-      - run: >
-          ./qshell fput ${{secrets.QINIU_BUCKET}} 
-          download/${{steps.package-version.outputs.current-version}}/bittly-${{steps.package-version.outputs.current-version}}-win-ia32.exe 
-          ./dist_electron/bittly-${{steps.package-version.outputs.current-version}}.exe
+      # # build 32bit package and upload
+      # - run: npm run electron:build -- --ia32
+      # - run: >
+      #     ./qshell fput ${{secrets.QINIU_BUCKET}} 
+      #     download/${{steps.package-version.outputs.current-version}}/bittly-${{steps.package-version.outputs.current-version}}-win-ia32.exe 
+      #     ./dist_electron/bittly-${{steps.package-version.outputs.current-version}}.exe
 
   # build-linux-package:
   #   runs-on: ubuntu-22.04
