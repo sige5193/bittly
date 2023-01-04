@@ -21,13 +21,20 @@ jobs:
           vs-version: 15.9
 
       # get package.json version
-      - name: get-version-from-package-json
-        uses: polyseam/get-version-from-package-json@v.1.0.0
-        id: package-version
-        with:
-          path-to-file: './package.json'
-      - name: print-version
-        run: echo "The version key in your json is ${{steps.package-version.outputs.version}}"
+      - name: Extract version
+        id: extract_version
+        uses: Saionaro/extract-package-version@v1.0.6
+      # From now you can access the version
+      - name: Print version
+        run: echo ${{ steps.extract_version.outputs.version }}
+
+      # - name: get-version-from-package-json
+      #   uses: polyseam/get-version-from-package-json@v.1.0.0
+      #   id: package-version
+      #   with:
+      #     path-to-file: './package.json'
+      # - name: print-version
+      #   run: echo "The version key in your json is ${{steps.package-version.outputs.version}}"
 
       # # setup qshell
       # - run: Invoke-RestMethod -Uri 'https://devtools.qiniu.com/qshell-v2.9.2-windows-386.zip' -OutFile 'qshell.zip'
