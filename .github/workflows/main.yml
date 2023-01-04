@@ -26,5 +26,5 @@ jobs:
     # - run: chmod u+x qshell
     # - run: ./qshell --version
     # - run: ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
-    - run: echo fput ${{secrets.QINIU_BUCKET}} download/${{steps.package-version.outputs.current-version}}/bittly-${{steps.package-version.outputs.current-version}}-x64.AppImage ./dist_electron/xxxx
+    - run: echo fput ${{secrets.QINIU_BUCKET}} download/${{steps.package-version.outputs.current-version}}/bittly-${{steps.package-version.outputs.current-version}}-x64.AppImage ./dist_electron/bittly-${{steps.package-version.outputs.current-version}}-x64.AppImage
 
