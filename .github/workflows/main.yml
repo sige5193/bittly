@@ -3,26 +3,36 @@ name: Build App
 on: push
 
 jobs:
+  # build windows packages for 32 and 64 bit.
   build-window-package:
     runs-on: windows-2022
     steps:
-      - uses: actions/checkout@v1
+      # node.js
       - uses: actions/setup-node@v3
         with:
           node-version: 16.14.2
+      
+      # python2
       - uses: actions/setup-python@v4
         with:
           python-version: 2.7 
+
+      # python3
       - uses: actions/setup-python@v4
         with:
           python-version: 3.11
+      
+      # msbuild
       - uses: microsoft/setup-msbuild@v1.1
         with:
           vs-version: 15.9
 
-      # get package.json version
+      # checkout 
+      - uses: actions/checkout@v1
+
+      # get version
       - name: Extract version
-        id: package-version
+        id: package-json
         uses: Saionaro/extract-package-version@v1.0.6
 
       # setup qshell
@@ -35,19 +45,25 @@ jobs:
       - run: npm install --python=python2.7
 
       # build 32bit package and upload
-      # - run: npm run electron:build -- --ia32
-      # - run: >
-      #     ./qshell rput ${{secrets.QINIU_BUCKET}} 
-      #     download/${{steps.package-version.outputs.version}}/bittly-${{steps.package-version.outputs.version}}-x86.exe 
-      #     ./dist_electron/bittly-${{steps.package-version.outputs.version}}-win-ia32.exe
+      - run: npm run electron:build -- --ia32
+      - run: >
+          ./qshell rput ${{secrets.QINIU_BUCKET}} 
+          download/${{steps.package-json.outputs.version}}/bittly-${{steps.package-json.outputs.version}}-x86.exe 
+          ./dist_electron/bittly-${{steps.package-json.outputs.version}}-win-ia32.exe
 
       # build 64bit package and upload
       - run: npm run electron:build -- --x64
-      - run: ls ./dist_electron/
-      # - run: >
-      #     ./qshell fput ${{secrets.QINIU_BUCKET}} 
-      #     download/${{steps.package-version.outputs.current-version}}/bittly-${{steps.package-version.outputs.current-version}}-x86_64.AppImage 
-      #     ./dist_electron/bittly-${{steps.package-version.outputs.current-version}}-x86_64.AppImage
+      - run: >
+          ./qshell fput ${{secrets.QINIU_BUCKET}} 
+          download/${{steps.package-json.outputs.version}}/bittly-${{steps.package-json.outputs.version}}-win-x64.exe 
+          ./dist_electron/bittly-${{steps.package-json.outputs.version}}-win-x64.exe 
+
+      # update server variables
+      - run: >
+          curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
+          --form 'key="windows_released_at"' 
+          --form "value=$(date '+%Y-%m-%d')" 
+          --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
 
   # build-linux-package:
   #   runs-on: ubuntu-22.04
