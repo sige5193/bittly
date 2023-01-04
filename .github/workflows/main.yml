@@ -37,7 +37,7 @@ jobs:
       # build 32bit package and upload
       - run: npm run electron:build -- --ia32
       - run: >
-          ./qshell fput ${{secrets.QINIU_BUCKET}} 
+          ./qshell rput ${{secrets.QINIU_BUCKET}} 
           download/${{steps.package-version.outputs.version}}/bittly-${{steps.package-version.outputs.version}}-x86.exe 
           ./dist_electron/bittly-${{steps.package-version.outputs.version}}-win-ia32.exe
 
