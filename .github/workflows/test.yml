@@ -42,10 +42,10 @@ jobs:
 
       # build package and upload
       - run: npm run electron:build
-      # - run: >
-      #     ./qshell rput ${{secrets.QINIU_BUCKET}} 
-      #     download/${{steps.package-json.outputs.version}}/bittly-${{steps.package-json.outputs.version}}-win-x86.exe 
-      #     ./dist_electron/bittly-${{steps.package-json.outputs.version}}-win-ia32.exe
+      - run: >
+          ./qshell rput ${{secrets.QINIU_BUCKET}} 
+          download/${{steps.package-json.outputs.version}}/bittly-${{steps.package-json.outputs.version}}.dmg 
+          ./dist_electron/bittly-${{steps.package-json.outputs.version}}.dmg 
 
       # update server variables
       - run: >
