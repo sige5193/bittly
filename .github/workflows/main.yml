@@ -28,4 +28,5 @@ jobs:
     - run: ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
     - run: ./qshell fput ${{secrets.QINIU_BUCKET}} download/${{steps.package-version.outputs.current-version}}/bittly-${{steps.package-version.outputs.current-version}}-x64.AppImage ./dist_electron/bittly-${{steps.package-version.outputs.current-version}}-x86_64.AppImage
     - run: curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' --form 'key="linux_released_at"' --form "value=$(date '+%Y-%m-%d')" --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
+    
 
