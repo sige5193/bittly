@@ -35,11 +35,19 @@ jobs:
       - run: npm install --python=python2.7
 
       # build 32bit package and upload
-      - run: npm run electron:build -- --ia32
-      - run: >
-          ./qshell rput ${{secrets.QINIU_BUCKET}} 
-          download/${{steps.package-version.outputs.version}}/bittly-${{steps.package-version.outputs.version}}-x86.exe 
-          ./dist_electron/bittly-${{steps.package-version.outputs.version}}-win-ia32.exe
+      # - run: npm run electron:build -- --ia32
+      # - run: >
+      #     ./qshell rput ${{secrets.QINIU_BUCKET}} 
+      #     download/${{steps.package-version.outputs.version}}/bittly-${{steps.package-version.outputs.version}}-x86.exe 
+      #     ./dist_electron/bittly-${{steps.package-version.outputs.version}}-win-ia32.exe
+
+      # build 64bit package and upload
+      - run: npm run electron:build -- --x64
+      - run: ls ./dist_electron/
+      # - run: >
+      #     ./qshell fput ${{secrets.QINIU_BUCKET}} 
+      #     download/${{steps.package-version.outputs.current-version}}/bittly-${{steps.package-version.outputs.current-version}}-x86_64.AppImage 
+      #     ./dist_electron/bittly-${{steps.package-version.outputs.current-version}}-x86_64.AppImage
 
   # build-linux-package:
   #   runs-on: ubuntu-22.04
