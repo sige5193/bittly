@@ -260,6 +260,9 @@ export default class Builder {
                     params[i] = requestParams;
                 } else if ( '$' === paramItem[0] ) {
                     let index = paramItem.substring(1) * 1 - 1;
+                    if ( isNaN(index) ) {
+                        throw Error(window.app.$t('directive.parameter.parameterIndexNotAvailable', [content, funcName, paramItem]));
+                    }
                     if ( undefined === requestParams[index] ) {
                         throw Error(window.app.$t('directive.parameter.parameterIndexNotExists', [content, funcName, index+1]));
                     }

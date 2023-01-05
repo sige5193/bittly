@@ -57,6 +57,7 @@ module.exports = {
     parameter : { 
         statusNameNotExists : '指令状态 "{0}" 不存在',
         parameterIndexNotExists : '"{0}" 中的快速调用 "{1}" 参数索引编号 "${2}" 不存在',
+        parameterIndexNotAvailable : '"{0}" 中的快速调用 "{1}" 参数索引编号 "{2}" 无效，目前仅支持数字索引',
         parseStringFailed : '解析字符串 "{0}" 失败 : {1}',
         executeScriptFailed : '执行脚本失败 : {0}',
         projectScriptObjectGenerateFailed : '项目脚本执行失败 : {0}',

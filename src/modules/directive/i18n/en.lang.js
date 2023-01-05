@@ -57,6 +57,7 @@ module.exports = {
     parameter : {
         statusNameNotExists : 'Directive status name "{0}" does not exists',
         parameterIndexNotExists : 'In "{0}" the quick call "{1}" parameter index "${2}" does not exists.',
+        parameterIndexNotAvailable : 'In "{0}" the quick call "{1}" parameter index "{2}" is not supported, Only numbers are supported.',
         parseStringFailed : 'failed to parse string "{0}" : {1}',
         executeScriptFailed : 'failed to execute script : {0}',
         projectScriptObjectGenerateFailed : 'failed to build project script : {0}',
