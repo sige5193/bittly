@@ -6,7 +6,7 @@
 <script>
 import Common from '@/utils/Common.js'
 export default {
-    name : 'BlockResponseViewerText',
+    name : 'DirectiveParameterTextViewer',
     props: {
         directive : {},
         /**
@@ -26,7 +26,12 @@ export default {
                 return '';
             }
 
-            let buffer = paramBuilder.getRequestBuffer();
+            let buffer = null;
+            try {
+                buffer = paramBuilder.getRequestBuffer();
+            } catch {
+                buffer = Buffer.alloc(0);
+            }
             return Common.charsetConvert(buffer, 'utf-8', this.directive.responseCharset);
         },
     },
