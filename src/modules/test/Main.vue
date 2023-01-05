@@ -44,6 +44,9 @@ export default {
             mode : 'functional',
         };
     },
+    created() {
+        this.$store.commit('moduleIdSet', 'test');
+    },
     /**
      * 
      */

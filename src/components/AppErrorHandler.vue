@@ -101,6 +101,7 @@ export default {
          */
         reportError( error ) {
             error.version = packageInfo.version;
+            error.moduleId = this.$store.getters.moduleId;
             this.$bittly.errorReport(error);
         },
         

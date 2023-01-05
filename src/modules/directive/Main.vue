@@ -143,6 +143,7 @@ export default {
      * init widget after widget mounted
      */
     async mounted() {
+        this.$store.commit('moduleIdSet', 'directive');
         this.hasInited = false;
         this.callbacks.newTempDirective = (directiveData) => this.handleNewTempDirectiveCreated(directiveData);
         this.$eventBus.$on('directive-new-temp-create', this.callbacks.newTempDirective);

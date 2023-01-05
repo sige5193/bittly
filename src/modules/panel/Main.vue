@@ -67,6 +67,7 @@ export default {
         };
     },
     created() {
+        this.$store.commit('moduleIdSet', 'panel');
         this.$eventBus.$emit('app-module-panel-init', this);
     },
     async mounted() {

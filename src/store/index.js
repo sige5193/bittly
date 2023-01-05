@@ -13,6 +13,11 @@ export default new Vuex.Store({
         envVariables : {},
         /** 通讯器列表 */
         communicators : {},
+        /**
+         * id of current module
+         * @property {String}
+         */
+        moduleId : null,
     },
     getters : {
         /**
@@ -50,6 +55,15 @@ export default new Vuex.Store({
         envVariables( state ) {
             return state.envVariables;
         },
+
+        /**
+         * get current module id
+         * @param {*} state 
+         * @returns {String}
+         */
+        moduleId( state ) {
+            return state.moduleId; 
+        }
     },
     mutations: {
         /** 
@@ -96,6 +110,16 @@ export default new Vuex.Store({
          */
         envVariablesSet( state, variables ) {
             state.envVariables = variables;
+        },
+        
+        /**
+         * set current module id
+         * @param {*} state 
+         * @param {*} id 
+         */
+        moduleIdSet( state, id ) {
+            state.moduleId = id;
+            console.log(id);
         }
     },
     actions: {

@@ -99,6 +99,9 @@ export default {
             directive : null,
         };
     },
+    created() {
+        this.$store.commit('moduleIdSet', 'document');
+    },
     methods : {
         /**
          * event handler on entry menu item click.

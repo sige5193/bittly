@@ -39,6 +39,9 @@ export default {
             activePanel : 'base',
         };
     },
+    created() {
+        this.$store.commit('moduleIdSet', 'project');
+    },
     methods : {
         /**
          * event handle on menu item clicked

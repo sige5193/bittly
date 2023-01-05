@@ -128,6 +128,7 @@ export default {
         };
     },
     async mounted() {
+        this.$store.commit('moduleIdSet', 'environment');
         await this.loadEnvironments();
         let curEnvId = this.$store.getters.envActivedId;
         if ( null != curEnvId ) {
