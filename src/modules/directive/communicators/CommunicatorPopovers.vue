@@ -1,7 +1,7 @@
 <template>
   <div class="w-100">
     <!-- custom communicators -->
-    <div v-for="(com, comKey) in communicators" :key="comKey">
+    <div v-for="(com, comKey) in communicators" :key="comKey" class="d-inline-block">
       <div v-if="true === com.isCustom" class="popover-trigger">
         <div class="name">{{com.title}}</div>
         <div ref="actionClose" class="action" @click="actionClose(comKey)">
