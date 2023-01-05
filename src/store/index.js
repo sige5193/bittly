@@ -119,7 +119,6 @@ export default new Vuex.Store({
          */
         moduleIdSet( state, id ) {
             state.moduleId = id;
-            console.log(id);
         }
     },
     actions: {
