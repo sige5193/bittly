@@ -83,6 +83,11 @@ module.exports = {
             dataTypeBitsNotMatchToByte : 'Bits length must be a multiple of 8',
             fieldNotConfigured : 'Form is not configured',
             fieldSetting : 'Field Setting',
+            fieldSettingFailed : 'Field Setting Failed',
+            fieldValueSelectOptions : 'Value Options',
+            fieldValueSelectOptionName : 'Option Name',
+            fieldValueSelectOptionValue : 'Option Value',
+            fieldValueSelectOptionValueDuplicate : 'Duplicate option value : {0}',
             fieldEndiannessDefault : 'Default',
             dataType : {
                 byte : 'Byte (uint8)',

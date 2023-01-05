@@ -83,6 +83,11 @@ module.exports = {
             dataTypeBitsNotMatchToByte : '位组(bits)数据拼装长度必须为8的整数倍',
             fieldNotConfigured : '表单未配置',
             fieldSetting : '属性配置',
+            fieldSettingFailed : '属性配置失败',
+            fieldValueSelectOptions : '取值选项',
+            fieldValueSelectOptionName : '选项名称',
+            fieldValueSelectOptionValue : '选项取值',
+            fieldValueSelectOptionValueDuplicate : '选项取值重复：{0}',
             fieldEndiannessDefault : '默认',
             dataType : {
                 byte : '字节 (uint8)',

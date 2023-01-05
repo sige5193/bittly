@@ -66,8 +66,21 @@
             <a-select-option value="dec">DEC</a-select-option>
             <a-select-option value="hex">HEX</a-select-option>
           </a-select>
+          
+          <div v-if="record.valueOptions && 0 < record.valueOptions.length" class="pl-1 pr-1 w-100">
+            <a-select size="small" class="border-none w-100 pl-1 pr-1 directive-parameter-editor-form-value-select"
+              v-model="fields[index]['value']"
+              @change="actionValueInput(index)"
+            >
+              <a-select-option v-for="(valueOption,valueOptionIndex) in record.valueOptions"
+                :key="valueOptionIndex"
+                :value="valueOption.value"
+              >{{valueOption.name}}</a-select-option>
+            </a-select>
+          </div>
 
           <a-auto-complete size="small" class="border-none ml-1 w-100"
+            v-else
             v-model="fields[index]['value']"
             option-label-prop="value"
             :data-source="valueAutoCompleteItems"
@@ -78,6 +91,7 @@
             @search="actionValueAutoCompleteSearch"
             @change="actionValueInput(index)"
           />
+          
         </div>
 
         <!-- data type : file -->
@@ -95,6 +109,18 @@
           <span class="ml-1" v-if="0 != fields[index].value.length">{{fields[index].value}}</span>
         </a-upload>
         
+        <!-- value options -->
+        <a-select size="small" class="border-none w-100 directive-parameter-editor-form-value-select"
+          v-else-if="record.valueOptions && 0 < record.valueOptions.length"
+          v-model="fields[index]['value']"
+          @change="actionValueInput(index)"
+        >
+          <a-select-option v-for="(valueOption,valueOptionIndex) in record.valueOptions"
+            :key="valueOptionIndex"
+            :value="valueOption.value"
+          >{{valueOption.name}}</a-select-option>
+        </a-select>
+
         <!-- data type : char -->
         <a-auto-complete size="small" class="border-none w-100"
           v-else-if="$dict.match('DIRECTIVE_PARAM_DATATYPE',['CHAR','UNSIGNED_CHAR'], record.type)"
@@ -176,6 +202,7 @@
 
       <!-- field options -->
       <div slot="action" slot-scope="text, record, index">
+        <field-setting v-model="fields[index]" @change="actionRowSettingChange(index)" />
         <a-icon :ref="`iconRowInsert_${index}`" type="plus-square" @click="actionRowInsert(index)" class="mr-1" />
         <a-icon :ref="`iconRowDelete_${index}`" type="delete" @click="actionRowDelete(index)" class="mr-1"/>
         <a-icon type="swap" :rotate="90" class="drag-handler" style="cursor: s-resize;"/>
@@ -184,11 +211,15 @@
   </div>
 </template>
 <script>
+import EditorFieldSetting from './EditorFieldSetting.vue'
 import MdbDirective from '@/models/MdbDirective.js'
 import TableDraggableWrapper from '@/components/TableDraggableWrapper.vue'
 import Common from '@/utils/Common.js'
 export default {
     name : 'DirectiveParamEditorFormBlock',
+    components : {
+        'field-setting' : EditorFieldSetting,
+    },
     props : {
         /**
          * the directive object to edit
@@ -452,6 +483,18 @@ export default {
         },
 
         /**
+         * event handler for filed value inputed
+         * @param {Number} index
+         */
+        actionRowSettingChange(index) {
+            if ( index == this.fields.length - 1 ) {
+                this.appendNewField();
+            }
+            this.updateVModel();
+            this.$forceUpdate();
+        },
+
+        /**
          * event handler for field options button delete to delete selected row
          * @param {Number} index
          */
@@ -564,4 +607,5 @@ export default {
 <style>
 .directive-parameter-editor-form-table td {padding: 3px 3px !important;}
 .directive-parameter-editor-form-table th {padding: 3px 3px !important;}
+.directive-parameter-editor-form-value-select .ant-select-selection {background: #f6f6f6;color: #cfcfcf;}
 </style>
