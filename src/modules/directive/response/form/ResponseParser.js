@@ -158,7 +158,13 @@ export default class ResponseParser {
         if ( 8 == dataTypeLength ) {
             getter = 'getBigInt64';
         }
-        let isLittleEndian = 'little-endian' == this.directive.endianness;
+
+        let isLittleEndian = false;
+        if ( !field.endianness || 'default' === field.endianness ) {
+            isLittleEndian = 'little-endian' == this.directive.endianness;
+        } else {
+            isLittleEndian = 'little-endian' == field.endianness;
+        }
         let value = dataView[getter](index, isLittleEndian);
         value = this.executeExpression(field, value);
         this.values.push(value.toString());
@@ -180,7 +186,13 @@ export default class ResponseParser {
             getter = 'getFloat64';
         }
         
-        let isLittleEndian = 'little-endian' == this.directive.endianness;
+        let isLittleEndian = false;
+        if ( !field.endianness || 'default' === field.endianness ) {
+            isLittleEndian = 'little-endian' == this.directive.endianness;
+        } else {
+            isLittleEndian = 'little-endian' == field.endianness;
+        }
+
         let value = dataView[getter](index, isLittleEndian);
         value = this.executeExpression(field, value);
         this.values.push(value.toString());
@@ -197,7 +209,13 @@ export default class ResponseParser {
         if ( 8 == dataTypeLength ) {
             getter = 'getBigUint64';
         }
-        let isLittleEndian = 'little-endian' == this.directive.endianness;
+        
+        let isLittleEndian = false;
+        if ( !field.endianness || 'default' === field.endianness ) {
+            isLittleEndian = 'little-endian' == this.directive.endianness;
+        } else {
+            isLittleEndian = 'little-endian' == field.endianness;
+        }
         let value = dataView[getter](index,isLittleEndian);
         
         if ( field.expression ) {

@@ -82,6 +82,8 @@ module.exports = {
             dataTypeBitsOverLenght : 'value of Bits "{0}" is longer than given length "{1}"',
             dataTypeBitsNotMatchToByte : 'Bits length must be a multiple of 8',
             fieldNotConfigured : 'Form is not configured',
+            fieldSetting : 'Field Setting',
+            fieldEndiannessDefault : 'Default',
             dataType : {
                 byte : 'Byte (uint8)',
                 char_int : 'Mini Int (int8)',

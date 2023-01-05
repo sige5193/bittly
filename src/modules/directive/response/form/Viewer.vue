@@ -136,14 +136,7 @@
       
         <!-- Field Operations -->
         <div slot="action" slot-scope="text, record, index">
-          <a-popover :title="$t('directive.response.form.expression')" placement="topRight" trigger="click">
-            <template slot="content">
-              <a-input size="small" v-model="fields[index]['expression']" style="width:250px;" 
-                @input="actionExpressionInput(index)"
-              />
-            </template>
-            <a-icon :theme="record.expression ? 'twoTone' : 'outlined'" type="calculator" class="mr-1"/>
-          </a-popover>
+          <viewer-field-setting v-model="fields[index]" @change="actionRowSettingChange(index)"/>
           <a-icon :ref="`iconRowInsert_${index}`" type="plus-square" @click="actionRowInsert(index)" class="mr-1" />
           <a-icon :ref="`iconRowDelete_${index}`" type="delete" class="mr-1"
             :data-text="text" 
@@ -156,6 +149,7 @@
   </div>
 </template>
 <script>
+import ViewerFieldSetting from './ViewerFieldSetting.vue'
 import TableDraggableWrapper from '@/components/TableDraggableWrapper.vue'
 import ViewerMixin from '../ViewerMixin.js'
 import Common from '@/utils/Common.js'
@@ -163,6 +157,9 @@ import ResponseParser from './ResponseParser.js'
 export default {
     name : 'BlockResponseViewerFrorm',
     mixins : [ViewerMixin],
+    components : {
+        'viewer-field-setting' : ViewerFieldSetting,
+    },
     props: {
         /**
          * the directive model to edit
@@ -343,7 +340,7 @@ export default {
         /**
          * event handler on field expression updated
          */
-        actionExpressionInput(index) {
+        actionRowSettingChange(index) {
             if ( index*1 === this.fields.length - 1 ) {
                 this.appendNewField();
             }
