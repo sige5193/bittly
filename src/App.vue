@@ -20,6 +20,7 @@
             <a-menu-item key="directive"><a-icon type="box-plot" /> <span> {{$t('directive.moduleName')}} </span></a-menu-item>
             <a-menu-item key="panel"><a-icon type="dashboard" /> <span> {{$t('panel.moduleName')}} </span></a-menu-item>
             <a-menu-item key="test"><a-icon type="issues-close" /> <span>{{$t('test.moduleName')}}</span></a-menu-item>
+            <a-menu-item key="mock"><a-icon type="robot" /> <span>{{$t('mock.moduleName')}}</span></a-menu-item>
             <a-menu-item key="document"><a-icon type="read" /> <span>{{$t('document.moduleName')}}</span></a-menu-item>
             <a-menu-item key="environment"><a-icon type="gold" /> <span>{{$t('environment.moduleName')}}</span></a-menu-item>
             <a-menu-item key="setting"><a-icon type="setting" /> <span>{{$t('project.setting')}}</span></a-menu-item>
@@ -50,6 +51,7 @@ import ModuleEnvironmentMain from './modules/environment/Main.vue'
 import ModuleSettingMain from './modules/project/Setting.vue'
 import PageProjectIndex from './modules/project/PageProjectIndex.vue'
 import PluginManager from './modules/plugin/Manager.js'
+import ModuleMockMain from './modules/mock/Main.vue'
 require('./utils/Common.css');
 export default {
     name: 'App',
@@ -62,6 +64,7 @@ export default {
         'module-document-main':ModuleDocumentMain,
         'module-environment-main' : ModuleEnvironmentMain,
         'module-setting-main' : ModuleSettingMain,
+        'module-mock-main' : ModuleMockMain,
         'app-footer' : AppFooter,
     },
     data() {
