@@ -1,0 +1,68 @@
+module.exports = {
+    moduleName : 'Mock',
+    name : '名称',
+    nameDefault : '未命名 Mock',
+    type : '类型',
+    operations : '操作',
+    setting : '设置',
+    stopConfirm : 'Mock 正在运行中， 是否停止 ?',
+    start : '启动',
+    stop : '停止',
+    mockDeleteConfirm : '是否删除该 Mock ?',
+    mockerSetting : 'Mock 设置',
+    mockers : {
+        serialport : require('../mockers/serialport/i18n/zh.lang.js'),
+    },
+    response : {
+        match : {
+            columnStatus : '状态',
+            columnName : '名称',
+            columnMatch : '匹配',
+            columnResponse : '响应',
+            regexEnable : '正则表达式',
+            matcherAll : '全部',
+            matcherText : '文本',
+            matcherHex : 'HEX',
+            matcherScript : '脚本',
+            matcherJson : 'JSON',
+        },
+        manual : {
+            title : '手动',
+            history : '历史',
+            contentCanNotBeEmpty : '发送内容不可为空',
+        },
+        snippet : {
+            title : '片段',
+            attrName : '名称',
+            attrContent : '内容',
+            loopSend : '循环发送',
+        },
+        inlineEditorText : {
+            editorName : '文本',
+            fullTitle : '文本编辑',
+            placeholder : '文本内容',
+        },
+        inlineEditorHex : {
+            editorName : 'Hex',
+            fullTitle : 'HEX 编辑',
+            placeholder : 'HEX 内容',
+        },
+        inlineEditorForm : {
+            editorName : '表单',
+            fullTitle : '表单编辑',
+            endianessBig : '大端',
+            endianessLittle : '小端',
+            empty : '空',
+            columnName : '名称',
+            columnType : '类型',
+            columnValue : '取值',
+            columnDesc : '描述',
+        },
+        inlineEditorScript : {
+            editorName : '脚本',
+        },
+        inlineEditorRandom : {
+            editorName : '随机',
+        },
+    },
+};

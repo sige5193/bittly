@@ -9,6 +9,12 @@ module.exports = {
      * @property {Object}
      */
     panel : require('@/modules/panel/i18n/en.lang.js'),
+    /**
+     * translation for module mock 
+     * @property {Object}
+     */
+    mock : require('@/modules/mock/i18n/en.lang.js'),
+
     test : require('@/modules/test/i18n/en.lang.js'),
     document : require('@/modules/document/i18n/en.lang.js'),
     environment : require('@/modules/environment/i18n/en.lang.js'),
