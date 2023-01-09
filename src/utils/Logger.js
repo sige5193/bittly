@@ -13,6 +13,14 @@ export default class Logger {
      * @param  {...any} messages 
      */
     static log( ... messages ) {
+        let stackIndex = 2;
+        if ( 'object' === typeof(messages[0]) ) {
+            let options = messages[0];
+            options.params.unshift(options.message);
+            stackIndex = options.stackIndex;
+            messages = options.params;
+        }
+
         let message = messages[0];
         for ( let i=1; i<messages.length; i++ ) {
             let item = messages[i];
@@ -24,7 +32,7 @@ export default class Logger {
 
         // get caller name
         let callstack = (new Error()).stack.split("\n");
-        let callerName = callstack[2].trim().split(' ')[1];
+        let callerName = callstack[stackIndex].trim().split(' ')[1];
         message = `[renderer] [${callerName}()] => ${message}`;
         window.ipcRenderer.send("app-log", message)
         console.info(message);
