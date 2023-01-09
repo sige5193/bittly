@@ -80,6 +80,7 @@ export default {
          */
         actionInput() {
             this.$emit('input', this.content);
+            this.$emit('change');
             
             if ( 'javascript' === this.mode ) {
                 let codemirror = this.$refs.editor.codemirror;
