@@ -13,8 +13,14 @@ module.exports = {
     mockers : {
         serialport : require('../mockers/serialport/i18n/zh.lang.js'),
     },
+    status : {
+        columnName : 'Name',
+        columnDefaultValue : 'Default Value',
+        columnRuntimeValue : 'Runtime Value',
+    },
     response : {
         match : {
+            title : 'Match',
             columnStatus : 'Status',
             columnName : 'Name',
             columnMatch : 'Match',

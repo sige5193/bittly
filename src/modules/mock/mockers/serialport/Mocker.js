@@ -2,6 +2,7 @@ import Logger from '../../../../utils/Logger.js'
 import MyObject from '../../../../utils/datatype/MyObject.js'
 import ResponseDataGenerator from '../../response/DataGenerator.js'
 import RequestMatcher from '../../response/match/RequestMatcher.js';
+import StatusManager from '../../status/StatusManager.js';
 export default class Mocker {
     /**
      * @constructor
@@ -38,6 +39,12 @@ export default class Mocker {
          * @property {Number}
          */
         this.dataSendSize = 0;
+        /**
+         * runtime status
+         * @property {StatusManager}
+         */
+        this.status = new StatusManager();
+        this.status.updateStatusList(this.options.status);
     }
 
     /**
@@ -81,7 +88,7 @@ export default class Mocker {
     async send( content ) {
         let entry = MyObject.copy(content);
         let generator = new ResponseDataGenerator({
-            status : {},
+            status : this.status,
             requestData : {},
         });
         entry.dir = 'send';

@@ -3,8 +3,26 @@ export default class DataGeneratorScriptRuntime {
     /**
      * @constructor
      */
-    constructor () {
+    constructor (options={}) {
+        this.status = options.status;
         this.responses = [];
+    }
+
+    /**
+     * @param {*} name 
+     * @returns 
+     */
+    getVariable(name) {
+        return this.status.getValueByName(name);
+    }
+
+    /**
+     * @param {*} name 
+     * @param {*} value 
+     * @returns 
+     */
+    setVariable(name, value) {
+        this.status.setValueByName(name, value);
     }
 
     /**

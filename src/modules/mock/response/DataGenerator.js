@@ -8,7 +8,7 @@ export default class DataGenerator {
      * @param {Object} options 
      */
     constructor( options ) {
-        this.status = options.status || {};
+        this.status = options.status;
         this.requestData = options.requestData || null;
     }
     /**
@@ -27,6 +27,7 @@ export default class DataGenerator {
      * @returns {Buffer}
      */
     handleText( entry ) {
+        debugger
         let content = entry.content;
         content = content.replaceAll('\r\n', '\n');
         content = content.replaceAll('\r', '\n');
@@ -35,6 +36,7 @@ export default class DataGenerator {
         } else if ( 'CR' == entry.nlstyle ) {
             content = content.replaceAll('\n', '\r');
         }
+        content = this.applyStatusValueToContent(content);
         return Buffer.from(content);
     }
 
@@ -102,7 +104,9 @@ export default class DataGenerator {
      */
     handleScript( entry ) {
         try {
-            let runtime = new DataGeneratorScriptRuntime();
+            let runtime = new DataGeneratorScriptRuntime({
+                status : this.status
+            });
             (new Function('$this' , entry.content))(runtime);
             return runtime.getBuffer();
         } catch ( e ) {
@@ -145,20 +149,22 @@ export default class DataGenerator {
         }
     }
 
+    /**
+     * apply status value to content
+     * @param {*} content 
+     * @returns 
+     */
+    applyStatusValueToContent( content ) {
+        let newContent = content;
+        let regex = /\{\{status\.(?<status>.*?)\}\}/gm;
+        let match = null;
+        
+        while ((match = regex.exec(content)) !== null) {
+            let varName = match.groups.status;
+            let varValue = this.status.getValueByName(varName);
+            newContent = newContent.replaceAll(match[0], varValue);
+        }
 
-
-
-
-
-
-
-
-
-
-
-    
-    
-    handleEcho() {}
-    handleFunction() {}
-    handleExpression() {}
+        return newContent;
+    }
 }

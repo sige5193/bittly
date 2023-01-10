@@ -31,8 +31,11 @@
     <!-- response -->
     <div class="h-0 flex-grow position-relative">
       <div class="block-separator"></div>
-      <a-tabs default-active-key="match" :tabBarStyle="{marginBottom:'0px'}" class="d-flex flex-dir-column h-100 mock-mocker-serialport-response-tab">
-        <a-tab-pane key="match" tab="响应规则">
+      <a-tabs class="d-flex flex-dir-column h-100 mock-mocker-serialport-response-tab"
+        default-active-key="match" 
+        :tabBarStyle="{marginBottom:'0px'}"
+      >
+        <a-tab-pane key="match" :tab="$t('mock.response.match.title')">
           <response-match-rule-editor 
             v-model="mock.options.responseMatchRules"
             @change="actionEditorOptionChange"
@@ -52,8 +55,12 @@
             @change="actionEditorOptionChange"
           />
         </a-tab-pane>
-        <a-tab-pane key="status" tab="状态" force-render>
-          <response-manual-editor />
+        <a-tab-pane key="status" tab="状态">
+          <status-editor
+            v-model="mock.options.status"
+            :mocker="mocker"
+            @change="actionEditorOptionChange"
+          />
         </a-tab-pane>
       </a-tabs>
     </div>
@@ -68,8 +75,10 @@ import MockerSetting from './MockerSetting.vue'
 import ResponseManualEditor from '../../response/manual/Editor.vue'
 import ResponseMatchRuleEditor from '../../response/match/Editor.vue'
 import ResponseSnippetEditor from '../../response/snippet/Editor.vue'
+import StatusEditor from '../../status/Editor.vue'
 export default {
     components : {
+        'status-editor' : StatusEditor,
         'mocker-setting' : MockerSetting,
         'response-snippet-editor' : ResponseSnippetEditor,
         'response-match-rule-editor' : ResponseMatchRuleEditor,
@@ -151,7 +160,7 @@ export default {
          */
         async actionEditorOptionChange() {
             await this.mock.save();
-        }
+        },
     },
 }
 </script>
