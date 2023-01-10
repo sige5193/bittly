@@ -5,7 +5,7 @@ export default class RequestMatcher {
      * @param {*} rules 
      */
     constructor( rules ) {
-        this.rules = rules;
+        this.rules = rules || [];
     }
 
     /**

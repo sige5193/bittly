@@ -13,7 +13,8 @@ module.exports = {
     dataSendSize : 'Send',
     dataReceiveSize : 'Receive',
     mockers : {
-        serialport : require('../mockers/serialport/i18n/zh.lang.js'),
+        serialport : require('../mockers/serialport/i18n/en.lang.js'),
+        tcp : require('../mockers/tcp/i18n/en.lang.js'),
     },
     status : {
         title : 'Status',

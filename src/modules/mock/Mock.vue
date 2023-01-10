@@ -22,9 +22,11 @@
 </template>
 <script>
 import SerialPortMocker from './mockers/serialport/Mocker.vue'
+import TcpMocker from './mockers/tcp/Mocker.vue'
 export default {
     components : {
         'serialport-mocker' : SerialPortMocker,
+        'tcp-mocker' : TcpMocker,
     },
     props : {
         /**
@@ -89,6 +91,7 @@ export default {
                 this.status = 'stopped';
                 let message = 'string' === typeof(e) ? e : e.message;
                 this.$message.error(message);
+                console.log(e);
             }
         },
 

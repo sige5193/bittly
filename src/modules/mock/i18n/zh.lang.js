@@ -14,6 +14,7 @@ module.exports = {
     dataReceiveSize : '接收',
     mockers : {
         serialport : require('../mockers/serialport/i18n/zh.lang.js'),
+        tcp : require('../mockers/tcp/i18n/zh.lang.js'),
     },
     status : {
         title : '状态',

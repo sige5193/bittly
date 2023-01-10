@@ -34,6 +34,10 @@ export default class StatusManager {
      * @param {*} statuses 
      */
     updateStatusList( statuses ) {
+        if ( undefined === statuses ) {
+            return ;
+        }
+        
         let names = [];
         
         // append new status
