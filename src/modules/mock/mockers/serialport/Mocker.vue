@@ -1,47 +1,49 @@
 <template>
   <div class="d-flex flex-dir-column h-100">
-    <a-row class="border-bottom p-1">
-      <a-col :span="12">
-        <a-radio-group button-style="solid" size="small" class="mr-1" v-model="viewerMode">
-          <a-radio-button value="hex">HEX</a-radio-button>
-          <a-radio-button value="text">TEXT</a-radio-button>
-        </a-radio-group>
-        <a-switch class="mr-1" style="vertical-align: top;" 
-          v-model="mock.options.enableDataMerge"
-          :checked-children="$t('mock.mockers.serialport.enableDataMerge')" 
-          :un-checked-children="$t('mock.mockers.serialport.enableDataMerge')" 
-          @change="actionEnableDataMergeSwitchChange"
-        />
-        <a-input-number v-if="mock.options.enableDataMerge" size="small" 
-          v-model="mock.options.dataMergeTime" 
-          :min="1"
-          :step="1"
-          :formatter="value => `${value}ms`"
-          :parser="value => value.replace('ms', '')"
-          @change="actionEditorOptionChange"
-        />
-      </a-col>
-      <a-col :span="12" class="text-right">
-        <a-input size="small" style="width:120px;" class="mr-1" disabled 
-          :addon-before="$t('mock.dataReceiveSize')" 
-          :value="null == mocker ? 0 : formatAsFileSize(mocker.dataReceiveSize)" 
-        />
-        <a-input size="small" style="width:120px;" class="mr-1" disabled 
-          :addon-before="$t('mock.dataSendSize')" 
-          :value="null == mocker ? 0 : formatAsFileSize(mocker.dataSendSize)" 
-        />
-      </a-col>
-    </a-row>
+    <div class="d-flex flex-dir-column" :style="{height:`${dataEntryViewerHeight}px`}">
+      <a-row class="p-1">
+        <a-col :span="12">
+          <a-radio-group button-style="solid" size="small" class="mr-1" v-model="viewerMode">
+            <a-radio-button value="hex">HEX</a-radio-button>
+            <a-radio-button value="text">TEXT</a-radio-button>
+          </a-radio-group>
+          <a-switch class="mr-1" style="vertical-align: top;" 
+            v-model="mock.options.enableDataMerge"
+            :checked-children="$t('mock.mockers.serialport.enableDataMerge')" 
+            :un-checked-children="$t('mock.mockers.serialport.enableDataMerge')" 
+            @change="actionEnableDataMergeSwitchChange"
+          />
+          <a-input-number v-if="mock.options.enableDataMerge" size="small" 
+            v-model="mock.options.dataMergeTime" 
+            :min="1"
+            :step="1"
+            :formatter="value => `${value}ms`"
+            :parser="value => value.replace('ms', '')"
+            @change="actionEditorOptionChange"
+          />
+        </a-col>
+        <a-col :span="12" class="text-right">
+          <a-input size="small" style="width:120px;" class="mr-1" disabled 
+            :addon-before="$t('mock.dataReceiveSize')" 
+            :value="null == mocker ? 0 : formatAsFileSize(mocker.dataReceiveSize)" 
+          />
+          <a-input size="small" style="width:120px;" class="mr-1" disabled 
+            :addon-before="$t('mock.dataSendSize')" 
+            :value="null == mocker ? 0 : formatAsFileSize(mocker.dataSendSize)" 
+          />
+        </a-col>
+      </a-row>
+      <!-- data entries -->
+      <data-entry-list-viewer ref="dataEntryListViewer" class="flex-grow"
+        :mode="viewerMode"
+        :entries="null !== mocker ? mocker.dataEntries : []"
+      />
+    </div>
     
-    <!-- data entries -->
-    <data-entry-list-viewer ref="dataEntryListViewer" 
-      :mode="viewerMode"
-      :entries="null !== mocker ? mocker.dataEntries : []"
-    />
-    
+    <seperator v-model="dataEntryViewerHeight"/>
+
     <!-- response -->
-    <div class="h-0 flex-grow position-relative">
-      <div class="block-separator"></div>
+    <div class="h-0 flex-grow position-relative bg-white" style="z-index:1;">
       <a-tabs class="d-flex flex-dir-column h-100 mock-mocker-serialport-response-tab"
         default-active-key="match" 
         :tabBarStyle="{marginBottom:'0px'}"
@@ -88,8 +90,10 @@ import ResponseMatchRuleEditor from '../../response/match/Editor.vue'
 import ResponseSnippetEditor from '../../response/snippet/Editor.vue'
 import StatusEditor from '../../status/Editor.vue'
 import Formatter from '../../../../utils/Formatter.js'
+import Seperator from '../../../../components/Seperator.vue'
 export default {
     components : {
+        'seperator' : Seperator,
         'data-entry-list-viewer' : DataEntryListViewer,
         'status-editor' : StatusEditor,
         'mocker-setting' : MockerSetting,
@@ -117,6 +121,11 @@ export default {
              * @property {String}
              */
             viewerMode : 'hex',
+            /**
+             * height of data entry viewer
+             * @property {Number}
+             */
+            dataEntryViewerHeight : 300,
         };
     },
     created() {
@@ -193,15 +202,5 @@ export default {
 }
 </script>
 <style scoped>
-.block-separator {text-align: center;
-    position: absolute;
-    width: 100%;
-    cursor: ns-resize;
-    top: -10px;
-    height: 10px;}
-.block-separator:hover {    background: #d6d6d6;
-    border-radius: 5px;}
-</style>
-<style>
 .mock-mocker-serialport-response-tab .ant-tabs-content {flex-grow: 1;height: 0;}
 </style>

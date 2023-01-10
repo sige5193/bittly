@@ -1,5 +1,5 @@
 <template>
-  <div class="p-2 overflow-y-auto border-bottom" style="height:300px;">
+  <div class="p-2 overflow-y-auto">
     <div class="content-center" v-if="0 === entries.length">
       <a-empty :description="false" />
     </div>
