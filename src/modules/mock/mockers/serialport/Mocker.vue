@@ -1,22 +1,37 @@
 <template>
   <div class="d-flex flex-dir-column h-100">
     <a-row class="border-bottom p-1">
-        <a-col :span="12">
-         <a-radio-group button-style="solid" size="small" class="mr-1" v-model="viewerMode">
+      <a-col :span="12">
+        <a-radio-group button-style="solid" size="small" class="mr-1" v-model="viewerMode">
           <a-radio-button value="hex">HEX</a-radio-button>
           <a-radio-button value="text">TEXT</a-radio-button>
         </a-radio-group>
-
-
-
-          <a-switch checked-children="合并数据" un-checked-children="合并数据" default-checked style="vertical-align: baseline;"/>
-        </a-col>
-        <a-col :span="12" class="text-right">
-          <a-input addon-before="接收" value="1.23M" size="small" style="width:120px;" class="mr-1" disabled />
-          <a-input addon-before="发送" value="1.23K" size="small" style="width:120px;" class="mr-1" disabled />
-          <a-button size="small" class="mr-1">导出</a-button>
-        </a-col>
-      </a-row>
+        <a-switch class="mr-1" style="vertical-align: top;" 
+          v-model="mock.options.enableDataMerge"
+          :checked-children="$t('mock.mockers.serialport.enableDataMerge')" 
+          :un-checked-children="$t('mock.mockers.serialport.enableDataMerge')" 
+          @change="actionEnableDataMergeSwitchChange"
+        />
+        <a-input-number v-if="mock.options.enableDataMerge" size="small" 
+          v-model="mock.options.dataMergeTime" 
+          :min="1"
+          :step="1"
+          :formatter="value => `${value}ms`"
+          :parser="value => value.replace('ms', '')"
+          @change="actionEditorOptionChange"
+        />
+      </a-col>
+      <a-col :span="12" class="text-right">
+        <a-input size="small" style="width:120px;" class="mr-1" disabled 
+          :addon-before="$t('mock.dataReceiveSize')" 
+          :value="null == mocker ? 0 : formatAsFileSize(mocker.dataReceiveSize)" 
+        />
+        <a-input size="small" style="width:120px;" class="mr-1" disabled 
+          :addon-before="$t('mock.dataSendSize')" 
+          :value="null == mocker ? 0 : formatAsFileSize(mocker.dataSendSize)" 
+        />
+      </a-col>
+    </a-row>
     
     <!-- data entries -->
     <data-entry-list-viewer ref="dataEntryListViewer" 
@@ -66,13 +81,13 @@
 </template>
 <script>
 import DataEntryListViewer from '../../data-entry/ListViewer.vue'
-import Common from '../../../../utils/Common.js'
 import Mocker from './Mocker.js'
 import MockerSetting from './MockerSetting.vue'
 import ResponseManualEditor from '../../response/manual/Editor.vue'
 import ResponseMatchRuleEditor from '../../response/match/Editor.vue'
 import ResponseSnippetEditor from '../../response/snippet/Editor.vue'
 import StatusEditor from '../../status/Editor.vue'
+import Formatter from '../../../../utils/Formatter.js'
 export default {
     components : {
         'data-entry-list-viewer' : DataEntryListViewer,
@@ -154,7 +169,26 @@ export default {
          */
         async actionEditorOptionChange() {
             await this.mock.save();
+            this.$forceUpdate();
         },
+
+        /**
+         * format number as file size
+         * @returns {Number}
+         */
+        formatAsFileSize( size ) {
+            return Formatter.asFileSize(size);
+        },
+
+        /**
+         * event handler on data merge switch changed.
+         */
+        async actionEnableDataMergeSwitchChange() {
+            if ( undefined == this.mock.options.dataMergeTime ) {
+                this.mock.options.dataMergeTime = '100';
+            }
+            await this.actionEditorOptionChange();
+        }
     },
 }
 </script>

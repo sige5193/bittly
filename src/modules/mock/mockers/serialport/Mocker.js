@@ -40,6 +40,11 @@ export default class Mocker {
          */
         this.dataSendSize = 0;
         /**
+         * size of receive data
+         * @property {Number}
+         */
+        this.dataReceiveSize = 0;
+        /**
          * runtime status
          * @property {StatusManager}
          */
@@ -138,13 +143,27 @@ export default class Mocker {
      * @param {*} data 
      */
     handleOnSerialPortData( data ) {
+        this.dataReceiveSize += data.length;
+        
         let entry = {};
+        entry.handler = 'Hex';
         entry.time = new Date();
         entry.dir = 'receive';
         entry.data = Buffer.from(data);
+        if ( this.mock.options.enableDataMerge ) {
+            let nowTime = (new Date()).getTime();
+            let mergeTime = parseInt(this.mock.options.dataMergeTime || 0);
+            let lastEntry = this.dataEntries[this.dataEntries.length - 1];
+            if ( undefined !== lastEntry 
+            && 'receive' == lastEntry.dir 
+            && (nowTime - lastEntry.time.getTime()) < mergeTime ) {
+                lastEntry.data = Buffer.concat([lastEntry.data, Buffer.from(entry.data)]);
+                entry = this.dataEntries.pop();
+            }
+        }
 
         let matcher = new RequestMatcher(this.options.responseMatchRules);
-        let rules = matcher.match(data);
+        let rules = matcher.match(entry.data);
         let names = [];
         for ( let i=0; i<rules.length; i++ ) {
             names.push(rules[i].name);

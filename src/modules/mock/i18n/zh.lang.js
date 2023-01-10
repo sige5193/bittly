@@ -10,6 +10,8 @@ module.exports = {
     stop : '停止',
     mockDeleteConfirm : '是否删除该 Mock ?',
     mockerSetting : 'Mock 设置',
+    dataSendSize : '发送',
+    dataReceiveSize : '接收',
     mockers : {
         serialport : require('../mockers/serialport/i18n/zh.lang.js'),
     },

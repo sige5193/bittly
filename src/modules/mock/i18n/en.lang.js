@@ -10,6 +10,8 @@ module.exports = {
     stop : 'Stop',
     mockDeleteConfirm : 'Are you sure to delete this mock ?',
     mockerSetting : 'Mocker Setting',
+    dataSendSize : 'Send',
+    dataReceiveSize : 'Receive',
     mockers : {
         serialport : require('../mockers/serialport/i18n/zh.lang.js'),
     },

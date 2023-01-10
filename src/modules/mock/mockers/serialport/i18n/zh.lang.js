@@ -6,6 +6,7 @@ module.exports = {
     dataBits : '数据位',
     stopBits : '停止位',
     parity : '校验位',
+    enableDataMerge : '数据合并',
     unableToOpen : '无法打开串口设备 {0}',
     unableToClose : '无法关闭串口设备 {0}',
     deviceRefreshSuccess : '串口设备已刷新',
