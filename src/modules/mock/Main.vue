@@ -13,7 +13,12 @@
             <a-button class="w-100"> {{$t('button.create')}} <a-icon type="down" /> </a-button>
           </a-dropdown>
         </div>
-        <!-- mocks -->
+        
+        <div v-if="0 === mocks.length" class="content-center">
+          <a-empty :description="false"/>
+        </div>
+
+        <!-- mock list -->
         <a-menu class="flex-grow h-0 overflow-y-auto overflow-x-hidden" mode="inline" 
           :selectedKeys="[activeMockIndex]"
           @click="actionMockListMenuItemClicked"
@@ -27,6 +32,7 @@
         </a-menu>
       </div>
     </a-layout-sider>
+
     <a-layout>
       <a-layout-content>
         <div v-if="null === activeMockModel" class="content-center">
