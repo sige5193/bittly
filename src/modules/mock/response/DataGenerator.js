@@ -27,7 +27,6 @@ export default class DataGenerator {
      * @returns {Buffer}
      */
     handleText( entry ) {
-        debugger
         let content = entry.content;
         content = content.replaceAll('\r\n', '\n');
         content = content.replaceAll('\r', '\n');

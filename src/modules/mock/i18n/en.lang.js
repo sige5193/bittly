@@ -14,6 +14,7 @@ module.exports = {
         serialport : require('../mockers/serialport/i18n/zh.lang.js'),
     },
     status : {
+        title : 'Status',
         columnName : 'Name',
         columnDefaultValue : 'Default Value',
         columnRuntimeValue : 'Runtime Value',
@@ -31,6 +32,7 @@ module.exports = {
             matcherHex : 'Hex',
             matcherScript : 'Script',
             matcherJson : 'JSON',
+            entryName : 'Match : {0}',
         },
         manual : {
             title : 'Manual',

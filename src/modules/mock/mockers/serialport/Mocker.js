@@ -91,6 +91,7 @@ export default class Mocker {
             status : this.status,
             requestData : {},
         });
+        entry.time = new Date();
         entry.dir = 'send';
         entry.data = generator.generate(entry);
         this.dataEntries.push(entry);
@@ -137,8 +138,20 @@ export default class Mocker {
      * @param {*} data 
      */
     handleOnSerialPortData( data ) {
+        let entry = {};
+        entry.time = new Date();
+        entry.dir = 'receive';
+        entry.data = Buffer.from(data);
+
         let matcher = new RequestMatcher(this.options.responseMatchRules);
         let rules = matcher.match(data);
+        let names = [];
+        for ( let i=0; i<rules.length; i++ ) {
+            names.push(rules[i].name);
+        }
+        entry.name = window.app.$t('mock.response.match.entryName',[names.join('; ')]);
+        this.dataEntries.push(entry);
+
         for ( let i=0; i<rules.length; i++ ) {
             let content = MyObject.copy(rules[i].responseContent);
             content.handler = rules[i].responseHandler;

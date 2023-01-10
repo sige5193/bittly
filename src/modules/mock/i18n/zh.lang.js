@@ -14,6 +14,7 @@ module.exports = {
         serialport : require('../mockers/serialport/i18n/zh.lang.js'),
     },
     status : {
+        title : '状态',
         columnName : '名称',
         columnDefaultValue : '默认值',
         columnRuntimeValue : '运行值',
@@ -31,6 +32,7 @@ module.exports = {
             matcherHex : 'HEX',
             matcherScript : '脚本',
             matcherJson : 'JSON',
+            entryName : '匹配 : {0}',
         },
         manual : {
             title : '手动',
