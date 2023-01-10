@@ -8,6 +8,7 @@
               <a-menu-item key="serialport">{{$t('mock.mockers.serialport.typeName')}}</a-menu-item>
               <a-menu-item key="tcp">{{$t('mock.mockers.tcp.typeName')}}</a-menu-item>
               <a-menu-item key="udp">{{$t('mock.mockers.udp.typeName')}}</a-menu-item>
+              <a-menu-item key="websocket">{{$t('mock.mockers.websocket.typeName')}}</a-menu-item>
             </a-menu>
             <a-button class="w-100"> {{$t('button.create')}} <a-icon type="down" /> </a-button>
           </a-dropdown>

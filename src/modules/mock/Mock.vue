@@ -24,11 +24,13 @@
 import SerialPortMocker from './mockers/serialport/Mocker.vue'
 import TcpMocker from './mockers/tcp/Mocker.vue'
 import UdpMocker from './mockers/udp/Mocker.vue'
+import WebSocketMocker from './mockers/websocket/Mocker.vue'
 export default {
     components : {
         'serialport-mocker' : SerialPortMocker,
         'tcp-mocker' : TcpMocker,
         'udp-mocker' : UdpMocker,
+        'websocket-mocker' : WebSocketMocker,
     },
     props : {
         /**

@@ -16,6 +16,7 @@ module.exports = {
         serialport : require('../mockers/serialport/i18n/zh.lang.js'),
         tcp : require('../mockers/tcp/i18n/zh.lang.js'),
         udp : require('../mockers/udp/i18n/zh.lang.js'),
+        websocket : require('../mockers/websocket/i18n/zh.lang.js'),
     },
     status : {
         title : '状态',
