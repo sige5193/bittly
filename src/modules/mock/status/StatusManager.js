@@ -68,7 +68,7 @@ export default class StatusManager {
      */
     getValueByName(name) {
         if ( undefined === this.statuses[name] ) {
-            throw Error('status not exists');
+            throw Error(window.app.$t('mock.status.nameNotExists', [name]));
         }
         return this.statuses[name];
     }
@@ -80,7 +80,7 @@ export default class StatusManager {
      */
     setValueByName(name, value) {
         if ( undefined === this.statuses[name] ) {
-            throw Error('status not exists');
+            throw Error(window.app.$t('mock.status.nameNotExists', [name]));
         }
         this.statuses[name] = value;
         for( let i=0; i<this.listeners.length; i++ ) {

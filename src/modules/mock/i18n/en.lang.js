@@ -28,6 +28,7 @@ module.exports = {
         columnRuntimeValue : 'Runtime Value',
         runtimeValueUpdated : 'Status value updated',
         runtimeValueUpdateFailed : 'Fail to update status value : {0}',
+        nameNotExists : 'Status "{0}" does not exists',
     },
     responseFailed : 'Failed to send content : {0}',
     responseContentCanNotBeEmpty : 'Response content can not be empty.',

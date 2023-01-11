@@ -28,6 +28,7 @@ module.exports = {
         columnRuntimeValue : '运行值',
         runtimeValueUpdated : '状态值已更新',
         runtimeValueUpdateFailed : '状态值更新失败 : {0}',
+        nameNotExists : '状态 "{0}" 不存在',
     },
     responseFailed : '发送内容失败： {0}',
     responseContentCanNotBeEmpty : '发送内容不可为空',
