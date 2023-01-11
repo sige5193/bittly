@@ -12,6 +12,8 @@ module.exports = {
     mockerSetting : 'Mocker Setting',
     dataSendSize : 'Send',
     dataReceiveSize : 'Receive',
+    mockerStarted : 'Mock service started',
+    mockerStopped : 'Mock service stopped',
     mockers : {
         serialport : require('../mockers/serialport/i18n/en.lang.js'),
         tcp : require('../mockers/tcp/i18n/en.lang.js'),

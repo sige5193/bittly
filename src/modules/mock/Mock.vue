@@ -1,5 +1,6 @@
 <template>
   <div class="bg-white h-100 d-flex flex-dir-column">
+    <!-- header -->
     <a-page-header :title="mock.name" class="border-bottom">
       <template slot="extra">
         <a-dropdown :trigger="['click']">
@@ -15,22 +16,26 @@
         <a-button v-else-if="'closing' == status" type="danger" :loading="true">{{$t('mock.stop')}}</a-button>
       </template>
     </a-page-header>
+    
+    <!-- main -->
     <div class="h-0 flex-grow">
-      <component ref="mocker" :is="`${mock.type}-mocker`" v-model="mock" />
+      <component ref="mocker" :is="`mocker-${mock.type}`" v-model="mock" />
     </div>
   </div>
 </template>
 <script>
+import ComponentBase from '../../utils/component/Base.js'
 import SerialPortMocker from './mockers/serialport/Mocker.vue'
 import TcpMocker from './mockers/tcp/Mocker.vue'
 import UdpMocker from './mockers/udp/Mocker.vue'
 import WebSocketMocker from './mockers/websocket/Mocker.vue'
 export default {
+    mixins : [ComponentBase],
     components : {
-        'serialport-mocker' : SerialPortMocker,
-        'tcp-mocker' : TcpMocker,
-        'udp-mocker' : UdpMocker,
-        'websocket-mocker' : WebSocketMocker,
+        'mocker-serialport' : SerialPortMocker,
+        'mocker-tcp' : TcpMocker,
+        'mocker-udp' : UdpMocker,
+        'mocker-websocket' : WebSocketMocker,
     },
     props : {
         /**
@@ -57,11 +62,43 @@ export default {
         this.mock = this.value;
     },
     mounted() {
+        this.registerEventHandler('mock-start', (mocker) => this.onMockStart(mocker));
+        this.registerEventHandler('mock-stop', (key) => this.onMockStop(key));
         if ( this.mock.isNew ) {
             this.actionSetting();
         }
+        if ( undefined != this.$store.getters.mocks[this.mock.id] ) {
+            this.status = 'running';
+        }
+    },
+    beforeDestroy() {
+        this.unregisterAllEventHandlers();
     },
     methods : {
+        /**
+         * event handler on mock started
+         * @param {Object} mocker
+         */
+        onMockStart(mocker) {
+            if ( mocker.key != this.mock.id ) {
+                return ;
+            }
+            this.status = 'running';
+            this.$message.success(this.$t('mock.mockerStarted'));
+        },
+
+        /**
+         * event handler on mock stopped.
+         * @param {String} key
+         */
+        onMockStop( key ) {
+            if ( key != this.mock.id ) {
+                return ;
+            }
+            this.status = 'stopped';
+            this.$message.info(this.$t('mock.mockerStopped'));
+        },
+
         /**
          * enable mock setting
          */
@@ -77,7 +114,7 @@ export default {
                 okText : this.$t('button.ok'),
                 cancelText : this.$t('button.cancel'),
                 async onOk() {
-                    $this.actionStop();
+                    await $this.actionStop();
                     $this.$refs.mocker.setting();
                 },
             });
@@ -90,7 +127,6 @@ export default {
             try {
                 this.status = 'opening';
                 await this.$refs.mocker.start();
-                this.status = 'running';
             } catch ( e ) {
                 this.status = 'stopped';
                 let message = 'string' === typeof(e) ? e : e.message;
@@ -106,7 +142,6 @@ export default {
             try {
                 this.status = 'closing';
                 await this.$refs.mocker.stop();
-                this.status = 'stopped';
             } catch ( e ) {
                 this.status = 'running';
                 let message = 'string' === typeof(e) ? e : e.message;
@@ -135,6 +170,9 @@ export default {
                 okText : this.$t('button.ok'),
                 cancelText : this.$t('button.cancel'),
                 async onOk() {
+                    if ( 'running' == $this.status ) {
+                        await $this.actionStop();
+                    }
                     if ( !$this.mock.isNew ) {
                         await $this.mock.delete();
                     }

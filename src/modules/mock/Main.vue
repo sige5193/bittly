@@ -2,6 +2,7 @@
   <a-layout class="h-100">
     <a-layout-sider width="300" class="bg-white border-right">
       <div class="d-flex flex-dir-column h-100">
+        <!-- toolbar -->
         <div class="border-bottom p-1">
           <a-dropdown :trigger="['click']">
             <a-menu slot="overlay" @click="actionCreateMenuItemClicked">
@@ -17,6 +18,7 @@
           </a-dropdown>
         </div>
         
+        <!-- no mocks -->
         <div v-if="0 === mocks.length" class="content-center">
           <a-empty :description="false"/>
         </div>
@@ -48,6 +50,7 @@
         <div v-if="null === activeMockModel" class="content-center">
           <a-empty :description="false"/>
         </div>
+        <!-- mocker -->
         <div v-else-if="false === activeMockModel" class="content-center bg-white">
           <a-spin />
         </div>
@@ -182,9 +185,5 @@ export default {
 }
 </script>
 <style scoped>
-.mock-type-tag {
-    padding: 2px;
-    font-size: 7px;
-    vertical-align: bottom;
-}
+.mock-type-tag {padding: 2px;font-size: 7px;vertical-align: bottom;}
 </style>

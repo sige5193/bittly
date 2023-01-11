@@ -12,6 +12,8 @@ module.exports = {
     mockerSetting : 'Mock 设置',
     dataSendSize : '发送',
     dataReceiveSize : '接收',
+    mockerStarted : 'Mock 服务已启动',
+    mockerStopped : 'Mock 服务已停止',
     mockers : {
         serialport : require('../mockers/serialport/i18n/zh.lang.js'),
         tcp : require('../mockers/tcp/i18n/zh.lang.js'),
