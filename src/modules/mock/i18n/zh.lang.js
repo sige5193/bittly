@@ -26,7 +26,11 @@ module.exports = {
         columnName : '名称',
         columnDefaultValue : '默认值',
         columnRuntimeValue : '运行值',
+        runtimeValueUpdated : '状态值已更新',
+        runtimeValueUpdateFailed : '状态值更新失败 : {0}',
     },
+    responseFailed : '发送内容失败： {0}',
+    responseContentCanNotBeEmpty : '发送内容不可为空',
     response : {
         match : {
             title : '匹配',

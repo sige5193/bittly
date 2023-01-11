@@ -1,7 +1,7 @@
 <template>
   <div class="h-100 d-flex flex-dir-column">
     <a-table 
-      class="mock-response-snippet-table flex-grow" 
+      class="table-mini flex-grow" 
       :pagination="false"
       :columns="statusTableColumns" 
       :data-source="statuses"
@@ -10,6 +10,7 @@
       <div slot="name" slot-scope="text,record,index">
         <a-input size="small" v-model="record.name" 
           :placeholder="$t('mock.response.snippet.attrName')"
+          :disabled="null !== mocker"
           @change="actionNameChange(index)"
         />
       </div>
@@ -17,28 +18,37 @@
       <!-- default value -->
       <div slot="default-value" slot-scope="text,record,index">
         <a-input size="small" v-model="record.defaultValue" 
+          :disabled="null !== mocker"
           @change="actionItemContentChange(index)"
         />
       </div>
 
       <!-- runtime value -->
-      <div slot="runtime-value" slot-scope="text,record">
-        <a-input size="small" v-model="record.runtimeValue"
-          @change="actionItemRuntimeValueChange(index)"
+      <div slot="runtime-value" slot-scope="text,record,index" class="d-flex flex-dir-row">
+        <a-input size="small" class="mr-1" v-model="record.runtimeValue" 
+          :disabled="null === mocker || index === statuses.length - 1"
         />
+        <a-button size="small" :disabled="null === mocker || index === statuses.length - 1"
+          @click="actionItemRuntimeValueUpdate(index)"
+        ><a-icon type="check" /></a-button>
       </div>
       
       <!-- operations -->
       <div slot="operations" slot-scope="text,record,index">
-        <a-button size="small" class="mr-1" @click="actionItemDelete(index)"
+        <a-button size="small" class="mr-1" 
+          :disabled="null !== mocker"
+          @click="actionItemDelete(index)"
         ><a-icon type="delete" /></a-button>
       </div>
     </a-table>
   </div>
 </template>
 <script>
+import ComponentBase from '../../../utils/component/Base.js'
 import MyObject from '../../../utils/datatype/MyObject.js'
 export default {
+    name : 'MockStatusEditor',
+    mixins : [ComponentBase],
     props : {
         /**
          * options for manual editor
@@ -47,12 +57,17 @@ export default {
         value : {type:Array},
         /**
          * instance of mocker
-         * @property {Object}
+         * @property {MdbMock}
          */
-        mocker : {},
+        mock : {},
     },
     data() {
         return {
+            /**
+             * instance of mock service
+             * @property {Object}
+             */
+            mocker : null,
             /**
              * list of snippets
              * @property {Array<Object>}
@@ -75,15 +90,9 @@ export default {
             statusListener : null,
         };
     },
-    watch : {
-        mocker (value, oldValue) {
-            if ( null !== this.mocker ) {
-                this.refreshMockerStatus();
-                this.mocker.status.addListener(this.statusListener);
-            }
-        }
-    },
-    created() {
+    mounted() {
+        this.registerEventHandler('mock-start', (mocker) => this.onMockStart(mocker));
+        this.registerEventHandler('mock-stop', (key) => this.onMockStop(key));
         this.statusListener = () => this.refreshMockerStatus();
 
         this.statuses = [];
@@ -96,11 +105,36 @@ export default {
         this.addNewStatus();
     },
     beforeDestroy() {
+        this.unregisterAllEventHandlers();
         if ( null !== this.mocker ) {
             this.mocker.status.removeListener(this.statusListener);
         }
     },
     methods : {
+        /**
+         * event handler on mock started
+         * @param {Object} mocker
+         */
+        onMockStart(mocker) {
+            if ( mocker.key != this.mock.id ) {
+                return ;
+            }
+            this.mocker = mocker;
+            this.mocker.status.addListener(this.statusListener);
+            this.refreshMockerStatus();
+        },
+
+        /**
+         * event handler on mock stopped.
+         * @param {String} key
+         */
+        onMockStop( key ) {
+            if ( key != this.mock.id ) {
+                return ;
+            }
+            this.mocker = null;
+        },
+
         /**
          * add new snippet to snippets
          */
@@ -173,18 +207,22 @@ export default {
 
         /**
          * event handle on item runtime value changed.
+         * @param {Number} index
          */
-        actionItemRuntimeValueChange(index) {
-            if ( null !== this.mocker ) {
+        actionItemRuntimeValueUpdate(index) {
+            if ( null === this.mocker ) {
                 return ;
             }
             let name = this.statuses[index].name;
             let value = this.statuses[index].runtimeValue;
-            this.mocker.status.getValueByName(name, value);
+            
+            try {
+                this.mocker.status.setValueByName(name, value);
+                this.$message.success(this.$t('mock.status.runtimeValueUpdated'));
+            } catch ( e ) {
+                this.$message.error(this.$t('mock.status.runtimeValueUpdateFailed',[e.message]));
+            }
         }
     },
 }
 </script>
-<style>
-.mock-response-snippet-table th, .mock-response-snippet-table td {padding: 5px !important;}
-</style>

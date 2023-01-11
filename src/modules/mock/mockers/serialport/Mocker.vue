@@ -67,7 +67,7 @@
         </a-tab-pane>
         <a-tab-pane key="status" :tab="$t('mock.status.title')">
           <status-editor v-model="mock.options.status"
-            :mocker="mocker"
+            :mock="mock"
             @change="actionEditorOptionChange"
           />
         </a-tab-pane>
@@ -204,7 +204,13 @@ export default {
                 return ;
             }
 
-            await this.mocker.send(content);
+            try {
+                await this.mocker.send(content);
+            } catch ( e ) {
+                this.$message.error(this.$t('mock.responseFailed',[e.message]));
+                return ;
+            }
+            
             this.$forceUpdate();
             this.$refs.dataEntryListViewer.scrollToBottom();
         },

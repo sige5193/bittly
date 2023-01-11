@@ -18,7 +18,11 @@ export default class DataGenerator {
      */
     generate(entry) {
         let handler = `handle${entry.handler}`;
-        return this[handler](entry);
+        let data = this[handler](entry);
+        if ( 0 === data.length ) {
+            throw Error(window.app.$t('mock.responseContentCanNotBeEmpty'));
+        }
+        return data;
     }
 
     /**

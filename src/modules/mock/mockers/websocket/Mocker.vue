@@ -189,7 +189,12 @@ export default {
          * @param {Object} content
          */
         async actionContentSend( content ) {
-            await this.mocker.clients[this.activeClientKey].send(content);
+            try {
+                await this.mocker.clients[this.activeClientKey].send(content);
+            } catch ( e ) {
+                this.$message.error(this.$t('mock.responseFailed',[e.message]));
+                return ;
+            }
             
             let viewer = this.$refs[`dataEntryListViewer_${this.activeClientKey}`][0];
             viewer.$forceUpdate();

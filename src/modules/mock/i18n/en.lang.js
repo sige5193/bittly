@@ -26,7 +26,11 @@ module.exports = {
         columnName : 'Name',
         columnDefaultValue : 'Default Value',
         columnRuntimeValue : 'Runtime Value',
+        runtimeValueUpdated : 'Status value updated',
+        runtimeValueUpdateFailed : 'Fail to update status value : {0}',
     },
+    responseFailed : 'Failed to send content : {0}',
+    responseContentCanNotBeEmpty : 'Response content can not be empty.',
     response : {
         match : {
             title : 'Match',

@@ -12,7 +12,7 @@ export default class DataGeneratorScriptRuntime {
      * @param {*} name 
      * @returns 
      */
-    getVariable(name) {
+    getStatusValue(name) {
         return this.status.getValueByName(name);
     }
 
@@ -21,7 +21,7 @@ export default class DataGeneratorScriptRuntime {
      * @param {*} value 
      * @returns 
      */
-    setVariable(name, value) {
+    setStatusValue(name, value) {
         this.status.setValueByName(name, value);
     }
 
