@@ -156,6 +156,7 @@ body {user-select: none;}
 .overflow-hidden {overflow: hidden !important;}
 .overflow-x-hidden {overflow-x: hidden !important;}
 .white-space-pre {white-space: pre !important;}
+.white-space-pre-line {white-space: pre-line;}
 .rounded {border-radius: 0.25rem !important;}
 .rounded-none {border-radius: 0 !important;}
 .rounded-none .ant-select-selection {border-radius: 0 !important;}

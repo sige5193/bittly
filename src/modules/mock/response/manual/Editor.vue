@@ -1,8 +1,11 @@
 <template>
   <div class="h-100 d-flex flex-dir-column">
+    <!-- content editor -->
     <div class="flex-grow">
       <a-textarea class="h-100 content-editor" v-model="content"></a-textarea>
     </div>
+    
+    <!-- toolbar -->
     <div class="border-top p-1 text-right">
       <a-popover trigger="click" v-if="0 < historyItems.length" v-model="historyVisible">
         <template slot="content">
@@ -11,14 +14,11 @@
               :key="historyItemIndex"
               class="d-flex flex-dir-row bg-light mb-1 p-1 history-item"
             >
-              <div class="flex-grow"
-                @click="actionHistoryItemClick(historyItemIndex)"
+              <div class="flex-grow" @click="actionHistoryItemClick(historyItemIndex)"
               >{{historyItem.content}}</div>
-              <div>
-                <a-icon type="delete" class="cursor-pointer" 
-                  @click="actionHistoryItemDelete(historyItemIndex)"
-                />
-              </div>
+              <a-icon type="delete" class="cursor-pointer d-block" 
+                @click="actionHistoryItemDelete(historyItemIndex)"
+              />
             </div>
           </div>
         </template>
@@ -123,6 +123,7 @@ export default {
             }
 
             let entry = {};
+            entry.name = this.$t('mock.response.manual.title');
             entry.handler = this.handler;
             entry.content = this.content;
             entry.nlstyle = this.newlineStyle;

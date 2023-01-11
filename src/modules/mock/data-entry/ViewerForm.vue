@@ -1,7 +1,7 @@
 <template>
   <div class="content">
-    <pre class="mb-0 pl-1 pr-1">{{generateFormValueText()}}</pre>
-    <pre class="mb-0 pl-1 pr-1 mt-1">{{viewerContent}}</pre>
+    <pre class="mb-0 pl-1 pr-1 white-space-pre-line word-break-all">{{generateFormValueText()}}</pre>
+    <pre class="mb-0 pl-1 pr-1 mt-1 white-space-pre-line word-break-all">{{viewerContent}}</pre>
   </div>
 </template>
 <script>
