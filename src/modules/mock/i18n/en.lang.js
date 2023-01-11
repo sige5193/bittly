@@ -1,7 +1,7 @@
 module.exports = {
     moduleName : 'Mock',
     name : 'Name',
-    nameDefault : 'Unnamed Mock',
+    nameDefault : 'Unnamed {0} Mock',
     type : 'Type',
     operations : 'Operations',
     setting : 'Setting',
@@ -14,6 +14,7 @@ module.exports = {
     dataReceiveSize : 'Receive',
     mockerStarted : 'Mock service started',
     mockerStopped : 'Mock service stopped',
+    mockerNotStarted : 'Mock not started',
     mockers : {
         serialport : require('../mockers/serialport/i18n/en.lang.js'),
         tcp : require('../mockers/tcp/i18n/en.lang.js'),
@@ -40,6 +41,7 @@ module.exports = {
             matcherScript : 'Script',
             matcherJson : 'JSON',
             entryName : 'Match : {0}',
+            entryNameNotMatch : 'Not Matched',
         },
         manual : {
             title : 'Manual',

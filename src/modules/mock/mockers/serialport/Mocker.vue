@@ -49,28 +49,24 @@
         :tabBarStyle="{marginBottom:'0px'}"
       >
         <a-tab-pane key="match" :tab="$t('mock.response.match.title')">
-          <response-match-rule-editor 
-            v-model="mock.options.responseMatchRules"
+          <response-match-rule-editor v-model="mock.options.responseMatchRules"
             @change="actionEditorOptionChange"
           />
         </a-tab-pane>
         <a-tab-pane key="snippet" :tab="$t('mock.response.snippet.title')">
-          <response-snippet-editor 
-            v-model="mock.options.responseSnippets"
+          <response-snippet-editor v-model="mock.options.responseSnippets"
             @send="actionContentSend"
             @change="actionEditorOptionChange"
           />
         </a-tab-pane>
         <a-tab-pane key="manual" :tab="$t('mock.response.manual.title')">
-          <response-manual-editor 
-            v-model="mock.options.responseManualEditor"
+          <response-manual-editor v-model="mock.options.responseManualEditor"
             @send="actionContentSend"
             @change="actionEditorOptionChange"
           />
         </a-tab-pane>
         <a-tab-pane key="status" :tab="$t('mock.status.title')">
-          <status-editor
-            v-model="mock.options.status"
+          <status-editor v-model="mock.options.status"
             :mocker="mocker"
             @change="actionEditorOptionChange"
           />
@@ -78,10 +74,12 @@
       </a-tabs>
     </div>
 
+    <!-- setting -->
     <mocker-setting ref="setting" v-model="mock" />
   </div>
 </template>
 <script>
+import ComponentBase from '../../../../utils/component/Base.js'
 import DataEntryListViewer from '../../data-entry/ListViewer.vue'
 import Mocker from './Mocker.js'
 import MockerSetting from './MockerSetting.vue'
@@ -92,6 +90,7 @@ import StatusEditor from '../../status/Editor.vue'
 import Formatter from '../../../../utils/Formatter.js'
 import Seperator from '../../../../components/Seperator.vue'
 export default {
+    mixins : [ComponentBase],
     components : {
         'seperator' : Seperator,
         'data-entry-list-viewer' : DataEntryListViewer,
@@ -131,7 +130,39 @@ export default {
     created() {
         this.mock = this.value;
     },
+    mounted() {
+        this.registerEventHandler('mock-stop', (key) => this.onMockStop(key));
+        if ( undefined != this.$store.getters.mocks[this.mock.id] ) {
+            this.mocker = this.$store.getters.mocks[this.mock.id];
+        }
+    },
+    beforeDestroy() {
+        this.unregisterAllEventHandlers();
+    },
     methods : {
+        /**
+         * event handler on mock started
+         * @param {Object} mocker
+         */
+        onMockStart(mocker) {
+            if ( mocker.key != this.mock.id ) {
+                return ;
+            }
+            this.status = 'running';
+            this.$message.success(this.$t('mock.mockerStarted'));
+        },
+
+        /**
+         * event handler on mock stopped.
+         * @param {String} key
+         */
+        onMockStop( key ) {
+            if ( key != this.mock.id ) {
+                return ;
+            }
+            this.mocker = null;
+        },
+
         /**
          * enable mocker setting
          * @public
@@ -168,6 +199,11 @@ export default {
          * @param {Object} content
          */
         async actionContentSend( content ) {
+            if ( null === this.mocker ) {
+                this.$message.error(this.$t('mock.mockerNotStarted'));
+                return ;
+            }
+
             await this.mocker.send(content);
             this.$forceUpdate();
             this.$refs.dataEntryListViewer.scrollToBottom();
@@ -201,6 +237,6 @@ export default {
     },
 }
 </script>
-<style scoped>
+<style>
 .mock-mocker-serialport-response-tab .ant-tabs-content {flex-grow: 1;height: 0;}
 </style>

@@ -1,5 +1,6 @@
 import EventManager from "../../../utils/EventManager";
 import Logger from "../../../utils/Logger";
+import Validator from "../../../utils/Validator";
 export default class MockServiceBase {
     /**
      * @constructor
@@ -27,7 +28,42 @@ export default class MockServiceBase {
          */
         this.key = this.mock.id;
     }
-    
+
+    /**
+     * start mock service
+     * @public
+     * @abstract
+     * @returns {Promise<void>}
+     */
+    start() {
+        throw Error("start() method is not implemented");
+    }
+
+    /**
+     * stop mock service
+     * @public
+     * @abstract
+     * @returns {Promise<void>}
+     */
+    stop() {
+        throw Error("stop() method is not implemented");
+    }
+
+    /**
+     * validate value by
+     * @param {*} validatorName 
+     * @param {*} value 
+     * @param {*} message 
+     * @param {*} options 
+     */
+    validate(validatorName, value, message, options={} ) {
+        options.handler = validatorName;
+        let validator = new Validator(value, options);
+        if ( ! validator.validate() ) {
+            throw Error(this.$t(message));
+        }
+    }
+
     /**
      * online the mock service
      */

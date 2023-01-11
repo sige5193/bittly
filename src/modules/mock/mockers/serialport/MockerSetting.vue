@@ -113,6 +113,13 @@ export default {
          */
         open() {
             this.mock = this.value;
+            if ( true === this.mock.isMockInitRequired ) {
+                this.mock.options.baudRate = '9600';
+                this.mock.options.dataBits = '8';
+                this.mock.options.stopBits = '1';
+                this.mock.options.parity = 'none';
+            }
+            
             this.enable = true;
         },
 

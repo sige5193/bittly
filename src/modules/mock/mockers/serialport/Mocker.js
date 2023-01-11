@@ -1,4 +1,4 @@
-import Logger from '../../../../utils/Logger.js'
+import Common from '../../../../utils/Common.js';
 import MyObject from '../../../../utils/datatype/MyObject.js'
 import ResponseDataGenerator from '../../response/DataGenerator.js'
 import RequestMatcher from '../../response/match/RequestMatcher.js';
@@ -44,6 +44,12 @@ export default class Mocker extends MockServiceBase {
      * @returns {Promise<void>}
      */
     async start() {
+        this.validate('NotEmpty',this.options.path,'pathCanNotBeEmpty');
+        this.validate('NotEmpty',this.options.baudRate,'baudRateCanNotBeEmpty');
+        this.validate('NotEmpty',this.options.dataBits,'dataBitsCanNotBeEmpty');
+        this.validate('NotEmpty',this.options.stopBits,'stopBitsCanNotBeEmpty');
+        this.validate('NotEmpty',this.options.parity,'parityCanNotBeEmpty');
+
         this.serialport = new window.SerialPort({
             path : this.options.path,
             baudRate: parseInt(this.options.baudRate),
@@ -54,6 +60,7 @@ export default class Mocker extends MockServiceBase {
         });
         
         this.serialport.on('open', () => this.handleOnSerialPortOpen());
+        this.serialport.on('error', err => this.handleSerialportError(err));
         this.serialport.on('close', err => this.handleOnSerialPortClose(err));
         this.serialport.on('data', data => this.handleOnSerialPortData(data));
         await this.serialportOpen();
@@ -101,16 +108,21 @@ export default class Mocker extends MockServiceBase {
      * @returns 
      */
     serialportWrite( data ) {
+        console.log([
+            `> Mock [${this.mock.name}] ==> `,
+            `Hex : ${Common.convertBufferToHexString(data)}`,
+            `Text : ${data.toString()}`
+        ].join('\n'));
+
         let $this = this;
         return new Promise(( resolve, reject ) => {
-            $this.serialport.write(data, err => {
-                if (err) {
-                    reject($this.$t('unableToWrite', [err.message]));
-                } else {
-                    $this.dataSendSize += data.length;
-                    resolve();
-                }
-            });
+            let isSuccess = $this.serialport.write(data);
+            if ( !isSuccess ) {
+                $this.serialport.once('drain', () => $this.handleOnSerialPortDrain(data, resolve, reject));
+                return ;
+            }
+            $this.dataSendSize += data.length;
+            resolve();
         });
     }
 
@@ -130,17 +142,38 @@ export default class Mocker extends MockServiceBase {
     }
 
     /**
+     * event handler on serialport drain
+     * @param {*} data 
+     * @param {*} resolve 
+     * @param {*} reject 
+     */
+    handleOnSerialPortDrain( data, resolve, reject ) {
+        let isSuccess = this.serialport.write(data);
+        if ( !isSuccess ) {
+            this.serialport.once('drain', () => this.handleOnSerialPortDrain(data, resolve, reject));
+        }
+        resolve();
+    }
+
+    /**
      * event handler on serialport receive data
      * @param {*} data 
      */
     handleOnSerialPortData( data ) {
         this.dataReceiveSize += data.length;
-        
+        console.log([
+            `> Mock [${this.mock.name}] <== `,
+            `Hex : ${Common.convertBufferToHexString(data)}`,
+            `Text : ${data.toString()}`
+        ].join('\n'));
+
         let entry = {};
         entry.handler = 'Hex';
         entry.time = new Date();
         entry.dir = 'receive';
         entry.data = Buffer.from(data);
+        
+        // try to merge incoming data
         if ( this.mock.options.enableDataMerge ) {
             let nowTime = (new Date()).getTime();
             let mergeTime = parseInt(this.mock.options.dataMergeTime || 0);
@@ -152,16 +185,22 @@ export default class Mocker extends MockServiceBase {
                 entry = this.dataEntries.pop();
             }
         }
-
+        
+        // match request
         let matcher = new RequestMatcher(this.options.responseMatchRules);
         let rules = matcher.match(entry.data);
+        
+        // update entry name
         let names = [];
-        for ( let i=0; i<rules.length; i++ ) {
-            names.push(rules[i].name);
+        rules.forEach(item => names.push(item.name));
+        if ( 0 < names.length ) {
+            entry.name = window.app.$t('mock.response.match.entryName',[names.join('; ')]);
+        } else {
+            entry.name = window.app.$t('mock.response.match.entryNameNotMatch');
         }
-        entry.name = window.app.$t('mock.response.match.entryName',[names.join('; ')]);
         this.dataEntries.push(entry);
 
+        // send matched content
         for ( let i=0; i<rules.length; i++ ) {
             let content = MyObject.copy(rules[i].responseContent);
             content.handler = rules[i].responseHandler;
@@ -175,6 +214,14 @@ export default class Mocker extends MockServiceBase {
      */
     handleOnSerialPortOpen() {
         this.log('opened');
+    }
+
+    /**
+     * callback handler on serialport error
+     * @param {Error} err 
+     */
+    handleSerialportError(err) {
+        this.toast('eventError',[err.message],'error');
     }
 
     /**

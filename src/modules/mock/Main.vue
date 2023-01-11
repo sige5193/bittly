@@ -139,9 +139,10 @@ export default {
          */
         actionCreateMenuItemClicked( event ) {
             let mock = new MdbMock();
+            mock.isMockInitRequired = true;
             mock.projectId = this.curProjectId;
-            mock.name = this.$t('mock.nameDefault');
             mock.type = event.key;
+            mock.name = this.$t('mock.nameDefault', [this.$t(`mock.mockers.${mock.type}.typeName`)]);
             this.mocks.push(mock);
             this.switchActiveMock(this.mocks.length-1);
         },

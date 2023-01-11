@@ -1,7 +1,7 @@
 module.exports = {
     moduleName : 'Mock',
     name : '名称',
-    nameDefault : '未命名 Mock',
+    nameDefault : '未命名 {0} Mock',
     type : '类型',
     operations : '操作',
     setting : '设置',
@@ -14,6 +14,7 @@ module.exports = {
     dataReceiveSize : '接收',
     mockerStarted : 'Mock 服务已启动',
     mockerStopped : 'Mock 服务已停止',
+    mockerNotStarted : 'Mock 服务未启动',
     mockers : {
         serialport : require('../mockers/serialport/i18n/zh.lang.js'),
         tcp : require('../mockers/tcp/i18n/zh.lang.js'),
@@ -40,6 +41,7 @@ module.exports = {
             matcherScript : '脚本',
             matcherJson : 'JSON',
             entryName : '匹配 : {0}',
+            entryNameNotMatch : '未匹配',
         },
         manual : {
             title : '手动',
