@@ -1,4 +1,5 @@
 import EventManager from "../../../utils/EventManager";
+import Logger from "../../../utils/Logger";
 export default class MockServiceBase {
     /**
      * @constructor
@@ -20,8 +21,27 @@ export default class MockServiceBase {
          * @property {EventManager}
          */
         this.eventManager = new EventManager(this);
+        /**
+         * key of mock service
+         * @property {String}
+         */
+        this.key = this.mock.id;
     }
     
+    /**
+     * online the mock service
+     */
+    serviceOnline() {
+        window.app.$store.commit('mockStart', this);
+    }
+
+    /**
+     * offline the mock service
+     */
+    serviceOffline() {
+        window.app.$store.commit('mockStop', this.key);
+    }
+
     /**
      * show toast message
      * @protected
@@ -54,7 +74,7 @@ export default class MockServiceBase {
      */
     $t( ... args ) {
         let key = args.shift();
-        key = `mock.mockers.${this.type}.${key}`;
+        key = `mock.mockers.${this.mock.type}.${key}`;
         let message = window.app.$t(key, ... args);
         return message;
     }

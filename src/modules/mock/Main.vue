@@ -10,7 +10,10 @@
               <a-menu-item key="udp">{{$t('mock.mockers.udp.typeName')}}</a-menu-item>
               <a-menu-item key="websocket">{{$t('mock.mockers.websocket.typeName')}}</a-menu-item>
             </a-menu>
-            <a-button class="w-100"> {{$t('button.create')}} <a-icon type="down" /> </a-button>
+            <a-button class="w-100"> 
+              <span class="d-inline-block w-50 text-left">{{$t('button.create')}}</span> 
+              <span class="d-inline-block w-50 text-right"><a-icon type="down" /></span>
+            </a-button>
           </a-dropdown>
         </div>
         
@@ -25,8 +28,15 @@
         >
           <a-menu-item v-for="(mock, index) in mocks" :key="index" style="padding:0 16px;">
             <a-row>
-              <a-col :span="18">{{mock.name}}</a-col>
-              <!-- <a-col :span="6" class="text-right"><a-badge status="processing" /></a-col> -->
+              <a-col :span="18">
+                <small class="border rounded mock-type-tag mr-1">
+                  {{$t(`mock.mockers.${mock.type}.typeName`)}}
+                </small> 
+                {{mock.name}}
+              </a-col>
+              <a-col v-if="undefined !== mockServices[mock.id]" :span="6" class="text-right">
+                <a-badge status="processing" />
+              </a-col>
             </a-row>
           </a-menu-item>
         </a-menu>
@@ -49,10 +59,11 @@
 <script>
 import Mock from './Mock.vue'
 import ProjectMixin from '../../utils/ProjectMixin.js'
+import ComponentBase from '../../utils/component/Base.js'
 import MdbMock from '../../models/MdbMock.js';
 export default {
     name : 'ModuleMockMain',
-    mixins : [ProjectMixin],
+    mixins : [ComponentBase,ProjectMixin],
     components : {
         'mock' : Mock,
     },
@@ -75,8 +86,22 @@ export default {
             activeMockModel : null,
         };
     },
+    computed : {
+        /**
+         * get all online mock services
+         * @returns {Object}
+         */
+        mockServices () {
+            return this.$store.getters.mocks;
+        }
+    },
     async mounted() {
         await this.loadMocks();
+        this.registerEventHandler('mock-start', () => this.$forceUpdate());
+        this.registerEventHandler('mock-stop', () => this.$forceUpdate());
+    },
+    beforeDestroy() {
+        this.unregisterAllEventHandlers();
     },
     methods : {
         /**
@@ -156,3 +181,10 @@ export default {
     },
 }
 </script>
+<style scoped>
+.mock-type-tag {
+    padding: 2px;
+    font-size: 7px;
+    vertical-align: bottom;
+}
+</style>
