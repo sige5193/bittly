@@ -45,6 +45,8 @@ module.exports = {
             matcherHex : 'HEX',
             matcherScript : '脚本',
             matcherJson : 'JSON',
+            matcherJsonTitle : '表达式设置',
+            matcherJsonPlaceholder : '表达式',
             entryName : '匹配 : {0}',
             entryNameNotMatch : '未匹配',
         },
@@ -81,11 +83,13 @@ module.exports = {
             columnDesc : '描述',
         },
         inlineEditorScript : {
+            fullTitle : '脚本编辑',
             editorName : '脚本',
             placeholder : '脚本内容',
             failedToExecScript : '脚本执行失败 : {0}',
         },
         inlineEditorRandom : {
+            fullTitle : '随机模板编辑',
             editorName : '随机',
             placeholder : '随机模板',
         },

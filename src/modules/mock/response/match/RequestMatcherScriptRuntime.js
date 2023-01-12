@@ -149,6 +149,22 @@ export default class RequestMatcherScriptRuntime {
     }
 
     /**
+     * read all data as text
+     * @returns {String}
+     */
+    readAllAsText() {
+        return this.data.toString();
+    }
+
+    /**
+     * read all data as object
+     * @returns {Object}
+     */
+    readAllAsJson() {
+        return JSON.parse(this.data.toString());
+    }
+
+    /**
      * @returns 
      */
     getDataLength() {
@@ -158,14 +174,14 @@ export default class RequestMatcherScriptRuntime {
     /**
      * mark as matched
      */
-    matched() {
+    success() {
         this.isMatched = true;
     }
 
     /**
      * mark as not match
      */
-    notMatch() {
+    failed() {
         this.isMatched = false;
     }
     

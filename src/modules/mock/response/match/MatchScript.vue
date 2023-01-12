@@ -1,7 +1,8 @@
 <template>
   <div class="w-100 d-flex flex-dir-row">
     <a-input size="small" class="short-input" 
-      v-model="options.content" 
+      v-model="options.content"
+      :placeholder="$t('mock.response.inlineEditorScript.placeholder')" 
       @change="actionUpdateVModel"
     />
     <a-button size="small" class="short-button" @click="actionEnableFullEditor">
@@ -10,7 +11,7 @@
 
     <!-- full editor -->
     <a-modal v-if="fullEditorEnable" v-model="fullEditorEnable" 
-      :title="$t('mock.response.inlineEditorText.fullTitle')"
+      :title="$t('mock.response.inlineEditorScript.fullTitle')"
       :bodyStyle="{padding:0,height:'300px'}"
     >
       <code-editor v-model="options.content" 

@@ -1,7 +1,6 @@
 <template>
   <div class="h-100 d-flex flex-dir-column overflow-y-auto">
-    <a-table 
-      class="mock-response-match-rules flex-grow" 
+    <a-table class="table-mini" 
       :pagination="false"
       :columns="matchTableColumns" 
       :data-source="rules"
@@ -212,6 +211,3 @@ export default {
     }
 }
 </script>
-<style>
-.mock-response-match-rules th, .mock-response-match-rules td {padding: 5px !important;}
-</style>

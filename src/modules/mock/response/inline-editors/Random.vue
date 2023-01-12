@@ -11,7 +11,7 @@
 
     <!-- full editor -->
     <a-modal v-if="fullEditorEnable" v-model="fullEditorEnable" 
-      :title="$t('mock.response.inlineEditorText.fullTitle')"
+      :title="$t('mock.response.inlineEditorRandom.fullTitle')"
       :bodyStyle="{padding:0}"
     >
       <a-textarea ref="fullEditor" 

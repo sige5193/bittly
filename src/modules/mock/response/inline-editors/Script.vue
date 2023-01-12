@@ -11,7 +11,7 @@
 
     <!-- full editor -->
     <a-modal v-if="fullEditorEnable" v-model="fullEditorEnable" 
-      :title="$t('mock.response.inlineEditorText.fullTitle')"
+      :title="$t('mock.response.inlineEditorScript.fullTitle')"
       :bodyStyle="{padding:0,height:'300px'}"
     >
       <code-editor v-model="options.content" 

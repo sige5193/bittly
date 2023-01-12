@@ -2,7 +2,7 @@
   <div class="w-100 d-flex flex-dir-row">
     <a-input size="small" class="short-input" 
       v-model="options.content" 
-      :placeholder="$t('mock.response.inlineEditorText.placeholder')"
+      :placeholder="$t('mock.response.match.matcherJsonPlaceholder')"
       @change="actionUpdateVModel"
     />
     <a-button size="small" class="short-button" @click="actionEnableFullEditor">
@@ -11,13 +11,13 @@
 
     <!-- full editor -->
     <a-modal v-if="fullEditorEnable" v-model="fullEditorEnable" 
-      :title="$t('mock.response.inlineEditorText.fullTitle')"
+      :title="$t('mock.response.match.matcherJsonTitle')"
       :bodyStyle="{padding:0}"
     >
       <a-textarea ref="fullEditor" 
         class="full-editor-textarea" 
         v-model="options.content" 
-        :placeholder="$t('mock.response.inlineEditorText.placeholder')"
+        :placeholder="$t('mock.response.match.matcherJsonPlaceholder')"
         :rows="10"
         @change="actionUpdateVModel"
       />

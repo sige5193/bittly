@@ -45,6 +45,8 @@ module.exports = {
             matcherHex : 'Hex',
             matcherScript : 'Script',
             matcherJson : 'JSON',
+            matcherJsonTitle : 'JSON Expression Edit',
+            matcherJsonPlaceholder : 'Expression',
             entryName : 'Match : {0}',
             entryNameNotMatch : 'Not Matched',
         },
@@ -81,11 +83,13 @@ module.exports = {
             columnDesc : 'Desc',
         },
         inlineEditorScript : {
+            fullTitle : 'Script Edit',
             editorName : 'Script',
             placeholder : 'Script content',
             failedToExecScript : 'Failed to execute script : {0}',
         },
         inlineEditorRandom : {
+            fullTitle : 'Random Template Edit',
             editorName : 'Random',
             placeholder : 'Random template',
         },
