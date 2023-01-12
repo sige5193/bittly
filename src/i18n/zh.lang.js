@@ -246,6 +246,7 @@ module.exports = {
         receive : '接收',
         disable : '禁用',
         enable : '启用',
+        stringToHexIllegalChars : '字符串 "{0}" 转换为HEX失败 : 检测到非十六进制字符',
     },
     unit : {
         second : '秒',

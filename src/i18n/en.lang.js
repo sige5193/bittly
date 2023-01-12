@@ -245,6 +245,7 @@ module.exports = {
         receive : 'Receive',
         disable : 'Disable',
         enable : 'Enable',
+        stringToHexIllegalChars : 'Failed to convert string "{0}" to hex : illegal chars been found',
     },
     unit : {
         second : 'sec(s)',

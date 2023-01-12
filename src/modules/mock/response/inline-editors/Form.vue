@@ -1,14 +1,12 @@
 <template>
   <div>
-    <a-button size="small" class="w-100 text-left" 
-      @click="actionEnableFullEditor"
-    >{{generateFormValueText()}}</a-button>
+    <div class="summary border" @click="actionEnableFullEditor">{{generateFormValueText()}}</div>
 
     <a-modal v-if="fullEditorEnable" v-model="fullEditorEnable" width="1000px"
       :title="$t('mock.response.inlineEditorForm.fullTitle')"
       :bodyStyle="{padding:0}"
     >
-      <a-table class="mock-response-inline-editor-form-table" 
+      <a-table class="table-mini" 
         :pagination="false"
         :columns="formTableColumns" 
         :data-source="formFields"
@@ -252,6 +250,16 @@ export default {
     },
 }
 </script>
-<style>
-.mock-response-inline-editor-form-table th, .mock-response-inline-editor-form-table td {padding: 5px !important;}
+<style scoped>
+.summary {
+    height: 24px;
+    word-break: break-all;
+    overflow: hidden;
+    border-radius: 3px;
+    padding: 0 5px;
+    background: white;
+}
+.summary:hover {
+    border-color: #40a9ff !important;
+}
 </style>

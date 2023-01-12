@@ -49,7 +49,8 @@ export default class DataGenerator {
      * @returns {Buffer}
      */
     handleHex( entry ) {
-        let content = Common.convertStringToHex(entry.content);
+        let content = this.applyStatusValueToContent(entry.content);
+        content = Common.convertStringToHex(content);
         return content;
     }
 
@@ -67,11 +68,11 @@ export default class DataGenerator {
                 let tmpBuf = Buffer.from(itemData.buffer);
                 buffers.push(tmpBuf);
             } else if ( Dictionary.match('DIRECTIVE_PARAM_DATATYPE',['STRING','CHAR'], item.type) ) {
-                buffers.push(Buffer.from(itemValue));
+                buffers.push(Buffer.from(item.value));
             } else if ( Dictionary.match('DIRECTIVE_PARAM_DATATYPE',['FLOAT','DOUBLE'], item.type) ) {
-                let itemDataFloat = MyNumber.fromString(itemValue);
+                let itemDataFloat = MyNumber.fromString(item.value);
                 itemDataFloat.setByteLength(Dictionary.voption('DIRECTIVE_PARAM_DATATYPE',item.type,'length'));
-                itemDataFloat.setIsBigEndian('big-endian' == directive.endianness);
+                itemDataFloat.setIsBigEndian(item.isBigEndian);
                 itemDataFloat.setIsInteger(false);
                 let tmpBuf = itemDataFloat.toBuffer();
                 buffers.push(tmpBuf);
@@ -85,7 +86,7 @@ export default class DataGenerator {
                 let tmpBuf = itemDataUnsigned.toBuffer();
                 buffers.push(tmpBuf);
             } else if ( !Dictionary.voption('DIRECTIVE_PARAM_DATATYPE', item.type, 'unsigned', true) ) {
-                let itemDataSigned = MyNumber.fromString(itemValue);
+                let itemDataSigned = MyNumber.fromString(item.value);
                 itemDataSigned.setByteLength(Dictionary.voption('DIRECTIVE_PARAM_DATATYPE',item.type,'length'));
                 itemDataSigned.setRadix('dec');
                 itemDataSigned.setIsBigEndian(item.isBigEndian);
@@ -113,7 +114,7 @@ export default class DataGenerator {
             (new Function('$this' , entry.content))(runtime);
             return runtime.getBuffer();
         } catch ( e ) {
-            throw Error(e);
+            throw Error(window.app.$t('mock.response.inlineEditorScript.failedToExecScript', [e.message]));
         }
     }
 
@@ -125,7 +126,7 @@ export default class DataGenerator {
     handleRandom( entry ) {
         let template = entry.content;
         if ( 0 == template.trim().length ) {
-            template = '{{random.alphaNumeric}}';
+            return Buffer.alloc(0);
         }
         
         // replace holders

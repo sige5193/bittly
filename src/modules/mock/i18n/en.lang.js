@@ -82,9 +82,12 @@ module.exports = {
         },
         inlineEditorScript : {
             editorName : 'Script',
+            placeholder : 'Script content',
+            failedToExecScript : 'Failed to execute script : {0}',
         },
         inlineEditorRandom : {
             editorName : 'Random',
+            placeholder : 'Random template',
         },
     },
 };

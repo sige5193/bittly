@@ -131,12 +131,21 @@ class Common {
      * @returns 
      */
     static convertStringToHex(content) {
+        let contentRaw = content;
         if ( undefined === content ) {
             return new Uint8Array(0);
         }
 
         content = content.trim().replace(/\s*/g,'');
+        if ( 0 === content.length ) {
+            return new Uint8Array(0);
+        }
+
         content = content.toUpperCase();
+        if ( !/^[0-9A-F]+?$/.test(content) ) {
+            throw Error(window.app.$t('messages.stringToHexIllegalChars', [contentRaw]));
+        }
+        
         content = content.split('');
         if (content.length % 2 !== 0) {
             content.push(content[content.length-1]);

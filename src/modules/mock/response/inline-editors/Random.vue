@@ -2,6 +2,7 @@
   <div class="w-100 d-flex flex-dir-row">
     <a-input size="small" class="short-input" 
       v-model="options.content" 
+      :placeholder="$t('mock.response.inlineEditorRandom.placeholder')"
       @change="actionUpdateVModel"
     />
     <a-button size="small" class="short-button" @click="actionEnableFullEditor">
