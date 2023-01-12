@@ -5,6 +5,7 @@
     <a-modal v-if="fullEditorEnable" v-model="fullEditorEnable" width="1000px"
       :title="$t('mock.response.inlineEditorForm.fullTitle')"
       :bodyStyle="{padding:0}"
+      :scroll="{y:'500px'}"
     >
       <a-table class="table-mini" 
         :pagination="false"

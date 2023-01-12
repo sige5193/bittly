@@ -1,10 +1,11 @@
 <template>
   <div class="h-100 d-flex flex-dir-column">
     <a-table 
-      class="mock-response-snippet-table flex-grow" 
+      class="flex-grow table-scroll-body table-mini" 
       :pagination="false"
       :columns="snippetTableColumns" 
       :data-source="snippets"
+      :scroll="{y:true}"
     >
       <!-- column name -->
       <div slot="name" slot-scope="text,record,index">
@@ -166,6 +167,3 @@ export default {
     },
 }
 </script>
-<style>
-.mock-response-snippet-table th, .mock-response-snippet-table td {padding: 5px !important;}
-</style>

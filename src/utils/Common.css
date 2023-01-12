@@ -198,3 +198,11 @@ body {user-select: none;}
 
 /* table */
 .table-mini th, .table-mini td {padding: 5px !important;}
+.table-scroll-body, 
+.table-scroll-body .ant-spin-nested-loading,
+.table-scroll-body .ant-spin-container,
+.table-scroll-body .ant-table,
+.table-scroll-body .ant-table-content,
+.table-scroll-body .ant-table-scroll {height: 100%;}
+.table-scroll-body .ant-table-scroll {display: flex; flex-direction: column;}
+.table-scroll-body .ant-table-body {overflow-y: scroll;height: 0;flex-grow: 1;}

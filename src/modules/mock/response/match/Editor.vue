@@ -1,9 +1,10 @@
 <template>
-  <div class="h-100 d-flex flex-dir-column overflow-y-auto">
-    <a-table class="table-mini" 
+  <div class="h-100 d-flex flex-dir-column">
+    <a-table class="table-mini table-scroll-body" 
       :pagination="false"
       :columns="matchTableColumns" 
       :data-source="rules"
+      :scroll="{y:true}"
     >
       <!-- status -->
       <div slot="status" slot-scope="text,record,index">

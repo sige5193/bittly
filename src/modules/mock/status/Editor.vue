@@ -1,10 +1,11 @@
 <template>
   <div class="h-100 d-flex flex-dir-column">
     <a-table 
-      class="table-mini flex-grow" 
+      class="table-mini table-scroll-body flex-grow" 
       :pagination="false"
       :columns="statusTableColumns" 
       :data-source="statuses"
+      :scroll="{y:true}"
     >
       <!-- column name -->
       <div slot="name" slot-scope="text,record,index">
