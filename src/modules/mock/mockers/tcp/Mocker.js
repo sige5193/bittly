@@ -14,15 +14,15 @@ export default class Mocker extends MockServiceBase {
          */
         this.server = null;
         /**
-         * name of mock type
-         * @property {String}
-         */
-        this.type = 'tcp';
-        /**
          * list of clients
          * @property {Object}
          */
         this.clients = {};
+        /**
+         * callback function to reject server open
+         * @property {Function}
+         */
+        this.openRejectCallback = null;
         /**
          * runtime status
          * @property {StatusManager}
@@ -37,8 +37,10 @@ export default class Mocker extends MockServiceBase {
      */
     async start() {
         this.server = window.net.createServer(socket => this.tcpServerHandleNewClient(socket));
-        this.server.on('error', (err) => this.$message.error(err.message));
+        this.server.on('error', (err) => this.tcpServerHandleError(err));
+        this.server.on('close', () => this.tcpServerHandleClose());
         await this.tcpServerOpen();
+        this.serviceOnline();
     }
 
     /**
@@ -47,11 +49,13 @@ export default class Mocker extends MockServiceBase {
      */
     stop() {
         let $this = this;
-        return new Promise(( resolve, reject ) => {
+        return new Promise(resolve => {
             for ( let key in this.clients ) {
                 this.clients[key].close();
             }
-            $this.server.close(() => resolve());
+            $this.server.close(() => {
+                resolve();
+            });
         });
     }
 
@@ -65,11 +69,8 @@ export default class Mocker extends MockServiceBase {
         let host = this.options.host;
         let port = this.options.port;
         return new Promise(( resolve, reject ) => {
-            try {
-                $this.server.listen({port:port,host:host,}, () => resolve());
-            } catch ( e ) {
-                reject(e);
-            }
+            $this.openRejectCallback = reject;
+            $this.server.listen({port:port,host:host,}, () => resolve());
         });
     }
 
@@ -81,5 +82,26 @@ export default class Mocker extends MockServiceBase {
         let client = new TcpClientConnection(this, socket);
         this.clients[client.key] = client;
         this.eventManager.trigger('new-client', client);
+    }
+
+    /**
+     * event handler on server error
+     * @param {*} err 
+     */
+    tcpServerHandleError(err) {
+        if ( null !== this.openRejectCallback ) {
+            this.openRejectCallback(err);
+            this.openRejectCallback = null;
+            return ;
+        }
+
+        this.trigger('error', err);
+    }
+
+    /**
+     * event handler on server closed
+     */
+    tcpServerHandleClose() {
+        this.serviceOffline();
     }
 }

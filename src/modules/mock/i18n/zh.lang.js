@@ -7,6 +7,7 @@ module.exports = {
     setting : '设置',
     stopConfirm : 'Mock 正在运行中， 是否停止 ?',
     start : '启动',
+    startFailed : '启动 Mock 服务失败 : {0}',
     stop : '停止',
     mockDeleteConfirm : '是否删除该 Mock ?',
     mockerSetting : 'Mock 设置',

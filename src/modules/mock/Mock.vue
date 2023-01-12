@@ -130,8 +130,7 @@ export default {
             } catch ( e ) {
                 this.status = 'stopped';
                 let message = 'string' === typeof(e) ? e : e.message;
-                this.$message.error(message);
-                console.log(e);
+                this.$message.error(this.$t('mock.startFailed',[message]));
             }
         },
 

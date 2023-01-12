@@ -38,14 +38,42 @@ export default class TcpClientConnection {
          */
         this.dataReceiveSize = 0;
         // setup socket
-        this.socket.on('data', data => this.onData(data));
+        this.socket.on('data', data => this.handleOnData(data));
+        this.socket.on('close', () => this.handleOnClose());
+        this.socket.on('error', err => this.handleOnError(err));
+    }
+
+    /**
+     * event handler on connection error
+     * @param {*} err 
+     */
+    handleOnError( err ) {
+        if ( 'ECONNRESET' === err.code && this.socket.destroyed ) {
+            return ;
+        }
+        this.mocker.trigger('client-error', this, err);
+    }
+
+    /**
+     * get if conenction is connected.
+     * @returns {Boolean}
+     */
+    getIsConnected() {
+        return !this.socket.destroyed;
+    }
+
+    /**
+     * event handler on client closed.
+     */
+    handleOnClose() {
+        this.mocker.trigger('client-close', this);
     }
 
     /**
      * event handler on client receive data.
      * @param {*} data 
      */
-    onData(data) {
+    handleOnData(data) {
         this.dataReceiveSize += data.length;
 
         let entry = {};
@@ -53,6 +81,8 @@ export default class TcpClientConnection {
         entry.time = new Date();
         entry.dir = 'receive';
         entry.data = Buffer.from(data);
+        
+        // try to merge incomming data
         if ( this.mocker.mock.options.enableDataMerge ) {
             let nowTime = (new Date()).getTime();
             let mergeTime = parseInt(this.mocker.mock.options.dataMergeTime || 0);
@@ -64,17 +94,23 @@ export default class TcpClientConnection {
                 entry = this.dataEntries.pop();
             }
         }
-
+        
+        // match request
         let matcher = new RequestMatcher(this.mocker.options.responseMatchRules);
         let rules = matcher.match(entry.data);
+        
+        // update entry name
         let names = [];
-        for ( let i=0; i<rules.length; i++ ) {
-            names.push(rules[i].name);
+        rules.forEach(item => names.push(item.name));
+        if ( 0 < names.length ) {
+            entry.name = window.app.$t('mock.response.match.entryName',[names.join('; ')]);
+        } else {
+            entry.name = window.app.$t('mock.response.match.entryNameNotMatch');
         }
-        entry.name = window.app.$t('mock.response.match.entryName',[names.join('; ')]);
         this.dataEntries.push(entry);
         this.mocker.trigger('client-data', this);
 
+        // send matched content
         for ( let i=0; i<rules.length; i++ ) {
             let content = MyObject.copy(rules[i].responseContent);
             content.handler = rules[i].responseHandler;

@@ -7,6 +7,7 @@ module.exports = {
     setting : 'Setting',
     stopConfirm : 'Mock is running, are you sure to stop it ?',
     start : 'Start',
+    startFailed : 'Failed to start mock service : {0}',
     stop : 'Stop',
     mockDeleteConfirm : 'Are you sure to delete this mock ?',
     mockerSetting : 'Mocker Setting',

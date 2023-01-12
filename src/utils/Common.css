@@ -206,3 +206,8 @@ body {user-select: none;}
 .table-scroll-body .ant-table-scroll {height: 100%;}
 .table-scroll-body .ant-table-scroll {display: flex; flex-direction: column;}
 .table-scroll-body .ant-table-body {overflow-y: scroll;height: 0;flex-grow: 1;}
+
+/* tabs */
+.tab-h100-pane .ant-tabs-content,
+.tab-h100-pane .ant-tabs-tabpane-active {height: 100%;}
+.tab-p0-pane .ant-tabs-content {padding:0 !important;}

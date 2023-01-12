@@ -101,6 +101,10 @@ export default {
         'response-manual-editor' : ResponseManualEditor,
     },
     props : {
+        /**
+         * instance of mock module
+         * @property {MdbMock}
+         */
         value : {type:Object},
     },
     data () {

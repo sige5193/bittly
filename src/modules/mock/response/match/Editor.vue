@@ -113,11 +113,11 @@ export default {
              * @property {Array<Object>}
              */
             matchTableColumns : [
-                {title:this.$t('mock.response.match.columnStatus'),scopedSlots:{customRender:'status'}},
+                {title:this.$t('mock.response.match.columnStatus'),scopedSlots:{customRender:'status'},width:'50px'},
                 {title:this.$t('mock.response.match.columnName'),scopedSlots:{customRender:'name'}},
                 {title:this.$t('mock.response.match.columnMatch'),scopedSlots:{customRender:'match'}},
                 {title:this.$t('mock.response.match.columnResponse'),scopedSlots:{customRender:'response'}},
-                {title: this.$t('app.tool.responseHandlerMatchColOperations'),scopedSlots: { customRender: 'operations' },align:'right'},
+                {title: this.$t('app.tool.responseHandlerMatchColOperations'),scopedSlots: { customRender: 'operations' },align:'right',width:'120px'},
             ],
         };
     },
