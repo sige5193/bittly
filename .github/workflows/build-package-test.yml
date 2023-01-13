@@ -52,7 +52,7 @@ jobs:
           from: Github Actions Workflow Job
           body: Build job of ${{github.repository}} completed successfully!
           ignore_cert: true
-          attachments: ./package.json
+          attachments: ./src/modules/document/fonts/simkai-normal.js
           #attachments: ./dist_electron/bittly-$VERSION-win-x64.exe
         env:
           VERSION: ${{steps.package-json.outputs.version}}
