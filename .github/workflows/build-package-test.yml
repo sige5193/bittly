@@ -1,0 +1,40 @@
+name: Build  Test Package
+
+on: 
+  repository_dispatch:
+    types:
+      - build-test-package
+
+jobs:
+  # build windows package for testing
+  build-window-packages:
+    runs-on: windows-2022
+    steps:
+      # node.js
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.14.2
+      
+      # python2
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 2.7 
+
+      # python3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      
+      # msbuild
+      - uses: microsoft/setup-msbuild@v1.1
+        with:
+          vs-version: 15.9
+
+      # checkout 
+      - uses: actions/checkout@v1
+
+      # install deps
+      - run: npm install --python=python2.7
+
+      # build 64bit package
+      - run: npm run electron:build -- --x64
