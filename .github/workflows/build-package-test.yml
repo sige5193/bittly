@@ -8,16 +8,40 @@ jobs:
   build-window-packages:
     runs-on: windows-2022
     steps:
-      - name: Send mail
+      # node.js
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.14.2
+      
+      # python2
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 2.7 
+
+      # python3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      
+      # msbuild
+      - uses: microsoft/setup-msbuild@v1.1
+        with:
+          vs-version: 15.9
+
+      # checkout 
+      - uses: actions/checkout@v1
+
+      - run: npm install --python=python2.7
+      
+      - run: npm run electron:build -- --x64
+
+      - name: Extract version
+        id: package-json
+        uses: Saionaro/extract-package-version@v1.0.6
+
+      - name: Send test package to testers
         uses: dawidd6/action-send-mail@v3
         with:
-          # Specify connection via URL (replaces server_address, server_port, secure,
-          # username and password)
-          #
-          # Format:
-          #
-          #  * smtp://user:password@server:port
-          #  * smtp+starttls://user:password@server:port
           connection_url: ${{secrets.MAIL_CONNECTION}}
           server_port: 465
           secure: true
@@ -26,61 +50,6 @@ jobs:
           from: Github Actions Workflow Job
           body: Build job of ${{github.repository}} completed successfully!
           ignore_cert: true
-          # Optional attachments:
-          #attachments: attachments.zip,git.diff,./dist/static/*.js
-
-
-
-
-
-
-
-
-
-
-
-
-      # # node.js
-      # - uses: actions/setup-node@v3
-      #   with:
-      #     node-version: 16.14.2
-      
-      # # python2
-      # - uses: actions/setup-python@v4
-      #   with:
-      #     python-version: 2.7 
-
-      # # python3
-      # - uses: actions/setup-python@v4
-      #   with:
-      #     python-version: 3.11
-      
-      # # msbuild
-      # - uses: microsoft/setup-msbuild@v1.1
-      #   with:
-      #     vs-version: 15.9
-
-      # # checkout 
-      # - uses: actions/checkout@v1
-
-      # # install deps
-      # - run: npm install --python=python2.7
-
-      # # build 64bit package
-      # - run: npm run electron:build -- --x64
-
-      # # get version
-      # - name: Extract version
-      #   id: package-json
-      #   uses: Saionaro/extract-package-version@v1.0.6
-
-      # # setup qshell and upload package
-      # - run: Invoke-RestMethod -Uri 'https://devtools.qiniu.com/qshell-v2.9.2-windows-386.zip' -OutFile 'qshell.zip'
-      # - run: Expand-Archive -LiteralPath qshell.zip -DestinationPath ./
-      # - run: ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
-      # - run: >
-      #     ./qshell fput ${{secrets.QINIU_BUCKET}} 
-      #     download/$VERSION/bittly-$VERSION-x64.exe 
-      #     ./dist_electron/bittly-$VERSION-win-x64.exe 
-      #   env:
-      #     VERSION: ${{steps.package-json.outputs.version}}
+          attachments: ./dist_electron/bittly-$VERSION-win-x64.exe
+        env:
+          VERSION: ${{steps.package-json.outputs.version}}
