@@ -84,7 +84,7 @@
         <a-tab-pane key="status" :tab="$t('mock.status.title')">
           <status-editor
             v-model="mock.options.status"
-            :mocker="mocker"
+            :mock="mock"
             @change="actionEditorOptionChange"
           />
         </a-tab-pane>

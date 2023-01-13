@@ -3,7 +3,7 @@
     :closable="false"
     :keyboard="false"
     :maskClosable="false" 
-    :title="$t('mock.mockers.serialport.settingTitle')"
+    :title="$t('mock.mockers.udp.settingTitle')"
   >
     <a-form :label-col="{span:4}" :wrapper-col="{span:17}">
       <a-form-item :label="$t('mock.name')">
@@ -11,12 +11,12 @@
       </a-form-item>
       
       <!-- host -->
-      <a-form-item :label="$t('mock.mockers.tcp.host')">
+      <a-form-item :label="$t('mock.mockers.udp.host')">
         <a-input v-model="mock.options.host"/>
       </a-form-item>
       
       <!-- port -->
-      <a-form-item :label="$t('mock.mockers.tcp.port')">
+      <a-form-item :label="$t('mock.mockers.udp.port')">
         <a-input v-model="mock.options.port"/>
       </a-form-item>
     </a-form>
@@ -27,50 +27,9 @@
   </a-modal>
 </template>
 <script>
+import MockerSettingBase from '../MockerSettingBase.js'
 export default {
-    name : 'MockMockMockSetting',
-    props : {
-        /**
-         * mock instance to edit
-         * @property {Object}
-         */
-        value : {type:Object},
-    },
-    data() {
-        return {
-            /**
-             * indicate if setting enabled.
-             * @property {Boolean}
-             */
-            enable : false,
-            /**
-             * instance of mock model
-             * @property {MdbMock}
-             */
-            mock : null,
-        };
-    },
-    methods : {
-        /**
-         * open setting modal
-         * @public
-         */
-        open() {
-            this.mock = this.value;
-            this.enable = true;
-        },
-
-        /**
-         * event handler on done setting
-         */
-        async actionOk() {
-            let isSuccess = await this.mock.save();
-            if ( !isSuccess ) {
-                throw Error('Failed to save mock model');
-            }
-            this.$emit('change');
-            this.enable = false;
-        },
-    },
+    name : 'MockMockerUdpSetting',
+    mixins : [MockerSettingBase],
 }
 </script>

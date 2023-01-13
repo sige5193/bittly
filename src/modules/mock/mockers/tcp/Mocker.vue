@@ -200,7 +200,6 @@ export default {
             if ( key != this.mock.id ) {
                 return ;
             }
-            // this.mocker = null;
         },
 
         /**

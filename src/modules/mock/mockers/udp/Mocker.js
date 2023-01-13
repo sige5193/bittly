@@ -14,11 +14,6 @@ export default class Mocker extends MockServiceBase {
          */
         this.server = null;
         /**
-         * name of mock type
-         * @property {String}
-         */
-        this.type = 'udp';
-        /**
          * list of clients
          * @property {Object}
          */
@@ -46,6 +41,7 @@ export default class Mocker extends MockServiceBase {
         return new Promise(( resolve, reject ) => {
             try {
                 $this.server.bind($this.options.port, $this.options.host);
+                $this.serviceOnline();
                 resolve();
             } catch ( e ) {
                 reject(e);
@@ -63,7 +59,10 @@ export default class Mocker extends MockServiceBase {
             for ( let key in this.clients ) {
                 this.clients[key].close();
             }
-            $this.server.close(() => resolve());
+            $this.server.close(() => {
+                $this.serviceOffline();
+                resolve();
+            });
         });
     }
 
@@ -77,7 +76,7 @@ export default class Mocker extends MockServiceBase {
         if ( undefined === this.clients[key] ) {
             let connection = new UdpClientConnection(this, client);
             this.clients[key] = connection;
-            this.eventManager.trigger('new-client', client);
+            this.eventManager.trigger('new-client', connection);
         }
         this.clients[key].receiveData(data);
     }

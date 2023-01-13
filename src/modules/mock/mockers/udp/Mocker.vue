@@ -2,8 +2,17 @@
   <div class="d-flex flex-dir-column h-100">
     <div class="d-flex flex-dir-column" :style="{height:`${dataEntryViewerHeight}px`}">
       <!-- client list -->
-      <a-tabs v-if="null != mocker" id="module-mock-mocker-tcp-client-tab" tab-position="right" class="h-100" v-model="activeClientKey">
-        <a-tab-pane v-for="client in mocker.clients" :key="client.key" :tab="client.key" :forceRender="true">
+      <a-tabs v-if="null != mocker" 
+        tab-position="right" 
+        class="h-100 tab-h100-pane tab-p0-pane" 
+        v-model="activeClientKey"
+      >
+        <a-tab-pane v-for="client in mocker.clients" 
+          class="d-flex flex-dir-column"
+          :key="client.key" 
+          :tab="client.key" 
+          :forceRender="true"
+        >
           <a-row class="p-1">
             <a-col :span="12">
               <a-radio-group button-style="solid" size="small" class="mr-1" v-model="viewerMode">
@@ -28,9 +37,6 @@
             <a-col :span="12" class="text-right">
               <a-button size="small" class="mr-1" @click="actionClientRemove(client.key)">
                 {{$t('mock.mockers.tcp.remove')}}
-              </a-button>
-              <a-button type="danger" size="small" class="mr-1" @click="actionClientDisconnect(client.key)">
-                {{$t('mock.mockers.tcp.disconnect')}}
               </a-button>
               <a-input size="small" style="width:120px;" class="mr-1" disabled 
                 :addon-before="$t('mock.dataReceiveSize')" 
@@ -84,7 +90,7 @@
         <a-tab-pane key="status" :tab="$t('mock.status.title')">
           <status-editor
             v-model="mock.options.status"
-            :mocker="mocker"
+            :mock="mock"
             @change="actionEditorOptionChange"
           />
         </a-tab-pane>
@@ -144,12 +150,47 @@ export default {
              * @property {String}
              */
             activeClientKey : null,
+            /**
+             * map to mocker event handelrs
+             * @property {Object<String:Object>}
+             */
+            mockerEventHandlers : {},
         };
     },
     created() {
         this.mock = this.value;
     },
+    mounted() {
+        if ( undefined != this.$store.getters.mocks[this.mock.id] ) {
+            this.mocker = this.$store.getters.mocks[this.mock.id];
+            this.addEventListenersToMocker();
+            let clientKeys = Object.keys(this.mocker.clients);
+            this.activeClientKey = clientKeys[0] || null;
+        }
+    },
+    beforeDestroy() {
+        if ( null !== this.mocker ) {
+            this.mocker.off('new-client', this.mockerEventHandlers['new-client']);
+            this.mocker.off('client-data', this.mockerEventHandlers['client-data']);
+            this.mocker.off('client-data-write', this.mockerEventHandlers['client-data-write']);
+            this.mocker.off('client-close', this.mockerEventHandlers['client-close']);
+            this.mocker.off('client-error', this.mockerEventHandlers['client-error']);
+            this.mocker.off('error', this.mockerEventHandlers['error']);
+        }
+    },
     methods : {
+        /**
+         * add event listeners to mocker
+         */
+        addEventListenersToMocker() {
+            this.mockerEventHandlers['new-client'] = client => this.onNewClient(client);
+            this.mockerEventHandlers['client-data'] = client => this.onClientData(client);
+            this.mockerEventHandlers['client-data-write'] = client => this.onClientData(client);
+            this.mocker.on('new-client', this.mockerEventHandlers['new-client']);
+            this.mocker.on('client-data', this.mockerEventHandlers['client-data']);
+            this.mocker.on('client-data-write', this.mockerEventHandlers['client-data-write']);
+        },
+
         /**
          * enable mocker setting
          * @public
@@ -163,9 +204,7 @@ export default {
          */
         async start() {
             this.mocker = new Mocker(this.mock);
-            this.mocker.on('new-client', client => this.onNewClient(client));
-            this.mocker.on('client-data', client => this.onClientData(client));
-            this.mocker.on('client-data-write', client => this.onClientData(client));
+            this.addEventListenersToMocker();
             await this.mocker.start();
         },
 
@@ -244,17 +283,9 @@ export default {
             this.$nextTick(() => {
                 let viewer = $this.$refs[`dataEntryListViewer_${client.key}`][0];
                 viewer.$forceUpdate();
-                viewer.scrollToBottom()
+                viewer.scrollToBottom();
+                $this.$forceUpdate();
             });
-        },
-
-        /**
-         * disconnect client by given key
-         * @param {String} clientKey
-         */
-        actionClientDisconnect(clientKey) {
-            this.mocker.clients[clientKey].close();
-            this.$forceUpdate();
         },
 
         /**
@@ -262,14 +293,20 @@ export default {
          * @param {String} clientKey
          */
         actionClientRemove(clientKey) {
-            delete this.mocker.clients[clientKey];
-            this.$forceUpdate();
+            let client = this.mocker.clients[clientKey];
+            let $this = this;
+            this.$confirm({
+                title: this.$t('mock.mockers.udp.clientRemoveByNotDisconnected'),
+                onOk() {
+                    client.close();
+                    delete $this.mocker.clients[clientKey];
+                    $this.activeClientKey = null;
+                    $this.$forceUpdate();
+                },
+                okText : this.$t('button.ok'),
+                cancelText : this.$t('button.cancel')
+            });
         }
     },
 }
 </script>
-<style>
-#module-mock-mocker-tcp-response-tab .ant-tabs-content {flex-grow: 1;height: 0;}
-#module-mock-mocker-tcp-client-tab .ant-tabs-content {height: 100%;padding-right: 0;}
-#module-mock-mocker-tcp-client-tab .ant-tabs-content .ant-tabs-tabpane {display: flex;flex-direction: column;height: 100%;}
-</style>
