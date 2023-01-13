@@ -8,38 +8,38 @@ jobs:
   build-window-packages:
     runs-on: windows-2022
     steps:
-      # node.js
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.14.2
+      # # node.js
+      # - uses: actions/setup-node@v3
+      #   with:
+      #     node-version: 16.14.2
       
-      # python2
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 2.7 
+      # # python2
+      # - uses: actions/setup-python@v4
+      #   with:
+      #     python-version: 2.7 
 
-      # python3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.11
+      # # python3
+      # - uses: actions/setup-python@v4
+      #   with:
+      #     python-version: 3.11
       
-      # msbuild
-      - uses: microsoft/setup-msbuild@v1.1
-        with:
-          vs-version: 15.9
+      # # msbuild
+      # - uses: microsoft/setup-msbuild@v1.1
+      #   with:
+      #     vs-version: 15.9
 
-      # checkout 
-      - uses: actions/checkout@v1
+      # # checkout 
+      # - uses: actions/checkout@v1
 
-      - run: npm install --python=python2.7
+      # - run: npm install --python=python2.7
 
-      - run: npm run electron:build -- --x64
+      # - run: npm run electron:build -- --x64
 
-      - name: Extract version
-        id: package-json
-        uses: Saionaro/extract-package-version@v1.0.6
+      # - name: Extract version
+      #   id: package-json
+      #   uses: Saionaro/extract-package-version@v1.0.6
 
-      - run: ls ./dist_electron
+      # - run: ls ./dist_electron
       - name: Send test package to testers
         uses: dawidd6/action-send-mail@v3
         with:
@@ -51,6 +51,6 @@ jobs:
           from: Github Actions Workflow Job
           body: Build job of ${{github.repository}} completed successfully!
           ignore_cert: true
-          attachments: ./dist_electron/bittly-$VERSION-win-x64.exe
+          #attachments: ./dist_electron/bittly-$VERSION-win-x64.exe
         env:
           VERSION: ${{steps.package-json.outputs.version}}
