@@ -28,8 +28,8 @@ jobs:
       #   with:
       #     vs-version: 15.9
 
-      # # checkout 
-      # - uses: actions/checkout@v1
+      # checkout 
+      - uses: actions/checkout@v1
 
       # - run: npm install --python=python2.7
 
@@ -52,7 +52,7 @@ jobs:
           from: Github Actions Workflow Job
           body: Build job of ${{github.repository}} completed successfully!
           ignore_cert: true
-          attachments: ./test.txt
+          attachments: ./package.json
           #attachments: ./dist_electron/bittly-$VERSION-win-x64.exe
         env:
           VERSION: ${{steps.package-json.outputs.version}}
