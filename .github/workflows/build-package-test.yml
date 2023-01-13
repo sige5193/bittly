@@ -38,8 +38,9 @@ jobs:
       # - name: Extract version
       #   id: package-json
       #   uses: Saionaro/extract-package-version@v1.0.6
-
-      # - run: ls ./dist_electron
+      
+      - run: Invoke-RestMethod -Uri 'https://res.bittly.sigechen.com/download/0.15.2/bittly-0.15.2-x64.exe' -OutFile 'test.exe'
+      - run: ls
       - name: Send test package to testers
         uses: dawidd6/action-send-mail@v3
         with:
@@ -51,6 +52,7 @@ jobs:
           from: Github Actions Workflow Job
           body: Build job of ${{github.repository}} completed successfully!
           ignore_cert: true
+          attachments: ./test.exe
           #attachments: ./dist_electron/bittly-$VERSION-win-x64.exe
         env:
           VERSION: ${{steps.package-json.outputs.version}}
