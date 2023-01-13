@@ -1,9 +1,7 @@
 name: Build Test Package
 
-on: 
-  repository_dispatch:
-    types:
-      - build-test-package
+# @link : https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
+on: workflow_dispatch
 
 jobs:
   # build windows package for testing
