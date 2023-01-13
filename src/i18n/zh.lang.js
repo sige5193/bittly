@@ -9,6 +9,12 @@ module.exports = {
      * @property {Object}
      */
     panel : require('@/modules/panel/i18n/zh.lang.js'),
+    /**
+     * translation for module mock 
+     * @property {Object}
+     */
+    mock : require('@/modules/mock/i18n/zh.lang.js'),
+
     test : require('@/modules/test/i18n/zh.lang.js'),
     document : require('@/modules/document/i18n/zh.lang.js'),
     environment : require('@/modules/environment/i18n/zh.lang.js'),
@@ -240,6 +246,7 @@ module.exports = {
         receive : '接收',
         disable : '禁用',
         enable : '启用',
+        stringToHexIllegalChars : '字符串 "{0}" 转换为HEX失败 : 检测到非十六进制字符',
     },
     unit : {
         second : '秒',

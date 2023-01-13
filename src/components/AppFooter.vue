@@ -30,6 +30,7 @@
 
       <!-- communicators -->
       <a-col :span="16" class="text-right pr-2">
+        <mock-popovers />
         <communicator-popovers />
       </a-col>
 
@@ -41,6 +42,7 @@ import AppUpdate from './AppUpdate.vue'
 import AppFeedback from './AppFeedback.vue'
 import AppErrorHandler from './AppErrorHandler.vue'
 import CommunicatorPopovers from '../modules/directive/communicators/CommunicatorPopovers.vue'
+import MockPopovers from '../modules/mock/mockers/MockFooterPopovers.vue'
 export default {
     name : 'AppFooter',
     components : {
@@ -48,6 +50,7 @@ export default {
         'app-feedback' : AppFeedback,
         'app-error-handler' : AppErrorHandler,
         'communicator-popovers' : CommunicatorPopovers,
+        'mock-popovers' : MockPopovers,
     },
     methods : {
         /**

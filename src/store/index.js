@@ -18,6 +18,11 @@ export default new Vuex.Store({
          * @property {String}
          */
         moduleId : null,
+        /**
+         * list of mock service handlers
+         * @property {Object<String:Object>}
+         */
+        mocks : {},
     },
     getters : {
         /**
@@ -64,6 +69,15 @@ export default new Vuex.Store({
         moduleId( state ) {
             return state.moduleId; 
         }
+
+        /**
+         * get mock services
+         * @param {*} state 
+         * @returns 
+         */
+        mocks( state ) {
+            return state.mocks;
+        }
     },
     mutations: {
         /** 
@@ -101,6 +115,26 @@ export default new Vuex.Store({
         communicatorOffline( state, key ) {
             delete state.communicators[key];
             window.app.$eventBus.$emit('communicator-offline', key);
+        },
+
+        /**
+         * mock service start
+         * @param {*} state 
+         * @param {*} item 
+         */
+        mockStart( state, item ) {
+            state.mocks[item.key] = item;
+            window.app.$eventBus.$emit('mock-start', item);
+        },
+
+        /**
+         * mock service stop
+         * @param {*} state 
+         * @param {*} key 
+         */
+        mockStop( state, key ) {
+            delete state.mocks[key];
+            window.app.$eventBus.$emit('mock-stop', key);
         },
 
         /**

@@ -214,7 +214,6 @@ export default {
         actionStart() {
             this.server = window.net.createServer(( socket ) => this.handleNewClient(socket));
             this.server.on('error', (err) => this.$message.error(err.message));
-
             try {
                 let $this = this;
                 this.server.listen({port : this.port,host : this.host,}, () => {

@@ -156,6 +156,7 @@ body {user-select: none;}
 .overflow-hidden {overflow: hidden !important;}
 .overflow-x-hidden {overflow-x: hidden !important;}
 .white-space-pre {white-space: pre !important;}
+.white-space-pre-line {white-space: pre-line;}
 .rounded {border-radius: 0.25rem !important;}
 .rounded-none {border-radius: 0 !important;}
 .rounded-none .ant-select-selection {border-radius: 0 !important;}
@@ -192,3 +193,23 @@ body {user-select: none;}
     padding:  0 10px;
 }
 .my-input-group .input {flex-grow: 1; width: 0;}
+
+.content-center {width: 100%;height: 100%;display: flex;flex-direction: column;align-content: center;justify-content: center;}
+
+/* table */
+.table-mini th, .table-mini td {padding: 5px !important;}
+.table-scroll-body, 
+.table-scroll-body .ant-spin-nested-loading,
+.table-scroll-body .ant-spin-container,
+.table-scroll-body .ant-table,
+.table-scroll-body .ant-table-content,
+.table-scroll-body .ant-table-scroll {height: 100%;}
+.table-scroll-body .ant-table-scroll {display: flex; flex-direction: column;}
+.table-scroll-body .ant-table-body {overflow-y: scroll;height: 0;flex-grow: 1;}
+
+/* tabs */
+.tab-h100-pane .ant-tabs-content,
+.tab-h100-pane .ant-tabs-tabpane-active {height: 100%;}
+.tab-p0-pane .ant-tabs-content {padding:0 !important;}
+.tab-content-flex-grow .ant-tabs-content {flex-grow: 1;}
+.tab-content-h0 .ant-tabs-content {height: 0;}
