@@ -68,7 +68,7 @@ export default new Vuex.Store({
          */
         moduleId( state ) {
             return state.moduleId; 
-        }
+        },
 
         /**
          * get mock services
