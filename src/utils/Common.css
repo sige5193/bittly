@@ -211,3 +211,5 @@ body {user-select: none;}
 .tab-h100-pane .ant-tabs-content,
 .tab-h100-pane .ant-tabs-tabpane-active {height: 100%;}
 .tab-p0-pane .ant-tabs-content {padding:0 !important;}
+.tab-content-flex-grow .ant-tabs-content {flex-grow: 1;}
+.tab-content-h0 .ant-tabs-content {height: 0;}

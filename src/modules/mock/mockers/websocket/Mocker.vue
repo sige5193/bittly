@@ -2,8 +2,16 @@
   <div class="d-flex flex-dir-column h-100">
     <div class="d-flex flex-dir-column" :style="{height:`${dataEntryViewerHeight}px`}">
       <!-- client list -->
-      <a-tabs v-if="null != mocker" id="module-mock-mocker-tcp-client-tab" tab-position="right" class="h-100" v-model="activeClientKey">
-        <a-tab-pane v-for="client in mocker.clients" :key="client.key" :tab="client.key" :forceRender="true">
+      <a-tabs v-if="null != mocker"
+        tab-position="right" 
+        class="h-100 tab-h100-pane tab-p0-pane"
+        v-model="activeClientKey"
+      >
+        <a-tab-pane v-for="client in mocker.clients" :key="client.key" 
+          class="d-flex flex-dir-column"
+          :tab="client.key" 
+          :forceRender="true"
+        >
           <a-row class="p-1">
             <a-col :span="12">
               <a-radio-group button-style="solid" size="small" class="mr-1" v-model="viewerMode">
@@ -29,9 +37,10 @@
               <a-button size="small" class="mr-1" @click="actionClientRemove(client.key)">
                 {{$t('mock.mockers.tcp.remove')}}
               </a-button>
-              <a-button type="danger" size="small" class="mr-1" @click="actionClientDisconnect(client.key)">
-                {{$t('mock.mockers.tcp.disconnect')}}
-              </a-button>
+              <a-button v-if="client.getIsConnected()" 
+                type="danger" size="small" class="mr-1" 
+                @click="actionClientDisconnect(client.key)"
+              >{{$t('mock.mockers.tcp.disconnect')}}</a-button>
               <a-input size="small" style="width:120px;" class="mr-1" disabled 
                 :addon-before="$t('mock.dataReceiveSize')" 
                 :value="formatAsFileSize(client.dataReceiveSize)" 
@@ -56,8 +65,7 @@
 
     <!-- response -->
     <div class="h-0 flex-grow position-relative bg-white" style="z-index:1;">
-      <a-tabs id="module-mock-mocker-tcp-response-tab" 
-        class="d-flex flex-dir-column h-100"
+      <a-tabs class="d-flex flex-dir-column h-100 tab-content-flex-grow tab-content-h0"
         default-active-key="match" 
         :tabBarStyle="{marginBottom:'0px'}"
       >
@@ -243,6 +251,7 @@ export default {
         onClientData( client ) {
             let viewer = this.$refs[`dataEntryListViewer_${client.key}`][0];
             viewer.$forceUpdate();
+            this.$forceUpdate();
             this.$nextTick(() => viewer.scrollToBottom());
         },
 
@@ -251,8 +260,16 @@ export default {
          * @param {String} clientKey
          */
         actionClientDisconnect(clientKey) {
-            this.mocker.clients[clientKey].close();
-            this.$forceUpdate();
+            let $this = this;
+            this.$confirm({
+                title: this.$t('mock.mockers.websocket.clientDisconnectConfirm'),
+                onOk() {
+                    $this.mocker.clients[clientKey].close();
+                    $this.$forceUpdate();
+                },
+                okText : this.$t('button.ok'),
+                cancelText : this.$t('button.cancel')
+            });
         },
 
         /**
@@ -260,14 +277,27 @@ export default {
          * @param {String} clientKey
          */
         actionClientRemove(clientKey) {
-            delete this.mocker.clients[clientKey];
-            this.$forceUpdate();
+            let client = this.mocker.clients[clientKey];
+            if ( !client.getIsConnected() ) {
+                this.activeClientKey = null;
+                delete this.mocker.clients[clientKey];
+                this.$forceUpdate();
+                return ;
+            }
+
+            let $this = this;
+            this.$confirm({
+                title: this.$t('mock.mockers.websocket.clientRemoveByNotDisconnected'),
+                onOk() {
+                    $this.mocker.clients[clientKey].close();
+                    delete $this.mocker.clients[clientKey];
+                    $this.activeClientKey = null;
+                    $this.$forceUpdate();
+                },
+                okText : this.$t('button.ok'),
+                cancelText : this.$t('button.cancel')
+            });
         }
     },
 }
 </script>
-<style>
-#module-mock-mocker-tcp-response-tab .ant-tabs-content {flex-grow: 1;height: 0;}
-#module-mock-mocker-tcp-client-tab .ant-tabs-content {height: 100%;padding-right: 0;}
-#module-mock-mocker-tcp-client-tab .ant-tabs-content .ant-tabs-tabpane {display: flex;flex-direction: column;height: 100%;}
-</style>

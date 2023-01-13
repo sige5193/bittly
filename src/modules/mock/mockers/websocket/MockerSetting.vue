@@ -5,7 +5,7 @@
     :maskClosable="false" 
     :title="$t('mock.mockers.websocket.settingTitle')"
   >
-    <a-form :label-col="{span:4}" :wrapper-col="{span:17}">
+    <a-form :label-col="{span:5}" :wrapper-col="{span:17}">
       <a-form-item :label="$t('mock.name')">
         <a-input v-model="mock.name" />
       </a-form-item>
@@ -13,8 +13,8 @@
       <!-- protocol -->
       <a-form-item :label="$t('mock.mockers.websocket.protocol')">
         <a-select v-model="mock.options.protocol">
-          <a-select-option value="ws">ws://</a-select-option>
-          <a-select-option value="wss">wss://</a-select-option>
+          <a-select-option value="ws">ws</a-select-option>
+          <a-select-option value="wss">wss</a-select-option>
         </a-select>
       </a-form-item>
       
@@ -32,6 +32,25 @@
       <a-form-item :label="$t('mock.mockers.websocket.path')">
         <a-input v-model="mock.options.path"/>
       </a-form-item>
+
+      <template v-if="'wss' === mock.options.protocol">
+        <!-- pem key -->
+        <a-form-item :label="$t('mock.mockers.websocket.keyContent')">
+          <a-textarea 
+            v-model="mock.options.sslKey" 
+            placeholder="-----BEGIN RSA PRIVATE KEY-----" 
+            :rows="3"
+          />
+        </a-form-item>
+        <!-- cert content -->
+        <a-form-item :label="$t('mock.mockers.websocket.certContent')">
+          <a-textarea 
+            v-model="mock.options.sslCert" 
+            placeholder="-----BEGIN CERTIFICATE-----" 
+            :rows="3"
+          />
+        </a-form-item>
+      </template>
     </a-form>
 
     <template slot="footer">
@@ -40,50 +59,9 @@
   </a-modal>
 </template>
 <script>
+import MockerSettingBase from '../MockerSettingBase.js'
 export default {
-    name : 'MockMockMockSetting',
-    props : {
-        /**
-         * mock instance to edit
-         * @property {Object}
-         */
-        value : {type:Object},
-    },
-    data() {
-        return {
-            /**
-             * indicate if setting enabled.
-             * @property {Boolean}
-             */
-            enable : false,
-            /**
-             * instance of mock model
-             * @property {MdbMock}
-             */
-            mock : null,
-        };
-    },
-    methods : {
-        /**
-         * open setting modal
-         * @public
-         */
-        open() {
-            this.mock = this.value;
-            this.enable = true;
-        },
-
-        /**
-         * event handler on done setting
-         */
-        async actionOk() {
-            let isSuccess = await this.mock.save();
-            if ( !isSuccess ) {
-                throw Error('Failed to save mock model');
-            }
-            this.$emit('change');
-            this.enable = false;
-        },
-    },
+    name : 'MockMockerUdpSetting',
+    mixins : [MockerSettingBase],
 }
 </script>

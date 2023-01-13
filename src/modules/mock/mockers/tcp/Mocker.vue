@@ -72,7 +72,7 @@
     <!-- response -->
     <div class="h-0 flex-grow position-relative bg-white" style="z-index:1;">
       <a-tabs id="module-mock-mocker-tcp-response-tab" 
-        class="d-flex flex-dir-column h-100"
+        class="d-flex flex-dir-column h-100 tab-content-flex-grow tab-content-h0"
         default-active-key="match" 
         :tabBarStyle="{marginBottom:'0px'}"
       >
@@ -344,6 +344,7 @@ export default {
             if ( !client.getIsConnected() ) {
                 delete this.mocker.clients[clientKey];
                 this.$forceUpdate();
+                return ;
             }
 
             let $this = this;

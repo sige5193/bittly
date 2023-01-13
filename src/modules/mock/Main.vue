@@ -31,10 +31,10 @@
           <a-menu-item v-for="(mock, index) in mocks" :key="index" style="padding:0 16px;">
             <a-row>
               <a-col :span="18">
+                {{mock.name}}
                 <small class="border rounded mock-type-tag mr-1">
                   {{$t(`mock.mockers.${mock.type}.typeName`)}}
                 </small> 
-                {{mock.name}}
               </a-col>
               <a-col v-if="undefined !== mockServices[mock.id]" :span="6" class="text-right">
                 <a-badge status="processing" />

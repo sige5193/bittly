@@ -44,6 +44,14 @@ export default class WsClientConnection {
     }
 
     /**
+     * get if connection is open
+     * @returns {Boolean}
+     */
+    getIsConnected() {
+        return this.ws.readyState == this.ws.OPEN;
+    }
+
+    /**
      * event handler on client receive data.
      * @param {*} data 
      */
@@ -101,7 +109,17 @@ export default class WsClientConnection {
         this.dataEntries.push(entry);
         this.dataSendSize += entry.data.length;
 
-        this.ws.send(entry.data, {binary:true});
+        let data = entry.data;
+        if ( 'text' === entry.mode ) {
+            data = data.toString();
+        }
+
+        let $this = this;
+        return new Promise(( resovle, reject ) => {
+            $this.ws.send(data, err => {
+                err ? reject(err) : resovle();
+            });
+        });
     }
 
     /**

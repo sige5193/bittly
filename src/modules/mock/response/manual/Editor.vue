@@ -125,6 +125,7 @@ export default {
             let entry = {};
             entry.name = this.$t('mock.response.manual.title');
             entry.handler = this.handler;
+            entry.mode = this.handler.toLowerCase();
             entry.content = this.content;
             entry.nlstyle = this.newlineStyle;
             this.pushEntryToHistory(entry);

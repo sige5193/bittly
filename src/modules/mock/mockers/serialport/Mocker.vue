@@ -44,7 +44,7 @@
 
     <!-- response -->
     <div class="h-0 flex-grow position-relative bg-white" style="z-index:1;">
-      <a-tabs class="d-flex flex-dir-column h-100 mock-mocker-serialport-response-tab"
+      <a-tabs class="d-flex flex-dir-column h-100 tab-content-flex-grow tab-content-h0"
         default-active-key="match" 
         :tabBarStyle="{marginBottom:'0px'}"
       >
@@ -247,6 +247,3 @@ export default {
     },
 }
 </script>
-<style>
-.mock-mocker-serialport-response-tab .ant-tabs-content {flex-grow: 1;height: 0;}
-</style>
