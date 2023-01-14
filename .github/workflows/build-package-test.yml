@@ -1,7 +1,13 @@
 name: Build Test Package
 
 # @link : https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+    inputs:
+      packey:
+        description: 'the key to generate package name'
+        required: true
+        type: string
 
 jobs:
   # build windows package for testing
@@ -42,16 +48,13 @@ jobs:
       # build
       - run: npm run electron:build -- --x64
 
-      - run: echo VERSION = $env:appver ---- ${{steps.package-json.outputs.version}}
-        env:
-          appver: ${{steps.package-json.outputs.version}}
-
       # setup qshell and upload package to cdn
       - run: Invoke-RestMethod -Uri 'https://devtools.qiniu.com/qshell-v2.9.2-windows-386.zip' -OutFile 'qshell.zip'
       - run: Expand-Archive -LiteralPath qshell.zip -DestinationPath ./
       - run: ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
       - run: >
-          ./qshell fput ${{secrets.QINIU_BUCKET_TEST}} bittly/bittly-$env:appver-x64-test.exe 
+          ./qshell fput ${{secrets.QINIU_BUCKET_TEST}} bittly/bittly-x64-$env:packey.exe 
           ./dist_electron/bittly-$env:appver-win-x64.exe 
         env:
           appver: ${{steps.package-json.outputs.version}}
+          packey: ${{inputs.packey}}
