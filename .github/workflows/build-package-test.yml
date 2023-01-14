@@ -50,7 +50,7 @@ jobs:
 
       - run: echo VERSION = [${VERSION}] ---- [${{steps.read-version.outputs.version}}]
         env:
-          VERSION: ${{steps.read-version.outputs.version}}
+          VERSION: "xxxx"
 
       # # setup qshell and upload package to cdn
       # - run: Invoke-RestMethod -Uri 'https://devtools.qiniu.com/qshell-v2.9.2-windows-386.zip' -OutFile 'qshell.zip'
