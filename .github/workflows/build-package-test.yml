@@ -29,28 +29,22 @@ jobs:
       #     vs-version: 15.9
 
       # checkout 
-      # - uses: actions/checkout@v1
+      - uses: actions/checkout@v1
 
-      # - name: Read version
-      #   id: read-version
-      #   run: >
-      #     $version = (Get-Content -Encoding UTF8 .\package.json | ConvertFrom-Json).version ;
-      #     echo "version=$version" >> $GITHUB_OUTPUT ;
-      #     echo "version=$version" ;
-
-      - name: Read version
-        id: read-version
-        run: echo "version=123" >> $GITHUB_OUTPUT
-
+      # get version
+      - name: Extract version
+        id: package-json
+        uses: Saionaro/extract-package-version@v1.0.6
+      
       # # install
       # - run: npm install --python=python2.7
 
       # # build
       # - run: npm run electron:build -- --x64
 
-      - run: echo VERSION = [$sss] ---- [${{steps.read-version.outputs.version}}]
+      - run: echo VERSION = [$appver] ---- [${{steps.package-json.outputs.version}}]
         env:
-          sss: "xxxx"
+          appver: ${{steps.package-json.outputs.version}}
 
       # # setup qshell and upload package to cdn
       # - run: Invoke-RestMethod -Uri 'https://devtools.qiniu.com/qshell-v2.9.2-windows-386.zip' -OutFile 'qshell.zip'
