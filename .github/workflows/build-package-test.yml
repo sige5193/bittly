@@ -15,7 +15,7 @@ jobs:
     runs-on: windows-2022
     steps:
       # node.js
-      - name: Set up node to v16.14.2
+      - name: Set up node 16.14.2
         uses: actions/setup-node@v3
         with:
           node-version: 16.14.2
@@ -27,34 +27,44 @@ jobs:
           python-version: 2.7 
 
       # python3
-      - uses: actions/setup-python@v4
+      - name: Set up python 3.11
+        uses: actions/setup-python@v4
         with:
           python-version: 3.11
       
       # msbuild
-      - uses: microsoft/setup-msbuild@v1.1
+      - name: Set up msbuild 15.9
+        uses: microsoft/setup-msbuild@v1.1
         with:
           vs-version: 15.9
 
       # checkout 
-      - uses: actions/checkout@v1
+      - name: Checkout
+        uses: actions/checkout@v1
 
       # get version
-      - name: Extract version
+      - name: Read package version
         id: package-json
         uses: Saionaro/extract-package-version@v1.0.6
       
       # install
-      - run: npm install --python=python2.7
+      - name: Install dependences
+        run: npm install --python=python2.7
 
       # build
-      - run: npm run electron:build -- --x64
+      - name: Build app package
+        run: npm run electron:build -- --x64
 
-      # setup qshell and upload package to cdn
-      - run: Invoke-RestMethod -Uri 'https://devtools.qiniu.com/qshell-v2.9.2-windows-386.zip' -OutFile 'qshell.zip'
-      - run: Expand-Archive -LiteralPath qshell.zip -DestinationPath ./
-      - run: ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
-      - run: >
+      # setup qshell
+      - name: Set up qshell
+        run: |
+          Invoke-RestMethod -Uri 'https://devtools.qiniu.com/qshell-v2.9.2-windows-386.zip' -OutFile 'qshell.zip'
+          Expand-Archive -LiteralPath qshell.zip -DestinationPath ./
+          ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
+
+      # upload package
+      - name: Upload package bittly-x64-$env:packey.exe
+        run: >
           ./qshell rput ${{secrets.QINIU_BUCKET_TEST}} bittly/bittly-x64-$env:packey.exe 
           ./dist_electron/bittly-$env:appver-win-x64.exe 
         env:
