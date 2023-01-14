@@ -32,19 +32,19 @@ jobs:
       - uses: actions/checkout@v1
 
       # get version
-      - name: Extract version
-        id: package-json
-        uses: Saionaro/extract-package-version@v1.0.6
-      
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@main
+
       # # install
       # - run: npm install --python=python2.7
 
       # # build
       # - run: npm run electron:build -- --x64
 
-      - run: echo VERSION = [${VERSION}] ---- [${{ steps.extract_version.outputs.version }}]
+      - run: echo VERSION = [${VERSION}] ---- [${{steps.package-version.outputs.current-version}}]
         env:
-          VERSION: ${{steps.package-json.outputs.version}}
+          VERSION: ${{steps.package-version.outputs.current-version}}
 
       # # setup qshell and upload package to cdn
       # - run: Invoke-RestMethod -Uri 'https://devtools.qiniu.com/qshell-v2.9.2-windows-386.zip' -OutFile 'qshell.zip'
