@@ -8,40 +8,44 @@ jobs:
   build-window-packages:
     runs-on: windows-2022
     steps:
-      # node.js
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.14.2
+      # # node.js
+      # - uses: actions/setup-node@v3
+      #   with:
+      #     node-version: 16.14.2
       
-      # python2
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 2.7 
+      # # python2
+      # - uses: actions/setup-python@v4
+      #   with:
+      #     python-version: 2.7 
 
-      # python3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.11
+      # # python3
+      # - uses: actions/setup-python@v4
+      #   with:
+      #     python-version: 3.11
       
-      # msbuild
-      - uses: microsoft/setup-msbuild@v1.1
-        with:
-          vs-version: 15.9
+      # # msbuild
+      # - uses: microsoft/setup-msbuild@v1.1
+      #   with:
+      #     vs-version: 15.9
 
       # checkout 
       - uses: actions/checkout@v1
       
-      # install
-      - run: npm install --python=python2.7
+      # # install
+      # - run: npm install --python=python2.7
 
-      # build
-      - run: npm run electron:build -- --x64
+      # # build
+      # - run: npm run electron:build -- --x64
       
       # get current version
       - name: Extract version
         id: package-json
         uses: Saionaro/extract-package-version@v1.0.6
 
+      - run: echo VERSION = [${VERSION}]
+        env:
+          VERSION: ${{steps.package-json.outputs.version}}
+          
       # setup qshell and upload package to cdn
       - run: Invoke-RestMethod -Uri 'https://devtools.qiniu.com/qshell-v2.9.2-windows-386.zip' -OutFile 'qshell.zip'
       - run: Expand-Archive -LiteralPath qshell.zip -DestinationPath ./
