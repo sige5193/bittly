@@ -42,7 +42,7 @@ jobs:
       # # build
       # - run: npm run electron:build -- --x64
 
-      - run: echo VERSION = ${appver} ---- ${{steps.package-json.outputs.version}}
+      - run: echo VERSION = $env:appver ---- ${{steps.package-json.outputs.version}}
         env:
           appver: ${{steps.package-json.outputs.version}}
 
