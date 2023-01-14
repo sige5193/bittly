@@ -29,14 +29,18 @@ jobs:
       #     vs-version: 15.9
 
       # checkout 
-      - uses: actions/checkout@v1
+      # - uses: actions/checkout@v1
+
+      # - name: Read version
+      #   id: read-version
+      #   run: >
+      #     $version = (Get-Content -Encoding UTF8 .\package.json | ConvertFrom-Json).version ;
+      #     echo "version=$version" >> $GITHUB_OUTPUT ;
+      #     echo "version=$version" ;
 
       - name: Read version
         id: read-version
-        run: >
-          $version = (Get-Content -Encoding UTF8 .\package.json | ConvertFrom-Json).version;
-          echo "version=$version" >> $GITHUB_OUTPUT;
-          echo "version=$version"
+        run: echo "version=123" >> $GITHUB_OUTPUT
 
       # # install
       # - run: npm install --python=python2.7
