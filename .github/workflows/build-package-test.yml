@@ -47,7 +47,7 @@ jobs:
       - run: Expand-Archive -LiteralPath qshell.zip -DestinationPath ./
       - run: ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
       - run: >
-          ./qshell fput ${{secrets.QINIU_BUCKET_TEST}} bittly/bittly-$VERSION-x64-test.exe 
-          ./dist_electron/bittly-$VERSION-win-x64.exe 
+          ./qshell fput ${{secrets.QINIU_BUCKET_TEST}} bittly/bittly-${VERSION}-x64-test.exe 
+          ./dist_electron/bittly-${VERSION}-win-x64.exe 
         env:
           VERSION: ${{steps.package-json.outputs.version}}
