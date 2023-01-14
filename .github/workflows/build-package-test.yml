@@ -48,9 +48,9 @@ jobs:
       # # build
       # - run: npm run electron:build -- --x64
 
-      - run: echo VERSION = [$VERSION] ---- [${{steps.read-version.outputs.version}}]
+      - run: echo VERSION = [$sss] ---- [${{steps.read-version.outputs.version}}]
         env:
-          VERSION: "xxxx"
+          sss: "xxxx"
 
       # # setup qshell and upload package to cdn
       # - run: Invoke-RestMethod -Uri 'https://devtools.qiniu.com/qshell-v2.9.2-windows-386.zip' -OutFile 'qshell.zip'
