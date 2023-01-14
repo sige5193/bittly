@@ -21,7 +21,8 @@ jobs:
           node-version: 16.14.2
       
       # python2
-      - uses: actions/setup-python@v4
+      - name: Set up python 2.7
+        uses: actions/setup-python@v4
         with:
           python-version: 2.7 
 

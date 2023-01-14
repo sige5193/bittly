@@ -30,3 +30,5 @@ pnpm-debug.log*
 /build/build-config.json
 /tests
 /build/build-config.sh
+/scripts/qshell.exe
+bittly-x64-*.exe
