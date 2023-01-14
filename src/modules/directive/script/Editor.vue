@@ -93,7 +93,12 @@ export default {
             window.$this = new ScriptRuntime(this.directive);
             window.$this.parametersSet(directive.requestContent[directive.requestFormat]);
             window.bittly = new ScriptLib(this.directive);
-            window.project = Executor.getProjectScriptObjectOfCurrentProject();
+            window.project = {};
+            Executor.getProjectScriptObjectOfCurrentProject().then( project => {
+                window.project = project;
+            }).catch(e => {
+                $this.$message.error(e.message);
+            });
 
             return new Promise(( resolve, reject ) => {
                 $this.directive = directive;
