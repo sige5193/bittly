@@ -15,7 +15,8 @@ jobs:
     runs-on: windows-2022
     steps:
       # node.js
-      - uses: actions/setup-node@v3
+      - name: Set up node to v16.14.2
+        uses: actions/setup-node@v3
         with:
           node-version: 16.14.2
       
