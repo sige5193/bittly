@@ -48,7 +48,7 @@ jobs:
       # # build
       # - run: npm run electron:build -- --x64
 
-      - run: echo VERSION = [${VERSION}] ---- [${{steps.read-version.outputs.version}}]
+      - run: echo VERSION = [$VERSION] ---- [${{steps.read-version.outputs.version}}]
         env:
           VERSION: "xxxx"
 
