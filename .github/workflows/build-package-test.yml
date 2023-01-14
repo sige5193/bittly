@@ -35,7 +35,8 @@ jobs:
         id: read-version
         run: >
           $version = (Get-Content -Encoding UTF8 .\package.json | ConvertFrom-Json).version;
-          echo "{version}={$version}" >> $GITHUB_OUTPUT
+          echo "{version}={$version}" >> $GITHUB_OUTPUT;
+          echo "{version}={$version}"
 
       # # install
       # - run: npm install --python=python2.7
