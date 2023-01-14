@@ -31,10 +31,11 @@ jobs:
       # checkout 
       - uses: actions/checkout@v1
 
-      # get version
-      - name: get-npm-version
-        id: package-version
-        uses: martinbeentjes/npm-get-version-action@main
+      - name: Read version
+        id: read-version
+        run: >
+          $version = (Get-Content -Encoding UTF8 .\package.json | ConvertFrom-Json).version;
+          echo "{version}={$version}" >> $GITHUB_OUTPUT
 
       # # install
       # - run: npm install --python=python2.7
@@ -42,9 +43,9 @@ jobs:
       # # build
       # - run: npm run electron:build -- --x64
 
-      - run: echo VERSION = [${VERSION}] ---- [${{steps.package-version.outputs.current-version}}]
+      - run: echo VERSION = [${VERSION}] ---- [${{steps.read-version.outputs.version}}]
         env:
-          VERSION: ${{steps.package-version.outputs.current-version}}
+          VERSION: ${{steps.read-version.outputs.version}}
 
       # # setup qshell and upload package to cdn
       # - run: Invoke-RestMethod -Uri 'https://devtools.qiniu.com/qshell-v2.9.2-windows-386.zip' -OutFile 'qshell.zip'
