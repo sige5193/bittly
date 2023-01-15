@@ -39,7 +39,7 @@ jobs:
           vs-version: 15.9
 
       # checkout 
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v1
 
       # get version
@@ -63,7 +63,7 @@ jobs:
           ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
 
       # upload package
-      - name: Upload package bittly-x64-$env:packey.exe
+      - name: Upload package
         run: >
           ./qshell rput ${{secrets.QINIU_BUCKET_TEST}} bittly/bittly-x64-$env:packey.exe 
           ./dist_electron/bittly-$env:appver-win-x64.exe 
