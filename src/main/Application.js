@@ -129,7 +129,7 @@ export default class Application {
     }
     ready() {
         if (this.isDevelopment && !process.env.IS_TEST) {
-            let vueDevToolPath = 'C:/Users/Lenovo/AppData/Local/Google/Chrome/User Data/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/6.4.5_0';
+            let vueDevToolPath = 'C:/Users/Lenovo/AppData/Local/Google/Chrome/User Data/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/6.4.5_1';
             session.defaultSession.loadExtension(vueDevToolPath).then(({ id }) => {})
         }
         this.createMainWindow();
