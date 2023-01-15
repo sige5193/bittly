@@ -2,7 +2,7 @@ import Common from '../../utils/Common.js'
 import PluginBase from './PluginBase.js';
 import PluginExec from './PluginExec.js';
 import JSZip, { folder } from 'jszip'
-import { v4 as uuidV4 } from 'uuid';
+import MyString from '../../utils/datatype/MyString.js';
 export default class Manager {
     /**
      * @property {Manager}
@@ -154,7 +154,7 @@ export default class Manager {
             throw Error(window.app.$t('plugin.installManifestJsonNotExists'));
         }
         
-        let id = uuidV4();
+        let id = MyString.uuidV4();
         let pluginRoot = `${this.basepath}/${id}`;
         window.fs.mkdirSync(pluginRoot, {recursive:true});
         let folders = zip.filter((relativePath, file) => file.dir);

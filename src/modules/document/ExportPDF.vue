@@ -43,13 +43,13 @@
 import { Buffer } from 'buffer';
 import Common from '../../utils/Common.js'
 import artTemplate from 'art-template/lib/template-web.js'
-import { NIL as NIL_UUID } from 'uuid';
 import { jsPDF } from "jspdf";
 require('./fonts/simkai-normal.js');
 require('jspdf-autotable');
 import MdbDirectiveEntry from '../../models/MdbDirectiveEntry';
 import MdbProject from '../../models/MdbProject';
 import MdbRuntimeVariable from '../../models/MdbRuntimeVariable';
+import MyString from '../../utils/datatype/MyString.js';
 export default {
     name : 'ExportPDF',
     data() {
@@ -146,7 +146,7 @@ export default {
         async open() {
             let optionVar = await MdbRuntimeVariable.getVarValue('document_export_pdf_options', '{}', this.project.id);
             this.docOptions = JSON.parse(optionVar);
-            this.entries = await this.fetchAllEntriesByEntryParentId(NIL_UUID);
+            this.entries = await this.fetchAllEntriesByEntryParentId(MyString.uuidNil());
             this.enable = true;
         },
 

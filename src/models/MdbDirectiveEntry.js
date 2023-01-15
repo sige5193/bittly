@@ -1,7 +1,7 @@
-import { v4 as uuidV4 } from 'uuid';
 import ModelBase from '../utils/database/ModelBase.js'
 import MdbDirectiveFolder from './MdbDirectiveFolder.js'
 import MdbDirective from './MdbDirective.js'
+import MyString from '../utils/datatype/MyString.js';
 /**
  * @property {string} id
  * @property {string} type
@@ -23,7 +23,7 @@ class MdbDirectiveEntry extends ModelBase {
     /** 属性列表 */
     attributes() {
         return {
-            id : { type:'string', default:uuidV4() },
+            id : { type:'string', default:MyString.uuidV4()},
             projectId : {type:'string',default:''},
             type : {type:'string',default:''},
             target : {type:'string',default:''},

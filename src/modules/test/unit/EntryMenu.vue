@@ -39,10 +39,10 @@
   </div>
 </template>
 <script>
-import { NIL as NIL_UUID } from 'uuid';
 import MdbDirectiveEntry from '../../../models/MdbDirectiveEntry.js'
 import ExecuteAll from './ExecuteAll.vue'
 import ProjectMixin from '../../../utils/ProjectMixin.js'
+import MyString from '../../../utils/datatype/MyString.js';
 export default {
     name : 'DirectiveEntries',
     mixins : [ProjectMixin],
@@ -186,7 +186,7 @@ export default {
          * event handle on user input text on search input
          */
         actionSearchTextInput() {
-            this.menuData = this.filterMenuItemChildren(NIL_UUID);
+            this.menuData = this.filterMenuItemChildren(MyString.uuidNil());
         },
     }
 }

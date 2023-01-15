@@ -42,10 +42,10 @@
   </div>
 </template>
 <script>
-import { NIL as NIL_UUID } from 'uuid';
 import ExportPDF from './ExportPDF.vue'
 import ExportMarkdown from './ExportMarkdown.vue'
 import MdbDirectiveEntry from '../../models/MdbDirectiveEntry.js'
+import MyString from '../../utils/datatype/MyString';
 export default {
     name : 'DirectiveEntries',
     props : {
@@ -92,7 +92,7 @@ export default {
                 this.entries[item.entry.id] = item;
             }
 
-            this.menuData = this.filterMenuItemChildren(NIL_UUID);
+            this.menuData = this.filterMenuItemChildren(MyString.uuidNil());
         },
 
         /**
@@ -191,7 +191,7 @@ export default {
          * update filter text on search inptut changed
          */
         actionSearchTextInput() {
-            this.menuData = this.filterMenuItemChildren(NIL_UUID);
+            this.menuData = this.filterMenuItemChildren(MyString.uuidNil());
         },
     }
 }

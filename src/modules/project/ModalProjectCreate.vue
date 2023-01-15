@@ -94,8 +94,8 @@
 </template>
 <script>
 import TargetEditorRegistryMixin from '../directive/communicators/TargetEditorRegistryMixin.js'
-import { v4 as uuidv4 } from 'uuid';
 import MdbProject from '../../models/MdbProject.js'
+import MyString from '../../utils/datatype/MyString.js';
 export default {
     name : 'ModalProjectCreate',
     mixins : [TargetEditorRegistryMixin],
@@ -147,7 +147,7 @@ export default {
             this.downloadSelectedProjectIndex = null;
 
             this.project = new MdbProject();
-            this.project.uuid = uuidv4();
+            this.project.uuid = MyString.uuidV4();
             let $this = this;
             return new Promise(function( resolve, reject ) {
                 $this.actResolve = resolve;

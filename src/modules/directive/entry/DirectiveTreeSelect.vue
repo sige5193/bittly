@@ -12,8 +12,8 @@
   ></a-tree-select>
 </template>
 <script>
-import { NIL as NIL_UUID } from 'uuid';
 import MdbDirectiveEntry from '../../../models/MdbDirectiveEntry.js'
+import MyString from '../../../utils/datatype/MyString.js';
 export default {
     name : 'DirectiveTreeSelect',
     props : {
@@ -84,10 +84,10 @@ export default {
          */
         async actionLoadTreeData( treeNode ) {
             let projectId = this.$store.getters.projectActivedId;
-            let parentId = NIL_UUID;
+            let parentId = MyString.uuidNil();
             if ( null === treeNode ) {
                 this.treeData = [];
-                parentId = NIL_UUID;
+                parentId = MyString.uuidNil();
             } else {
                 parentId = treeNode.dataRef.id;
             }

@@ -73,10 +73,10 @@
   </div>
 </template>
 <script>
-import { NIL as NIL_UUID, v4 as uuidV4 } from 'uuid';
 import MdbDirective from '@/models/MdbDirective.js'
 import MdbDirectiveEntry from '@/models/MdbDirectiveEntry.js'
 import ModalDirectiveFolderEdit from './FolderEdit.vue'
+import MyString from '../../../utils/datatype/MyString';
 export default {
     name : 'PanelEntries',
     components : {
@@ -140,7 +140,7 @@ export default {
                 entry : entry,
                 target : target,
             };
-            this.menuData = this.filterMenuItemChildren(NIL_UUID);
+            this.menuData = this.filterMenuItemChildren(MyString.uuidNil());
         },
 
         /**
@@ -155,7 +155,7 @@ export default {
                     break;
                 }
             }
-            this.menuData = this.filterMenuItemChildren(NIL_UUID);
+            this.menuData = this.filterMenuItemChildren(MyString.uuidNil());
         },
 
         /**
@@ -175,7 +175,7 @@ export default {
                 }
                 this.entries[item.entry.id] = item;
             }
-            this.menuData = this.filterMenuItemChildren(NIL_UUID);
+            this.menuData = this.filterMenuItemChildren(MyString.uuidNil());
         },
 
         /**
@@ -268,7 +268,7 @@ export default {
         async actionMenuItemDrop( action ) {
             let parentId = null;
             if ( action.dropToGap ) {
-                parentId = NIL_UUID;
+                parentId = MyString.uuidNil();
             } else {
                 if ( undefined === action.node.$vnode 
                 || 'folder' != action.node.$vnode.data.props.type ) {
@@ -282,7 +282,7 @@ export default {
             sourceEntry.parentId = parentId;
             await sourceEntry.save();
             
-            this.menuData = this.filterMenuItemChildren(NIL_UUID);
+            this.menuData = this.filterMenuItemChildren(MyString.uuidNil());
         },
 
         /**
@@ -307,12 +307,12 @@ export default {
          */
         async handleQuickMenuClickNewFolder() {
             try {
-                let newEntry = await this.$refs.modalFolderEdit.create(NIL_UUID);
+                let newEntry = await this.$refs.modalFolderEdit.create(MyString.uuidNil());
                 let item = {};
                 item.entry = newEntry;
                 item.target = await newEntry.getTargetModel();
                 this.entries[item.entry.id] = item;
-                this.menuData = this.filterMenuItemChildren(NIL_UUID);
+                this.menuData = this.filterMenuItemChildren(MyString.uuidNil());
             } catch {}
         },
 
@@ -338,7 +338,7 @@ export default {
                 item.entry = newEntry;
                 item.target = await newEntry.getTargetModel();
                 this.entries[item.entry.id] = item;
-                this.menuData = this.filterMenuItemChildren(NIL_UUID);
+                this.menuData = this.filterMenuItemChildren(MyString.uuidNil());
             } catch {}
         },
 
@@ -350,7 +350,7 @@ export default {
             let item = this.entries[entryId];
             try {
                 await this.$refs.modalFolderEdit.update(item.target);
-                this.menuData = this.filterMenuItemChildren(NIL_UUID);
+                this.menuData = this.filterMenuItemChildren(MyString.uuidNil());
             } catch {}
         },
 
@@ -383,20 +383,20 @@ export default {
             let target = this.entries[entryId].target;
             let data = target.getData();
             data.name = this.$t('directive.entry.directiveCopyName', [target.name]);
-            data.id = uuidV4();
+            data.id = MyString.uuidV4();
             let directive = new MdbDirective();
             directive.setAttributes(data);
             await directive.save();
 
             let newEntry = new MdbDirectiveEntry();
             let entryData = entry.getData();
-            entryData.id = uuidV4();
+            entryData.id = MyString.uuidV4();
             entryData.target = directive.id;
             newEntry.setAttributes(entryData);
             await newEntry.save();
             
             this.entries[newEntry.id] = {entry:newEntry,target:directive};
-            this.menuData = this.filterMenuItemChildren(NIL_UUID);
+            this.menuData = this.filterMenuItemChildren(MyString.uuidNil());
         },
         
         /**
@@ -418,7 +418,7 @@ export default {
                     await target.delete();
                     await entry.delete();
                     delete $this.entries[entryId];
-                    $this.menuData = $this.filterMenuItemChildren(NIL_UUID);
+                    $this.menuData = $this.filterMenuItemChildren(MyString.uuidNil());
                 },
                 onCancel() {},
             });
@@ -429,7 +429,7 @@ export default {
          */
         actionSearchTextInput() {
             this.menuExpandedKeys = [];
-            this.menuData = this.filterMenuItemChildren(NIL_UUID);
+            this.menuData = this.filterMenuItemChildren(MyString.uuidNil());
         },
     }
 }

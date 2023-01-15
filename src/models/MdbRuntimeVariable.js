@@ -1,5 +1,5 @@
-import { v4 as uuidV4 } from 'uuid';
 import ModelBase from '../utils/database/ModelBase.js'
+import MyString from '../utils/datatype/MyString.js';
 class MdbRuntimeVariable extends ModelBase {
     /** 构造函数 */
     constructor() {
@@ -22,7 +22,7 @@ class MdbRuntimeVariable extends ModelBase {
      */
     attributes() {
         return {
-            id : {type:'string', default:uuidV4(),},
+            id : {type:'string', default:MyString.uuidV4(),},
             projectId : {type:'string',default:''},
             key : {type:'string',default:''},
             value : {type:'string',default:''},

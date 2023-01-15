@@ -1,5 +1,5 @@
-import { NIL as NIL_UUID, v4 as uuidV4 } from 'uuid';
 import ModelBase from '../utils/database/ModelBase.js'
+import MyString from '../utils/datatype/MyString.js';
 /**
  * @property {string} id
  * @property {string} projectId
@@ -32,7 +32,7 @@ export default class MdbDirective extends ModelBase {
      */
     attributes() {
         return {
-            id : { type:'string', default:uuidV4() },
+            id : { type:'string', default:MyString.uuidV4()},
             projectId : {type:'string',default:''},
             name : {type:'string',default:'未命名'},
             description : {type:'string',default:''},
@@ -94,7 +94,7 @@ export default class MdbDirective extends ModelBase {
             AND entries.parent_id = ?
             AND folder.name = ?
             LIMIT 1`;
-        let folderEntryId = NIL_UUID;
+        let folderEntryId = MyString.uuidNil();
         while ( 0 < path.length ) {
             let folderName = path.shift();
             let folder = await directiveModel.query(folderQuery, [projectId, folderEntryId, folderName]);

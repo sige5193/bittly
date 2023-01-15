@@ -19,9 +19,9 @@
   </div>
 </template>
 <script>
-import { NIL as NIL_UUID } from 'uuid';
 import MdbDirectiveEntry from '@/models/MdbDirectiveEntry.js'
 import MdbDirectiveFolder from '@/models/MdbDirectiveFolder.js';
+import MyString from '../../../utils/datatype/MyString';
 export default {
     name : 'DialogFolderSelect',
     data() {
@@ -42,8 +42,8 @@ export default {
             this.selectedEntryId = null;
             this.treeData = [{ 
                 title: this.$t('directive.entry.folderSelectRootName'), 
-                key:NIL_UUID, 
-                value:NIL_UUID
+                key:MyString.uuidNil(), 
+                value:MyString.uuidNil()
             }];
 
             let $this = this;

@@ -1,4 +1,3 @@
-import { v4 as uuidV4 } from 'uuid';
 import MdbDirective from './MdbDirective.js'
 import ModelBase from '../utils/database/ModelBase.js'
 import MdbDirectiveEntry from './MdbDirectiveEntry.js';
@@ -6,6 +5,7 @@ import MdbDirectiveFolder from './MdbDirectiveFolder.js';
 import MdbPanel from './MdbPanel.js'
 import MdbTestcase from './MdbTestcase.js';
 import MdbEnvironment from './MdbEnvironment.js'
+import MyString from '../utils/datatype/MyString.js';
 /**
  * 项目 Model
  * @property {integer} id ID
@@ -36,7 +36,7 @@ export default class MdbProject extends ModelBase {
      */
     attributes() {
         return {
-            id : {type:'string',default:uuidV4()},
+            id : {type:'string',default:MyString.uuidV4()},
             name : {type:'string',default:'',maxLength:64,required:true},
             description : {type:'string',default:'',maxLength:200},
             charset : {type:'string',default:'utf8'},

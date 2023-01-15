@@ -1,5 +1,5 @@
-import { v4 as uuidV4 } from 'uuid';
 import ModelBase from '../utils/database/ModelBase.js'
+import MyString from '../utils/datatype/MyString.js';
 class MdbPanel extends ModelBase {
     // 构造函数
     constructor() {
@@ -14,7 +14,7 @@ class MdbPanel extends ModelBase {
     /** 属性列表 */
     attributes() {
         return {
-            id : {type:'string',default:uuidV4()},
+            id : {type:'string',default:MyString.uuidV4()},
             name : {type:'string',default:''},
             widgets : {type:'array',default:[]},
             variables : {type:'array',default:[]},

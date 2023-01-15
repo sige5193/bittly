@@ -28,7 +28,7 @@
   </div>
 </template>
 <script>
-import { v4 as uuidV4 } from 'uuid';
+import MyString from '../utils/datatype/MyString.js'
 import packageJson from '../../package.json';
 import MdbRuntimeVariable from '../models/MdbRuntimeVariable';
 export default {
@@ -81,7 +81,7 @@ export default {
             this.release = null;
             let clientId = await MdbRuntimeVariable.getVarValue('app_client_id','');
             if ( '' == clientId ) {
-                clientId = uuidV4();
+                clientId = MyString.uuidV4();
                 await MdbRuntimeVariable.setVarValue('app_client_id', clientId);
             }
             
