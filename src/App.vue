@@ -16,14 +16,11 @@
       <a-layout>
         <!-- module menu bar -->
         <a-layout-sider :defaultCollapsed="true" :trigger="null" class="bg-white border-right">
-          <a-menu mode="inline" :selectedKeys="[moduleName]" @click="actionModuleListMenuItemClicked">
-            <a-menu-item key="directive"><a-icon type="box-plot" /> <span> {{$t('directive.moduleName')}} </span></a-menu-item>
-            <a-menu-item key="panel"><a-icon type="dashboard" /> <span> {{$t('panel.moduleName')}} </span></a-menu-item>
-            <a-menu-item key="test"><a-icon type="issues-close" /> <span>{{$t('test.moduleName')}}</span></a-menu-item>
-            <a-menu-item key="mock"><a-icon type="robot" /> <span>{{$t('mock.moduleName')}}</span></a-menu-item>
-            <a-menu-item key="document"><a-icon type="read" /> <span>{{$t('document.moduleName')}}</span></a-menu-item>
-            <a-menu-item key="environment"><a-icon type="gold" /> <span>{{$t('environment.moduleName')}}</span></a-menu-item>
-            <a-menu-item key="setting"><a-icon type="setting" /> <span>{{$t('project.setting')}}</span></a-menu-item>
+          <a-menu id="app-module-menu" mode="inline" :selectedKeys="[moduleName]" @click="actionModuleListMenuItemClicked">
+            <a-menu-item v-for="appModule in modulesList" :key="appModule.id" :data-module="appModule.id">
+              <a-icon :type="appModule.icon" /> 
+              <span>{{appModule.label}}</span>
+            </a-menu-item>
           </a-menu>
         </a-layout-sider>
         
@@ -84,6 +81,19 @@ export default {
              * @property {String}
              */
             moduleName : 'directive',
+            /**
+             * list of modules
+             * @property {Array<Object>}
+             */
+            modulesList : [
+                {id:'directive',label:this.$t('directive.moduleName'),icon:'box-plot'},
+                {id:'panel',label:this.$t('panel.moduleName'),icon:'dashboard'},
+                {id:'test',label:this.$t('test.moduleName'),icon:'issues-close'},
+                {id:'mock',label:this.$t('mock.moduleName'),icon:'robot'},
+                {id:'document',label:this.$t('document.moduleName'),icon:'read'},
+                {id:'environment',label:this.$t('environment.moduleName'),icon:'gold'},
+                {id:'setting',label:this.$t('project.setting'),icon:'setting'},
+            ],
         };
     },
     computed : {
