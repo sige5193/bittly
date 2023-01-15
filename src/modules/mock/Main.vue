@@ -1,5 +1,5 @@
 <template>
-  <a-layout class="h-100">
+  <a-layout class="h-100" id="app-module-mock">
     <a-layout-sider width="300" class="bg-white border-right">
       <div class="d-flex flex-dir-column h-100">
         <!-- toolbar -->
