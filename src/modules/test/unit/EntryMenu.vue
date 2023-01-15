@@ -98,7 +98,7 @@ export default {
                 this.entries[item.entry.id] = item;
             }
 
-            this.menuData = this.filterMenuItemChildren(NIL_UUID);
+            this.menuData = this.filterMenuItemChildren(MyString.uuidNil());
         },
 
         /**
