@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "build:test:package": "PowerShell -File ./scripts/build-test-package.ps1",
-
+    "test:webdriver:start" : "chromedriver --log-level=INFO",
+    
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
