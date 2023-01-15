@@ -1,9 +1,11 @@
 {
   "name": "bittly",
-  "version": "0.16.0",
+  "version": "0.16.1",
   "author": "sige",
   "private": true,
   "scripts": {
+    "build:test:package": "PowerShell -File ./scripts/build-test-package.ps1",
+
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
