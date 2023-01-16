@@ -138,10 +138,10 @@ jobs:
           python-version: 3.11
 
       # python2
-      - name: Set up python 2.7
+      - name: Set up python 2.7.18
         uses: actions/setup-python@v4
         with:
-          python-version: 2.7 
+          python-version: 2.7.18 
       
       # checkout 
       - name: Checkout repository
