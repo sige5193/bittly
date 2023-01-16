@@ -21,7 +21,17 @@ export default {
          * id of project
          * @property {Number}
          */
-        projectId : {type : Number,default : null}
+        projectId : {type : Number,default : null},
+    },
+    data() {
+        return {
+            /**
+             * the directives that been used inside directives. this
+             * value would be update by script lib.
+             * @property {Array<String : MdbDirective>}
+             */
+            scriptDirectives : {},
+        }
     },
     methods : {
         /**
@@ -122,11 +132,12 @@ export default {
             if ( null == projectId ) {
                 projectId = this.$store.getters.projectActivedId;
             }
-
+            
             let bittly = new WidgetActionScriptBittly({
                 runtime : this.runtime,
                 projectId : projectId,
-                widget : this.widget
+                widget : this.widget,
+                component: this,
             });
             let projectScript = await Executor.getProjectScriptObjectOfCurrentProject();
             let $this = this;
