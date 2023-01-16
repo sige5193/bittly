@@ -178,7 +178,8 @@ jobs:
           VERSION: ${{steps.package-json.outputs.version}}
 
       # update server variables
-      - run: >
+      - name: Update release time
+        run: >
           curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
           --form 'key="mac_released_at"' 
           --form "value=$(date '+%Y-%m-%d')" 
