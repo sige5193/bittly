@@ -1,169 +1,176 @@
 name: Build App Packages
 
-on: 
-  repository_dispatch:
-    types:
-      - build-packages
+on: workflow_dispatch
 
 jobs:
-  # build windows packages for 32 and 64 bit.
-  build-window-packages:
-    runs-on: windows-2022
-    steps:
-      # node.js
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.14.2
+  # # build windows packages for 32 and 64 bit.
+  # build-window-packages:
+  #   runs-on: windows-2022
+  #   steps:
+  #     # node.js
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 16.14.2
       
-      # python2
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 2.7 
+  #     # python2
+  #     - uses: actions/setup-python@v4
+  #       with:
+  #         python-version: 2.7 
 
-      # python3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.11
+  #     # python3
+  #     - uses: actions/setup-python@v4
+  #       with:
+  #         python-version: 3.11
       
-      # msbuild
-      - uses: microsoft/setup-msbuild@v1.1
-        with:
-          vs-version: 15.9
+  #     # msbuild
+  #     - uses: microsoft/setup-msbuild@v1.1
+  #       with:
+  #         vs-version: 15.9
 
-      # checkout 
-      - uses: actions/checkout@v1
+  #     # checkout 
+  #     - uses: actions/checkout@v1
 
-      # get version
-      - name: Extract version
-        id: package-json
-        uses: Saionaro/extract-package-version@v1.0.6
+  #     # get version
+  #     - name: Extract version
+  #       id: package-json
+  #       uses: Saionaro/extract-package-version@v1.0.6
 
-      # setup qshell
-      - run: Invoke-RestMethod -Uri 'https://devtools.qiniu.com/qshell-v2.9.2-windows-386.zip' -OutFile 'qshell.zip'
-      - run: Expand-Archive -LiteralPath qshell.zip -DestinationPath ./
-      - run: ./qshell --version
-      - run: ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
+  #     # setup qshell
+  #     - run: Invoke-RestMethod -Uri 'https://devtools.qiniu.com/qshell-v2.9.2-windows-386.zip' -OutFile 'qshell.zip'
+  #     - run: Expand-Archive -LiteralPath qshell.zip -DestinationPath ./
+  #     - run: ./qshell --version
+  #     - run: ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
 
-      # install deps
-      - run: npm install --python=python2.7
+  #     # install deps
+  #     - run: npm install --python=python2.7
 
-      # build 32bit package and upload
-      - run: npm run electron:build -- --ia32
-      - run: >
-          ./qshell rput ${{secrets.QINIU_BUCKET}} 
-          download/$VERSION/bittly-$VERSION-x86.exe 
-          ./dist_electron/bittly-$VERSION-win-ia32.exe
-        env:
-          VERSION: ${{steps.package-json.outputs.version}}
+  #     # build 32bit package and upload
+  #     - run: npm run electron:build -- --ia32
+  #     - run: >
+  #         ./qshell rput ${{secrets.QINIU_BUCKET}} 
+  #         download/$VERSION/bittly-$VERSION-x86.exe 
+  #         ./dist_electron/bittly-$VERSION-win-ia32.exe
+  #       env:
+  #         VERSION: ${{steps.package-json.outputs.version}}
 
-      # build 64bit package and upload
-      - run: npm run electron:build -- --x64
-      - run: >
-          ./qshell fput ${{secrets.QINIU_BUCKET}} 
-          download/$VERSION/bittly-$VERSION-x64.exe 
-          ./dist_electron/bittly-$VERSION-win-x64.exe 
-        env:
-          VERSION: ${{steps.package-json.outputs.version}}
+  #     # build 64bit package and upload
+  #     - run: npm run electron:build -- --x64
+  #     - run: >
+  #         ./qshell fput ${{secrets.QINIU_BUCKET}} 
+  #         download/$VERSION/bittly-$VERSION-x64.exe 
+  #         ./dist_electron/bittly-$VERSION-win-x64.exe 
+  #       env:
+  #         VERSION: ${{steps.package-json.outputs.version}}
 
-      # update server variables
-      - run: >
-          curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
-          --form 'key="windows_released_at"' 
-          --form "value=$(date '+%Y-%m-%d')" 
-          --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
+  #     # update server variables
+  #     - run: >
+  #         curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
+  #         --form 'key="windows_released_at"' 
+  #         --form "value=$(date '+%Y-%m-%d')" 
+  #         --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
 
-  # build linux packages
-  build-linux-packages:
-    runs-on: ubuntu-22.04
-    steps:
-    - run: sudo apt install python2
-    - run: sudo apt-get install libbluetooth-dev
-    - uses: actions/checkout@v1
-    - name: Setup node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: 16.14.2
+  # # build linux packages
+  # build-linux-packages:
+  #   runs-on: ubuntu-22.04
+  #   steps:
+  #   - run: sudo apt install python2
+  #   - run: sudo apt-get install libbluetooth-dev
+  #   - uses: actions/checkout@v1
+  #   - name: Setup node.js
+  #     uses: actions/setup-node@v1
+  #     with:
+  #       node-version: 16.14.2
 
-    # install qshell to upload packages to qiniu
-    - run: wget https://devtools.qiniu.com/qshell-v2.9.2-linux-386.tar.gz
-    - run: tar -zxvf qshell-v2.9.2-linux-386.tar.gz
-    - run: chmod u+x qshell
-    - run: ./qshell --version
-    - run: ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
+  #   # install qshell to upload packages to qiniu
+  #   - run: wget https://devtools.qiniu.com/qshell-v2.9.2-linux-386.tar.gz
+  #   - run: tar -zxvf qshell-v2.9.2-linux-386.tar.gz
+  #   - run: chmod u+x qshell
+  #   - run: ./qshell --version
+  #   - run: ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
     
-    # get package.json version
-    - name: get-npm-version
-      id: package-version
-      uses: martinbeentjes/npm-get-version-action@main
+  #   # get package.json version
+  #   - name: get-npm-version
+  #     id: package-version
+  #     uses: martinbeentjes/npm-get-version-action@main
 
-    # install deps
-    - run: npm install --python=python2.7
+  #   # install deps
+  #   - run: npm install --python=python2.7
 
-    # build 32bit package and upload
-    - run: npm run electron:build -- --ia32
-    - run: >
-        ./qshell fput ${{secrets.QINIU_BUCKET}} 
-        download/$VERSION/bittly-$VERSION-x86.AppImage 
-        ./dist_electron/bittly-$VERSION-i386.AppImage
-      env:
-        VERSION: ${{steps.package-version.outputs.current-version}}
+  #   # build 32bit package and upload
+  #   - run: npm run electron:build -- --ia32
+  #   - run: >
+  #       ./qshell fput ${{secrets.QINIU_BUCKET}} 
+  #       download/$VERSION/bittly-$VERSION-x86.AppImage 
+  #       ./dist_electron/bittly-$VERSION-i386.AppImage
+  #     env:
+  #       VERSION: ${{steps.package-version.outputs.current-version}}
 
-    # build 64bit package and upload
-    - run: npm run electron:build -- --x64
-    - run: >
-        ./qshell fput ${{secrets.QINIU_BUCKET}} 
-        download/$VERSION/bittly-$VERSION-x64.AppImage 
-        ./dist_electron/bittly-$VERSION-x86_64.AppImage
-      env:
-        VERSION: ${{steps.package-version.outputs.current-version}}
+  #   # build 64bit package and upload
+  #   - run: npm run electron:build -- --x64
+  #   - run: >
+  #       ./qshell fput ${{secrets.QINIU_BUCKET}} 
+  #       download/$VERSION/bittly-$VERSION-x64.AppImage 
+  #       ./dist_electron/bittly-$VERSION-x86_64.AppImage
+  #     env:
+  #       VERSION: ${{steps.package-version.outputs.current-version}}
     
-    # update server variables
-    - run: >
-        curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
-        --form 'key="linux_released_at"' 
-        --form "value=$(date '+%Y-%m-%d')" 
-        --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
+  #   # update server variables
+  #   - run: >
+  #       curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
+  #       --form 'key="linux_released_at"' 
+  #       --form "value=$(date '+%Y-%m-%d')" 
+  #       --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
     
   # build mac packages
   build-mac-packages:
     runs-on: macos-latest
     steps:
       # node.js
-      - uses: actions/setup-node@v3
+      - name: Set up node 16.14.2
+        uses: actions/setup-node@v3
         with:
           node-version: 16.14.2
       
       # python2
-      - uses: actions/setup-python@v4
+      - name: Set up python 2.7
+        uses: actions/setup-python@v4
         with:
           python-version: 2.7 
 
       # python3
-      - uses: actions/setup-python@v4
+      - name: Set up python 3.11
+        uses: actions/setup-python@v4
         with:
           python-version: 3.11
       
       # checkout 
-      - uses: actions/checkout@v1
+      - name: Checkout repository
+        uses: actions/checkout@v1
 
       # get version
-      - name: Extract version
+      - name: Read package version
         id: package-json
         uses: Saionaro/extract-package-version@v1.0.6
 
       # install qshell to upload packages to qiniu
-      - run: wget https://devtools.qiniu.com/qshell-v2.9.2-darwin-amd64.tar.gz
-      - run: tar -zxvf qshell-v2.9.2-darwin-amd64.tar.gz
-      - run: chmod u+x qshell
-      - run: ./qshell --version
-      - run: ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
+      - name: Set up qshell
+        run: |
+          wget https://devtools.qiniu.com/qshell-v2.9.2-darwin-amd64.tar.gz
+          tar -zxvf qshell-v2.9.2-darwin-amd64.tar.gz
+          chmod u+x qshell
+          ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
 
       # install deps
-      - run: npm install --python=python2.7
+      - name: Install dependences
+        run: npm install --python=python2.7
 
       # build package and upload
-      - run: npm run electron:build
-      - run: >
+      - name: Build app package
+        run: npm run electron:build
+       
+      # upload package
+      - name: Upload package
+        run: >
           ./qshell rput ${{secrets.QINIU_BUCKET}} 
           download/$VERSION/bittly-$VERSION.dmg 
           ./dist_electron/bittly-$VERSION.dmg 
