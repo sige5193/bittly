@@ -125,63 +125,76 @@ jobs:
   build-mac-packages:
     runs-on: macos-latest
     steps:
-      # node.js
-      - name: Set up node 16.14.2
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16.14.2
+      # # node.js
+      # - name: Set up node 16.14.2
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: 16.14.2
       
-      # python2
-      - name: Set up python 2.7
-        uses: actions/setup-python@v4
-        with:
-          python-version: 2.7 
+      # # python2
+      # - name: Set up python 2.7
+      #   uses: actions/setup-python@v4
+      #   with:
+      #     python-version: 2.7 
 
-      # python3
-      - name: Set up python 3.11
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.11
+      # # python3
+      # - name: Set up python 3.11
+      #   uses: actions/setup-python@v4
+      #   with:
+      #     python-version: 3.11
       
-      # checkout 
-      - name: Checkout repository
-        uses: actions/checkout@v1
+      # # checkout 
+      # - name: Checkout repository
+      #   uses: actions/checkout@v1
 
-      # get version
-      - name: Read package version
-        id: package-json
-        uses: Saionaro/extract-package-version@v1.0.6
+      # # get version
+      # - name: Read package version
+      #   id: package-json
+      #   uses: Saionaro/extract-package-version@v1.0.6
+      
+      # cache qshell tool
+      - name: Cache qshell
+        id: cache-qshell
+        uses: actions/cache@v3
+        with:
+          path: ./qshell
+          key: ${{runner.os}}-qshell
+      
+      # download qshell
+      - name: Download qshell
+        if: steps.cache-qshell.outputs.cache-hit != 'true'
+        run: |
+          wget https://devtools.qiniu.com/qshell-v2.9.2-darwin-amd64.tar.gz
+          tar -zxvf qshell-v2.9.2-darwin-amd64.tar.gz
 
       # install qshell to upload packages to qiniu
       - name: Set up qshell
         run: |
-          wget https://devtools.qiniu.com/qshell-v2.9.2-darwin-amd64.tar.gz
-          tar -zxvf qshell-v2.9.2-darwin-amd64.tar.gz
           chmod u+x qshell
           ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
 
-      # install deps
-      - name: Install dependences
-        run: npm install --python=python2.7
+      # # install deps
+      # - name: Install dependences
+      #   run: npm install --python=python2.7
 
-      # build package and upload
-      - name: Build app package
-        run: npm run electron:build
+      # # build package and upload
+      # - name: Build app package
+      #   run: npm run electron:build
        
-      # upload package
-      - name: Upload package
-        run: >
-          ./qshell rput ${{secrets.QINIU_BUCKET}} 
-          download/$VERSION/bittly-$VERSION.dmg 
-          ./dist_electron/bittly-$VERSION.dmg 
-        env:
-          VERSION: ${{steps.package-json.outputs.version}}
+      # # upload package
+      # - name: Upload package
+      #   run: >
+      #     ./qshell rput ${{secrets.QINIU_BUCKET}} 
+      #     download/$VERSION/bittly-$VERSION.dmg 
+      #     ./dist_electron/bittly-$VERSION.dmg 
+      #   env:
+      #     VERSION: ${{steps.package-json.outputs.version}}
 
-      # update server variables
-      - name: Update release time
-        run: >
-          curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
-          --form 'key="mac_released_at"' 
-          --form "value=$(date '+%Y-%m-%d')" 
-          --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
+      # # update server variables
+      # - name: Update release time
+      #   run: >
+      #     curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
+      #     --form 'key="mac_released_at"' 
+      #     --form "value=$(date '+%Y-%m-%d')" 
+      #     --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
 
