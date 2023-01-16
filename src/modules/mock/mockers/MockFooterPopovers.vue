@@ -1,5 +1,5 @@
 <template>
-  <div class="w-100">
+  <div class="d-inline-block">
     <div v-for="mock in mocks" :key="mock.key" class="d-inline-block">
       <div class="popover-trigger">
         <div class="name">{{mock.mock.name}}</div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="w-100">
+  <div class="d-inline-block">
     <!-- custom communicators -->
     <div v-for="(com, comKey) in communicators" :key="comKey" class="d-inline-block">
       <div v-if="true === com.isCustom" class="popover-trigger">
