@@ -1,3 +1,4 @@
+import Common from '../../../utils/Common.js'
 export default class ResponseScriptRuntime {
     constructor(requestData, com) {
         this.requestData = requestData;
@@ -11,9 +12,15 @@ export default class ResponseScriptRuntime {
     requestBytesGet(){
         return this.requestData;
     }
+
+    /**
+     * get request content as text data
+     * @returns {String}
+     */
     requestTextGet(){
         return Common.charsetConvert(this.requestData, 'utf8', this.com.charset).toString()
     }
+    
     responseHex( data ){
         this.mode = 'hex';
         this.responseData = data;
