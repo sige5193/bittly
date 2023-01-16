@@ -197,4 +197,25 @@ jobs:
           --form 'key="mac_released_at"' 
           --form "value=$(date '+%Y-%m-%d')" 
           --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
+      
+      # update server variables
+      - name: Update release version
+        run: >
+          curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
+          --form 'key="mac_released_version"' 
+          --form "value=$VERSION" 
+          --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
+        env:
+          VERSION: ${{steps.package-json.outputs.version}}
+
+        # update server variables
+      - name: Update release size
+        run: >
+          curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
+          --form 'key="mac_released_size"' 
+          --form "value=$(du -h ./dist_electron/bittly-$VERSION.dmg  | cut -f1)" 
+          --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
+        env:
+          VERSION: ${{steps.package-json.outputs.version}}
+
 
