@@ -6,6 +6,7 @@
   "scripts": {
     "build:test:package": "PowerShell -File ./scripts/build-test-package.ps1",
     "test:webdriver:start" : "chromedriver --log-level=INFO",
+    "test:functional" : "vue-cli-service test:unit --testMatch \"**/__tests__/functional/**/*.test.js\"",
     
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",

@@ -42,6 +42,7 @@
           <a-menu ref="menuHelp" slot="overlay" @click="actionMenuItemClick">
             <a-menu-item key="HelpGetStart">{{$t('app.menu.help.getStart')}}</a-menu-item>
             <a-menu-item key="HelpFeedback">{{$t('app.menu.help.feedback')}}</a-menu-item>
+            <a-menu-item key="ActionRecord">{{$t('app.menu.help.actionRecord')}}</a-menu-item>
             <a-menu-item key="HelpUpdate">{{$t('app.menu.help.update')}}</a-menu-item>
             <a-menu-item key="HelpAbout">{{$t('app.menu.help.about')}}</a-menu-item>
           </a-menu>
@@ -253,6 +254,13 @@ export default {
          */
         handleHelpAbout() {
             this.$refs.appAbout.show();
+        },
+
+        /**
+         * Help > Action record
+         */
+        handleActionRecord(){
+            this.$eventBus.$emit('menu-help-action-record-clicked');
         },
 
         /**

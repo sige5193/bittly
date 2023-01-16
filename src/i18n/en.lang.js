@@ -26,6 +26,8 @@ module.exports = {
         initLoadingStepI18nSetup : 'Setup I18n',
         initLoadingStepDirectionarySetup : 'Loading Directionary',
         initLoadingPlugins : 'Loading Plugins',
+        actionRecorderTitle : 'UI Test Script Generator',
+        actionRecorderDesc : 'UI test script generator use to generate test script for bittly, if you found a bug, you can use it to record actions to show how it happend.',
 
         about : 'About',
         quitConfirm : 'Are you sure to exit the app ?',
@@ -83,6 +85,7 @@ module.exports = {
                 update : 'Update',
                 about : 'About',
                 feedback : 'Feedback',
+                actionRecord : 'Action Record',
             }
         },
         tool : {
@@ -224,7 +227,9 @@ module.exports = {
         edit : 'Edit',
         export : 'Export',
         setting : 'Setting',
-        clearAll : '清空',
+        clearAll : 'Clear All',
+        start : 'Start',
+        stop : 'Stop',
     },
     messages : {
         dialogTitle : {

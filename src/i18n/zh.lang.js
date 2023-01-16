@@ -26,6 +26,8 @@ module.exports = {
         initLoadingStepI18nSetup : '加载国际化配置',
         initLoadingStepDirectionarySetup : '加载数据字典',
         initLoadingPlugins : '加载插件',
+        actionRecorderTitle : 'UI 测试脚本生成器',
+        actionRecorderDesc : '该生成器用于生成 Bittly 的功能测试脚本，或者当 Bittly 发生错误时，可以使用该脚本录制操作过程来重现错误以方便修复',
 
         about : '关于',
         quitConfirm : '是否退出应用？',
@@ -84,6 +86,7 @@ module.exports = {
                 update : '更新',
                 about : '关于',
                 feedback : '反馈',
+                actionRecord : '操作录制',
             }
         },
         tool : {
@@ -226,6 +229,8 @@ module.exports = {
         export : '导出',
         setting : '设置',
         clearAll : '清空',
+        start : '开始',
+        stop : '停止',
     },
     messages : {
         dialogTitle : {

@@ -2,6 +2,7 @@
   <a-layout-footer class="footer border-top">
     <a-row>
       <a-col :span="8">
+        <app-action-recorder />
         <app-update />
         <app-error-handler />
 
@@ -38,6 +39,7 @@
   </a-layout-footer>
 </template>
 <script>
+import AppActionRecorder from './AppActionRecorder.vue'
 import AppUpdate from './AppUpdate.vue'
 import AppFeedback from './AppFeedback.vue'
 import AppErrorHandler from './AppErrorHandler.vue'
@@ -46,6 +48,7 @@ import MockPopovers from '../modules/mock/mockers/MockFooterPopovers.vue'
 export default {
     name : 'AppFooter',
     components : {
+        'app-action-recorder' : AppActionRecorder,
         'app-update' : AppUpdate,
         'app-feedback' : AppFeedback,
         'app-error-handler' : AppErrorHandler,
