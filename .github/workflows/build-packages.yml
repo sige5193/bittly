@@ -143,9 +143,9 @@ jobs:
       #   with:
       #     python-version: 3.11
       
-      # # checkout 
-      # - name: Checkout repository
-      #   uses: actions/checkout@v1
+      # checkout 
+      - name: Checkout repository
+        uses: actions/checkout@v1
 
       # # get version
       # - name: Read package version
