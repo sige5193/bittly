@@ -85,15 +85,7 @@ export default {
              * list of modules
              * @property {Array<Object>}
              */
-            modulesList : [
-                {id:'directive',label:this.$t('directive.moduleName'),icon:'box-plot'},
-                {id:'panel',label:this.$t('panel.moduleName'),icon:'dashboard'},
-                {id:'test',label:this.$t('test.moduleName'),icon:'issues-close'},
-                {id:'mock',label:this.$t('mock.moduleName'),icon:'robot'},
-                {id:'document',label:this.$t('document.moduleName'),icon:'read'},
-                {id:'environment',label:this.$t('environment.moduleName'),icon:'gold'},
-                {id:'setting',label:this.$t('project.setting'),icon:'setting'},
-            ],
+            modulesList : [],
         };
     },
     computed : {
@@ -139,6 +131,14 @@ export default {
             if ( null != activeProjectId && null != activeProjectId.value) {
                 this.$store.dispatch('projectActivedIdSet', activeProjectId.value);
             }
+
+            this.modulesList.push({id:'directive',label:this.$t('directive.moduleName'),icon:'box-plot'});
+            this.modulesList.push({id:'panel',label:this.$t('panel.moduleName'),icon:'dashboard'});
+            this.modulesList.push({id:'test',label:this.$t('test.moduleName'),icon:'issues-close'});
+            this.modulesList.push({id:'mock',label:this.$t('mock.moduleName'),icon:'robot'});
+            this.modulesList.push({id:'document',label:this.$t('document.moduleName'),icon:'read'});
+            this.modulesList.push({id:'environment',label:this.$t('environment.moduleName'),icon:'gold'});
+            this.modulesList.push({id:'setting',label:this.$t('project.setting'),icon:'setting'});
 
             this.isLoading = false;
             this.loadingTitle = '';
