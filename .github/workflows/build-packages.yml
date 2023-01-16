@@ -132,10 +132,10 @@ jobs:
           node-version: 16.14.2
       
       # python3
-      - name: Set up python 3.11
+      - name: Set up python 3.10.8
         uses: actions/setup-python@v4
         with:
-          python-version: 3.11
+          python-version: 3.10.8
 
       # python2
       - name: Set up python 2.7.18
@@ -174,7 +174,8 @@ jobs:
           ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
 
       # cache npm packages
-      - uses: actions/cache@v3
+      - name: Cache npm dependences
+        uses: actions/cache@v3
         id: npm-cache
         with:
           path: ~/.npm
