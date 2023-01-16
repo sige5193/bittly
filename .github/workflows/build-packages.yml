@@ -173,14 +173,6 @@ jobs:
           chmod u+x qshell
           ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
 
-      # cache npm packages
-      - name: Cache npm dependences
-        uses: actions/cache@v3
-        id: npm-cache
-        with:
-          path: ~/.npm
-          key: ${{runner.os}}-node-${{hashFiles('**/package-lock.json')}}
-
       # install deps
       - name: Install dependences
         run: npm install --python=python2.7
