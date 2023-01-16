@@ -28,6 +28,7 @@ export default class MdbMock extends ModelBase {
             projectId : {type:'string',default:''},
             name : {type:'string',default:''},
             type : {type:'string',default:''},
+            summary : {type:'string',default:''},
             options : {type:'object',default:{}},
         };
     }

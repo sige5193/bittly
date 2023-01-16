@@ -334,6 +334,7 @@ export default class Setup {
         require('../../migrations/m202212081217_insert_table_dict_add_param_datatype_bits.js'),
         require('../../migrations/m202212261035_update_table_directive_update_reqest_content_file.js'),
         require('../../migrations/m202301061145_create_table_app_mocks.js'),
+        require('../../migrations/m202301161807_update_table_app_mocks_add_column_summary.js'),
     ];
 
     /**

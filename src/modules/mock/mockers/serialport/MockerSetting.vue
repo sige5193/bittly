@@ -119,7 +119,6 @@ export default {
                 this.mock.options.stopBits = '1';
                 this.mock.options.parity = 'none';
             }
-            
             this.enable = true;
         },
 
@@ -127,6 +126,10 @@ export default {
          * event handler on done setting
          */
         async actionOk() {
+            let options = this.mock.options;
+            this.mock.summary = `${this.$t('mock.mockers.serialport.typeName')} `
+                + `${options.path}:${options.baudRate} `
+                + `${options.dataBits}-${options.parity[0].toUpperCase()}-${options.stopBits}`;
             let isSuccess = await this.mock.save();
             if ( !isSuccess ) {
                 throw Error('Failed to save mock model');

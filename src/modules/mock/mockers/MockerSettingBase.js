@@ -34,6 +34,13 @@ export default {
          * event handler on done setting
          */
         async actionOk() {
+            let typeName = this.$t(`mock.mockers.${this.mock.type}.typeName`);
+            let summary = this.generateSummary(this.mock.options);
+            this.mock.summary = '';
+            if ( 0 < summary.length ) {
+                this.mock.summary = `${typeName} ${summary}`;
+            }
+            
             let isSuccess = await this.mock.save();
             if ( !isSuccess ) {
                 throw Error('Failed to save mock model');
@@ -41,5 +48,14 @@ export default {
             this.$emit('change');
             this.enable = false;
         },
+
+        /**
+         * generate summary by options
+         * @param {Object} options 
+         * @returns 
+         */
+        generateSummary( options ) {
+            return '';
+        }
     },
 }

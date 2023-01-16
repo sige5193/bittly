@@ -1,7 +1,7 @@
 <template>
   <div class="bg-white h-100 d-flex flex-dir-column">
     <!-- header -->
-    <a-page-header :title="mock.name" class="border-bottom">
+    <a-page-header :title="mock.name" :sub-title="mock.summary" class="border-bottom">
       <template slot="extra">
         <a-dropdown :trigger="['click']">
           <a-menu slot="overlay" @click="actionOperationMenuItemClicked">

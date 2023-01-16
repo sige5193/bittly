@@ -28,18 +28,20 @@
           :selectedKeys="[activeMockIndex]"
           @click="actionMockListMenuItemClicked"
         >
-          <a-menu-item v-for="(mock, index) in mocks" :key="index" style="padding:0 16px;">
-            <a-row>
-              <a-col :span="18">
-                {{mock.name}}
-                <small class="border rounded mock-type-tag mr-1">
-                  {{$t(`mock.mockers.${mock.type}.typeName`)}}
-                </small> 
-              </a-col>
-              <a-col v-if="undefined !== mockServices[mock.id]" :span="6" class="text-right">
-                <a-badge status="processing" />
-              </a-col>
-            </a-row>
+          <a-menu-item v-for="(mock, index) in mocks" :key="index" 
+            class="d-flex flex-dir-row"
+            style="padding: 5px 16px;height: auto;line-height: 1.1em;"
+          >
+            <div class="flex-grow">
+              <div>{{mock.name}}</div>
+              <small class="text-muted d-block" style="font-size: 0.8em;">
+                <span v-if="mock.summary">{{mock.summary}}</span>
+                <span v-else><a-icon type="ellipsis" /></span>
+              </small>
+            </div>
+            <div class="text-right" style="width: 32px;">
+              <a-badge v-if="undefined !== mockServices[mock.id]" :span="6" status="processing" />
+            </div>
           </a-menu-item>
         </a-menu>
       </div>

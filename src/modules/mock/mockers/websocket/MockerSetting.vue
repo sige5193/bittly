@@ -63,5 +63,15 @@ import MockerSettingBase from '../MockerSettingBase.js'
 export default {
     name : 'MockMockerUdpSetting',
     mixins : [MockerSettingBase],
+    methods : {
+        /**
+         * generate summary by options
+         * @param {Object} options 
+         * @returns 
+         */
+        generateSummary( options ) {
+            return `${options.protocol}://${options.host}:${options.port}/${options.path}`;
+        }
+    }
 }
 </script>
