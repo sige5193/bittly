@@ -111,6 +111,7 @@ export default {
         gloablUnhandledRejectionHandler (event) {
             event.preventDefault();
             let error = event.reason;
+            console.error(error);
             if ( undefined == event.reason ) {
                 error = {message:'Empty Rejection Message', stack:null};
             }
