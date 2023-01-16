@@ -131,17 +131,17 @@ jobs:
         with:
           node-version: 16.14.2
       
-      # python2
-      - name: Set up python 2.7
-        uses: actions/setup-python@v4
-        with:
-          python-version: 2.7 
-
       # python3
       - name: Set up python 3.11
         uses: actions/setup-python@v4
         with:
           python-version: 3.11
+
+      # python2
+      - name: Set up python 2.7
+        uses: actions/setup-python@v4
+        with:
+          python-version: 2.7 
       
       # checkout 
       - name: Checkout repository
