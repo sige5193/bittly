@@ -1,0 +1,9 @@
+name: "Set up environment"
+
+description: "Install and setup tools and libs"
+
+runs:
+  using: "composite"
+  steps:
+    - run: echo "HOW ARE YOU?"
+      shell: bash
