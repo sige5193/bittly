@@ -215,6 +215,7 @@ import EditorFieldSetting from './EditorFieldSetting.vue'
 import MdbDirective from '@/models/MdbDirective.js'
 import TableDraggableWrapper from '@/components/TableDraggableWrapper.vue'
 import Common from '@/utils/Common.js'
+import MyObject from '../../../../utils/datatype/MyObject'
 export default {
     name : 'DirectiveParamEditorFormBlock',
     components : {
@@ -385,9 +386,11 @@ export default {
             if ( isNaN(length) || 0 >= length ) {
                 length = 1;
             }
-            this.fields[index].length = length;
+            
+            let field = MyObject.copy(this.fields[index]);
+            field.length = length;
+            this.fields.splice(index, 1, field);
             this.updateVModel();
-            this.$forceUpdate();
         },
 
         /**
