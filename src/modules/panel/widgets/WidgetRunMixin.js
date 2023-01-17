@@ -223,7 +223,6 @@ export default {
             }
             requestLog.status = 'success';
             requestLog.responseData = Buffer.from(this.directiveResponseContent);
-            this.runtime.refresh();
             
             switch ( this.widget.directiveResponseParser ) {
             case 'form' : this.handleDirectiveResponseVariableBindingByForm(); break;

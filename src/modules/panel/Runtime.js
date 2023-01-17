@@ -109,7 +109,7 @@ export default class Runtime {
      * @returns {void}
      */
     refresh() {
-        console.debug('· panel runtime refresh');
+        console.debug(`· Panel [${this.panel.name}] runtime refresh`);
         this.component.refreshPanel();
         let widgets = this.component.$refs.widgets;
         for ( let i=0; i<widgets.length; i++ ) {
