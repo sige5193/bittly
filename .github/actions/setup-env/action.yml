@@ -2,6 +2,17 @@ name: "Set up environment"
 
 description: "Install and setup tools and libs"
 
+inputs:
+   qiniuAK:
+     required: true
+     description: "qiniu access key"
+   qiniuSK:
+     required: true
+     description: "qiniu secret key"
+   qiniuAccount:
+     required: false
+     description: "qiniu account name"
+
 runs:
   using: "composite"
   steps:
@@ -54,6 +65,6 @@ runs:
     
     # setup qshell
     - name: Setup qshell
-      run: ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
+      run: ./qshell account ${{inputs.qiniuAK}} ${{inputs.qiniuSK}} ${{inputs.qiniuAccount}}
       shell: bash
 

@@ -14,6 +14,10 @@ jobs:
       # setup env
       - name: Set up environment
         uses: ./.github/actions/setup-env
+        with:
+          qiniuAK: ${{secrets.QINIU_AK}}
+          qiniuSK: ${{secrets.QINIU_SK}}
+          qiniuAccount: ${{secrets.QINIU_ACCOUNT_NAME}}
 
       # get version
       - name: Read package version
