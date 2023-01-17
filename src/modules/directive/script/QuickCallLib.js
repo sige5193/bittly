@@ -61,6 +61,7 @@ export default class QuickCallLib {
      * @returns 
      */
     checksum8( ... items ) {
+        debugger
         let sum = this.scriptLib.bytesSum(... items);
         if(sum > 255) {
             sum = 255 - sum % 256;
