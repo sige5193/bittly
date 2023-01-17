@@ -7,8 +7,6 @@ jobs:
   build-window-packages:
     runs-on: windows-2022
     steps:
-      - uses: ./.github/actions/setup-env.yml
-
       # # node.js
       # - name: Set up node 16.14.2
       #   uses: actions/setup-node@v3
@@ -33,9 +31,11 @@ jobs:
       #   with:
       #     vs-version: 15.9
 
-      # # checkout 
-      # - name: Checkout repository
-      #   uses: actions/checkout@v1
+      # checkout 
+      - name: Checkout repository
+        uses: actions/checkout@v1
+
+      - uses: ./.github/actions/setup-env.yml
 
       # # get version
       # - name: Read package version
