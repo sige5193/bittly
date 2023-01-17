@@ -3,23 +3,16 @@ name: Build App Packages
 on: workflow_dispatch
 
 jobs:
-  # build packages for bittly.
-  build-packages:
-    strategy:
-      matrix:
-        os: [windows-2022, ubuntu-22.04, macos-10.15]
-    runs-on: ${{matrix.os}}
+  # build windows packages for 32 and 64 bit.
+  build-window-packages:
+    runs-on: windows-2022
     steps:
-      # Checkout repository
-      - name: Checkout repository
-        uses: actions/checkout@v1
-
       # node.js
       - name: Set up node 16.14.2
         uses: actions/setup-node@v3
         with:
           node-version: 16.14.2
-    
+      
       # python2
       - name: Set up python 2.7 
         uses: actions/setup-python@v4
@@ -31,269 +24,317 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: 3.11
-
+      
       # msbuild
       - name: Set up msbuild 15.9
-        if: runner.os == 'Windows'
         uses: microsoft/setup-msbuild@v1.1
         with:
           vs-version: 15.9
 
-      # install deps
-      - name: Install dependences
-        if: runner.os == 'Linux'
-        shell: bash
-        run: sudo apt-get install libbluetooth-dev
+      # checkout 
+      - name: Checkout repository
+        uses: actions/checkout@v1
 
+      # get version
+      - name: Read package version
+        id: package-json
+        uses: Saionaro/extract-package-version@v1.0.6
+      
       # cache qshell tool
       - name: Cache qshell
-        id: cache-qshell-win
-        if: runner.os == 'Windows'
+        id: cache-qshell
         uses: actions/cache@v3
         with:
           path: ./qshell.exe
           key: ${{runner.os}}-qshell
+      
+      # download qshell
+      - name: Download qshell
+        if: steps.cache-qshell.outputs.cache-hit != 'true'
+        run: |
+          Invoke-RestMethod -Uri 'https://devtools.qiniu.com/qshell-v2.9.2-windows-386.zip' -OutFile 'qshell.zip'
+          Expand-Archive -LiteralPath qshell.zip -DestinationPath ./
     
+      # setup qshell
+      - name: Setup qshell
+        run: ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
+
+      # install deps
+      - name: Install dependences
+        run: npm install --python=python2.7
+
+      # build 32bit package and upload
+      - name: Build for i386
+        run: npm run electron:build -- --ia32
+
+      # upload package
+      - name: Upload x86.exe to cdn
+        run: >
+          ./qshell rput ${{secrets.QINIU_BUCKET}} 
+          download/$env:appver/bittly-$env:appver-x86.exe 
+          ./dist_electron/bittly-$env:appver-win-ia32.exe
+        env:
+          appver: ${{steps.package-json.outputs.version}}
+
+      # build 64bit package and upload
+      - name: Build for x64
+        run: npm run electron:build -- --x64
+
+      # upload package
+      - name: Upload x64.exe to cdn
+        run: >
+          ./qshell fput ${{secrets.QINIU_BUCKET}} 
+          download/$env:appver/bittly-$env:appver-x64.exe 
+          ./dist_electron/bittly-$env:appver-win-x64.exe 
+        env:
+          appver: ${{steps.package-json.outputs.version}}
+
+      # update server variables
+      - name: Update release time
+        run: >
+          curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
+          --form 'key="windows_released_at"' 
+          --form "value=$(date '+%Y-%m-%d')" 
+          --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
+
+      # update server variables
+      - name: Update release version
+        run: >
+          curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
+          --form 'key="windows_released_version"' 
+          --form "value=$env:appver" 
+          --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
+        env:
+          appver: ${{steps.package-json.outputs.version}}
+
+      # update server variables
+      - name: Update release size for ia32
+        run: >
+          curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
+          --form 'key="windows_released_size_exe_x86"' 
+          --form "value=$([Math]::Truncate((Get-Item -Path ./dist_electron/bittly-$env:appver-win-ia32.exe).Length/1MB*100)/100)MB" 
+          --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
+        env:
+          appver: ${{steps.package-json.outputs.version}}
+
+      # update server variables
+      - name: Update release size for x64
+        run: >
+          curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
+          --form 'key="windows_released_size_exe_x64"' 
+          --form "value=$([Math]::Truncate((Get-Item -Path ./dist_electron/bittly-$env:appver-win-x64.exe).Length/1MB*100)/100)MB" 
+          --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
+        env:
+          appver: ${{steps.package-json.outputs.version}}
+
+  # build linux packages
+  build-linux-packages:
+    runs-on: ubuntu-22.04
+    steps:
+    # install deps
+    - name: Install dependences
+      run: |
+        sudo apt install python2
+        sudo apt-get install libbluetooth-dev
+
+    # checkout repository
+    - name: Checkout repository
+      uses: actions/checkout@v1
+
+    # setup node
+    - name: Setup node 16.14.2
+      uses: actions/setup-node@v1
+      with:
+        node-version: 16.14.2
+
+    # cache qshell tool
+    - name: Cache qshell
+      id: cache-qshell
+      uses: actions/cache@v3
+      with:
+        path: ./qshell
+        key: ${{runner.os}}-qshell
+      
+    # download qshell
+    - name: Download qshell
+      if: steps.cache-qshell.outputs.cache-hit != 'true'
+      run: |
+        wget https://devtools.qiniu.com/qshell-v2.9.2-linux-386.tar.gz
+        tar -zxvf qshell-v2.9.2-linux-386.tar.gz
+    
+    # setup qshell
+    - name: Setup qshell
+      run: |
+        chmod u+x qshell
+        ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
+
+    # get package.json version
+    - name: Read package version
+      id: package-version
+      uses: martinbeentjes/npm-get-version-action@main
+
+    # install deps
+    - name: Install dependences
+      run: npm install --python=python2.7
+
+    # build 32bit package and upload
+    - name: Build for i386
+      run: npm run electron:build -- --ia32
+
+    # upload package
+    - name: Upload i386.AppImage to cdn
+      run: >
+        ./qshell fput ${{secrets.QINIU_BUCKET}} 
+        download/$VERSION/bittly-$VERSION-i386.AppImage 
+        ./dist_electron/bittly-$VERSION-i386.AppImage
+      env:
+        VERSION: ${{steps.package-version.outputs.current-version}}
+
+    # build 64bit package and upload
+    - name: Build for x64
+      run: npm run electron:build -- --x64
+    
+    # upload package
+    - name: Upload x86_64.AppImage to cdn
+      run: >
+        ./qshell fput ${{secrets.QINIU_BUCKET}} 
+        download/$VERSION/bittly-$VERSION-x64.AppImage 
+        ./dist_electron/bittly-$VERSION-x86_64.AppImage
+      env:
+        VERSION: ${{steps.package-version.outputs.current-version}}
+    
+    # update server variables
+    - name: Update release time
+      run: >
+        curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
+        --form 'key="linux_released_at"' 
+        --form "value=$(date '+%Y-%m-%d')" 
+        --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
+
+    # update server variables
+    - name: Update release version
+      run: >
+        curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
+        --form 'key="linux_released_version"' 
+        --form "value=$VERSION" 
+        --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
+      env:
+        VERSION: ${{steps.package-version.outputs.current-version}}
+
+    # update server variables
+    - name: Update release size for appimage i386
+      run: >
+        curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
+        --form 'key="linux_released_size_appimage_i386"' 
+        --form "value=$(du -h ./dist_electron/bittly-$VERSION-i386.AppImage | cut -f1)" 
+        --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
+      env:
+        VERSION: ${{steps.package-version.outputs.current-version}}
+
+    # update server variables
+    - name: Update release size for appimage x86_64
+      run: >
+        curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
+        --form 'key="linux_released_size_appimage_x86_64"' 
+        --form "value=$(du -h ./dist_electron/bittly-$VERSION-x86_64.AppImage | cut -f1)" 
+        --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
+      env:
+        VERSION: ${{steps.package-version.outputs.current-version}}
+    
+  # build mac packages
+  build-mac-packages:
+    runs-on: macos-10.15
+    steps:
+      # node.js
+      - name: Set up node 16.14.2
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.14.2
+      
+      # python3
+      - name: Set up python 3.10.8
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10.8
+
+      # python2
+      - name: Set up python 2.7.18
+        uses: actions/setup-python@v4
+        with:
+          python-version: 2.7.18 
+      
+      # checkout 
+      - name: Checkout repository
+        uses: actions/checkout@v1
+
+      # get version
+      - name: Read package version
+        id: package-json
+        uses: Saionaro/extract-package-version@v1.0.6
+      
       # cache qshell tool
       - name: Cache qshell
-        id: cache-qshell-linux-mac
-        if: runner.os == 'Linux' || runner.os == 'macOS'
+        id: cache-qshell
         uses: actions/cache@v3
         with:
           path: ./qshell
           key: ${{runner.os}}-qshell
-
-      # download qshell
-      - name: Download qshell
-        if: runner.os == 'Windows' && steps.cache-qshell-win.outputs.cache-hit != 'true'
-        shell: powershell
-        run: |
-          Invoke-RestMethod -Uri 'https://devtools.qiniu.com/qshell-v2.9.2-windows-386.zip' -OutFile 'qshell.zip'
-          Expand-Archive -LiteralPath qshell.zip -DestinationPath ./
       
       # download qshell
       - name: Download qshell
-        if: runner.os == 'Linux' && steps.cache-qshell-linux-mac.outputs.cache-hit != 'true'
-        shell: bash
-        run: |
-          wget https://devtools.qiniu.com/qshell-v2.9.2-linux-386.tar.gz
-          tar -zxvf qshell-v2.9.2-linux-386.tar.gz
-          chmod u+x qshell
-
-      # download qshell
-      - name: Download qshell
-        if: runner.os == 'macOS' && steps.cache-qshell-linux-mac.outputs.cache-hit != 'true'
-        shell: bash
+        if: steps.cache-qshell.outputs.cache-hit != 'true'
         run: |
           wget https://devtools.qiniu.com/qshell-v2.9.2-darwin-amd64.tar.gz
           tar -zxvf qshell-v2.9.2-darwin-amd64.tar.gz
+
+      # install qshell to upload packages to qiniu
+      - name: Set up qshell
+        run: |
           chmod u+x qshell
+          ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
 
-      # setup qshell
-      - name: Setup qshell
-        run: ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
-        shell: bash
+      # install deps
+      - name: Install dependences
+        run: npm install --python=python2.7
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-      # # get version
-      # - name: Read package version
-      #   id: package-json
-      #   uses: Saionaro/extract-package-version@v1.0.6
-      
-      # # install deps
-      # - name: Install dependences
-      #   run: npm install --python=python2.7
-
-      # # build 32bit package and upload
-      # - name: Build for i386
-      #   run: npm run electron:build -- --ia32
-
-      # # upload package
-      # - name: Upload x86.exe to cdn
-      #   run: >
-      #     ./qshell rput ${{secrets.QINIU_BUCKET}} 
-      #     download/$env:appver/bittly-$env:appver-x86.exe 
-      #     ./dist_electron/bittly-$env:appver-win-ia32.exe
-      #   env:
-      #     appver: ${{steps.package-json.outputs.version}}
-
-      # # build 64bit package and upload
-      # - name: Build for x64
-      #   run: npm run electron:build -- --x64
-
-      # # upload package
-      # - name: Upload x64.exe to cdn
-      #   run: >
-      #     ./qshell fput ${{secrets.QINIU_BUCKET}} 
-      #     download/$env:appver/bittly-$env:appver-x64.exe 
-      #     ./dist_electron/bittly-$env:appver-win-x64.exe 
-      #   env:
-      #     appver: ${{steps.package-json.outputs.version}}
-
-      # # setup env
-      # - name: Update variables
-      #   uses: ./.github/actions/update-variables
-      #   with:
-      #     secret: ${{secrets.SERVER_DEPLOY_SECRET}}
-      #     version: ${{steps.package-json.outputs.version}}
-      
-  # # build linux packages
-  # build-linux-packages:
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     # checkout repository
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v1
-
-  #     # setup env
-  #     - name: Set up environment
-  #       uses: ./.github/actions/setup-env
-
-
-  #     # get package.json version
-  #     - name: Read package version
-  #       id: package-version
-  #       uses: martinbeentjes/npm-get-version-action@main
-
-  #     # install deps
-  #     - name: Install dependences
-  #       run: npm install --python=python2.7
-
-  #     # build 32bit package and upload
-  #     - name: Build for i386
-  #       run: npm run electron:build -- --ia32
-
-  #     # upload package
-  #     - name: Upload i386.AppImage to cdn
-  #       run: >
-  #         ./qshell fput ${{secrets.QINIU_BUCKET}} 
-  #         download/$VERSION/bittly-$VERSION-i386.AppImage 
-  #         ./dist_electron/bittly-$VERSION-i386.AppImage
-  #       env:
-  #         VERSION: ${{steps.package-version.outputs.current-version}}
-
-  #     # build 64bit package and upload
-  #     - name: Build for x64
-  #       run: npm run electron:build -- --x64
-      
-  #     # upload package
-  #     - name: Upload x86_64.AppImage to cdn
-  #       run: >
-  #         ./qshell fput ${{secrets.QINIU_BUCKET}} 
-  #         download/$VERSION/bittly-$VERSION-x64.AppImage 
-  #         ./dist_electron/bittly-$VERSION-x86_64.AppImage
-  #       env:
-  #         VERSION: ${{steps.package-version.outputs.current-version}}
-      
-  #     # update server variables
-  #     - name: Update release time
-  #       run: >
-  #         curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
-  #         --form 'key="linux_released_at"' 
-  #         --form "value=$(date '+%Y-%m-%d')" 
-  #         --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
-
-  #     # update server variables
-  #     - name: Update release version
-  #       run: >
-  #         curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
-  #         --form 'key="linux_released_version"' 
-  #         --form "value=$VERSION" 
-  #         --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
-  #       env:
-  #         VERSION: ${{steps.package-version.outputs.current-version}}
-
-  #     # update server variables
-  #     - name: Update release size for appimage i386
-  #       run: >
-  #         curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
-  #         --form 'key="linux_released_size_appimage_i386"' 
-  #         --form "value=$(du -h ./dist_electron/bittly-$VERSION-i386.AppImage | cut -f1)" 
-  #         --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
-  #       env:
-  #         VERSION: ${{steps.package-version.outputs.current-version}}
-
-  #     # update server variables
-  #     - name: Update release size for appimage x86_64
-  #       run: >
-  #         curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
-  #         --form 'key="linux_released_size_appimage_x86_64"' 
-  #         --form "value=$(du -h ./dist_electron/bittly-$VERSION-x86_64.AppImage | cut -f1)" 
-  #         --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
-  #       env:
-  #         VERSION: ${{steps.package-version.outputs.current-version}}
-      
-  # # build mac packages
-  # build-mac-packages:
-  #   runs-on: macos-10.15
-  #   steps:
-  #     # checkout 
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v1
-
-  #     # setup env
-  #     - name: Set up environment
-  #       uses: ./.github/actions/setup-env
-
-  #     # get version
-  #     - name: Read package version
-  #       id: package-json
-  #       uses: Saionaro/extract-package-version@v1.0.6
-    
-  #     # install deps
-  #     - name: Install dependences
-  #       run: npm install --python=python2.7
-
-  #     # build package and upload
-  #     - name: Build app package
-  #       run: npm run electron:build
+      # build package and upload
+      - name: Build app package
+        run: npm run electron:build
        
-  #     # upload package
-  #     - name: Upload package
-  #       run: >
-  #         ./qshell rput ${{secrets.QINIU_BUCKET}} 
-  #         download/$VERSION/bittly-$VERSION.dmg 
-  #         ./dist_electron/bittly-$VERSION.dmg 
-  #       env:
-  #         VERSION: ${{steps.package-json.outputs.version}}
+      # upload package
+      - name: Upload package
+        run: >
+          ./qshell rput ${{secrets.QINIU_BUCKET}} 
+          download/$VERSION/bittly-$VERSION.dmg 
+          ./dist_electron/bittly-$VERSION.dmg 
+        env:
+          VERSION: ${{steps.package-json.outputs.version}}
 
-  #     # update server variables
-  #     - name: Update release time
-  #       run: >
-  #         curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
-  #         --form 'key="mac_released_at"' 
-  #         --form "value=$(date '+%Y-%m-%d')" 
-  #         --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
+      # update server variables
+      - name: Update release time
+        run: >
+          curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
+          --form 'key="mac_released_at"' 
+          --form "value=$(date '+%Y-%m-%d')" 
+          --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
       
-  #     # update server variables
-  #     - name: Update release version
-  #       run: >
-  #         curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
-  #         --form 'key="mac_released_version"' 
-  #         --form "value=$VERSION" 
-  #         --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
-  #       env:
-  #         VERSION: ${{steps.package-json.outputs.version}}
+      # update server variables
+      - name: Update release version
+        run: >
+          curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
+          --form 'key="mac_released_version"' 
+          --form "value=$VERSION" 
+          --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
+        env:
+          VERSION: ${{steps.package-json.outputs.version}}
 
-  #       # update server variables
-  #     - name: Update release size
-  #       run: >
-  #         curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
-  #         --form 'key="mac_released_size_dmg"' 
-  #         --form "value=$(du -h ./dist_electron/bittly-$VERSION.dmg  | cut -f1)" 
-  #         --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
-  #       env:
-  #         VERSION: ${{steps.package-json.outputs.version}}
+        # update server variables
+      - name: Update release size
+        run: >
+          curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
+          --form 'key="mac_released_size_dmg"' 
+          --form "value=$(du -h ./dist_electron/bittly-$VERSION.dmg  | cut -f1)" 
+          --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
+        env:
+          VERSION: ${{steps.package-json.outputs.version}}
   
