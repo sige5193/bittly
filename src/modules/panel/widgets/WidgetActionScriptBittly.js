@@ -135,14 +135,12 @@ export default class WidgetActionScriptBittly {
         requestLog.widget = Common.objCopy(this.widget);
         requestLog.executor = executor;
         
-        let $this = this;
         executor.onData(function() {
             requestLog.status = 'success';
             requestLog.responseData = executor.getResponseBuffer();
             if ( undefined != responseCallback ) {
                 responseCallback(executor);
             }
-            $this.runtime.refresh();
         });
 
         let expection = null;
