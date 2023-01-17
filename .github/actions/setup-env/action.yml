@@ -24,6 +24,7 @@ runs:
         python-version: 3.11
     
     - run: echo ${{runner.os}}
+      shell: bash
 
     # msbuild
     - name: Set up msbuild 15.9
