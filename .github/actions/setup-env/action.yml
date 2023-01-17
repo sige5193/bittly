@@ -22,9 +22,6 @@ runs:
       uses: actions/setup-python@v4
       with:
         python-version: 3.11
-    
-    - run: echo ${{runner.os}}
-      shell: bash
 
     # msbuild
     - name: Set up msbuild 15.9
@@ -37,7 +34,5 @@ runs:
     - name: Install dependences
       if: runner.os == 'Linux'
       shell: bash
-      run: |
-        sudo apt install python2
-        sudo apt-get install libbluetooth-dev
+      run: sudo apt-get install libbluetooth-dev
 
