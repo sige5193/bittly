@@ -7,35 +7,13 @@ jobs:
   build-window-packages:
     runs-on: windows-2022
     steps:
-      # # node.js
-      # - name: Set up node 16.14.2
-      #   uses: actions/setup-node@v3
-      #   with:
-      #     node-version: 16.14.2
-      
-      # # python2
-      # - name: Set up python 2.7 
-      #   uses: actions/setup-python@v4
-      #   with:
-      #     python-version: 2.7 
-
-      # # python3
-      # - name: Set up python 3.11
-      #   uses: actions/setup-python@v4
-      #   with:
-      #     python-version: 3.11
-      
-      # # msbuild
-      # - name: Set up msbuild 15.9
-      #   uses: microsoft/setup-msbuild@v1.1
-      #   with:
-      #     vs-version: 15.9
-
       # checkout 
       - name: Checkout repository
         uses: actions/checkout@v1
 
-      - uses: ./.github/actions/setup-env
+      # setup env
+      - name: Set up environment
+        uses: ./.github/actions/setup-env
 
       # # get version
       # - name: Read package version
