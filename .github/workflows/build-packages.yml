@@ -104,26 +104,6 @@ jobs:
   #     - name: Set up environment
   #       uses: ./.github/actions/setup-env
 
-  #     # cache qshell tool
-  #     - name: Cache qshell
-  #       id: cache-qshell
-  #       uses: actions/cache@v3
-  #       with:
-  #         path: ./qshell
-  #         key: ${{runner.os}}-qshell
-        
-  #     # download qshell
-  #     - name: Download qshell
-  #       if: steps.cache-qshell.outputs.cache-hit != 'true'
-  #       run: |
-  #         wget https://devtools.qiniu.com/qshell-v2.9.2-linux-386.tar.gz
-  #         tar -zxvf qshell-v2.9.2-linux-386.tar.gz
-      
-  #     # setup qshell
-  #     - name: Setup qshell
-  #       run: |
-  #         chmod u+x qshell
-  #         ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
 
   #     # get package.json version
   #     - name: Read package version
@@ -214,28 +194,7 @@ jobs:
   #     - name: Read package version
   #       id: package-json
   #       uses: Saionaro/extract-package-version@v1.0.6
-      
-  #     # cache qshell tool
-  #     - name: Cache qshell
-  #       id: cache-qshell
-  #       uses: actions/cache@v3
-  #       with:
-  #         path: ./qshell
-  #         key: ${{runner.os}}-qshell
-      
-  #     # download qshell
-  #     - name: Download qshell
-  #       if: steps.cache-qshell.outputs.cache-hit != 'true'
-  #       run: |
-  #         wget https://devtools.qiniu.com/qshell-v2.9.2-darwin-amd64.tar.gz
-  #         tar -zxvf qshell-v2.9.2-darwin-amd64.tar.gz
-
-  #     # install qshell to upload packages to qiniu
-  #     - name: Set up qshell
-  #       run: |
-  #         chmod u+x qshell
-  #         ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
-
+    
   #     # install deps
   #     - name: Install dependences
   #       run: npm install --python=python2.7

@@ -50,19 +50,47 @@ runs:
     # cache qshell tool
     - name: Cache qshell
       id: cache-qshell-win
+      if: runner.os == 'Windows'
       uses: actions/cache@v3
       with:
         path: ./qshell.exe
         key: ${{runner.os}}-qshell
+    
+    # cache qshell tool
+    - name: Cache qshell
+      id: cache-qshell-linux-mac
+      if: runner.os == 'Linux' || runner.os == 'macOS'
+      uses: actions/cache@v3
+      with:
+        path: ./qshell
+        key: ${{runner.os}}-qshell
 
     # download qshell
     - name: Download qshell
-      if: steps.cache-qshell-win.outputs.cache-hit != 'true' && runner.os == 'Windows'
+      if: runner.os == 'Windows' && steps.cache-qshell-win.outputs.cache-hit != 'true'
       shell: powershell
       run: |
         Invoke-RestMethod -Uri 'https://devtools.qiniu.com/qshell-v2.9.2-windows-386.zip' -OutFile 'qshell.zip'
         Expand-Archive -LiteralPath qshell.zip -DestinationPath ./
     
+    # download qshell
+    - name: Download qshell
+      if: runner.os == 'Linux' && steps.cache-qshell-linux-mac.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        wget https://devtools.qiniu.com/qshell-v2.9.2-linux-386.tar.gz
+        tar -zxvf qshell-v2.9.2-linux-386.tar.gz
+        chmod u+x qshell
+
+    # download qshell
+    - name: Download qshell
+      if: runner.os == 'macOS' && steps.cache-qshell-linux-mac.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        wget https://devtools.qiniu.com/qshell-v2.9.2-darwin-amd64.tar.gz
+        tar -zxvf qshell-v2.9.2-darwin-amd64.tar.gz
+        chmod u+x qshell
+
     # setup qshell
     - name: Setup qshell
       run: ./qshell account ${{inputs.qiniuAK}} ${{inputs.qiniuSK}} ${{inputs.qiniuAccount}}
