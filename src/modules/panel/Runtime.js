@@ -109,6 +109,7 @@ export default class Runtime {
      * @returns {void}
      */
     refresh() {
+        console.debug('· panel runtime refresh');
         this.component.refreshPanel();
         let widgets = this.component.$refs.widgets;
         for ( let i=0; i<widgets.length; i++ ) {
@@ -125,7 +126,7 @@ export default class Runtime {
         this.requestKeyCounter ++;
         request.key = this.requestKeyCounter;
         this.requests.push(request);
-        this.refresh();
+        this.component.refreshPanel();
         return request;
     }
 }
