@@ -75,6 +75,7 @@ export default class UdpClientConnection {
 
         for ( let i=0; i<rules.length; i++ ) {
             let content = MyObject.copy(rules[i].responseContent);
+            content.name = window.app.$t('mock.response.match.entryName',[rules[i].name]);
             content.handler = rules[i].responseHandler;
             this.send(content);
         }
