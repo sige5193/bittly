@@ -96,6 +96,33 @@ jobs:
           --form "value=$(date '+%Y-%m-%d')" 
           --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
 
+      # update server variables
+      - run: >
+          curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
+          --form 'key="windows_released_version"' 
+          --form "value=$env:appver" 
+          --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
+        env:
+          appver: ${{steps.package-json.outputs.version}}
+
+      # update server variables
+      - run: >
+          curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
+          --form 'key="windows_released_size_exe_x86"' 
+          --form "value=$([Math]::Truncate((Get-Item -Path ./dist_electron/bittly-$env:appver-win-ia32.exe).Length/1MB*100)/100)MB" 
+          --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
+        env:
+          appver: ${{steps.package-json.outputs.version}}
+
+      # update server variables
+      - run: >
+          curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
+          --form 'key="windows_released_size_exe_x64"' 
+          --form "value=$([Math]::Truncate((Get-Item -Path ./dist_electron/bittly-$env:appver-win-x64.exe).Length/1MB*100)/100)MB" 
+          --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
+        env:
+          appver: ${{steps.package-json.outputs.version}}
+
   # # build linux packages
   # build-linux-packages:
   #   runs-on: ubuntu-22.04
