@@ -36,3 +36,24 @@ runs:
       shell: bash
       run: sudo apt-get install libbluetooth-dev
 
+    # cache qshell tool
+    - name: Cache qshell
+      id: cache-qshell-win
+      uses: actions/cache@v3
+      with:
+        path: ./qshell.exe
+        key: ${{runner.os}}-qshell
+
+    # download qshell
+    - name: Download qshell
+      if: steps.cache-qshell.outputs.cache-hit != 'true' && runner.os == 'Windows'
+      shell: powershell
+      run: |
+        Invoke-RestMethod -Uri 'https://devtools.qiniu.com/qshell-v2.9.2-windows-386.zip' -OutFile 'qshell.zip'
+        Expand-Archive -LiteralPath qshell.zip -DestinationPath ./
+    
+    # setup qshell
+    - name: Setup qshell
+      run: ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
+      shell: bash
+
