@@ -79,13 +79,13 @@ jobs:
       - run: ls ./dist_electron
 
       # update server variables
-      - name: Update latest.yml version
+      - name: Update latest.yml content
         run: >
           curl --location --request POST 'https://bittly.sigechen.com/deploy/set-update-file' 
-          --form 'yml=@"/D:/Flashin/bittly/server/web/app-update/win32/x64/latest.yml"' 
+          --form 'yml=@"./dist_electron/latest.yml"' 
           --form 'platform="win32"'
-          --form 'arch="i386"'
-          --form 'filename="xyz.yml"'
+          --form 'arch="ia32"'
+          --form 'filename="latest.yml"'
           --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"'
 
       # build 64bit package and upload
@@ -100,6 +100,16 @@ jobs:
           ./dist_electron/bittly-$env:appver-win-x64.exe 
         env:
           appver: ${{steps.package-json.outputs.version}}
+
+      # update server variables
+      - name: Update latest.yml content
+        run: >
+          curl --location --request POST 'https://bittly.sigechen.com/deploy/set-update-file' 
+          --form 'yml=@"./dist_electron/latest.yml"' 
+          --form 'platform="win32"'
+          --form 'arch="x64"'
+          --form 'filename="latest.yml"'
+          --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"'
 
       # update server variables
       - name: Update release time
