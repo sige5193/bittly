@@ -6,6 +6,9 @@
     <div v-if="isLoading" class="loading"> 
       <a-spin size="large" />
       <p class="mt-3" v-if="'' != loadingTitle">{{$t(`app.${loadingTitle}`)}}</p>
+      <div class="mt-5">
+        <a-button size="small" @click="actionDevTool">Open Dev Tool</a-button>
+      </div>
     </div>
     
     <!-- project index page -->
@@ -183,6 +186,13 @@ export default {
                 let borderStyle = window.remote.getCurrentWindow().isMaximized() ? 'none' : 'solid 1px #b7b7b7';
                 document.getElementsByTagName('body')[0].style.border = borderStyle;
             }
+        },
+
+        /**
+         * open dev tools
+         */
+        actionDevTool() {
+            window.remote.getCurrentWebContents().openDevTools();
         }
     },
 }
