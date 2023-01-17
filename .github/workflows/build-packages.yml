@@ -107,19 +107,18 @@ jobs:
       #   env:
       #     appver: ${{steps.package-json.outputs.version}}
 
-  # # build linux packages
-  # build-linux-packages:
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #   # install deps
-  #   - name: Install dependences
-  #     run: |
-  #       sudo apt install python2
-  #       sudo apt-get install libbluetooth-dev
+  # build linux packages
+  build-linux-packages:
+    runs-on: ubuntu-22.04
+    steps:
+      # checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v1
 
-  #   # checkout repository
-  #   - name: Checkout repository
-  #     uses: actions/checkout@v1
+      # setup env
+      - name: Set up environment
+        uses: ./.github/actions/setup-env
+
 
   #   # setup node
   #   - name: Setup node 16.14.2

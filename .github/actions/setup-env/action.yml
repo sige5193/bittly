@@ -28,8 +28,16 @@ runs:
 
     # msbuild
     - name: Set up msbuild 15.9
-      if: runner.os == 'windows'
+      if: runner.os == 'Windows'
       uses: microsoft/setup-msbuild@v1.1
       with:
         vs-version: 15.9
+
+    # install deps
+    - name: Install dependences
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        sudo apt install python2
+        sudo apt-get install libbluetooth-dev
 
