@@ -35,7 +35,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v1
 
-      - uses: ./.github/actions/setup-env.yml
+      - uses: ./.github/actions/setup-env
 
       # # get version
       # - name: Read package version
