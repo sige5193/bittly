@@ -46,7 +46,7 @@ runs:
 
     # download qshell
     - name: Download qshell
-      if: steps.cache-qshell.outputs.cache-hit != 'true' && runner.os == 'Windows'
+      if: steps.cache-qshell-win.outputs.cache-hit != 'true' && runner.os == 'Windows'
       shell: powershell
       run: |
         Invoke-RestMethod -Uri 'https://devtools.qiniu.com/qshell-v2.9.2-windows-386.zip' -OutFile 'qshell.zip'
