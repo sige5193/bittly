@@ -9,7 +9,7 @@
           <small>
             {{formatAsTimeDotMS(entry.time)}} 
             {{formatAsSize(entry.data.length)}} 
-            [{{entry.name}}]
+            [{{'send' === entry.dir ? '=&gt;' : '&lt;='}} {{entry.name}}]
           </small>
         </div>
         <div>
