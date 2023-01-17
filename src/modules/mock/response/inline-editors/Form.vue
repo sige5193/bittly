@@ -186,8 +186,13 @@ export default {
 
             let formFields = MyObject.copy(this.formFields);
             formFields.pop();
-            this.value.content = formFields;
-            this.$emit('input', this.value);
+            
+            let newValue = this.value;
+            if ( undefined == newValue ) {
+                newValue = {};
+            }
+            newValue.content = formFields;
+            this.$emit('input', newValue);
             this.$emit('change');
             this.$forceUpdate();
         },
