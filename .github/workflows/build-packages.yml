@@ -68,7 +68,7 @@ jobs:
         run: npm run electron:build -- --ia32
 
       # upload package
-      - name: Upload x86.exe to cdn
+      - name: Upload x86.exe to CDN
         run: >
           ./qshell rput ${{secrets.QINIU_BUCKET}} 
           download/$env:appver/bittly-$env:appver-x86.exe 
@@ -76,12 +76,24 @@ jobs:
         env:
           appver: ${{steps.package-json.outputs.version}}
 
+      - run: ls ./dist_electron
+
+      # update server variables
+      - name: Update latest.yml version
+        run: >
+          curl --location --request POST 'https://bittly.sigechen.com/deploy/set-update-file' 
+          --form 'yml=@"/D:/Flashin/bittly/server/web/app-update/win32/x64/latest.yml"' 
+          --form 'platform="win32"'
+          --form 'arch="i386"'
+          --form 'filename="xyz.yml"'
+          --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"'
+
       # build 64bit package and upload
       - name: Build for x64
         run: npm run electron:build -- --x64
 
       # upload package
-      - name: Upload x64.exe to cdn
+      - name: Upload x64.exe to CDN
         run: >
           ./qshell fput ${{secrets.QINIU_BUCKET}} 
           download/$env:appver/bittly-$env:appver-x64.exe 
