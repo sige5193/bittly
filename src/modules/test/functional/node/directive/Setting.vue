@@ -205,7 +205,7 @@ export default {
             this.directive = directive;
             this.options.parameterFormat = directive.requestFormat;
             this.options.parameterValue = directive.requestContent[directive.requestFormat];
-            if ( 0 === this.options.title.trim().length ) {
+            if ( undefined === this.options.title || 0 === this.options.title.trim().length ) {
                 this.options.title = directive.name;
             }
             this.$forceUpdate();
