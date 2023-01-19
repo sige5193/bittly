@@ -4,7 +4,7 @@
   "author": "sige",
   "private": true,
   "scripts": {
-    "publish": "PowerShell -File ./scripts/build-prod-package.ps1",
+    "publish": "PowerShell -File ./scripts/build-prod-packages.ps1",
     "build:test:package": "PowerShell -File ./scripts/build-test-package.ps1",
     "test:webdriver:start" : "chromedriver --log-level=INFO",
     "test:functional" : "vue-cli-service test:unit --testMatch \"**/__tests__/functional/**/*.test.js\"",
