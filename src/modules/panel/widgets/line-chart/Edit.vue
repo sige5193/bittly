@@ -68,6 +68,7 @@ export default {
             this.widget.maxDataLength = 50;
             this.widget.sizeHeight = 200;
             this.widget.sizeWidth = 200;
+            this.widget.dataExpression = '{{value}}';
         },
 
         /**
