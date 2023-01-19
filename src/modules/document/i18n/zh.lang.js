@@ -12,6 +12,7 @@ module.exports = {
     exportAsPdfSuccess : 'PDF文件导出成功, 文件保存于 {0}',
     tocLabel : '目录',
     parameterEmpty : '空',
+    exportPdfFontFile : '字体文件',
     exportPdfParamName : '名称',
     exportPdfParamType : '类型',
     exportPdfParamDesc : '说明',

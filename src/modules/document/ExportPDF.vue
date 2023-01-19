@@ -7,6 +7,19 @@
       <a-form-item :label="$t('document.docOptionsVersion')">
         <a-input v-model="docOptions.version" @change="actionDocOptionsUpdate"/>
       </a-form-item>
+      
+      <!-- font -->
+      <a-form-item :label="$t('document.exportPdfFontFile')">
+        <a-upload accept=".ttf"
+          :showUploadList="false"
+          :multiple="false"
+          :beforeUpload="() => false"
+          @change="actionFontFileChanged"
+        >
+          <a-button> <a-icon type="file" /> {{docOptions.fontFile}} </a-button>
+        </a-upload>
+      </a-form-item>
+
       <a-form-item :label="$t('document.docOptionsAuthorLogo')">
         <a-upload
           accept=".jpg"
@@ -44,7 +57,6 @@ import { Buffer } from 'buffer';
 import Common from '../../utils/Common.js'
 import artTemplate from 'art-template/lib/template-web.js'
 import { jsPDF } from "jspdf";
-require('./fonts/simkai-normal.js');
 require('jspdf-autotable');
 import MdbDirectiveEntry from '../../models/MdbDirectiveEntry';
 import MdbProject from '../../models/MdbProject';
@@ -57,6 +69,11 @@ export default {
             enable : false,
             project : null,
             entries : [],
+            /**
+             * callback function to load fonts
+             * @property {Function}
+             */
+            jsPdfAddFontsCallback : null,
             /**
              * @property {Object}
              */
@@ -78,6 +95,7 @@ export default {
                 author : '',
                 authorLogo : null,
                 projectLogo : null,
+                fontFile : '',
             },
             /**
              * pdf template
@@ -129,6 +147,20 @@ export default {
     },
     mounted() {
         this.init();
+        let $this = this;
+        this.jsPdfAddFontsCallback = function() {
+            $this.handleJsPdfEventAddFonts(this);
+        };
+        jsPDF.API.events.push(['addFonts', this.jsPdfAddFontsCallback]);
+    },
+    beforeDestroy() {
+        // remove font load event handler
+        for ( let i=0; i<jsPDF.API.events.length; i++ ) {
+            let event = jsPDF.API.events[i];
+            if ( 'addFonts' === event[0] && this.jsPdfAddFontsCallback === event[1] ) {
+                jsPDF.API.events.splice(i, 1);
+            }
+        }
     },
     methods : {
         /**
@@ -149,13 +181,31 @@ export default {
             this.entries = await this.fetchAllEntriesByEntryParentId(MyString.uuidNil());
             this.enable = true;
         },
+        
+        /**
+         * event handler on jspdf requires fonts.
+         */
+        handleJsPdfEventAddFonts( jspdf ) {
+            let fontFileContent = window.fs.readFileSync(this.docOptions.fontFile);
+            let fontContent = fontFileContent.toString('base64');
+            jspdf.addFileToVFS('custom-normal.ttf', fontContent);
+            jspdf.addFont('custom-normal.ttf', 'custom', 'normal');
+        },
+
+        /**
+         * event handler on font file changed
+         */
+        actionFontFileChanged( info ) {
+            this.docOptions.fontFile = info.file.path;
+            this.actionDocOptionsUpdate();
+        },
 
         /**
          * start exporting
          */
         async actionStart() {
             this.docWriter.doc = new jsPDF();
-            this.docWriter.doc.setFont('simkai');
+            this.docWriter.doc.setFont('custom', 'normal');
             this.docWriter.cursorY = this.template.pageMarginTop;
             this.docWriter.currentPageNumber = 1;
             this.docWriter.bookmarkMap = {};
@@ -346,7 +396,7 @@ export default {
                 this.writeElementText(this.$t('document.requestParamsString'));
                 this.writeElementText({
                     raw : true,
-                    content : directive.requestContent.file,
+                    content : directive.requestContent.file.path,
                     marginTop : element.marginTop,
                     padding : 5,
                     color : '#989dad',

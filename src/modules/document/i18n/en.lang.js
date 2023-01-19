@@ -10,6 +10,7 @@ module.exports = {
     exportAsPdfSuccess : 'Export as PDF successed. File saved at : {0}',
     tocLabel : 'Table of content',
     parameterEmpty : 'Empty',
+    exportPdfFontFile : 'Font File',
     exportPdfParamName : 'Name',
     exportPdfParamType : 'Type',
     exportPdfParamDesc : 'Description',
