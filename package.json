@@ -4,13 +4,13 @@
   "author": "sige",
   "private": true,
   "scripts": {
-    "build:prod:package": "PowerShell -File ./scripts/build-prod-package.ps1",
+    "publish": "PowerShell -File ./scripts/build-prod-package.ps1",
     "build:test:package": "PowerShell -File ./scripts/build-test-package.ps1",
     "test:webdriver:start" : "chromedriver --log-level=INFO",
     "test:functional" : "vue-cli-service test:unit --testMatch \"**/__tests__/functional/**/*.test.js\"",
     "electron:build": "vue-cli-service electron:build",
     "electron:serve": "vue-cli-service electron:serve",
-    
+
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
