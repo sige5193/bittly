@@ -107,8 +107,8 @@ export default class RequestMatcher {
             let script = `return ${checkRule.matchContent.content}`;
             let isMatched = (new Function('data', script))(content);
             return isMatched;
-        } catch ( e ) {
-            throw Error(e);
+        } catch {
+            return false;
         }
     }
 }
