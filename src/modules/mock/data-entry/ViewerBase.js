@@ -29,7 +29,7 @@ export default {
          * @param {*} data 
          */
         formatAsText( data ) {
-            return data.toString();
+            return Buffer.from(data).toString();
         },
         /**
          * format buffer as hex string
