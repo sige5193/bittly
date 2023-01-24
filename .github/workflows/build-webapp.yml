@@ -1,0 +1,57 @@
+name: Build Web App
+
+on: workflow_dispatch
+
+jobs:
+  build-web-app:
+    runs-on: ubuntu-22.04
+    steps:
+    # install deps
+    - name: Install dependences
+      run: |
+        sudo apt install python2
+        sudo apt-get install libbluetooth-dev
+
+    # checkout repository
+    - name: Checkout repository
+      uses: actions/checkout@v1
+
+    # setup node
+    - name: Setup node 16.14.2
+      uses: actions/setup-node@v1
+      with:
+        node-version: 16.14.2
+
+    # cache qshell tool
+    - name: Cache qshell
+      id: cache-qshell
+      uses: actions/cache@v3
+      with:
+        path: ./qshell
+        key: ${{runner.os}}-qshell
+      
+    # download qshell
+    - name: Download qshell
+      if: steps.cache-qshell.outputs.cache-hit != 'true'
+      run: |
+        wget https://devtools.qiniu.com/qshell-v2.9.2-linux-386.tar.gz
+        tar -zxvf qshell-v2.9.2-linux-386.tar.gz
+    
+    # setup qshell
+    - name: Setup qshell
+      run: |
+        chmod u+x qshell
+        ./qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} ${{secrets.QINIU_ACCOUNT_NAME}}
+
+    # get package.json version
+    - name: Read package version
+      id: package-version
+      uses: martinbeentjes/npm-get-version-action@main
+
+    # install deps
+    - name: Install dependences
+      run: npm install --python=python2.7
+
+    # build 64bit package and upload
+    - name: Build for web app
+      run: npm run build
