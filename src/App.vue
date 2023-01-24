@@ -20,7 +20,7 @@
     </div>
     
     <!-- project index page -->
-    <page-project-index ref="projectIndex" v-else-if="null == projectCurId"></page-project-index>
+    <page-project-index v-else-if="null == projectId" ref="projectIndex" />
 
     <!-- project main -->
     <a-layout v-else class="h-100">
@@ -38,7 +38,8 @@
         <!-- module content -->
         <component :is="`module-${moduleName}-main`"></component>
       </a-layout>
-
+      
+      <!-- footer -->
       <app-footer></app-footer>
     </a-layout>
   </div>
@@ -80,6 +81,11 @@ export default {
     data() {
         return {
             /**
+             * id of active project
+             * @property {String}
+             */
+            projectId : null,
+            /**
              * indicate loading or not
              * @property {Boolean}
              */
@@ -102,7 +108,7 @@ export default {
         };
     },
     async mounted() {
-        this.registerEventHandler('project-active-id-change', id => this.moduleName = 'directive');
+        this.registerEventHandler('project-active-id-change', id => this.handleProjectActiveIdChange(id));
         this.$env.on('ipcRenderer', 'open-share-link', (event, info) => this.handleOpenShareLink(event, info));
         window.onresize = () => this.handleWindowResized();
         await this.init();
@@ -160,6 +166,16 @@ export default {
             this.$nextTick(() => this.$emit('ready'));
         },
         
+
+        /**
+         * callback handler on project changed
+         * @property {String} id
+         */
+        handleProjectActiveIdChange(id) {
+            this.projectId = id;
+            this.moduleName = 'directive'
+        },
+
         /**
          * handle event on event `open-share-link` fired.
          * when user click a share link on browser, it would open bittly main view 
