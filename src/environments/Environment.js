@@ -11,14 +11,26 @@ export default class Environment {
      * setup environment
      */
     static setup() {
-        let env = null;
         if ( 'Electron' === window.envName ) {
-            env = new EnvElectron();
+            Environment.switchEnv('Electron');
         } else {
-            env = new EnvBrowser();
+            Environment.switchEnv('Browser');
         }
-        Environment.env = env;
-        return env;
+        return Environment.env;
+    }
+
+    /**
+     * switch environment by given name
+     * @param {String} name 
+     */
+    static switchEnv( name ) {
+        if ( 'Electron' === name ) {
+            Environment.env = new EnvElectron();
+        } else if ('Browser' === name ) {
+            Environment.env = new EnvBrowser();
+        } else {
+            throw Error(`environment [${name}] is not supported`)
+        }
     }
 
     /**

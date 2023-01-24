@@ -35,4 +35,11 @@ export default class EnvBrowser {
     log( message ) {
         // nothing to do here
     }
+
+    /**
+     * open dev tools
+     */
+    openDevTools() {
+        alert(window.app.$t('app.browserOpenDevTools'));
+    }
 }

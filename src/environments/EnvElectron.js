@@ -21,7 +21,10 @@ export default class EnvElectron {
      * @param {*} handler 
      */
     on( type, name, handler ) {
-        window[type].on(name, ... args => handler(...args));
+        window[type].on(name, function () {
+            let args = Array.from(arguments);
+            handler(...args);
+        });
     }
 
     /**
@@ -50,5 +53,12 @@ export default class EnvElectron {
      */
     getOS() {
         return window.os;
+    }
+
+    /**
+     * open dev tools
+     */
+    openDevTools() {
+        window.remote.getCurrentWebContents().openDevTools();
     }
 }
