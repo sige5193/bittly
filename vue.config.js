@@ -1,8 +1,25 @@
 /**
+ * set configuration variables
+ */
+let publicPath = '/';
+let pageTemplate = 'public/index.html';
+if ( 'production' === process.env.NODE_ENV && 'browser' === process.env.BITTLY_HOST_TYPE ) {
+    publicPath = process.env.BITTLY_WEBAPP_ASSETS_PATH;
+    pageTemplate = 'public/index-webapp.html';
+}
+
+/**
  * configurations for vue cli
  * @link https://cli.vuejs.org/config/
  */
 module.exports = {
+    /**
+     * The base URL your application bundle will be deployed at.
+     * @property {String}
+     * @link https://cli.vuejs.org/config/#publicpath
+     */
+    publicPath : publicPath,
+
     /**
      * webpack configurations
      * @property {Object}
@@ -28,49 +45,49 @@ module.exports = {
     pages: {
         index: {
             entry: 'src/main.js',
-            template: 'public/index.html',
+            template: pageTemplate,
             filename: 'index.html',
             title: 'Bittly',
             chunks: ['chunk-vendors', 'chunk-common', 'index']
         },
         toolTcpServer : {
           entry: 'src/tools/tcp-server/index.js',
-          template: 'public/index.html',
+          template: pageTemplate,
           filename: 'tool-tcp-server.html',
           title: 'TCP Server Tool',
           chunks: ['chunk-vendors', 'chunk-common', 'toolTcpServer']
         },
         toolUdpServer : {
             entry: 'src/tools/udp-server/index.js',
-            template: 'public/index.html',
+            template: pageTemplate,
             filename: 'tool-udp-server.html',
             title: 'UDP Server Tool',
             chunks: ['chunk-vendors', 'chunk-common', 'toolUdpServer']
         },
         toolTerminal : {
             entry: 'src/tools/terminal/index.js',
-            template: 'public/index.html',
+            template: pageTemplate,
             filename: 'tool-terminal.html',
             title: 'Terminal',
             chunks: ['chunk-vendors', 'chunk-common', 'toolTerminal']
         },
         toolCalculator : {
             entry: 'src/tools/calculator/index.js',
-            template: 'public/index.html',
+            template: pageTemplate,
             filename: 'tool-calculator.html',
             title: 'Calculator',
             chunks: ['chunk-vendors', 'chunk-common', 'toolCalculator']
         },
         toolWebSocketServer : {
             entry: 'src/tools/ws-server/index.js',
-            template: 'public/index.html',
+            template: pageTemplate,
             filename: 'tool-ws-server.html',
             title: 'Web Socket Server',
             chunks: ['chunk-vendors', 'chunk-common', 'toolWebSocketServer']
         },
         toolSerialPortServer : {
             entry: 'src/tools/serialport-server/index.js',
-            template: 'public/index.html',
+            template: pageTemplate,
             filename: 'tool-serialport-server.html',
             title: 'SerialPort Server',
             chunks: ['chunk-vendors', 'chunk-common', 'toolSerialPortServer']
