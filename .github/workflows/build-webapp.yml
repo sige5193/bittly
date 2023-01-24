@@ -55,3 +55,13 @@ jobs:
     # build 64bit package and upload
     - name: Build for web app
       run: npm run build
+      
+    # upload package
+    - name: Upload result to cdn
+      run: >
+        ./qshell.exe qupload2 
+        --bucket=${{secrets.QINIU_BUCKET}} 
+        --src-dir=dist 
+        --key-prefix=app/$VERSION/
+      env:
+        VERSION: ${{steps.package-version.outputs.current-version}}
