@@ -3,6 +3,7 @@ import PluginBase from './PluginBase.js';
 import PluginExec from './PluginExec.js';
 import JSZip, { folder } from 'jszip'
 import MyString from '../../utils/datatype/MyString.js';
+import Environment from '../../environments/Environment.js';
 export default class Manager {
     /**
      * @property {Manager}
@@ -13,6 +14,11 @@ export default class Manager {
      * start plugin manager
      */
     static async start () {
+        let env = Environment.getEnv();
+        if ( !env.isPluginsAvailable ) {
+            return ;
+        }
+        
         Manager.instance = new Manager();
         await Manager.instance.load();
     }
