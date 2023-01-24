@@ -111,6 +111,7 @@
       "no-unused-vars": "off",
       "no-undef": "off",
       "no-empty": "off",
+      "no-constant-condition" : ["error", { "checkLoops": false }],
       "vue/no-unused-components": "off"
     },
     "overrides": [
