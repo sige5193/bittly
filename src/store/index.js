@@ -85,6 +85,7 @@ export default new Vuex.Store({
          */
         projectActivedIdSet( state, id ) {
             state.projectActivedId = id;
+            window.app.$eventBus.$emit('project-active-id-change', id);
         },
 
         /**
