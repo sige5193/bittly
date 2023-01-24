@@ -1,0 +1,28 @@
+<?php 
+use yii\helpers\Html;
+use app\assets\AppAsset;
+?>
+<?php $this->beginPage() ?>
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <?php $this->head() ?>
+    <link rel="shortcut icon" href="<?php echo AppAsset::res('/favicon.ico'); ?>">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <title><?= Html::encode($this->title) ?> </title>
+  </head>
+  <body>
+    <?php $this->beginBody() ?>
+    <noscript>
+      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+    <?php echo $content ;?>
+    <?php $this->endBody() ?>
+  </body>
+</html>
+<?php $this->endPage() ?>
