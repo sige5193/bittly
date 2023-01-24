@@ -68,5 +68,5 @@ jobs:
     - name: Update layout content
       run: >
         curl --location --request POST 'https://bittly.sigechen.com/deploy/set-web-app-layout' 
-          --form 'layout=@"./dist/index.html"' 
-          --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"'
+        --form 'layout=@"./dist/index.html"' 
+        --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"'
