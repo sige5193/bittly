@@ -1,4 +1,34 @@
+import Environment from '../../environments/Environment.js'
+import StorageServer from './StorageServer';
+import StorageSqlite from './StorageSqlite.js';
+import MyObject from '../datatype/MyObject.js'
 export default class ModelBase {
+    /**
+     * storage instance for data
+     * @var {Object}
+     */
+    static storage = null;
+    
+    /**
+     * get database storage
+     * @returns {Object}
+     */
+    static getStorage() {
+        if ( null !== ModelBase.storage ) {
+            return ModelBase.storage;
+        }
+
+        let env = Environment.getEnv();
+        if ( 'sqlite' === env.databaseStorageType ) {
+            ModelBase.storage = new StorageSqlite();
+        } else if ( 'server' === env.databaseStorageType ) {
+            ModelBase.storage = new StorageServer();
+        } else {
+            throw Error(`database storage handler [${evn.databaseStorageType}] is not supported.`);
+        }
+        return ModelBase.storage;
+    }
+
     /**
      * constructor of database table model
      */
@@ -337,28 +367,21 @@ export default class ModelBase {
      * @fires ModelBas#update
      * @returns {Promise}
      */
-    update() {
-        let attrs = [];
-        let values = [];
+    async update() {
+        let options = {};
+        options.table = this.tbname;
+        options.id = this.id;
+        options.data = {};
+
         for ( let name in this.attrs ) {
-            let aName = this.convertCamelToSnakeCase(name);
-            attrs.push(`${aName} = ?`)
-            values.push(this.formatAttributeValue(this.attrs[name], this.attrs[name].value));
+            let attrName = this.convertCamelToSnakeCase(name);
+            let attrValue = this.formatAttributeValue(this.attrs[name], this.attrs[name].value);
+            options.data[attrName] = attrValue;
         }
-        
-        values.push(this.id);
-        let $this = this;
-        let sql = `UPDATE ${this.tbname} SET ${attrs.join(',')} WHERE id = ?`;
-        return new Promise(function( resolve, reject ) {
-            window.database.run(sql, values, function( err ) {
-                if ( null != err ) {
-                    reject(false);
-                    return;
-                }
-                $this.trigger('update');
-                resolve(true);
-            });
-        });
+
+        let storage = ModelBase.getStorage();
+        await storage.update(options);
+        this.trigger('update');
     }
 
     /**
@@ -366,34 +389,23 @@ export default class ModelBase {
      * @fires ModelBase#inserte
      * @returns {Promise}
      */
-    insert() {
-        let holders = [];
-        let names = [];
-        let values = [];
+    async insert() {
+        let options = {};
+        options.table = this.tbname;
+        options.data = {};
+
         for ( let name in this.attrs ) {
-            names.push(this.convertCamelToSnakeCase(name));
-            holders.push('?');
-            values.push(this.formatAttributeValue(this.attrs[name], this.attrs[name].value));
+            let attrName = this.convertCamelToSnakeCase(name);
+            let attrValue = this.formatAttributeValue(this.attrs[name], this.attrs[name].value);
+            options.data[attrName] = attrValue;
         }
-        
-        let sql = `INSERT INTO ${this.tbname} (${names.join(',')}) VALUES (${holders.join(',')})`;
-        let $this = this;
-        return new Promise(function( resolve, reject ) {
-            window.database.run(sql, values, function( err ) {
-                if ( null != err ) {
-                    reject(false);
-                    return;
-                }
-                if ( undefined == $this.id ) {
-                    $this.id = this.lastID;
-                }
-                $this.isNew = false;
-                $this.trigger('inserte');
-                $this.afterInsert().then(function() {
-                    resolve(true);
-                });
-            });
-        });
+
+        let storage = ModelBase.getStorage();
+        await storage.insert(options);
+
+        this.isNew = false;
+        this.trigger('insert');
+        await this.afterInsert();
     }
 
     /**
@@ -442,22 +454,18 @@ export default class ModelBase {
      * delete this model from database
      * @returns {Promise}
      */
-    delete() {
-        let sql = `DELETE FROM ${this.tbname} WHERE id = ?`;
-        let $this = this;
-        return new Promise(function( resolve, reject ) {
-            $this.beforeDelete().then(function() {
-                window.database.run(sql, [$this.id], function( err ) {
-                    if ( null != err ) {
-                        reject(false);
-                        return;
-                    }
-                    $this.isNew = true;
-                    $this.afterDelete();
-                    resolve(true);
-                });
-            })
-        });
+    async delete() {
+        let options = {};
+        options.table = this.tbname;
+        options.id = this.id;
+
+        await this.beforeDelete();
+
+        let storage = ModelBase.getStorage();
+        await storage.delete(options);
+
+        this.isNew = true;
+        this.afterDelete();
     }
 
     /** 
@@ -530,52 +538,29 @@ export default class ModelBase {
      * - {Number} limit
      * @returns {Promise}
      */
-    static findAll( options ) {
-        if ( undefined == options ) {
-            options = {};
-        }
-
+    static async findAll( options ) {
         let model = new this;
-        let params = [];
+        options = options || {};
+        options.conditions = options.conditions || MyObject.copy(options);
+        options.limit = options.limit || 0;
+        options.table = model.tbname;
 
-        let conditions = (undefined === options.conditions) ? options : options.conditions;
-        let conditionList = [];
-        for ( let i in conditions ) {
-            params.push(conditions[i]);
-            conditionList.push(`${i} = ?`);
+        let storage = ModelBase.getStorage();
+        let rows = await storage.find(options);
+        
+        // create models
+        let models = [];
+        for ( let i=0; i<rows.length; i++ ) {
+            let instance = new this();
+            instance.isInited = false;
+            instance.fillModel(rows[i]);
+            instance.isNew = false;
+            instance.isInited = true;
+            models.push(instance);
         }
-        conditionList = 0 == conditionList.length ? '' : `WHERE ${conditionList.join(' AND ')}`;
-
-        let order = 'ORDER BY id DESC';
-
-        let limit = '';
-        if ( undefined != options.limit ) {
-            limit = `LIMIT ${options.limit}`
-        }
-
-        let $this = this;
-        let sql = `SELECT * FROM ${model.tbname} ${conditionList} ${order} ${limit}`;
-        return new Promise(function( resolve, reject ) {
-            window.database.all(sql, params, function( err, rows ) {
-                if ( null != err ) {
-                    reject(err);
-                    return;
-                }
-
-                let models = [];
-                for ( let i=0; i<rows.length; i++ ) {
-                    let instance = new $this();
-                    instance.isInited = false;
-                    instance.fillModel(rows[i]);
-                    instance.isNew = false;
-                    instance.isInited = true;
-                    models.push(instance);
-                }
-                resolve(models);
-            });
-        });
+        return models;
     }
-
+    
     /**
      * fill model data
      * @param {Object} data 
