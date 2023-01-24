@@ -35,6 +35,17 @@ export default {
         async refreshProjects() {
             this.projects = [];
             this.projects = await MdbProject.findAll();
+            
+            if ( 0 < this.projects.length ) {
+                return ;
+            }
+
+            // create default projects
+            let project = new MdbProject();
+            project.name = this.$t('project.nameDefaultValue');
+            await project.save();
+            await this.refreshProjects();
+            this.$store.dispatch('projectActivedIdSet', project.id);
         },
 
         /**
