@@ -62,6 +62,11 @@ jobs:
         ./qshell qupload2 
         --bucket=${{secrets.QINIU_BUCKET}} 
         --src-dir=dist 
-        --key-prefix=app/$VERSION/
-      env:
-        VERSION: ${{steps.package-version.outputs.current-version}}
+        --key-prefix=app/
+    
+    # upload layout file.
+    - name: Update layout content
+      run: >
+        curl --location --request POST 'https://bittly.sigechen.com/deploy/set-web-app-layout' 
+          --form 'layout=@"./dist/index.html"' 
+          --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"'
