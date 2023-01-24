@@ -1,6 +1,10 @@
 /**
  * set configuration variables
  */
+console.log(`NODE_ENV : ${process.env.NODE_ENV}`);
+console.log(`BITTLY_HOST_TYPE : ${process.env.BITTLY_HOST_TYPE}`);
+console.log(`BITTLY_WEBAPP_ASSETS_PATH : ${process.env.BITTLY_WEBAPP_ASSETS_PATH}`);
+
 let publicPath = '/';
 let pageTemplate = 'public/index.html';
 if ( 'production' === process.env.NODE_ENV && 'browser' === process.env.BITTLY_HOST_TYPE ) {
