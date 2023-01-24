@@ -1,3 +1,4 @@
+import Environment from '../../environments/Environment.js';
 import MdbRuntimeVariable from '../../models/MdbRuntimeVariable.js'
 import MigrationBase from './MigrationBase.js';
 export default class Setup {
@@ -342,6 +343,11 @@ export default class Setup {
      * @returns {Promise}
      */
     static async start() {
+        if ( !Environment.getEnv().isDatabaseMigrationRequired ) {
+            console.log('database migration is not required in this environment.');
+            return ;
+        }
+        
         let setup = new Setup();
         let step = 0;
         try {
