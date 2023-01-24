@@ -28,6 +28,9 @@ module.exports = {
         initLoadingPlugins : 'Loading Plugins',
         actionRecorderTitle : 'UI Test Script Generator',
         actionRecorderDesc : 'UI test script generator use to generate test script for bittly, if you found a bug, you can use it to record actions to show how it happend.',
+        browserTip : 'Because of the limitation of browser, there would be some action not available ~~~ You can download bittly and use it without limiation.',
+        browserDownloadClient : 'Download Bittly',
+        browserOpenDevTools : 'you can open dev tools by browser menu ~~~ ',
 
         about : 'About',
         quitConfirm : 'Are you sure to exit the app ?',

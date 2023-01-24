@@ -28,6 +28,9 @@ module.exports = {
         initLoadingPlugins : '加载插件',
         actionRecorderTitle : 'UI 测试脚本生成器',
         actionRecorderDesc : '该生成器用于生成 Bittly 的功能测试脚本，或者当 Bittly 发生错误时，可以使用该脚本录制操作过程来重现错误以方便修复',
+        browserTip : '由于浏览器限制，部分功能可能会出现不可用的情况 ~~~ 您可下载 Bittly 在您本地使用，可完全离线 (～￣▽￣)～',
+        browserDownloadClient : '下载 Bittly',
+        browserOpenDevTools : '您可以通过浏览器菜单手动打开开发者工具 ~~~ ',
 
         about : '关于',
         quitConfirm : '是否退出应用？',
