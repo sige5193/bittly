@@ -59,7 +59,7 @@ jobs:
     # upload package
     - name: Upload result to cdn
       run: >
-        ./qshell.exe qupload2 
+        ./qshell qupload2 
         --bucket=${{secrets.QINIU_BUCKET}} 
         --src-dir=dist 
         --key-prefix=app/$VERSION/
