@@ -57,6 +57,9 @@ jobs:
     # build 64bit package and upload
     - name: Build for web app
       run: npm run build
+      env:
+        BITTLY_HOST_TYPE: browser
+        BITTLY_WEBAPP_ASSETS_PATH: ${{secrets.WEBAPP_ASSETS_PATH}}
       
     # upload package
     - name: Upload result to cdn
