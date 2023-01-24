@@ -4,6 +4,7 @@ module.exports = {
     create : '创建项目',
     switch : '切换项目',
     name : '名称',
+    nameDefaultValue : '未命名项目',
     description : '描述',
     endianness : '字节序',
     charset : '字符集',

@@ -4,6 +4,7 @@ module.exports = {
     create : 'Create Project',
     switch : 'Switch Project',
     name : 'Name',
+    nameDefaultValue : 'Unnamed Project',
     description : 'Description',
     endianness : 'Endianness',
     charset : 'Charset',
