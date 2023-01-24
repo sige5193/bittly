@@ -1,3 +1,5 @@
+import ModelBase from "./database/ModelBase";
+
 class Dictionary {
     /** 
      * @var {object}
@@ -144,32 +146,23 @@ class Dictionary {
      * @returns 
      */
     static async load() {
-        let resultHandler = function( result, resolve ) {
-            let dict = {};
-            for ( let i=0; i<result.length; i++ ) {
-                if ( undefined == dict[result[i].group] ) {
-                    dict[result[i].group] = {
-                        name : result[i].group_name,
-                        items : {}
-                    };
-                }
-                dict[result[i].group].items[result[i].key] = result[i];
-                dict[result[i].group].items[result[i].key].options = JSON.parse(result[i].options);
-            }
-            Dictionary.dict = dict;
-            resolve();
-        };
-
-        let sql = `SELECT * FROM app_dictionary`;
-        return new Promise(function( resolve, reject ) {
-            window.database.all(sql, [], function( err, rows ) {
-                if ( null != err ) {
-                    reject(err);
-                    return;
-                }
-                resultHandler(rows, resolve);
-            });
+        let storage = ModelBase.getStorage();
+        let result = await storage.find({
+            table : 'app_dictionary',
         });
+
+        let dict = {};
+        for ( let i=0; i<result.length; i++ ) {
+            if ( undefined == dict[result[i].group] ) {
+                dict[result[i].group] = {
+                    name : result[i].group_name,
+                    items : {}
+                };
+            }
+            dict[result[i].group].items[result[i].key] = result[i];
+            dict[result[i].group].items[result[i].key].options = JSON.parse(result[i].options);
+        }
+        Dictionary.dict = dict;
     }
 }
 
