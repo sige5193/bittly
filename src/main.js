@@ -11,6 +11,13 @@ import i18n from './i18n/index.js'
 import VueThermometer from 'vuejs-thermometer'
 import BittlyApiClient from './utils/BittlyApiClient';
 import Logger from './utils/Logger.js'
+import Environment from './environments/Environment.js';
+
+/** 
+ * setup env 
+ * */
+let env = Environment.setup();
+Vue.prototype.$env = env;
 
 /**
  * send log message to main process console
@@ -26,7 +33,7 @@ Vue.prototype.$appLog = ( ... messages ) => {
         message = message.replace(`{${i-1}}`, item);
     }
     message = `[renderer] ${message}`;
-    window.ipcRenderer.send("app-log", message)
+    Environment.getEnv().log(message);
     console.log(message);
 };
 
