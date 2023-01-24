@@ -1,5 +1,13 @@
 <template>
   <div id="mainApp" class="h-100 d-flex flex-dir-column">
+    <a-alert v-if="'browser' == $env.name" banner closable >
+      <span slot="message">
+        {{$t('app.browserTip')}}
+        <a class="app-download" target="_blank" href="https://bittly.sigechen.com/download"
+        >{{$t('app.browserDownloadClient')}}</a>
+      </span>
+    </a-alert>
+
     <app-title v-if="!isLoading"></app-title>
     
     <!-- init -->
@@ -12,7 +20,7 @@
     </div>
     
     <!-- project index page -->
-    <page-project-index v-else-if="null == projectCurId"></page-project-index>
+    <page-project-index ref="projectIndex" v-else-if="null == projectCurId"></page-project-index>
 
     <!-- project main -->
     <a-layout v-else class="h-100">
@@ -52,9 +60,11 @@ import ModuleSettingMain from './modules/project/Setting.vue'
 import PageProjectIndex from './modules/project/PageProjectIndex.vue'
 import PluginManager from './modules/plugin/Manager.js'
 import ModuleMockMain from './modules/mock/Main.vue'
+import ComponentBase from './utils/component/Base.js'
 require('./utils/Common.css');
 export default {
     name: 'App',
+    mixins : [ComponentBase],
     components : {
         'app-title' : AppTitle,
         'page-project-index' : PageProjectIndex,
@@ -91,20 +101,14 @@ export default {
             modulesList : [],
         };
     },
-    computed : {
-        projectCurId () {
-            return this.$store.getters.projectActivedId;
-        },
-    },
-    watch : {
-        projectCurId() {
-            this.moduleName = 'directive';
-        },
-    },
     async mounted() {
-        window.ipcRenderer.on('open-share-link', (event, info) => this.handleOpenShareLink(event, info) );
+        this.registerEventHandler('project-active-id-change', id => this.moduleName = 'directive');
+        this.$env.on('ipcRenderer', 'open-share-link', (event, info) => this.handleOpenShareLink(event, info));
         window.onresize = () => this.handleWindowResized();
         await this.init();
+    },
+    beforeDestroy() {
+        this.unregisterAllEventHandlers();
     },
     methods : {
         /**
@@ -112,29 +116,35 @@ export default {
          */
         async init() {
             this.isLoading = true;
-            
             document.title = `Bittly - ${PackageJSON.version}`;
-            
+
+            // setup database
             this.loadingTitle = 'initLoadingStepDatabaseSetup';
             await DatabaseSetup.start();
 
+            // setup api client
             this.loadingTitle = 'initLoadingStepServerSetup';
             await this.$bittly.start();
-
+            
+            // setup i18n
             this.loadingTitle = 'initLoadingStepI18nSetup';
             this.$i18n.locale = await AppHelper.langCodeGet();
-
+            
+            // setup dictionary
             this.loadingTitle = 'initLoadingStepDirectionarySetup';
             await Dictionary.load();
-
+            
+            // setup plugins
             this.loadingTitle = 'initLoadingPlugins';
             await PluginManager.start();
-
+            
+            // active default project
             let activeProjectId = await MdbRuntimeVariable.findOne({key:'project_actived_id'});
             if ( null != activeProjectId && null != activeProjectId.value) {
                 this.$store.dispatch('projectActivedIdSet', activeProjectId.value);
             }
-
+            
+            // setup modules
             this.modulesList.push({id:'directive',label:this.$t('directive.moduleName'),icon:'box-plot'});
             this.modulesList.push({id:'panel',label:this.$t('panel.moduleName'),icon:'dashboard'});
             this.modulesList.push({id:'test',label:this.$t('test.moduleName'),icon:'issues-close'});
@@ -142,9 +152,12 @@ export default {
             this.modulesList.push({id:'document',label:this.$t('document.moduleName'),icon:'read'});
             this.modulesList.push({id:'environment',label:this.$t('environment.moduleName'),icon:'gold'});
             this.modulesList.push({id:'setting',label:this.$t('project.setting'),icon:'setting'});
-
+            
+            // done
             this.isLoading = false;
             this.loadingTitle = '';
+
+            this.$nextTick(() => this.$emit('ready'));
         },
         
         /**
@@ -182,7 +195,7 @@ export default {
          * event handler on window resized
          */
         handleWindowResized() {
-            if ( null !== window.os.version().match('Windows 7') ) {
+            if ( 'electron' === this.$env.name && null !== this.$env.getOS().version().match('Windows 7') ) {
                 let borderStyle = window.remote.getCurrentWindow().isMaximized() ? 'none' : 'solid 1px #b7b7b7';
                 document.getElementsByTagName('body')[0].style.border = borderStyle;
             }
@@ -192,11 +205,13 @@ export default {
          * open dev tools
          */
         actionDevTool() {
-            window.remote.getCurrentWebContents().openDevTools();
+            this.$env.openDevTools();
         }
     },
 }
 </script>
 <style scoped>
 .loading {text-align: center;width: 100%;padding-top: 20%;}
+.app-download {border: solid 1px #1890ff;background: #1890ff;color: white;padding: 1px 5px;border-radius: 3px;margin-left: 10px;}
+.app-download:hover {background: #2475c0;}
 </style>
