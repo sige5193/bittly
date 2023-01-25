@@ -31,6 +31,7 @@ module.exports = {
         browserTip : '由于浏览器限制，部分功能可能会出现不可用的情况 ~~~ 您可下载 Bittly 在您本地使用，可完全离线 (～￣▽￣)～',
         browserDownloadClient : '下载 Bittly',
         browserOpenDevTools : '您可以通过浏览器菜单手动打开开发者工具 ~~~ ',
+        environmentNotSupportAction : '当前运行环境不支持该操作',
 
         about : '关于',
         quitConfirm : '是否退出应用？',
