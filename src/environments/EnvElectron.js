@@ -104,4 +104,11 @@ export default class EnvElectron {
     browserOpen(link) {
         window.shell.openExternal(link);
     }
+
+    /**
+     * @param  {...any} params 
+     */
+    ipcRendererSend ( ... params ) {
+        window.ipcRenderer.send( ... params );
+    }
 }

@@ -176,7 +176,9 @@ export default {
             await this.openedDirectiveMemoryUpdate();
             this.hasInited = true;
 
-            setTimeout(() => window.ipcRenderer.send("window-app-ready"), 100),
+            if ( 'electron' === this.$env.name ) {
+                setTimeout(() => this.$env.ipcRendererSend('window-app-ready'), 100);
+            }
             this.$appLog('module.directive.main:actionEntryMenuInited() => done');
         },
 
