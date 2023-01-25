@@ -1,6 +1,7 @@
 import axios from 'axios'
 import MdbRuntimeVariable from '../models/MdbRuntimeVariable.js'
 import packageInfo from '../../package.json'
+import Environment from '../environments/Environment.js';
 export default class BittlyApiClient {
     /**
      * 客户端实例
@@ -83,7 +84,7 @@ export default class BittlyApiClient {
         }
         
         let apiUrl = 'https://bittly.sigechen.com/api';
-        if ( 'development' === window.remote.process.env.NODE_ENV ) {
+        if ( 'dev' === Environment.getEnv().mode ) {
             apiUrl = 'http://server.bittly.local/api';
         }
 
