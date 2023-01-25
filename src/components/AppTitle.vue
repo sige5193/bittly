@@ -188,7 +188,6 @@ export default {
          * @parma {Event} event
          */
         actionConfigurableMenuItemClick( event ) {
-            debugger
             let eventData = event.domEvent.target.dataset;
             let item = this.menus[eventData.menuKey].items[eventData.itemIndex];
             item.action();
