@@ -9,6 +9,8 @@ import VueShortkey from 'vue-shortkey'
 import VueThermometer from 'vuejs-thermometer'
 import BittlyApiClient from '@/utils/BittlyApiClient.js'
 import MdbProject from '../../models/MdbProject.js'
+import Environment from '../../environments/Environment.js';
+import EnvElectron from '../../environments/EnvElectron.js';
 export default class UnitTester {
     /**
      * constructor of testcase setup
@@ -32,7 +34,7 @@ export default class UnitTester {
          * mock bittly api client
          * @property {Object}
          */
-        this.mockBittlyApiClient = options.mockBittlyApiClient || {};
+        this.mockBittlyApiClient = options.mockBittlyApiClient || {start:()=>{},isGuest:()=>true};
         /**
          * mock getters of store
          * @property {Object}
@@ -104,15 +106,24 @@ export default class UnitTester {
         
 
         this.storeData = {};
-        
-        
+    }
+
+    /**
+     * listen event on component
+     * @param {*} eventName 
+     * @param {*} handler 
+     */
+    on( eventName, handler ) {
+        this.componentMountListeners[eventName] = handler;
     }
 
     /**
      * setup a test env
      */
-    async setup() {
+    async setup( envName='Electron' ) {
         window.envName = 'test';
+        this.setupEnvironment(envName);
+        Environment.switchEnv(envName);
         
         // clean database
         if ( undefined != window.database ) {
@@ -125,6 +136,9 @@ export default class UnitTester {
 
         // setup localvue
         let localVue = createLocalVue();
+        localVue.prototype.$env = Environment.getEnv();
+        localVue.prototype.$log = () => {};
+
         localVue.use(Antd);
         localVue.use(VueShortkey);
         localVue.use(VueThermometer)
@@ -134,6 +148,39 @@ export default class UnitTester {
         await Dictionary.load();
         this.localVue = localVue;
         this.mount({template:'<div></div>'});
+    }
+
+    /**
+     * setup basic env variables
+     * @param {*} name 
+     */
+    setupEnvironment( name ) {
+        if ( 'Electron' === name ) {
+            window.remote = {
+                process : {
+                    env : {NODE_ENV:'test'}
+                },
+                app : {
+                    getPath : () => './',
+                },
+            };
+            window.ipcRenderer = {
+                on : () => {},
+                invoke : () => null,
+                send(){},
+            };
+            window.shell = {
+                openExternal(){}
+            };
+            window.fs = {
+                mkdirSync(){},
+                opendir(path,callback){callback(null,[])},
+            };
+            window.os = {
+                platform() { return 'win32'; },
+                arch() { return 'x86'; }
+            };
+        }
     }
 
     /**
@@ -230,25 +277,7 @@ export default class UnitTester {
         }
     }
 
-    /**
-     * get element text by given selector
-     * @param {*} selector 
-     * @param {*} wrapper 
-     * @returns {String}
-     */
-    async click( selector, wrapper=null, index=0 ) {
-        if ( null === wrapper ) {
-            wrapper = this.wrapper;
-        }
-        if ( 'object' === typeof(selector) ) {
-            let com = wrapper.findAllComponents(selector).at(index);
-            await com.vm.$emit('click');
-        } else {
-            let elem = wrapper.findAll(selector).at(index);
-            await elem.trigger('click');
-        }
-        await this.msleep(200);
-    }
+    
 
     /**
      * set text value to textarea
@@ -295,30 +324,23 @@ export default class UnitTester {
         if ( null === wrapper ) {
             wrapper = this.wrapper;
         }
-        if ( 'object' === typeof(selector) ) {
-            let coms = wrapper.findAllComponents(selector);
-            await coms.at(index).vm.$emit(eventName, ... data);
-        }
+        let com = this.getTargetBySelector(wrapper, selector);
+        await com.vm.$emit(eventName, ... data);
         await this.msleep(200);
     }
 
     /**
      * trigger event
-     * @param {*} selector 
+     * @param {Object} selector 
      * @param {*} eventName 
      * @param {*} wrapper 
      */
-    async trigger( selector, eventName, data=[], wrapper=null, index=-1) {
+    async trigger( selector, eventName, data=[], wrapper=null) {
         if ( null === wrapper ) {
             wrapper = this.wrapper;
         }
 
-        let com = null;
-        if ( -1 === index ) {
-            com = wrapper.findComponent(selector);
-        } else {
-            com = wrapper.findAllComponents(selector).at(index);
-        }
+        let com = this.getTargetBySelector(wrapper, selector);
         await com.trigger(eventName, ... data);
         await this.msleep(200);
     }
@@ -454,6 +476,12 @@ export default class UnitTester {
         await this.msleep(200);
     }
     
+
+
+
+
+
+    
     /**
      * @param {*} selector 
      * @param {*} key 
@@ -469,5 +497,58 @@ export default class UnitTester {
         }
         await this.trigger(triggerSelector, 'click');
         await this.emit(menuSelector, 'click', [data]);
+    }
+
+    /**
+     * get target by given selector
+     * @param {*} wrapper 
+     * @param {Object} selector selector of target
+     * - {ref:'elem-name'}
+     * - {ref:'elem-name',index:1}
+     * @returns 
+     */
+    getTargetBySelector( wrapper, selector ) {
+        let selectorName = JSON.stringify(selector);
+        let index = 0;
+        if ( 'object' === typeof(selector) && undefined !== selector.index ) {
+            index = selector.index;
+            delete selector.index;
+        }
+
+        let target = null;
+        if ( 0 == index ) {
+            target = wrapper.findComponent(selector);
+        } else {
+            let list = wrapper.findAllComponents(selector);
+            if ( 0 === list.length ) {
+                throw Error(`unable to locate target by given selector : ${selectorName}`);
+            }
+            
+            target = list.at(index);
+        }
+
+        if ( !target.exists() ) {
+            throw Error(`target does not exists by given selector : ${selectorName}`);
+        }
+
+        return target;
+    }
+
+    /**
+     * click element by given selector
+     * @param {*} selector 
+     * @param {*} wrapper 
+     */
+    async click( selector, wrapper=null ) {
+        if ( null === wrapper ) {
+            wrapper = this.wrapper;
+        }
+        let com = this.getTargetBySelector(wrapper, selector);
+        if ( undefined === com.vm ) {
+            await com.trigger('click');
+        } else {
+            await com.vm.$emit('click');
+        }
+        await this.msleep(200);
     }
 }
