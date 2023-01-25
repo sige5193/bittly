@@ -114,6 +114,9 @@ export default {
          * open management modal
          */
         open () {
+            if ( ! this.$env.isPluginsAvailable ) {
+                return this.$env.errorActionNotSupported();
+            }
             this.refresh();
             this.enable = true;
         },
