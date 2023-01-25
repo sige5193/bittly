@@ -7,11 +7,13 @@
       <img style="width:100px;height:100px;" src="../assets/icon.png">
     </p>
     <p class="text-center"><strong>Bittly</strong> {{packInfo.version}}</p>
-    <p class="text-center">Electron : {{electronVersion}}</p>
-    <p class="text-center">Chrome : {{chromeVersion}}</p>
-    <p class="text-center">Node.js : {{nodeVersion}}</p>
-    <p class="text-center">V8 : {{v8Version}}</p>
-    <p class="text-center">OS : {{osInfo}}</p>
+    <template v-if="null !== electronInfo">
+      <p class="text-center">Electron : {{electronInfo.electronVersion}}</p>
+      <p class="text-center">Chrome : {{electronInfo.chromeVersion}}</p>
+      <p class="text-center">Node.js : {{electronInfo.nodeVersion}}</p>
+      <p class="text-center">V8 : {{electronInfo.v8Version}}</p>
+      <p class="text-center">OS : {{electronInfo.osInfo}}</p>
+    </template>
   </a-modal>
 </template>
 <script>
@@ -29,25 +31,9 @@ export default {
              */
             packInfo : packageInfo,
             /**
-             * @property {String|null}
+             * @property {Object|null}
              */
-            electronVersion : null,
-            /**
-             * @property {String|null}
-             */
-            chromeVersion : null,
-            /**
-             * @property {String|null}
-             */
-            nodeVersion : null,
-            /**
-             * @property {String|null}
-             */
-            v8Version : null,
-            /**
-             * @property {String|null}
-             */
-            osInfo : null,
+            electronInfo : null,
         };
     },
     methods : {
@@ -55,17 +41,30 @@ export default {
          * display about dialog
          */
         show() {
-            this.osInfo = [];
-            this.osInfo.push(window.os.type());
-            this.osInfo.push(window.os.arch());
-            this.osInfo.push(window.os.version());
-            this.osInfo = this.osInfo.join(' ');
-
-            this.v8Version = window.remote.process.versions.v8;
-            this.nodeVersion = window.remote.process.versions.node;
-            this.chromeVersion = window.remote.process.versions.chrome;
-            this.electronVersion = window.remote.process.versions.electron;
+            this.setupElectronInfo();
             this.enabled = true;
+        },
+
+        /**
+         * setup electron info
+         */
+        setupElectronInfo() {
+            this.electronInfo = null;
+            if ( 'electron' != this.$env.name ) {
+                return ;
+            }
+
+            this.electronInfo = {};
+            this.electronInfo.osInfo = [];
+            this.electronInfo.osInfo.push(window.os.type());
+            this.electronInfo.osInfo.push(window.os.arch());
+            this.electronInfo.osInfo.push(window.os.version());
+            this.electronInfo.osInfo = this.electronInfo.osInfo.join(' ');
+
+            this.electronInfo.v8Version = window.remote.process.versions.v8;
+            this.electronInfo.nodeVersion = window.remote.process.versions.node;
+            this.electronInfo.chromeVersion = window.remote.process.versions.chrome;
+            this.electronInfo.electronVersion = window.remote.process.versions.electron;
         }
     }
 }

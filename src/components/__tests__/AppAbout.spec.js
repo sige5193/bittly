@@ -3,6 +3,10 @@ import AppAbout from '../AppAbout.vue'
 import packInfo from '../../../package.json'
 describe('@/components/AppAbout.vue', () => {
     it('basic', async ( ) => {
+        let tester = new UnitTester();
+        await tester.setup();
+        await tester.mount(AppAbout);
+        
         window.os = {
             type(){},
             arch(){},
@@ -19,10 +23,6 @@ describe('@/components/AppAbout.vue', () => {
             },
         };
 
-        let tester = new UnitTester();
-        await tester.setup();
-        await tester.mount(AppAbout);
-        
         tester.wrapper.vm.show();
         expect(tester.dataGet('enabled')).toBe(true);
 
