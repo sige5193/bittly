@@ -44,3 +44,4 @@ window.https = require('https');
 window.http = require('http');
 
 window.path = require('path');
+window.envName = 'Electron';
