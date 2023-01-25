@@ -1,18 +1,62 @@
 import UnitTester from '../../utils/test/UnitTester.js';
 import AppTitle from '../AppTitle.vue'
 describe('@/components/AppTitle.vue', () => {
-    /**
-     * click menu key
-     * @param {*} labelClass 
-     * @param {*} menuRef 
-     * @param {*} keyName 
-     */
-    async function menuClick(tester, triggerRef, menuRef, keyName) {
-        await tester.click({ref:triggerRef});
-        await tester.msleep(200);
-        await tester.emit({ref:menuRef},'click',[{key:keyName}]);
-        await tester.msleep(200);
-    }
+    it('Menu > Help > HelpAbout', async () => {
+        let tester = new UnitTester();
+        await tester.setup();
+        await tester.mount(AppTitle);
+
+        window.os = {
+            type() { return '';},
+            arch() { return '';},
+            version() { return '';}
+        };
+        window.remote.process = {
+            versions : {
+                v8 : 'V8-VERSION',
+                node : 'NODE-VERSION',
+                chrome : 'CHROME-VERSION',
+                electron : 'ELECTRON-VERSION',
+            },
+        };
+        await tester.dropdownMenuClick({ref:'dmenuTriggerHelp'}, {ref:'menuHelp'}, {
+            key:'HelpAbout',
+            domEvent:{target:{dataset:{}}}
+        });
+        expect(tester.wrapper.vm.$refs.appAbout.enabled).toBeTruthy();
+    });
+    
+    it('Menu > Tools > Serialport Server', async () => {
+        let tester = new UnitTester();
+        await tester.setup();
+        await tester.mount(AppTitle);
+
+        let windowIpcRendererSend = jest.fn();
+        window.ipcRenderer.send = windowIpcRendererSend;
+        await tester.dropdownMenuClick(
+            {ref:'dmenuTriggerConfigurableMenu',index:0}, 
+            {ref:'dmenuConfigurableMenu',index:0}, 
+            {
+                key:'ToolSerialportServer',
+                domEvent:{target:{dataset:{menuKey:'tools',itemIndex : 0}}}
+            }
+        );
+        expect(windowIpcRendererSend.mock.calls[0][1].uri).toBe('/tool-serialport-server.html');
+    });
+
+    it('Menu > Help > GetStart', async () => {
+        let tester = new UnitTester();
+        await tester.setup();
+        await tester.mount(AppTitle);
+
+        let windowShellOpenExternal = jest.fn();
+        window.shell.openExternal = windowShellOpenExternal;
+        await tester.dropdownMenuClick({ref:'dmenuTriggerHelp'}, {ref:'menuHelp'}, {
+            key:'HelpGetStart',
+            domEvent:{target:{dataset:{}}}
+        });
+        expect(windowShellOpenExternal.mock.calls[0][0]).toBe('https://bittly.sigechen.com/manual?src=bittly');
+    });
 
     it('basic', async ( ) => {
         window.remote = {};
@@ -65,24 +109,6 @@ describe('@/components/AppTitle.vue', () => {
         expect(window.close).toBeCalled();
         window.close = oldWindowClose;
 
-        // Tools > Serialport Server
-        let windowIpcRendererSend = jest.fn();
-        window.ipcRenderer = {send : windowIpcRendererSend};
-        await tester.dropdownMenuClick({ref:'dmenuTriggerTool'}, {ref:'menuTool'}, {
-            key:'ToolSerialportServer',
-            domEvent:{target:{dataset:{act:'new-window',path:'DEMO-PATH'}}}
-        });
-        expect(windowIpcRendererSend.mock.calls[0][1].uri).toBe('DEMO-PATH');
-        
-        // Help > HelpGetStart
-        let windowShellOpenExternal = jest.fn();
-        window.shell = {openExternal:windowShellOpenExternal};
-        await tester.dropdownMenuClick({ref:'dmenuTriggerHelp'}, {ref:'menuHelp'}, {
-            key:'HelpGetStart',
-            domEvent:{target:{dataset:{}}}
-        });
-        expect(windowShellOpenExternal.mock.calls[0][0]).toBe('https://bittly.sigechen.com/manual?src=bittly');
-
         // Help > HelpFeedback
         let menuHelpFeedbackClicked = jest.fn();
         tester.eventBusOn('menu-help-feedback-clicked', menuHelpFeedbackClicked);
@@ -100,21 +126,6 @@ describe('@/components/AppTitle.vue', () => {
             domEvent:{target:{dataset:{}}}
         });
         expect(menuHelpHelpUpdateClicked).toBeCalled();
-
-        // Help > HelpAbout
-        window.remote.process = {
-            versions : {
-                v8 : 'V8-VERSION',
-                node : 'NODE-VERSION',
-                chrome : 'CHROME-VERSION',
-                electron : 'ELECTRON-VERSION',
-            },
-        };
-        await tester.dropdownMenuClick({ref:'dmenuTriggerHelp'}, {ref:'menuHelp'}, {
-            key:'HelpAbout',
-            domEvent:{target:{dataset:{}}}
-        });
-        expect(tester.wrapper.vm.$refs.appAbout.enabled).toBeTruthy();
 
         // Window handler
         let windowMinimize = jest.fn();
@@ -142,5 +153,5 @@ describe('@/components/AppTitle.vue', () => {
         tester.wrapper.vm.$confirm = jest.fn(opt => opt.onOk());
         await tester.trigger({ref:'btnWinClose'}, 'click');
         expect(window.close).toBeCalled();
-    }, 30 * 1000);
+    });
 });

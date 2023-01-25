@@ -26,8 +26,8 @@
 
         <!-- Configurable Menus -->
         <a-dropdown v-for="(menuEntry, menuKey) in menus" :key="menuKey" class="mr-2" :trigger="['click']">
-          <span class="app-dropdown-menu-title">{{menuEntry.title}}</span>
-          <a-menu slot="overlay" @click="actionConfigurableMenuItemClick">
+          <span class="app-dropdown-menu-title" ref="dmenuTriggerConfigurableMenu">{{menuEntry.title}}</span>
+          <a-menu slot="overlay" @click="actionConfigurableMenuItemClick" ref="dmenuConfigurableMenu">
             <a-menu-item v-for="(menuEntryItem,menuEntryItemIndex) in menuEntry.items" 
               :key="menuEntryItem.key"
               :data-menu-key="menuKey"
@@ -56,15 +56,22 @@
     <!-- App name -->
     <a-col :span="8" class="text-center">
       <div class="app-name">Bittly {{appVersion}}</div>
+      <div v-if="'browser' == $env.name" class="d-inline-block ml-1" style="vertical-align: sub;height: 28px;">
+        <iframe frameborder="0" scrolling="0" width="150" height="20" title="GitHub"
+          src="https://ghbtns.com/github-btn.html?user=sige5193&repo=bittly&type=star&count=true" 
+        ></iframe>
+      </div>
     </a-col>
 
     <!-- other actions -->
     <a-col :span="8" class="text-right">
       <div class="app-title-content">
         <user-login></user-login>
-        <div class="btn-win-act" ref="btnWinMinSize" @click="actionWinMinSize"><a-icon type="minus-circle" /></div>
-        <div class="btn-win-act" ref="btnWinMaxSize" @click="actionWinMaxSize"><a-icon type="plus-circle" /></div>
-        <div class="btn-win-act close" ref="btnWinClose" @click="actionWinClose"><a-icon type="close-circle" /></div>
+        <template v-if="'electron' === $env.name">
+          <div class="btn-win-act" ref="btnWinMinSize" @click="actionWinMinSize"><a-icon type="minus-circle" /></div>
+          <div class="btn-win-act" ref="btnWinMaxSize" @click="actionWinMaxSize"><a-icon type="plus-circle" /></div>
+          <div class="btn-win-act close" ref="btnWinClose" @click="actionWinClose"><a-icon type="close-circle" /></div>
+        </template>
       </div>
     </a-col>
   </a-row>
@@ -173,7 +180,7 @@ export default {
          * @parma {String} link
          */
         newWindow( link ) {
-            window.ipcRenderer.send("window-open", {uri:link});
+            this.$env.windowOpen(link);
         },
 
         /**
@@ -181,6 +188,7 @@ export default {
          * @parma {Event} event
          */
         actionConfigurableMenuItemClick( event ) {
+            debugger
             let eventData = event.domEvent.target.dataset;
             let item = this.menus[eventData.menuKey].items[eventData.itemIndex];
             item.action();
@@ -211,14 +219,14 @@ export default {
          */
         handleFileToggleAlwaysOnTop() {
             this.alwaysOnTopEnable = !this.alwaysOnTopEnable;
-            window.remote.getCurrentWindow().setAlwaysOnTop(this.alwaysOnTopEnable);
+            this.$env.setAlwaysOnTop(this.alwaysOnTopEnable);
         },
 
         /**
          * File > Open dev tools
          */
         handleFileOpenDevTools() {
-            window.remote.getCurrentWebContents().openDevTools();
+            this.$env.openDevTools();
         },
 
         /**
@@ -232,7 +240,7 @@ export default {
          * Help > Get Start
          */
         handleHelpGetStart() {
-            window.shell.openExternal('https://bittly.sigechen.com/manual?src=bittly');
+            this.$env.browserOpen('https://bittly.sigechen.com/manual?src=bittly');
         },
 
         /**
@@ -267,19 +275,14 @@ export default {
          * Minimize current window
          */
         actionWinMinSize() {
-            window.remote.getCurrentWindow().minimize();
+            this.$env.windowMinimize();
         },
 
         /**
          * Maximize currrent window
          */
         actionWinMaxSize() {
-            let win = window.remote.getCurrentWindow();
-            if ( win.isMaximized() ) {
-                win.restore();
-            } else {
-                win.maximize();
-            }
+            this.$env.windowMaximize();
         },
 
         /**
