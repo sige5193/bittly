@@ -51,12 +51,12 @@ export default {
          * init 
          */
         init() {
-            window.ipcRenderer.on('app-update-checking', () => this.handleCheckingForUpdate() );
-            window.ipcRenderer.on('app-update-not-available', () => this.handleUpdateNotAvailable() );
-            window.ipcRenderer.on('app-update-available', ( event, info ) => this.handleUpdateAvailable(info));
-            window.ipcRenderer.on('app-update-error', ( event, error ) => this.handleError(error));
-            window.ipcRenderer.on('app-update-download-progress', ( event, progress) => this.handleDownloadProgress(progress));
-            window.ipcRenderer.on('app-update-downloaded', () => this.handleUpdateDownloaded() );
+            this.$env.on('ipcRenderer','app-update-checking', () => this.handleCheckingForUpdate() );
+            this.$env.on('ipcRenderer','app-update-not-available', () => this.handleUpdateNotAvailable() );
+            this.$env.on('ipcRenderer','app-update-available', ( event, info ) => this.handleUpdateAvailable(info));
+            this.$env.on('ipcRenderer','app-update-error', ( event, error ) => this.handleError(error));
+            this.$env.on('ipcRenderer','app-update-download-progress', ( event, progress) => this.handleDownloadProgress(progress));
+            this.$env.on('ipcRenderer','app-update-downloaded', () => this.handleUpdateDownloaded() );
             this.$eventBus.$on('menu-help-update-clicked', () => this.manualUpdateCheck() );
         },
 
@@ -64,6 +64,10 @@ export default {
          * check update manually
          */
         async manualUpdateCheck() {
+            if ( 'electron' != this.$env.name ) {
+                return this.$env.errorActionNotSupported();
+            }
+
             this.$message.loading(this.$t('app.update.checkingForUpdate'), 0);
             await this.start();
             this.$message.destroy();
@@ -78,6 +82,10 @@ export default {
          * start update checking
          */
         async start() {
+            if ( 'electron' != this.$env.name ) {
+                return ;
+            }
+
             this.release = null;
             let clientId = await MdbRuntimeVariable.getVarValue('app_client_id','');
             if ( '' == clientId ) {

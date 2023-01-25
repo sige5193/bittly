@@ -2,9 +2,17 @@ import UnitTester from '../../utils/test/UnitTester.js';
 import AppUpdate from '../AppUpdate.vue'
 import MdbRuntimeVariable from '../../models/MdbRuntimeVariable.js'
 describe('@/components/AppUpdate.vue', () => {
-    it('update', async () => {
-        let appUpdateQuitAndInstall = jest.fn();
+    it('basic update', async () => {
+        let tester = new UnitTester({
+            mockBittlyApiClient : {
+                systemUpdateCheck() {
+                    return {success : true,data : {version : '1.0.0.',}};
+                },
+            }
+        });
+        await tester.setup();
 
+        let appUpdateQuitAndInstall = jest.fn();
         let ipcRendererCallbacks = {};
         window.ipcRenderer = {
             on ( name, callback ) {
@@ -19,14 +27,6 @@ describe('@/components/AppUpdate.vue', () => {
             }
         };
 
-        let tester = new UnitTester({
-            mockBittlyApiClient : {
-                systemUpdateCheck() {
-                    return {success : true,data : {version : '1.0.0.',}};
-                },
-            }
-        });
-        await tester.setup();
         await tester.mount(AppUpdate, true);
         await tester.msleep(200);
         
@@ -48,6 +48,15 @@ describe('@/components/AppUpdate.vue', () => {
     });
 
     it('app update available but download not available', async () => {
+        let tester = new UnitTester({
+            mockBittlyApiClient : {
+                systemUpdateCheck() {
+                    return {success : true,data : {version : '1.0.0.'}};
+                },
+            }
+        });
+        await tester.setup();
+
         let ipcRendererCallbacks = {};
         window.ipcRenderer = {
             on ( name, callback ) {
@@ -61,15 +70,6 @@ describe('@/components/AppUpdate.vue', () => {
             }
         };
 
-        let tester = new UnitTester({
-            mockBittlyApiClient : {
-                systemUpdateCheck() {
-                    return {success : true,data : {version : '1.0.0.'}};
-                },
-            }
-        });
-        await tester.setup();
-
         await MdbRuntimeVariable.setVarValue('update_check_version', '0.0.0');
         await tester.mount(AppUpdate, true);
         await tester.msleep(200);
@@ -79,11 +79,6 @@ describe('@/components/AppUpdate.vue', () => {
     });
 
     it('app update not available', async () => {
-        window.ipcRenderer = {
-            on ( name, callback ) {},
-            send(name) {}
-        };
-
         let systemUpdateCheckApi = jest.fn(() => { return {success : true, data : null}; });
         let tester = new UnitTester({
             mockBittlyApiClient : {
@@ -91,6 +86,11 @@ describe('@/components/AppUpdate.vue', () => {
             }
         });
         await tester.setup();
+
+        window.ipcRenderer = {
+            on ( name, callback ) {},
+            send(name) {}
+        };
 
         await MdbRuntimeVariable.setVarValue('update_check_version', '0.0.0');
         await tester.mount(AppUpdate, true);
@@ -110,6 +110,15 @@ describe('@/components/AppUpdate.vue', () => {
     });
 
     it('update ignore', async () => {
+        let tester = new UnitTester({
+            mockBittlyApiClient : {
+                systemUpdateCheck() {
+                    return {success : true,data : {version : '1.0.0.'}};
+                },
+            }
+        });
+        await tester.setup();
+
         let ipcRendererCallbacks = {};
         window.ipcRenderer = {
             on ( name, callback ) {
@@ -122,15 +131,6 @@ describe('@/components/AppUpdate.vue', () => {
                 }
             }
         };
-
-        let tester = new UnitTester({
-            mockBittlyApiClient : {
-                systemUpdateCheck() {
-                    return {success : true,data : {version : '1.0.0.'}};
-                },
-            }
-        });
-        await tester.setup();
 
         await MdbRuntimeVariable.setVarValue('update_check_version', '0.0.0');
         await tester.mount(AppUpdate, true);
@@ -142,6 +142,15 @@ describe('@/components/AppUpdate.vue', () => {
     });
 
     it('update error', async () => {
+        let tester = new UnitTester({
+            mockBittlyApiClient : {
+                systemUpdateCheck() {
+                    return {success : true,data : {version : '1.0.0.'}};
+                },
+            }
+        });
+        await tester.setup();
+        
         let ipcRendererCallbacks = {};
         window.ipcRenderer = {
             on ( name, callback ) {
@@ -154,15 +163,6 @@ describe('@/components/AppUpdate.vue', () => {
                 }
             }
         };
-
-        let tester = new UnitTester({
-            mockBittlyApiClient : {
-                systemUpdateCheck() {
-                    return {success : true,data : {version : '1.0.0.'}};
-                },
-            }
-        });
-        await tester.setup();
 
         await MdbRuntimeVariable.setVarValue('update_check_version', '0.0.0');
         await tester.mount(AppUpdate, true);
