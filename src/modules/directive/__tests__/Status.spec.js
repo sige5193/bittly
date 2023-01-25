@@ -23,7 +23,7 @@ describe('@/src/modules/directive/Status.vue', () => {
 
         // update status value
         await tester.input({ref:'inputStatusValue'}, 'V-NEW', null, 0);
-        await tester.trigger({ref:'iconCheck'}, 'click', [], null, 0);
+        await tester.trigger({ref:'iconCheck',index:0}, 'click', [], null);
         expect(directive.statusGet('TestStatus')).toBe('V-NEW');
 
         // clear all status
