@@ -382,6 +382,7 @@ export default class ModelBase {
         let storage = ModelBase.getStorage();
         await storage.update(options);
         this.trigger('update');
+        return true;
     }
 
     /**
@@ -406,6 +407,7 @@ export default class ModelBase {
         this.isNew = false;
         this.trigger('insert');
         await this.afterInsert();
+        return true;
     }
 
     /**
