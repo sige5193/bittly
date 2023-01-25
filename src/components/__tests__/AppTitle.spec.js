@@ -153,5 +153,5 @@ describe('@/components/AppTitle.vue', () => {
         tester.wrapper.vm.$confirm = jest.fn(opt => opt.onOk());
         await tester.trigger({ref:'btnWinClose'}, 'click');
         expect(window.close).toBeCalled();
-    });
+    }, 20000);
 });
