@@ -82,7 +82,7 @@ export default class StorageSqlite {
         sql.push('ORDER BY id DESC');
         
         // generate limit
-        if ( undefined != options.limit ) {
+        if ( undefined != options.limit && 0 != options.limit ) {
             sql.push(`LIMIT ${options.limit}`);
         }
 
