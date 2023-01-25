@@ -61,4 +61,47 @@ export default class EnvElectron {
     openDevTools() {
         window.remote.getCurrentWebContents().openDevTools();
     }
+
+    /**
+     * Whether the window should always stay on top of other windows.
+     * @param {Boolean} enable
+     */
+    setAlwaysOnTop( enable ) {
+        window.remote.getCurrentWindow().setAlwaysOnTop(enable);
+    }
+
+    /**
+     * open new window by given link
+     * @param {*} link 
+     */
+    windowOpen( link ) {
+        window.ipcRenderer.send("window-open", {uri:link});
+    }
+
+    /**
+     * minize the window
+     */
+    windowMinimize() {
+        window.remote.getCurrentWindow().minimize();
+    }
+    
+    /**
+     * maximize the window
+     */
+    windowMaximize() {
+        let win = window.remote.getCurrentWindow();
+        if ( win.isMaximized() ) {
+            win.restore();
+        } else {
+            win.maximize();
+        }
+    }
+
+    /**
+     * open link by system browser
+     * @param {*} link 
+     */
+    browserOpen(link) {
+        window.shell.openExternal(link);
+    }
 }

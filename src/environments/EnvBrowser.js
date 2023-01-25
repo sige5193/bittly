@@ -40,6 +40,40 @@ export default class EnvBrowser {
      * open dev tools
      */
     openDevTools() {
-        alert(window.app.$t('app.browserOpenDevTools'));
+        this.errorActionNotSupported();
+    }
+
+    /**
+     * Whether the window should always stay on top of other windows.
+     * @param {Boolean} enable
+     */
+    setAlwaysOnTop( enable ) {
+       this.errorActionNotSupported();
+    }
+
+    /**
+     * show message that action not supported
+     */
+    errorActionNotSupported() {
+        window.app.$error({
+            title: window.app.$t('app.environmentNotSupportAction'),
+            okText : window.app.$t('button.ok')
+        });
+    }
+
+    /**
+     * open new window by given link
+     * @param {*} link 
+     */
+    windowOpen( link ) {
+        window.open(link);
+    }
+
+    /**
+     * open link by system browser
+     * @param {*} link 
+     */
+    browserOpen(link) {
+        window.open(link);
     }
 }
