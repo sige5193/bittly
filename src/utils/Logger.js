@@ -1,3 +1,5 @@
+import Environment from "../environments/Environment";
+
 export default class Logger {
     /**
      * setup Vue
@@ -34,7 +36,8 @@ export default class Logger {
         let callstack = (new Error()).stack.split("\n");
         let callerName = callstack[stackIndex].trim().split(' ')[1];
         message = `[renderer] [${callerName}()] => ${message}`;
-        window.ipcRenderer.send("app-log", message)
+        
+        Environment.getEnv().log(message);
         console.info(message);
     }
 
@@ -59,7 +62,7 @@ export default class Logger {
         // output message
         let comName = component.$options.name;
         message = `[renderer] [${comName}.${callerName}()] => ${message}`;
-        window.ipcRenderer.send("app-log", message)
+        Environment.getEnv().log(message);
         console.info(message);
     }
 }
