@@ -14,7 +14,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
-    "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --no-cache --no-watchman",
+    "test:debug": "vue-cli-service test:unit --runInBand  --testPathPattern=./src/components/__tests__/AppUpdate.spec.js --testNamePattern=debug",
     "lint": "vue-cli-service lint",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
