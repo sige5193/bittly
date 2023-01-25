@@ -39,6 +39,16 @@ export default {
             for ( let eventName in this.eventHandlers ) {
                 this.unregisterEventHandler(eventName);
             }
+        },
+
+        /**
+         * show error message that environment does not support given action.
+         * @param {String} actionName
+         */
+        environmentNotSupport( actionName ) {
+            this.$error({
+                title: this.$t('app.environmentNotSupportAction', [actionName]),
+            });
         }
     }
 }
