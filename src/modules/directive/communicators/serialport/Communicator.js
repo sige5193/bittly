@@ -1,5 +1,7 @@
-import Common from "@/utils/Common";
+import Environment from '../../../../environments/Environment.js'
 import CommunicatorBase from '../CommunicatorBase.js'
+import SerialPortHandlerNodeSerialPort from './SerialPortHandlerNodeSerialPort.js';
+import SerialPortHandlerWebSerial from "./SerialPortHandlerWebSerial.js";
 /**
  * communicator for serial port communication
  * @author sige
@@ -56,28 +58,15 @@ export default class Communicator extends CommunicatorBase {
         this.deviceType = 'serialport';
         this.timeDelayBeforeFirstWrite = '2000';
         this.comkey = Communicator.generateKeyFromOptions(options);
-
-        if ( Common.isEmpty(options.path) ) {
-            throw new Error(this.$t('pathCannotBeEmpty'));
-        }
-        if ( Common.isEmpty(options.baudRate) ) {
-            throw new Error(this.$t('baudRateCannotBeEmpty'));
-        }
-
-        this.serialPort = new window.SerialPort({
-            path : this.applyEnvPlaceholderVariables(options.path),
-            baudRate: parseInt(this.applyEnvPlaceholderVariables(options.baudRate)),
-            dataBits: parseInt(this.applyEnvPlaceholderVariables(options.dataBits)),
-            stopBits: parseInt(this.applyEnvPlaceholderVariables(options.stopBits)),
-            parity: this.applyEnvPlaceholderVariables(options.parity),
-            autoOpen: false,
-        });
         
-        this.serialPort.on('open', () => this.handleOnOpen());
-        this.serialPort.on('data', (data) => this.handleOnData(data));
-        this.serialPort.on('error',(err) => console.log('SERIAL PORT ON ERROR',err));
-        this.serialPort.on('close',(err) => this.handleOnClose(err));
-        this.serialPort.on('drain',(err) => console.log('SERIAL PORT ON DRAIN',err));
+        let handler = Environment.getEnv().serialportHandler;
+        if ( 'node-serialport' === handler ) {
+            this.serialport = new SerialPortHandlerNodeSerialPort(options, this);
+        } else if ( 'web-serial' === handler ) {
+            this.serialport = new SerialPortHandlerWebSerial(options, this);
+        } else {
+            throw Error(`serialport handler does not exists`);
+        }
     }
 
     /**
@@ -85,91 +74,40 @@ export default class Communicator extends CommunicatorBase {
      * @returns {Boolean} 
      */
     getIsOpen() {
-        return this.serialPort.isOpen;
+        return this.serialport.isOpen;
     }
 
     /**
      * Open serial port connection
+     * @returns {Promise<void>}
      */
-    open() {
-        let $this = this;
-        return new Promise(( resolve, reject ) => {
-            if ( $this.serialPort.isOpen ) {
-                resolve();
-                return ;
-            }
-
-            $this.serialPort.open(function (err) {
-                if (err) {
-                    reject($this.$t('unableToOpen', [$this.options.path, err.message]));
-                } else {
-                    resolve();
-                }
-            });
-        });
-    }
-
-    /**
-     * close the serial port
-     */
-    close() {
-        let $this = this;
-        return new Promise(( resolve, reject ) => {
-            $this.serialPort.close(function( error ) {
-                if ( error ) {
-                    reject($this.$t('unableToClose', [$this.options.path, error.message]));
-                } else {
-                    resolve();
-                }
-            });
-        });
+    async open() {
+        await this.serialport.open();
+        this.deviceOnline();
     }
 
     /**
      * write data to serial port
      * @param {*} data 
      */
-    write( data ) {
-        let $this = this;
-        return new Promise(( resolve, reject ) => {
-            $this.serialPort.write(data, function(err) {
-                if (err) {
-                    reject($this.$t('unableToWrite', [$this.options.path, err.message]));
-                } else {
-                    $this.dataSendSize += data.length;
-                    $this.log('write', data);
-                    resolve();
-                }
-            });
-        });
+    async write( data ) {
+        await this.serialport.write(data);
+        this.dataSendSize += data.length;
     }
 
     /**
-     * handle event on serial port opened.
+     * close the serial port
      */
-    handleOnOpen() {
-        this.deviceOnline();
+    async close() {
+        await this.serialport.close();
+        this.deviceDisconnected();
     }
 
     /**
-     * handle event on serial port has data come in
-     * @param {*} data 
+     * handle device disconnected evnet
      */
-    handleOnData(data) {
-        this.log('receive',data);
-        this.dataReceived(data);
-    }
-
-    /**
-     * hanle event on serial port closed
-     * @param {Error} err 
-     */
-    handleOnClose( err ) {
-        if ( null != err && undefined != err.disconnected && true === err.disconnected ) {
-            this.toast('disconnected',[this.options.path], 'warning');
-        }
-        this.log('close');
+    deviceDisconnected() {
         this.deviceOffline();
-        delete Communicator.instances[this.options.path];
+        delete Communicator.instances[this.comkey];
     }
 }
