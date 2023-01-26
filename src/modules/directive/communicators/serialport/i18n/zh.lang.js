@@ -12,4 +12,8 @@ module.exports = {
     unableToClose : '无法关闭串口设备 {0} : {1}',
     unableToWrite : '无法写入串口设备 {0} : {1}',
     disconnected : '串口设备 {0} 断开连接',
+    noDeviceSelected : '未选择设备',
+    deviceSelected : '设备已选择',
+    deviceNotAvailable : '无法连接设备',
+    deviceError : '串口设备 {0} 错误 : {1}',
 };

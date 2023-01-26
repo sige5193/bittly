@@ -12,4 +12,7 @@ module.exports = {
     unableToClose : 'Unable to close serial port device {0} : {1}',
     unableToWrite : 'Unable to write serial port device {0} : {1}',
     disconnected : 'Serial port device {0} disconnected',
+    noDeviceSelected : 'Device not available',
+    deviceNotAvailable : 'Device is not available',
+    deviceError : 'Serialport device {0} error : {1}',
 };
