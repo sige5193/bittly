@@ -4,8 +4,8 @@
 -->
 <template>
   <a-row>
-    <!-- path -->
-    <a-col :span="7" class="pr-1">
+    <!-- path : for node-serialport -->
+    <a-col v-if="'node-serialport' == handlerType" :span="7" class="pr-1">
       <a-input-group compact>
         <a-auto-complete 
           ref="path"
@@ -21,6 +21,20 @@
           ref="btnSerialPortRefresh" 
           style="width:20%;" 
           @click="actionSerialPortListRefresh"
+        ><a-icon type="reload" /></a-button>
+      </a-input-group>
+    </a-col>
+
+     <!-- path : for web-serial -->
+    <a-col v-if="'web-serial' == handlerType" :span="7" class="pr-1">
+      <a-input-group compact>
+        <a-input style="width: 80%" disabled
+          :value="$t(`directive.communicator.serialport.${null === webSerialPort ? 'noDeviceSelected' : 'deviceSelected'}`)"
+        />
+        <a-button 
+          ref="btnSerialPortRefresh" 
+          style="width:20%;" 
+          @click="actionRequestSerialPort"
         ><a-icon type="reload" /></a-button>
       </a-input-group>
     </a-col>
@@ -78,15 +92,33 @@
   </a-row>
 </template>
 <script>
-import MyObject from '../../../../utils/datatype/MyObject.js'
-import Common from '@/utils/Common.js'
-import TargetEditorMixin from '../TargetEditorMixin.js'
 import CommunicatorSerialPort from './Communicator.js'
+import Environment from '../../../../environments/Environment.js'
+import TargetEditorMixin from '../TargetEditorMixin.js'
+import Common from '@/utils/Common.js'
+import MyObject from '../../../../utils/datatype/MyObject.js'
+import MyString from '../../../../utils/datatype/MyString.js'
 export default {
     name : 'Serialport',
     mixins : [TargetEditorMixin],
     data() {
         return {
+            /**
+             * name of serialport handler
+             * @property {String}
+             */
+            handlerType : null,
+            /**
+             * instance of web serialport object
+             * @property {SerialPort|null}
+             */
+            webSerialPort : null,
+            /**
+             * callback function to handle web serial disconnected event.
+             * @property {Function}
+             */
+            webSerialPortDisconnectedCallback : null,
+            
             showSerialportPathList : false,
             serialportOptions : {
                 hasInited : false,
@@ -98,15 +130,27 @@ export default {
             },
         };
     },
+    created() {
+        this.handlerType = Environment.getEnv().serialportHandler;
+        this.webSerialPortDisconnectedCallback = event => this.handleWebSerialDisconnected(event);
+    },
     mounted() {
         this.initOptions();
+    },
+    beforeDestroy() {
+        if ( null !== this.webSerialPort ) {
+            this.webSerialPort.removeEventListener('disconnect', this.webSerialPortDisconnectedCallback);
+        }
     },
     methods : {
         /**
          * init options for editor
          */
         async initOptions() {
-            await this.refreshSerialports();
+            if ( 'node-serialport' === this.handlerType ) {
+                await this.refreshSerialports();
+            }
+            
             this.serialportOptions.baudRates = [
                 '110','300','600','1200','2400','4800','9600','14400','19200',
                 '38400','56000','57600','76800','115200','128000','153600',
@@ -136,6 +180,35 @@ export default {
         },
 
         /**
+         * show device selector in browser
+         */
+        async actionRequestSerialPort() {
+            try {
+                let port = await navigator.serial.requestPort();
+                if ( undefined === port.conId ) {
+                    port.conId = MyString.uuidV4();
+                }
+
+                this.webSerialPort = port;
+                this.webSerialPort.addEventListener('disconnect', this.webSerialPortDisconnectedCallback);
+                this.target.path = port.conId;
+            } catch (e) {
+                this.target.path = '';
+                this.webSerialPort = null;
+                this.$message.error(this.$t('directive.communicator.serialport.noDeviceSelected'));
+            }
+            this.actionUpdateTarget(true);
+        },
+
+        /**
+         * event handler on web serial device disconnected
+         * @param {Event} event
+         */
+        handleWebSerialDisconnected(event) {
+            this.webSerialPort = null;
+        },
+
+        /**
          * event handler on serialpost path changed
          */
         actionSerialportPathChange() {
@@ -144,7 +217,7 @@ export default {
         },
 
         /**
-         * refresh serialport list
+         * refresh serialport list or request 
          */
         async actionSerialPortListRefresh() {
             await this.refreshSerialports();

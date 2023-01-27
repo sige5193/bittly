@@ -52,7 +52,7 @@ export default class SerialPortHandlerWebSerial {
             throw Error(this.com.$t('deviceNotAvailable'));
         }
 
-        this.port.ondisconnect = event => this.handleDisconnect(event);
+        this.port.addEventListener('disconnect', event => this.handleDisconnect(event));
         await this.port.open({ 
             baudRate : parseInt(this.options.baudRate),
             // bufferSize : 4096,
