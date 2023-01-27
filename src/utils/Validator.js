@@ -19,6 +19,19 @@ export default class Validator {
     }
 
     /**
+     * check value by given handler or throw error with given message
+     * @param {*} value 
+     * @param {*} handler 
+     * @param {*} message 
+     */
+    static check( value, handler, message ) {
+        let validator = new Validator(value, {handler:handler});
+        if ( !validator.validate() ) {
+            throw Error(message);
+        }
+    }
+
+    /**
      * validate empty
      * @returns {Boolean}
      */
