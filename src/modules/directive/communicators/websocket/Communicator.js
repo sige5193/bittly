@@ -114,7 +114,11 @@ export default class Communicator extends CommunicatorBase {
 
         let $this = this;
         return new Promise(function( resolve, reject ) {
-            $this.connection = new window.ws.WebSocket(url, protocols, options);
+            if ( undefined === window.ws ) {
+                $this.connection = new WebSocket(url, protocols, options);
+            } else {
+                $this.connection = new window.ws.WebSocket(url, protocols, options);
+            }
             $this.connection.binaryType = 'arraybuffer';
             $this.connection.onopen = ( event ) => $this.handleOnOpen(event, resolve) ;
             $this.connection.onmessage = ( event ) => $this.handleOnData(event);
