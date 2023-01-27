@@ -10,6 +10,9 @@ export default class EnvBrowser {
         this.mode = 'localhost' == location.hostname ? 'dev' : 'prod';
         this.serialportHandler = 'web-serial';
         this.networkHandler = 'none';
+        this.bluetoothDefaultType = 'ble';
+        this.bluetoothClassicAvailable = false;
+        this.bluetoothBleHandler = 'web-bluetooth-ble';
     }
 
     /**

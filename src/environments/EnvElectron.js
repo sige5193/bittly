@@ -9,6 +9,9 @@ export default class EnvElectron {
         this.isPluginsAvailable = true;
         this.serialportHandler = 'node-serialport';
         this.networkHandler = 'node';
+        this.bluetoothDefaultType = 'classic';
+        this.bluetoothClassicAvailable = true;
+        this.bluetoothBleHandler = 'electron-bluetooth-ble';
 
         this.mode = 'prod';
         if ( 'development' === window.remote.process.env.NODE_ENV ) {
