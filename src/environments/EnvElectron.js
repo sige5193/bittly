@@ -8,6 +8,7 @@ export default class EnvElectron {
         this.databaseStorageType = 'sqlite';
         this.isPluginsAvailable = true;
         this.serialportHandler = 'node-serialport';
+        this.networkHandler = 'node';
 
         this.mode = 'prod';
         if ( 'development' === window.remote.process.env.NODE_ENV ) {

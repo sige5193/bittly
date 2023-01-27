@@ -9,6 +9,7 @@ export default class EnvBrowser {
         this.isPluginsAvailable = false;
         this.mode = 'localhost' == location.hostname ? 'dev' : 'prod';
         this.serialportHandler = 'web-serial';
+        this.networkHandler = 'none';
     }
 
     /**

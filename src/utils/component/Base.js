@@ -43,11 +43,11 @@ export default {
 
         /**
          * show error message that environment does not support given action.
-         * @param {String} actionName
          */
-        environmentNotSupport( actionName ) {
+        environmentNotSupport( ) {
             this.$error({
-                title: this.$t('app.environmentNotSupportAction', [actionName]),
+                title: this.$t('app.environmentNotSupportAction'),
+                okText : this.$t('button.ok'),
             });
         }
     }

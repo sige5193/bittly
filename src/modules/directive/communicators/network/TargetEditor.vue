@@ -3,7 +3,7 @@
  - @author sige
 --> 
 <template>
-  <a-row>
+  <a-row v-if="'none' !== $env.networkHandler">
     <!-- protocol -->
     <a-col :span="5" class="pr-1">
       <a-input-group compact class="my-input-group">
@@ -37,13 +37,17 @@
   </a-row>
 </template>
 <script>
+import ComponentBase from '../../../../utils/component/Base.js'
 import Communicator from './Communicator.js'
 import TargetEditorMixin from '../TargetEditorMixin.js'
 import MyObject from '../../../../utils/datatype/MyObject.js';
 export default {
     name : 'Network',
-    mixins : [TargetEditorMixin],
+    mixins : [ComponentBase,TargetEditorMixin],
     mounted() {
+        if ( 'none' === this.$env.networkHandler ) {
+            return this.environmentNotSupport();
+        }
         this.initTarget();
     },
     methods : {
