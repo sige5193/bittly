@@ -96,7 +96,6 @@ export default class ClassicHandler {
                     return;
                 }
                 $this.com.log('write', data);
-                $this.com.dataSendSize += bytesWritten;
                 resolve(bytesWritten);
             });
         });
@@ -123,7 +122,7 @@ export default class ClassicHandler {
         }
 
         this.isOpen = false;
-        this.com.handleOnClose();
+        this.com.deviceDisconnected();
         this.com.log('close');
     }
 
@@ -132,7 +131,10 @@ export default class ClassicHandler {
      * @param {Error} err 
      */
     handleOnFailure( err ) {
-        throw err;
+        if ( !this.btSerial.isOpen() ) {
+            return ;
+        }
+        this.com.toast(err.message);
     }
 
     /**

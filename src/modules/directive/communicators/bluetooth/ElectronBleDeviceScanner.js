@@ -3,7 +3,7 @@ import Common from '@/utils/Common.js'
  * ble device scanner
  * @author sige
  */
-export default class BleDeviceScanner {
+export default class ElectronBleDeviceScanner {
     /**
      * the instance of scanner
      */
@@ -11,13 +11,13 @@ export default class BleDeviceScanner {
 
     /**
      * get ble device scanner
-     * @returns {BleDeviceScanner}
+     * @returns {ElectronBleDeviceScanner}
      */
     static getScanner() {
-        if ( null == BleDeviceScanner.instance ) {
-            BleDeviceScanner.instance = new BleDeviceScanner();
+        if ( null == ElectronBleDeviceScanner.instance ) {
+            ElectronBleDeviceScanner.instance = new ElectronBleDeviceScanner();
         }
-        return BleDeviceScanner.instance;
+        return ElectronBleDeviceScanner.instance;
     }
 
     /**
@@ -141,7 +141,7 @@ export default class BleDeviceScanner {
         this.onDeviceSelectedCallback(device);
 
         device.addEventListener('gattserverdisconnected', () => {
-            let scanner = BleDeviceScanner.getScanner();
+            let scanner = ElectronBleDeviceScanner.getScanner();
             for ( let devkey in scanner.devices ) {
                 let devins = scanner.devices[devkey];
                 if ( devins.id == this.id ) {
