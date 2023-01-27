@@ -1,6 +1,8 @@
 import CommunicatorBase from '../CommunicatorBase.js';
 import ClassicHandler from './ClassicHandler.js'
-import BleHander from './BleHandler.js'
+import Environment from '../../../../environments/Environment.js'
+import BtHandlerWebBluetoothBle from './BtHandlerWebBluetoothBle.js';
+import BtHandlerElectronBluetoothBle from './BtHandlerElectronBluetoothBle.js'
 export default class Communicator extends CommunicatorBase {
     /**
      * serial port instances
@@ -47,12 +49,16 @@ export default class Communicator extends CommunicatorBase {
         this.deviceType = 'bluetooth';
         this.comkey = Communicator.generateComkeyByOptions(options);
         this.timeDelayBeforeFirstWrite = 500;
+        this.isClosing = false;
 
-        this.handler = null;
+        let env = Environment.getEnv();
+        this.handler = null; 
         if ( 'classic' == this.options.btType ) {
             this.handler = new ClassicHandler(this);
-        } else if ( 'ble'== this.options.btType ) {
-            this.handler = new BleHander(this);
+        } else if ( 'ble'== this.options.btType && 'web-bluetooth-ble' === env.bluetoothBleHandler ) {
+            this.handler = new BtHandlerWebBluetoothBle(this);
+        } else if ( 'ble' === this.options.btType && 'electron-bluetooth-ble' === env.bluetoothBleHandler ) {
+            this.handler = new BtHandlerElectronBluetoothBle(this);
         }
     }
 
@@ -60,7 +66,7 @@ export default class Communicator extends CommunicatorBase {
      * @returns {Boolean}
      */
     getIsClosing() {
-        return this.handler.isClosing;
+        return this.isClosing;
     }
 
     /**
@@ -72,27 +78,21 @@ export default class Communicator extends CommunicatorBase {
     }
 
     /**
-     * Open connection
+     * Open bluetooth connection
      * @returns {Promise}
      */
-    open() {
-        let $this = this;
-        return new Promise(( resolve, reject ) => {
-            $this.handler.open().then(() => {
-                $this.deviceOnline();
-                resolve();
-            }).catch((error) => {
-                reject(error);
-            });
-        });
+    async open() {
+        await this.handler.open();
+        this.deviceOnline();
+        Communicator.instances[this.comkey] = this;
     }
 
     /**
      * close the connection
      * @returns {Promise}
      */
-    close() {
-        return this.handler.close();
+    async close() {
+        await this.handler.close();
     }
 
     /**
@@ -100,14 +100,15 @@ export default class Communicator extends CommunicatorBase {
      * @param {Buffer} data
      * @returns {Promise} 
      */
-    write( data ) {
-        return this.handler.write(data);
+    async write( data ) {
+        await this.handler.write(data);
+        this.dataSendSize += data.length;
     }
 
     /**
      * bluetooth connection disconnected
      */
-    handleOnClose() {
+    deviceDisconnected() {
         this.toast('disconnected', [this.handler.getDeviceTitle()]);
         this.deviceOffline();
         delete Communicator.instances[this.comkey];
