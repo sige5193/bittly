@@ -3,7 +3,7 @@
     <a-col :span="5" class="pr-1">
       <a-input-group compact class="my-input-group">
         <span class="label">{{$t('directive.communicator.bluetooth.type')}}</span>
-        <a-select class="input" ref="sltType" v-model="target.btType" @change="actionUpdateTarget">
+        <a-select class="input" ref="sltType" v-model="target.btType" @change="actionBtTypeChange">
           <a-select-option value="classic">{{$t('directive.communicator.bluetooth.typeClassic')}}</a-select-option>
           <a-select-option value="ble">{{$t('directive.communicator.bluetooth.typeBle')}}</a-select-option>
         </a-select>
@@ -11,7 +11,7 @@
     </a-col>
 
    <!-- Classic -->
-    <a-col :span="10" class="pr-1" v-if="'classic' == target.btType">
+    <a-col :span="10" class="pr-1" v-if="'classic' == target.btType && $env.bluetoothClassicAvailable">
       <a-input-group compact>
         <a-select style="width: 80%" 
           :loading="isRefreshing" 
@@ -53,24 +53,28 @@
             @change="actionUpdateTarget"
           />
         </a-tooltip>
-
-        <a-button 
-          ref="btnBleDeviceRefresh"
-          class="pl-0 pr-0 w-10"
-          v-if="!bleIsRefreshing"
-          :disabled="!bleDeviceRefreshEnable"
-          @click="actionBleDeviceListRefresh"
-        ><a-icon type="search"/></a-button>
-        <a-button 
-          ref="btnBleDeviceRefreshStop"
-          class="pl-0 pr-0 w-10"
-          v-if="bleIsRefreshing" 
-          @click="actionBleDeviceListRefreshStop"
-        ><a-icon type="stop"/></a-button>
         
+        <!-- web bluetooth request device -->
+        <template v-if="'browser' === $env.name">
+          <a-button class="pl-0 pr-0 w-10"
+            :disabled="!bleDeviceRefreshEnable"
+            @click="actionWebBleDeviceListRefresh"
+          ><a-icon type="search"/></a-button>
+        </template>
+
+        <!-- electron bluetooth requests device -->
+        <template v-else>
+          <a-button v-if="!bleIsRefreshing" ref="btnBleDeviceRefresh" class="pl-0 pr-0 w-10"
+            :disabled="!bleDeviceRefreshEnable"
+            @click="actionBleDeviceListRefresh"
+          ><a-icon type="search"/></a-button>
+          <a-button v-if="bleIsRefreshing" ref="btnBleDeviceRefreshStop" class="pl-0 pr-0 w-10"
+            @click="actionBleDeviceListRefreshStop"
+          ><a-icon type="stop"/></a-button>
+        </template>
+
         <!-- ble device id -->
-        <a-select class="w-40" 
-          ref="selectDeviceId"
+        <a-select class="w-40" ref="selectDeviceId"
           v-model="target.btBleId"
           :open="bleDeviceListOpen"
           :disabled="0 == bleDeviceList.length"
@@ -80,8 +84,7 @@
           :showArrow="false"
           @select="actionBleDeviceSelected"
         >
-          <a-select-option 
-            v-for="device in bleDeviceList" 
+          <a-select-option v-for="device in bleDeviceList" 
             :key="device.deviceId" 
             :value="device.deviceId"
           >{{device.deviceName}}</a-select-option>
@@ -119,36 +122,63 @@
 import Common from '@/utils/Common.js'
 import ClassicHandler from './ClassicHandler.js'
 import TargetEditorMixin from '../TargetEditorMixin.js'
-import BleDeviceScanner from './BleDeviceScanner.js'
+import ElectronBleDeviceScanner from './ElectronBleDeviceScanner.js'
 import MdbRuntimeVariable from '../../../../models/MdbRuntimeVariable.js'
 import MyObject from '../../../../utils/datatype/MyObject.js'
+import ComponentBase from '../../../../utils/component/Base.js'
+import BtHandlerWebBluetoothBle from './BtHandlerWebBluetoothBle.js'
 export default {
     name : 'TargetEditorBluetooth',
-    mixins : [TargetEditorMixin],
+    mixins : [ComponentBase,TargetEditorMixin],
     data() {
         return {
+            /**
+             * list of ble devices
+             * @property {Array<Object>}
+             */
+            bleDeviceList : [],
+            /**
+             * indicate whether the device list is open
+             * @property {Boolean}
+             */
+            bleDeviceListOpen : false,
+            /**
+             * indicate whether device refresh button available.
+             * @property {Boolean}
+             */
+            bleDeviceRefreshEnable : true,
+            /**
+             * indicate whether device list is refreshing or device is connecting.
+             * @property {Boolean}
+             */
+            bleIsRefreshing : false,
+            /**
+             * list of characteristics of given service
+             * @property {Array<>}
+             */
+            bleCharList : [],
+            /**
+             * indicate whether characteristic list is refreshing.
+             * @property {Boolean}
+             */
+            bleIsCharRefreshing : false,
+            /**
+             * list of service ids in history.
+             * @property {Array<String>}
+             */
+            bleHistoryServiceIds : [],
+            /**
+             * instance of electron ble scanner
+             * @property {ElectronBleDeviceScanner}
+             */
+            bleElectronScanner : null,
+
             isRefreshing : false,
             /**
              * classic bluetooth device list
              * @property {Array<Object>}
              */
             devlist : [],
-            
-
-            bleDevice : null,
-            bleDeviceList : [],
-            bleDeviceListOpen : false,
-            bleCharList : [],
-            bleScanner : null,
-            bleIsRefreshing : false,
-            bleIsCharRefreshing : false,
-            bleHistoryServiceIds : [],
-
-            /**
-             * indicate if device refresh button available.
-             * @property {Boolean}
-             */
-            bleDeviceRefreshEnable : true,
         };
     },
     mounted() {
@@ -157,11 +187,106 @@ export default {
     },
     methods : {
         /**
+         * event handler to request ble device for web browser
+         * @environment browser
+         */
+        async actionWebBleDeviceListRefresh() {
+            try {
+                if ( Common.isEmpty(this.target.btBleServiceId) ) {
+                    throw Error(this.$t('directive.communicator.bluetooth.serviceIdCannotBeEmpty'));
+                }
+
+                let serviceId = this.target.btBleServiceId.toLowerCase();
+                if ( serviceId.startsWith('0x') ) {
+                    serviceId = serviceId * 1;
+                }
+
+                let requestOptions = {};
+                requestOptions.optionalServices = [serviceId];
+                requestOptions.acceptAllDevices = true;
+                let device = await navigator.bluetooth.requestDevice(requestOptions);
+                
+                this.target.btBleId = device.id;
+                this.updateVModel();
+
+                this.bleDeviceRefreshEnable = false;
+                let isSuccessed = await this.handleOnBleDeviceSelected(device);
+                if ( isSuccessed ) {
+                    await BtHandlerWebBluetoothBle.cacheDevice(device);
+                }
+            } catch (e) {
+                this.$message.error(e.message);
+            }
+        },
+
+        /**
+         * once the ble device is selected, we need to refresh characteristics
+         * of this ble device.
+         * @param {BluetoothDevice} device
+         * @returns {Primise<Boolean>}
+         */
+        async handleOnBleDeviceSelected( device ) {
+            this.bleDeviceList = [{deviceId:device.id,deviceName:device.name}];
+            this.bleIsCharRefreshing = true;
+            this.bleIsRefreshing = true;
+            this.bleCharList = [];
+
+            try {
+                this.$message.loading(this.$t('directive.communicator.bluetooth.connecting'), 0);
+                let server = await device.gatt.connect();
+                this.bleIsRefreshing = false;
+                let services = await server.getPrimaryServices();
+                let service = services[0];
+                this.bleCharList = await service.getCharacteristics();
+                this.$message.destroy();
+
+                if ( 1 == this.bleCharList.length ) {
+                    this.target.btBleCharId = this.bleCharList[0].uuid;
+                    this.updateVModel();
+                }
+
+                this.bleIsCharRefreshing = false;
+                this.bleDeviceRefreshEnable = true;
+
+                // add service uuid to history
+                if ( -1 == this.bleHistoryServiceIds.indexOf(this.target.btBleServiceId) ) {
+                    this.bleHistoryServiceIds.push(this.target.btBleServiceId);
+                    if ( this.bleHistoryServiceIds.length > 10 ) {
+                        this.bleHistoryServiceIds.shift();
+                    }
+                    let history = JSON.stringify(this.bleHistoryServiceIds);
+                    await MdbRuntimeVariable.setVarValue('bluetooth_ble_history_service_ids',history);
+                }
+
+                this.$forceUpdate();
+                return true;
+            } catch ( e ) {
+                this.target.btBleId = '';
+                this.updateVModel();
+
+                this.bleCharList = [];
+                this.bleDeviceList = [];
+                this.bleIsRefreshing = false;
+                this.bleIsCharRefreshing = false;
+                this.bleDeviceRefreshEnable = true;
+
+                if ( device.gatt.connected ) {
+                    device.gatt.disconnect();
+                }
+                
+                this.$message.destroy();
+                let errorMessageKey = 'directive.communicator.bluetooth.unableToConnectToDevice';
+                this.$message.error(this.$t(errorMessageKey, [e.message]));
+                return false;
+            }
+        },
+
+        /**
          * init target model
          */
         initTarget() {
             let hasChanged = MyObject.applyDefaultValues(this.target, {
-                btType : 'classic',
+                btType : this.$env.bluetoothDefaultType,
             });
             if ( hasChanged ) {
                 this.updateVModel();
@@ -179,6 +304,16 @@ export default {
                 this.bleHistoryServiceIds = JSON.parse(this.bleHistoryServiceIds);
             } else {
                 this.bleHistoryServiceIds = [];
+            }
+        },
+
+        /**
+         * event handler on bluetooth type changed
+         */
+        actionBtTypeChange() {
+            this.actionUpdateTarget();
+            if ( 'classic' === this.target.btType && !this.$env.bluetoothClassicAvailable ) {
+                this.environmentNotSupport();
             }
         },
 
@@ -220,18 +355,18 @@ export default {
             this.bleDeviceRefreshEnable = false;
             this.target.btBleId = '';
             this.bleDeviceList = [];
-            if ( null === this.bleScanner ) {
-                this.bleScanner = BleDeviceScanner.getScanner();
+            if ( null === this.bleElectronScanner ) {
+                this.bleElectronScanner = ElectronBleDeviceScanner.getScanner();
             }
             let $this = this;
-            this.bleScanner.onRefresh(( devices ) => {
+            this.bleElectronScanner.onRefresh(( devices ) => {
                 $this.bleDeviceList = devices;
                 $this.bleDeviceListOpen = true;
             });
-            this.bleScanner.onDeviceSelected(( device ) => {
+            this.bleElectronScanner.onDeviceSelected(( device ) => {
                 $this.handleOnBleDeviceSelected(device);
             });
-            this.bleScanner.onError(( error ) => {
+            this.bleElectronScanner.onError(( error ) => {
                 if ( 'User cancelled the requestDevice() chooser.' != error.message ) {
                     $this.$message.error(error.message);
                 }
@@ -240,8 +375,8 @@ export default {
             });
 
             try {
-                this.bleScanner.serviceId = this.target.btBleServiceId;
-                await this.bleScanner.start();
+                this.bleElectronScanner.serviceId = this.target.btBleServiceId;
+                await this.bleElectronScanner.start();
                 this.bleIsRefreshing = true;
             } catch (error) {
                 console.error(error);
@@ -252,79 +387,10 @@ export default {
         },
 
         /**
-         * once the ble device is selected, we need to refresh characteristics
-         * of this ble device.
-         */
-        async handleOnBleDeviceSelected( device ) {
-            console.log(`handleOnBleDeviceSelected({id:${device.id},name:${device.name}})`);
-            this.bleDeviceList = [{deviceId:this.target.btBleId,deviceName:device.name}];
-            this.bleDevice = device;
-            this.bleIsCharRefreshing = true;
-            this.bleCharList = [];
-            this.bleIsRefreshing = true;
-
-            try {
-                this.$message.loading(this.$t('directive.communicator.bluetooth.connecting'), 0);
-                
-                console.log(`bluetooth ble device [${device.name}] gatt server connecting ...`);
-                let server = await this.bleDevice.gatt.connect();
-                this.bleIsRefreshing = false;
-                console.log(`bluetooth ble device [${device.name}] gatt server connectted`);
-                
-                console.log(`bluetooth ble device [${device.name}] fetching services from gatt server ...`);
-                let services = await server.getPrimaryServices();
-                let service = services[0];
-                console.log(`bluetooth ble device [${device.name}] services : `, services);
-
-                console.log(`bluetooth ble device [${device.name}] fetching characteristics from service ...`);
-                this.bleCharList = await service.getCharacteristics();
-                console.log(`bluetooth ble device [${device.name}] characteristics : `, this.bleCharList);
-
-                this.$message.destroy();
-            } catch ( e ) {
-                this.bleDeviceRefreshEnable = true;
-                if ( this.bleDevice.gatt.connected ) {
-                    this.bleDevice.gatt.disconnect();
-                }
-                this.target.btBleId = '';
-                this.bleDeviceList = [];
-                this.bleIsCharRefreshing = false;
-                this.bleIsRefreshing = false;
-                this.$message.destroy();
-                this.bleDevice = null;
-                this.$message.error(this.$t('directive.communicator.bluetooth.unableToConnectToDevice', [e.message]));
-                console.error(e);
-                return;
-            }
-            
-            if ( 1 == this.bleCharList.length ) {
-                this.target.btBleCharId = this.bleCharList[0].uuid;
-                this.updateVModel();
-            }
-
-            this.bleIsCharRefreshing = false;
-            this.bleDeviceRefreshEnable = true;
-
-            // add service uuid to history
-            if ( -1 == this.bleHistoryServiceIds.indexOf(this.target.btBleServiceId) ) {
-                this.bleHistoryServiceIds.push(this.target.btBleServiceId);
-                if ( this.bleHistoryServiceIds.length > 10 ) {
-                    this.bleHistoryServiceIds.shift();
-                }
-                await MdbRuntimeVariable.setVarValue(
-                    'bluetooth_ble_history_service_ids', 
-                    JSON.stringify(this.bleHistoryServiceIds)
-                );
-            }
-
-            this.$forceUpdate();
-        },
-
-        /**
          * stop refreshing ble device
          */
         actionBleDeviceListRefreshStop() {
-            this.bleScanner.stop();
+            this.bleElectronScanner.stop();
             this.bleIsRefreshing = false;
             this.bleDeviceList = [];
         },
@@ -335,7 +401,7 @@ export default {
         actionBleDeviceSelected() {
             this.bleDeviceListOpen = false;
             if ( this.bleIsRefreshing ) {
-                this.bleScanner.select(this.target.btBleId);
+                this.bleElectronScanner.select(this.target.btBleId);
                 this.bleIsRefreshing = false;
             }
             this.updateVModel();
