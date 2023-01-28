@@ -1,3 +1,4 @@
+import * as mqtt from "mqtt"
 import Common from '@/utils/Common.js';
 import MyObject from '../../../../utils/datatype/MyObject.js'
 import CommunicatorBase from '../CommunicatorBase.js'
@@ -111,7 +112,12 @@ export default class Communicator extends CommunicatorBase {
                 return;
             }
 
-            $this.client = window.mqtt.connect($this.options.mqttUri, {
+            let mqttConnector = mqtt.connect;
+            if ( undefined != window.mqtt ) {
+                mqttConnector = window.mqtt.connect;
+            }
+            
+            $this.client = mqttConnector($this.options.mqttUri, {
                 clientId : $this.options.mqttClientId,
                 username : $this.options.mqttUsername,
                 password : $this.options.mqttPassword,
