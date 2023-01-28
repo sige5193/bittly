@@ -12,6 +12,7 @@ export default class EnvElectron {
         this.bluetoothDefaultType = 'classic';
         this.bluetoothClassicAvailable = true;
         this.bluetoothBleHandler = 'electron-bluetooth-ble';
+        this.httpHandler = 'node-http';
 
         this.mode = 'prod';
         if ( 'development' === window.remote.process.env.NODE_ENV ) {

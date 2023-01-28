@@ -1,6 +1,8 @@
 import MdbDirective from '@/models/MdbDirective.js';
 import CommunicatorBase from '../CommunicatorBase.js'
 import RequestParamBuilder from './RequestParamBuilder.js';
+import axios from 'axios'
+import Environment from '../../../../environments/Environment.js';
 /**
  * Http communicator use to execute http request by given target options
  * and parameters.
@@ -70,7 +72,35 @@ export default class Communicator extends CommunicatorBase {
             options.body = paramBuilder.getBody();
             options.method = paramBuilder.getMethod();
             options.headers = paramBuilder.getHeaders();
-            $this.executeRequest(options, resolve, reject);
+            
+            let handlerName = Environment.getEnv().httpHandler;
+            if ( 'node-http' === handlerName ) {
+                $this.executeRequest(options, resolve, reject);
+            } else {
+                $this.executeRequestByAxios(options, resolve, reject);
+            }
+        });
+    }
+
+    /**
+     * execute http request by axios
+     * @param {*} options 
+     * @param {*} resolve 
+     * @param {*} reject 
+     */
+    executeRequestByAxios(options, resolve, reject) {
+        delete options.headers['Content-Length'];
+        axios({
+            method: options.method,
+            url: options.url,
+            headers : options.headers,
+            data: options.body
+        })
+        .then(response => resolve(response.data))
+        .catch(e => {
+            debugger
+            console.log(e);
+            reject(e)
         });
     }
 

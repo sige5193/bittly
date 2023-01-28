@@ -13,6 +13,7 @@ export default class EnvBrowser {
         this.bluetoothDefaultType = 'ble';
         this.bluetoothClassicAvailable = false;
         this.bluetoothBleHandler = 'web-bluetooth-ble';
+        this.httpHandler = 'axios';
     }
 
     /**
