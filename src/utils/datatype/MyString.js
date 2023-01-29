@@ -15,4 +15,23 @@ export default class MyString {
     static uuidNil() {
         return NIL_UUID;
     }
+
+    /**
+     * translate message to local language
+     * @param {String} key 
+     * @param {Array|undefined} params 
+     */
+    static $t(key, params) {
+        return window.app.$t(key, params);
+    }
+
+    /**
+     * generate key by time
+     * @returns {String}
+     */
+    static generateShortSecKey() {
+        return Math.floor(((new Date()).getTime()/1000))
+        .toString(16)
+        .toUpperCase();
+    }
 }
