@@ -27,16 +27,9 @@
 
      <!-- path : for web-serial -->
     <a-col v-if="'web-serial' == handlerType" :span="7" class="pr-1">
-      <a-input-group compact>
-        <a-input style="width: 80%" disabled
-          :value="$t(`directive.communicator.serialport.${null === webSerialPort ? 'noDeviceSelected' : 'deviceSelected'}`)"
-        />
-        <a-button 
-          ref="btnSerialPortRefresh" 
-          style="width:20%;" 
-          @click="actionRequestSerialPort"
-        ><a-icon type="reload" /></a-button>
-      </a-input-group>
+      <web-serial-device-selector v-model="target.path"
+        @change="actionUpdateTarget(true)"
+      ></web-serial-device-selector>
     </a-col>
 
     <!-- baudRate -->
@@ -97,10 +90,13 @@ import Environment from '../../../../environments/Environment.js'
 import TargetEditorMixin from '../TargetEditorMixin.js'
 import Common from '@/utils/Common.js'
 import MyObject from '../../../../utils/datatype/MyObject.js'
-import MyString from '../../../../utils/datatype/MyString.js'
+import WebSerialDeviceSelector from './TargetEditorWebSerialDeviceSelector.vue'
 export default {
     name : 'Serialport',
     mixins : [TargetEditorMixin],
+    components : {
+        'web-serial-device-selector' : WebSerialDeviceSelector,
+    },
     data() {
         return {
             /**
@@ -108,17 +104,6 @@ export default {
              * @property {String}
              */
             handlerType : null,
-            /**
-             * instance of web serialport object
-             * @property {SerialPort|null}
-             */
-            webSerialPort : null,
-            /**
-             * callback function to handle web serial disconnected event.
-             * @property {Function}
-             */
-            webSerialPortDisconnectedCallback : null,
-            
             showSerialportPathList : false,
             serialportOptions : {
                 hasInited : false,
@@ -132,15 +117,9 @@ export default {
     },
     created() {
         this.handlerType = Environment.getEnv().serialportHandler;
-        this.webSerialPortDisconnectedCallback = event => this.handleWebSerialDisconnected(event);
     },
     mounted() {
         this.initOptions();
-    },
-    beforeDestroy() {
-        if ( null !== this.webSerialPort ) {
-            this.webSerialPort.removeEventListener('disconnect', this.webSerialPortDisconnectedCallback);
-        }
     },
     methods : {
         /**
@@ -177,35 +156,6 @@ export default {
 
             this.$forceUpdate();
             this.isEditorInited = true;
-        },
-
-        /**
-         * show device selector in browser
-         */
-        async actionRequestSerialPort() {
-            try {
-                let port = await navigator.serial.requestPort();
-                if ( undefined === port.conId ) {
-                    port.conId = MyString.uuidV4();
-                }
-
-                this.webSerialPort = port;
-                this.webSerialPort.addEventListener('disconnect', this.webSerialPortDisconnectedCallback);
-                this.target.path = port.conId;
-            } catch (e) {
-                this.target.path = '';
-                this.webSerialPort = null;
-                this.$message.error(this.$t('directive.communicator.serialport.noDeviceSelected'));
-            }
-            this.actionUpdateTarget(true);
-        },
-
-        /**
-         * event handler on web serial device disconnected
-         * @param {Event} event
-         */
-        handleWebSerialDisconnected(event) {
-            this.webSerialPort = null;
         },
 
         /**

@@ -15,4 +15,11 @@ module.exports = {
     noDeviceSelected : 'Device not available',
     deviceNotAvailable : 'Device is not available',
     deviceError : 'Serialport device {0} error : {1}',
+    deviceSelectPlaceholder : 'Please select device',
+    webSerialDeviceNameEdit : 'Edit Device Name',
+    webSerialDeviceNamePlaceholder : 'Please input device name',
+    webSerialDeviceNameCannotBeEmpty : 'Device name cannot be empty',
+    webSerialDeviceRefreshed : 'Device list refreshed',
+    webSerialDeviceInuse : '"{0}" is using this device, are you sure to switch to {1} ?',
+    webSerialDeviceRequestManually : 'Please select device for "{0}"',
 };

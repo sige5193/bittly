@@ -63,7 +63,7 @@ export default class Communicator extends CommunicatorBase {
         if ( 'node-serialport' === handler ) {
             this.serialport = new SerialPortHandlerNodeSerialPort(options, this);
         } else if ( 'web-serial' === handler ) {
-            this.serialport = new SerialPortHandlerWebSerial(options, this);
+            this.serialport = new SerialPortHandlerWebSerial(this);
         } else {
             throw Error(`serialport handler does not exists`);
         }
@@ -74,7 +74,7 @@ export default class Communicator extends CommunicatorBase {
      * @returns {Boolean} 
      */
     getIsOpen() {
-        return this.serialport.isOpen;
+        return this.serialport.getIsOpen();
     }
 
     /**

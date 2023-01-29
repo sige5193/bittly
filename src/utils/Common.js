@@ -247,5 +247,22 @@ class Common {
         }
         return result;
     }
+
+    /**
+     * show confirm dialog with given title
+     * @param {*} title 
+     * @returns 
+     */
+    static confirm( title ) {
+        return new Promise(resolve => {
+            window.app.$confirm({
+                title: title,
+                okText : window.app.$t('button.ok'),
+                cancelText : window.app.$t('button.cancel'),
+                onOk : () => resolve(true),
+                onCancel : () => resolve(false),
+            });
+        });
+    }
 }
 export default Common;

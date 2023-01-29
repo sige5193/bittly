@@ -16,4 +16,11 @@ module.exports = {
     deviceSelected : '设备已选择',
     deviceNotAvailable : '无法连接设备',
     deviceError : '串口设备 {0} 错误 : {1}',
+    deviceSelectPlaceholder : '请选择设备',
+    webSerialDeviceNameEdit : '设备名称编辑',
+    webSerialDeviceNamePlaceholder : '请输入设备名称',
+    webSerialDeviceNameCannotBeEmpty : '设备名称不可为空',
+    webSerialDeviceRefreshed : '设备列表已刷新',
+    webSerialDeviceInuse : '该设备正在被 [{0}] 使用中， 是否变更到 [{1}] ?',
+    webSerialDeviceRequestManually : '请为 [{0}] 选择设备',
 };
