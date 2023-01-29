@@ -3,12 +3,11 @@
     <a-col :span="9" class="pr-1">
       <a-input-group compact>
         <!-- mode -->
-        <a-select 
-          ref="sltMode"
+        <a-select ref="sltMode"
           class="w-25"
           v-model="target.modbusMode" 
           :showArrow="false" 
-          @change="actionUpdateTarget(true)"
+          @change="actionTargetModeChange"
         >
           <a-select-option value="RTU">RTU</a-select-option>
           <a-select-option value="ASCII">ASCII</a-select-option>
@@ -17,18 +16,27 @@
         
         <!-- modbus-RTU or modbus-ASCII -->
         <template v-if="'RTU' === target.modbusMode || 'ASCII' ===  target.modbusMode">
-          <a-auto-complete 
-            ref="txtSerialport"
-            class="w-35"
-            v-model="target.modbusSerialport" 
-            :data-source="serialportOptions.serialports"
+          <!-- web serial -->
+          <web-serial-device-selector 
+            v-if="'web-serial' === $env.serialportHandler"
+            v-model="target.modbusSerialport"
             @change="actionUpdateTarget(true)"
-          ><a-input style="border-right:none;"></a-input></a-auto-complete>
-          <a-button 
-            ref="btnSerialPortRefresh" 
-            style="width:10%;padding:0;border-left:none;border-right:none;" 
-            @click="actionSerialPortListRefresh(false)"
-          ><a-icon type="reload" /></a-button>
+          ></web-serial-device-selector>
+          
+          <!-- electron -->
+          <template v-else>
+            <a-auto-complete ref="txtSerialport" class="w-35"
+              v-model="target.modbusSerialport" 
+              :data-source="serialportOptions.serialports"
+              @change="actionUpdateTarget(true)"
+            ><a-input style="border-right:none;"></a-input></a-auto-complete>
+            <a-button 
+              ref="btnSerialPortRefresh" 
+              style="width:10%;padding:0;border-left:none;border-right:none;" 
+              @click="actionSerialPortListRefresh(false)"
+            ><a-icon type="reload" /></a-button>
+          </template>
+
           <a-input class="pl-0 pr-0 text-center text-body" style="width:10%;" value="@" disabled></a-input>
           <a-tooltip>
             <template slot="title">
@@ -39,6 +47,7 @@
               class="w-20"
               v-model="target.modbusBaudRate" 
               :data-source="serialportOptions.baudRates"
+              :dropdownMatchSelectWidth="false"
               @change="actionUpdateTarget(true)"
             ><a-input></a-input></a-auto-complete>
           </a-tooltip>
@@ -185,9 +194,14 @@
 import MyObject from '../../../../utils/datatype/MyObject.js'
 import Communicator from './Communicator.js'
 import TargetEditorMixin from '../TargetEditorMixin.js'
+import WebSerialDeviceSelector from './TargetEditorWebSerialDeviceSelector.vue'
+import ComponentBase from '../../../../utils/component/Base.js'
 export default {
     name : 'ModbusTargetEditor',
-    mixins : [TargetEditorMixin],
+    mixins : [ComponentBase,TargetEditorMixin],
+    components : {
+        'web-serial-device-selector' : WebSerialDeviceSelector,
+    },
     data() {
         return {
             /**
@@ -320,6 +334,19 @@ export default {
          */
         getComKeyByOptions(options) {
             return Communicator.generateKeyFromOptions(options);
+        },
+
+        /**
+         * event handler on target mode changed
+         */
+        actionTargetModeChange() {
+            if ( 'browser' === this.$env.name 
+            && -1 != ['ASCII','TCP-IP'].indexOf(this.target.modbusMode)) {
+                this.target.modbusMode = 'RTU';
+                this.actionUpdateTarget(true);
+                return this.environmentNotSupport();
+            }
+            this.actionUpdateTarget(true);
         },
     },
 
