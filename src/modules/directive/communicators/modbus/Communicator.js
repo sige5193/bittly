@@ -1,6 +1,7 @@
-import Common from "@/utils/Common";
+import Common from "../../../../utils/Common";
 import MyNumber from "../../../../utils/datatype/MyNumber.js";
 import CommunicatorBase from '../CommunicatorBase.js'
+import MbHandlerWebSerial from "./MbHandlerWebSerial.js";
 /**
  * communicator for modbus
  * @author sige
@@ -76,7 +77,12 @@ export default class Communicator extends CommunicatorBase {
             this.initTcpOptions();
         }
         
-        this.client = new window.modbus();
+        if ( undefined === window.modbus ) {
+            this.client = new MbHandlerWebSerial();
+        } else {
+            this.client = new window.modbus();
+        }
+        
         this.client.on('error', (error) => this.handleOnError(error) );
         this.client.on('close', () => this.handleOnClose() );
         this.updateOptions(options);
@@ -159,17 +165,7 @@ export default class Communicator extends CommunicatorBase {
         let $this = this;
         return new Promise(function( resolve, reject ) {
             if ( 'RTU' == $this.options.modbusMode ) {
-                let serialOptions = { 
-                    baudRate: $this.options.modbusBaudRate,
-                    dataBits: parseInt($this.options.modbusDataBits),
-                    stopBits: parseInt($this.options.modbusStopBits),
-                    parity: $this.options.modbusParity,
-                };
-                $this.client.connectRTUBuffered(
-                    $this.options.modbusSerialport,
-                    serialOptions,
-                    (err) => $this.handleOnConnect(err, resolve, reject)
-                );
+                $this.openWithModeRTU(resolve, reject);
             } else if ( 'ASCII' == $this.options.modbusMode ) {
                 let serialOptions = { 
                     baudRate: $this.options.modbusBaudRate,
@@ -193,6 +189,23 @@ export default class Communicator extends CommunicatorBase {
     }
 
     /**
+     * open modbus connection with model RTU
+     * @param {Function} resolve
+     * @param {Function} reject
+     */
+    openWithModeRTU(resolve, reject) {
+        let options = { 
+            baudRate: this.options.modbusBaudRate,
+            dataBits: parseInt(this.options.modbusDataBits),
+            stopBits: parseInt(this.options.modbusStopBits),
+            parity: this.options.modbusParity,
+        };
+        let path = this.options.modbusSerialport;
+        let callback = (err) => this.handleOnConnect(err, resolve, reject);
+        this.client.connectRTUBuffered(path,options,callback);
+    }
+
+    /**
      * callback handler for connect
      * @param {Error} err
      * @param {CallableFunction} resolve
@@ -200,11 +213,8 @@ export default class Communicator extends CommunicatorBase {
      */
     handleOnConnect( err, resolve, reject ) {
         if ( null != err ) {
-            reject(err);
-            return;
+            return reject(err);
         }
-
-        this.log('connected');
         this.isConnected = true;
         this.deviceOnline();
         resolve();
@@ -365,7 +375,10 @@ export default class Communicator extends CommunicatorBase {
             data.swap16();
         }
 
-        let value = window.nodeBuffer.from(data);
+        let value = Buffer.from(data);
+        if ( undefined != window.nodeBuffer ) {
+            value = window.nodeBuffer.from(data);
+        }
         let addr = this.options.modbusAddress;
         let callback = (err,res) => this.handleOnResponse(resolve, reject, err, res);
         this.client.writeRegister(addr,value, callback);
@@ -418,7 +431,10 @@ export default class Communicator extends CommunicatorBase {
         }
 
         let address = this.options.modbusAddress;
-        let value = window.nodeBuffer.from(data);
+        let value = Buffer.from(data);
+        if ( undefined != window.nodeBuffer ) {
+            value = window.nodeBuffer.from(data);
+        }
         let callback = (err,res) => this.handleOnResponse(resolve, reject, err, res);
         this.client.writeRegisters(address,value,callback);
     }
@@ -430,7 +446,7 @@ export default class Communicator extends CommunicatorBase {
      * @param {Error} err
      * @param {Buffer} res
      */
-    handleOnResponse( resolve, reject, err, res ) {
+    async handleOnResponse( resolve, reject, err, res ) {
         if ( null != err ) {
             this.log(err);
             reject(err);
@@ -438,6 +454,7 @@ export default class Communicator extends CommunicatorBase {
         }
 
         resolve();
+        await Common.msleep(10);
         if ( undefined == res.buffer ) {
             return;
         }
@@ -457,7 +474,7 @@ export default class Communicator extends CommunicatorBase {
      * close the modbus connection
      * @returns {Promise}
      */
-    close() {
+    async close() {
         let $this = this;
         return new Promise(( resolve ) => {
             if ( 'TCP-IP' == $this.options.modbusMode ) {
@@ -465,9 +482,7 @@ export default class Communicator extends CommunicatorBase {
                 $this.handleOnClose();
                 resolve();
             } else {
-                $this.client.close(() => {
-                    resolve();
-                });
+                $this.client.close(() => resolve());
             }
         });
     }
