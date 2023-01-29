@@ -135,7 +135,7 @@ export default {
             return new Promise(( resolve, reject ) => {
                 let devId = MyString.generateShortSecKey();
                 $this.devNameEditEnable = true;
-                $this.devNameEditValue = `mb-${devId}`;
+                $this.devNameEditValue = `MB-${devId}`;
                 $this.devNameEditPromiseHandlers = {resolve,reject};
             });
         },
