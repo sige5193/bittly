@@ -81,9 +81,10 @@ import PanelEntries from './entry/PanelEntries.vue'
 import PanelDirective from './Execute.vue'
 import MdbDirectiveEntry from '../../models/MdbDirectiveEntry.js'
 import MdbDirective from '../../models/MdbDirective.js'
+import ComponentBase from '../../utils/component/Base.js'
 export default {
     name : 'ModuleDirectiveMain',
-    mixins : [ProjectMixin],
+    mixins : [ProjectMixin,ComponentBase],
     components : {
         'panel-directive' : PanelDirective,
         'panel-entries' : PanelEntries,
@@ -151,6 +152,7 @@ export default {
         this.callbacks.directiveDeleted = (directive) => this.actionDirectiveDelete(directive);
         this.$eventBus.$on('directive-delete', this.callbacks.directiveDeleted);
 
+        this.registerEventHandler('project-active-id-change', id => this.onProjectActiveIdChange(id));
         this.hasInited = true;
     },
     /**
@@ -160,8 +162,17 @@ export default {
         this.$eventBus.$off('directive-new-temp-create', this.callbacks.newTempDirective);
         this.$eventBus.$off('directive-delete', this.callbacks.directiveDeleted);
         await this.$store.dispatch('closeAllCommunicators');
+        this.unregisterAllEventHandlers();
     },
     methods : {
+        /**
+         * event handler on active project id changed.
+         * @param {String} id
+         */
+        onProjectActiveIdChange(id) {
+            this.openedDirectives = [];
+        },
+
         /**
          * event handler for entry menu inited.
          */
