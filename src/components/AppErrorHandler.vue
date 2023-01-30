@@ -100,6 +100,7 @@ export default {
          * report error info to server.
          */
         reportError( error ) {
+            error.userAgent = navigator.userAgent;
             error.version = packageInfo.version;
             error.moduleId = this.$store.getters.moduleId;
             this.$bittly.errorReport(error);
