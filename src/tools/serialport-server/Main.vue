@@ -200,6 +200,10 @@ export default {
             ],
             this.serialportOptions.hasInited = true;
             this.hasInited = true;
+            this.$warning({
+                title: 'WARNING',
+                content: this.$t('app.toolWsServer.offlineTip'),
+            });
         },
 
         /**

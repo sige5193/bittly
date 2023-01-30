@@ -264,6 +264,10 @@ export default {
             }
 
             this.hasInited = true;
+            this.$warning({
+                title: 'WARNING',
+                content: this.$t('app.toolWsServer.offlineTip'),
+            });
         },
 
         /**

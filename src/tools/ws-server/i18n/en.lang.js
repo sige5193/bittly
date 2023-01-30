@@ -8,4 +8,5 @@ module.exports = {
     settingModalTitle : 'Setting',
     keyContent : 'PEM Key Content',
     certContent : 'PEM Cert Content',
+    offlineTip: 'This page would be deleted in the future, and you can use this feature in mock services, and you have migrate your settings manually to the mock service ~~~',
 };

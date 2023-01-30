@@ -1,3 +1,4 @@
+import Environment from '../environments/Environment.js';
 import Vue from 'vue'
 import VueShortkey from 'vue-shortkey'
 import Antd from 'ant-design-vue';
@@ -20,12 +21,15 @@ export default class AppWindowSetup {
         Vue.use(Antd);
         Vue.use(VueCodeMirror);
 
+        let env = Environment.setup();
+        Vue.prototype.$env = env;
+
         Dictionary.setupVue(Vue);
         window.app = new Vue({
             store,
             i18n,
             render: h => h(component),
         });
-        window.app.$mount('#app')
+        window.app.$mount('#app');
     }
 }
