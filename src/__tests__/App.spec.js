@@ -7,6 +7,7 @@ describe('@/App.vue', () => {
         let tester = new UnitTester();
         tester.on('ready', () => {
             expect(tester.exists({ref:'projectIndex'})).toBeTruthy();
+            tester.wrapper.destroy();
             done();
         });
 
