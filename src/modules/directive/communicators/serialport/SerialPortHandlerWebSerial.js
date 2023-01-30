@@ -148,12 +148,12 @@ export default class SerialPortHandlerWebSerial {
      * @returns {Promise<void>}
      */
     async close() {
+        this.com.log(`[${this.com.options.path}] close`);
         this.port.isOpened = false;
         if ( undefined !== this.port.activeReader ) {
             await this.port.activeReader.cancel();
         }
         await this.port.close();
-        this.com.log(`[${this.com.options.path}] closed`);
     }
 
     /**

@@ -14,6 +14,11 @@ export default new Vuex.Store({
         /** 通讯器列表 */
         communicators : {},
         /**
+         * indicate whether closing all communicators
+         * @property {Boolean}
+         */
+        isClosingAllCommunicators : false,
+        /**
          * id of current module
          * @property {String}
          */
@@ -77,9 +82,13 @@ export default new Vuex.Store({
          */
         mocks( state ) {
             return state.mocks;
-        }
+        },
+
+        isClosingAllCommunicators : state => state.isClosingAllCommunicators,
     },
     mutations: {
+        isClosingAllCommunicators : (state,value) => state.isClosingAllCommunicators = value,
+
         /** 
          * 设置当前活跃项目ID
          */
@@ -154,7 +163,7 @@ export default new Vuex.Store({
          */
         moduleIdSet( state, id ) {
             state.moduleId = id;
-        }
+        },
     },
     actions: {
         /**
@@ -196,10 +205,19 @@ export default new Vuex.Store({
          * @param {*} context 
          */
         async closeAllCommunicators ( context ) {
+            debugger
+            console.log('[store] close all communicators');
+            let isClosing = context.getters.isClosingAllCommunicators;
+            if ( true === isClosing ) {
+                return ;
+            }
+
+            context.commit('isClosingAllCommunicators', true);
             let coms = context.getters.communicators;
             for ( let comKey in coms ) {
                 await coms[comKey].close();
             }
+            context.commit('isClosingAllCommunicators', false);
         }
     },
 })
