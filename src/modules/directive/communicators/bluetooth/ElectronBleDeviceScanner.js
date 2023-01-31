@@ -120,7 +120,7 @@ export default class ElectronBleDeviceScanner {
         
         let $this = this;
         window.ipcRenderer.on('select-bluetooth-device-refresh',this.refreshHandler);
-        this.log('requestDevice : ', requestOptions);
+        this.log(`request device : service = ${serviceId}`);
         
         navigator.bluetooth.requestDevice(requestOptions).then((device) => {
             $this.handleOnDeviceSelected(device);
@@ -136,7 +136,7 @@ export default class ElectronBleDeviceScanner {
      * @param {*} device 
      */
     handleOnDeviceSelected(device) {
-        this.log('device selected', device);
+        this.log(`device selected : id = ${device.id}; name = ${device.name}`);
         this.devices[this.selectedDeviceId] = device;
         this.onDeviceSelectedCallback(device);
 
@@ -193,7 +193,7 @@ export default class ElectronBleDeviceScanner {
      * @param {Array} devices 
      */
     handleRefresh(event, devices) {
-        this.log('found devices', devices);
+        this.log('found devices', JSON.stringify(devices));
         this.onRefreshCallback(devices);
     }
 

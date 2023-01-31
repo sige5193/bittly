@@ -65,12 +65,10 @@ export default class BtHandlerElectronBluetoothBle {
             return ;
         }
 
+        this.com.log('ble open');
         let scanner = ElectronBleDeviceScanner.getScanner();
-        let device = scanner.getDevice(this.com.options.btBleId);
-        if ( null === device ) {
-            scanner.serviceId = this.com.options.btBleServiceId;
-            device = await scanner.requestDevice(this.com.options.btBleId);
-        }
+        scanner.serviceId = this.com.options.btBleServiceId;
+        let device = await scanner.requestDevice(this.com.options.btBleId);
         if ( null == device ) {
             throw Error(this.com.$t('unableToConnectToDevice', [this.com.options.btBleId]));
         }
@@ -90,10 +88,13 @@ export default class BtHandlerElectronBluetoothBle {
         
         if ( !device.gatt.connected ) {
             await device.gatt.connect();
+            this.com.log('ble gatt connected');
         }
         let services = await device.gatt.getPrimaryServices();
         let service = services[0];
+        this.com.log(`ble service : ${service.uuid}`);
         let char = await service.getCharacteristic(this.com.options.btBleCharId);
+        this.com.log(`ble characteristic : ${char.uuid}`);
         await char.startNotifications();
         
         // add event listener on value change
@@ -131,8 +132,10 @@ export default class BtHandlerElectronBluetoothBle {
     /**
      * event handler for gatt server disconnected
      */
-    handleOnDisconnected() {
+    async handleOnDisconnected() {
+        await Common.msleep(800);
         this.com.deviceDisconnected();
+        this.com.log('ble disconnected');
     }
 
     /**
@@ -140,6 +143,7 @@ export default class BtHandlerElectronBluetoothBle {
      * @returns {Promise}
      */
     close() {
+        this.com.log('ble close');
         this.device.gatt.disconnect();
         return Promise.resolve();
     }

@@ -1,7 +1,7 @@
 import Tester from '../../../../../utils/test/UnitTester.js';
 import Communicator from '../Communicator.js'
 describe('@/communicators/bluetooth/BleHandler.js', () => {
-    it('normal use', async () => {
+    it('basic', async () => {
         let tester = new Tester();
         await tester.setup();
         window.console.log = () => {};
@@ -27,6 +27,7 @@ describe('@/communicators/bluetooth/BleHandler.js', () => {
                     this.connected = true;
                 },
                 disconnect() {
+                    this.connected = false;
                     device.eventHandlers['gattserverdisconnected']();
                 },
                 getPrimaryServices() {
