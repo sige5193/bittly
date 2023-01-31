@@ -152,10 +152,26 @@ export default {
              * @property {String}
              */
             activeClientKey : null,
+            /**
+             * list of event handler for mocker
+             * @property {Object}
+             */
+            mockerEventHandlers : {},
         };
     },
     created() {
         this.mock = this.value;
+    },
+    mounted() {
+        if ( undefined != this.$store.getters.mocks[this.mock.id] ) {
+            this.mocker = this.$store.getters.mocks[this.mock.id];
+            this.registerMockerEventHandlers();
+        }
+    },
+    beforeDestroy() {
+        if ( null != this.mocker ) {
+            this.unregisterMockerEventHandlers();
+        }
     },
     methods : {
         /**
@@ -167,13 +183,32 @@ export default {
         },
 
         /**
+         * register mocker event handlers to mocker
+         */
+        registerMockerEventHandlers() {
+            this.mockerEventHandlers['new-client'] = client => this.onNewClient(client);
+            this.mockerEventHandlers['client-data'] = client => this.onClientData(client);
+            this.mockerEventHandlers['client-data-write'] = client => this.onClientData(client);
+            this.mocker.on('new-client', this.mockerEventHandlers['new-client']);
+            this.mocker.on('client-data', this.mockerEventHandlers['client-data']);
+            this.mocker.on('client-data-write', this.mockerEventHandlers['client-data-write']);
+        },
+
+        /**
+         * unregister mocker event handlers
+         */
+        unregisterMockerEventHandlers() {
+            this.mocker.off('new-client', this.mockerEventHandlers['new-client']);
+            this.mocker.off('client-data', this.mockerEventHandlers['client-data']);
+            this.mocker.off('client-data-write', this.mockerEventHandlers['client-data-write']);
+        },
+
+        /**
          * start mocker
          */
         async start() {
             this.mocker = new Mocker(this.mock);
-            this.mocker.on('new-client', client => this.onNewClient(client));
-            this.mocker.on('client-data', client => this.onClientData(client));
-            this.mocker.on('client-data-write', client => this.onClientData(client));
+            this.registerMockerEventHandlers();
             await this.mocker.start();
         },
 
@@ -181,7 +216,9 @@ export default {
          * stop mocker
          */
         async stop() {
+            this.unregisterMockerEventHandlers();
             await this.mocker.stop();
+            this.mocker = null;
         },
 
         /**

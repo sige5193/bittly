@@ -205,7 +205,6 @@ export default new Vuex.Store({
          * @param {*} context 
          */
         async closeAllCommunicators ( context ) {
-            debugger
             console.log('[store] close all communicators');
             let isClosing = context.getters.isClosingAllCommunicators;
             if ( true === isClosing ) {
