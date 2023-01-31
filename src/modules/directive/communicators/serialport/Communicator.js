@@ -82,6 +82,9 @@ export default class Communicator extends CommunicatorBase {
      * @returns {Promise<void>}
      */
     async open() {
+        if ( this.getIsOpen() ) {
+            return ;
+        }
         await this.serialport.open();
         this.deviceOnline();
     }

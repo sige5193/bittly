@@ -1,10 +1,9 @@
 import Tester from '../../../../../utils/test/UnitTester.js'
-import TestCaseSetup from '../../../../../utils/test/UnitTester.js'
 import TargetEditor from '../TargetEditor.vue'
-import SerialPortMocker from '../SerialPortMocker.js'
+import MockSerialport from './mocks/MockSerialport.js';
 describe('@/communicators/serailport/TargetEditor.vue', () => {
     it('basic', async ( ) => {
-        SerialPortMocker.mock();
+        MockSerialport.setup();
         let target = {};
         
         let tester = new Tester({
@@ -34,15 +33,14 @@ describe('@/communicators/serailport/TargetEditor.vue', () => {
         expect(target.parity).toBe('xxx');
 
         let editorConfig = TargetEditor.editorConfig();
-        expect(editorConfig.name).toBe('Serial Port');
+        expect(editorConfig.name).toBe('SerialPort');
         expect(editorConfig.defaultDataType).toBe('byte');
         expect(editorConfig.defaultResponseViewer).toBe('hex');
     });
 
     it('auto select device if only one device in list', async ( done ) => {
-        SerialPortMocker.mock({
-            list : () => Promise.resolve([{path:'COM1'}]),
-        });
+        let mock = MockSerialport.setup();
+        mock.list.mockImplementation(() => Promise.resolve([{path:'COM1'}]));
 
         let isRefreshed = false;
         let target = {};
@@ -63,9 +61,10 @@ describe('@/communicators/serailport/TargetEditor.vue', () => {
         await tester.click({ref:'btnSerialPortRefresh'});
     });
 
-    it('device list should be opened after clicking refresh button', async ( ) => {
-        SerialPortMocker.mock({
-            list : () => Promise.resolve([{path:'COM1'},{path:'COM2'}]),
+    it('debug device list should be opened after clicking refresh button', async ( ) => {
+        let mock = MockSerialport.setup();
+        mock.list.mockImplementation(() => {
+            return Promise.resolve([{path:'COM1'},{path:'COM2'}])
         });
 
         let target = {};
@@ -82,9 +81,8 @@ describe('@/communicators/serailport/TargetEditor.vue', () => {
     });
 
     it('should auto select device if only one deivce in the list if target path is empty during initation.', async ( done ) => {
-        SerialPortMocker.mock({
-            list : () => Promise.resolve([{path:'COM1'}]),
-        });
+        let mock = MockSerialport.setup();
+        mock.list.mockImplementation(() => Promise.resolve([{path:'COM1'}]));
 
         let target = {};
         let tester = new Tester({

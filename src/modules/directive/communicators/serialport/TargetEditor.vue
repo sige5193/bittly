@@ -170,6 +170,7 @@ export default {
          * refresh serialport list or request 
          */
         async actionSerialPortListRefresh() {
+            debugger
             await this.refreshSerialports();
             if ( 0 === this.serialportOptions.serialports.length ) {
                 this.$message.info(this.$t('directive.communicator.serialport.deviceRefreshEmpty'), 1);

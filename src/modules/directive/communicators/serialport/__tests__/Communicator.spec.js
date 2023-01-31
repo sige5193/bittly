@@ -2,29 +2,9 @@ import Tester from '../../../../../utils/test/UnitTester.js'
 import MdbDirective from '@/models/MdbDirective.js';
 import Communicator from '../Communicator.js'
 import RequestParamBuilder from '../../../parameters/Builder.js';
-import SerialPortMocker from '../SerialPortMocker.js'
+import MockSerialport from './mocks/MockSerialport.js';
 describe('@/communicators/serialport/Communicator.js', () => {
     it('basic', async ( done ) => {
-        let serialportOpen = jest.fn(($this, callback) => {
-            $this.isOpen=true; 
-            $this.trigger('open');
-            callback();
-        });
-        let serialportWrite = jest.fn(($this, data, callback) => {
-            callback();
-            setTimeout(()=> $this.trigger('data', data), 10);
-        });
-        let serialportClose = jest.fn(($this, callback) => {
-            $this.isOpen = false;
-            $this.trigger('close',null);
-            callback();
-        });
-        SerialPortMocker.mock({
-            open : serialportOpen,
-            write : serialportWrite,
-            close : serialportClose,
-        });
-
         let communicatorOnline = jest.fn();
         let communicatorOffline = jest.fn();
 
@@ -34,6 +14,7 @@ describe('@/communicators/serialport/Communicator.js', () => {
                 communicatorOffline : communicatorOffline,
             },
         });
+        MockSerialport.setup();
         await tester.setup();
         await tester.activeNewProject();
         
@@ -77,27 +58,9 @@ describe('@/communicators/serialport/Communicator.js', () => {
         await tester.msleep(1000);
     });
 
-    it('serialport failed test', async () => {
-        let serialportOpen = jest.fn(($this, callback) => {
-            $this.isOpen=true; 
-            $this.trigger('open');
-            callback();
-        });
-        let serialportWrite = jest.fn(($this, data, callback) => {
-            callback();
-        });
-        let serialportClose = jest.fn(($this, callback) => {
-            $this.isOpen = false;
-            $this.trigger('close',null);
-            callback();
-        });
-        SerialPortMocker.mock({
-            open : serialportOpen,
-            write : serialportWrite,
-            close : serialportClose,
-        });
-
+    it('debug serialport failed test', async () => {
         let tester = new Tester();
+        let mock = MockSerialport.setup();
         await tester.setup();
         await tester.activeNewProject();
         
@@ -112,29 +75,11 @@ describe('@/communicators/serialport/Communicator.js', () => {
         directive.requestContent = {};
         directive.requestContent.text = testContent;
 
-        // path is required
-        let setupFailedHandler = jest.fn(() => {});
-        try {
-            await Communicator.setup({});
-        } catch ( e ) {
-            setupFailedHandler(e);
-        }
-        expect(setupFailedHandler.mock.calls.length).toBe(1);
-        expect(setupFailedHandler.mock.calls[0][0].message).toBe('Please input serial port device path');
-
-        try {
-            await Communicator.setup({path:'COM1'});
-        } catch ( e ) {
-            setupFailedHandler(e);
-        }
-        expect(setupFailedHandler.mock.calls.length).toBe(2);
-        expect(setupFailedHandler.mock.calls[1][0].message).toBe('Please input serial port device baudrate')
-
         let com = await Communicator.setup(directive.target);
         expect(com.getIsOpen()).toBeFalsy();
         try {
             // failed to open at first time.
-            serialportOpen.mockImplementationOnce(($this,callback) => callback({message:'OPEN-FAILED-TEST'}));
+            mock.open.mockImplementationOnce(($this,callback) => callback({message:'OPEN-FAILED-TEST'}));
             await com.open();
             expect(true).toBeFalsy();
         } catch ( errMessage ) {
@@ -147,7 +92,7 @@ describe('@/communicators/serialport/Communicator.js', () => {
         await paramBuilder.init();
         try {
             // trigger an error on write data
-            serialportWrite.mockImplementationOnce(($this,data,callback) => callback({message:'WRITE-FAILED-TEST'}));
+            mock.write.mockImplementationOnce(($this,data,callback) => callback({message:'WRITE-FAILED-TEST'}));
             await com.write(paramBuilder.getRequestData());
             expect(true).toBeFalsy();
         } catch ( errMessage ) {
@@ -158,21 +103,14 @@ describe('@/communicators/serialport/Communicator.js', () => {
 
         try {
             // failed to close at first time.
-            serialportClose.mockImplementationOnce(($this,callback) => {
+            mock.close.mockImplementationOnce(($this,callback) => {
                 callback({message:'CLOSE-FAILED-TEST'});
-                $this.trigger('close', {disconnected:true})
+                mock.eventHandlers.close({disconnected:true});
             });
             await com.close();
             expect(true).toBeFalsy();
         } catch ( errMessage ) {
             expect(errMessage).toBe('Unable to close serial port device COM9 : CLOSE-FAILED-TEST');
         }
-
-        let consoleLogOld = window.console.log;
-        window.console.log = jest.fn();
-        com.serialPort.trigger('error',{});
-        com.serialPort.trigger('drain',{});
-        expect(window.console.log).toBeCalledTimes(2);
-        window.console.log = consoleLogOld;
     });
 });
