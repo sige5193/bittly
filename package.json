@@ -14,7 +14,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
-    "test:debug": "vue-cli-service test:unit --runInBand --testTimeout=3600000 --testPathPattern=./src/modules/directive/communicators/bluetooth/__tests__/BtHandlerElectronBluetoothBle.spec.js --testNamePattern=debug",
+    "test:debug": "vue-cli-service test:unit --runInBand --testTimeout=3600000 --testPathPattern=./src/modules/directive/communicators/bluetooth/__tests__/TargetEditor.spec.js --testNamePattern=debug",
     "lint": "vue-cli-service lint",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",

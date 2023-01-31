@@ -1,6 +1,6 @@
 import Tester from '../../../../../utils/test/UnitTester.js';
-import BleDeviceScanner from '../BleDeviceScanner.js'
-describe('@/communicators/bluetooth/BleDeviceScanner.spec.js', () => {
+import ElectronBleDeviceScanner from '../ElectronBleDeviceScanner.js'
+describe('@/communicators/bluetooth/ElectronBleDeviceScanner.spec.js', () => {
     let BleDevice = class {
         constructor(id) {
             this.deviceId = id;
@@ -55,7 +55,7 @@ describe('@/communicators/bluetooth/BleDeviceScanner.spec.js', () => {
         }
 
         // test start
-        let scanner = BleDeviceScanner.getScanner();
+        let scanner = ElectronBleDeviceScanner.getScanner();
 
         // service id is required
         await tester.expectError(async () => await scanner.start(),'Please input service name or UUID');
@@ -104,7 +104,7 @@ describe('@/communicators/bluetooth/BleDeviceScanner.spec.js', () => {
         };
         
         // test start
-        let scanner = new BleDeviceScanner();
+        let scanner = new ElectronBleDeviceScanner();
         scanner.serviceId = '0xFF';
 
         // request device and canel it with empty device list

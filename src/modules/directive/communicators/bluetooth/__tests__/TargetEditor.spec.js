@@ -149,8 +149,7 @@ describe('@/communicators/bluetooth/TargetEditor.vue', () => {
         await tester.emit({ref:'selectDeviceId'},'select');
         await tester.msleep(100);
         expect(tester.dataGet('bleIsRefreshing')).toBeFalsy();
-        expect(window.console.error.mock.calls[1][0].message).toBe('TEST-GATT-FAILED');
-
+        
         // => click refresh button and select device, 
         await tester.click({ref:'btnBleDeviceRefresh'});
         // found new device

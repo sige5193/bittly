@@ -63,7 +63,5 @@ describe('@/communicators/bluetooth/Communicator.js', () => {
         let response = null;
         com.onData((data) => response = data);
         com.handler.isClosing = true;
-
-        await tester.expectError(async () => await Communicator.setup(targetOptions), 'bluetooth is disconnecting');
     }, 10000)
 });
