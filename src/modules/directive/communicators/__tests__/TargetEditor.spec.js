@@ -1,13 +1,12 @@
 import Tester from '../../../../utils/test/UnitTester.js'
-import TestcaseSetup from '../../../../utils/test/Setup.js';
 import TargetEditor from '../TargetEditor.vue'
 import MdbDirective from '@/models/MdbDirective.js'
 import MdbRuntimeVariable from '../../../../models/MdbRuntimeVariable.js'
 import MdbProject from '../../../../models/MdbProject.js';
-import SerialPortMocker from '../../communicators/serialport/SerialPortMocker.js'
+import MockSerialport from '../serialport/__tests__/mocks/MockSerialport.js';
 describe('@/src/modules/directive/communicators/TargetEditor.vue', () => {
     it('basic', async ( ) => {
-        SerialPortMocker.mock();
+        MockSerialport.setup();
         let directive = new MdbDirective();
         let executeHandler = jest.fn().mockResolvedValue(true);
 
@@ -37,7 +36,7 @@ describe('@/src/modules/directive/communicators/TargetEditor.vue', () => {
     })
 
     it('auto send and stop manually', async () => {
-        SerialPortMocker.mock();
+        MockSerialport.setup();
         let executeHandler = jest.fn().mockReturnValue(true);
         let directive = new MdbDirective();
         directive.target.type = 'SerialPort';
@@ -65,7 +64,7 @@ describe('@/src/modules/directive/communicators/TargetEditor.vue', () => {
     }, 10000);
 
     it('auto send with random time', async () => {
-        SerialPortMocker.mock();
+        MockSerialport.setup();
         let executeHandler = jest.fn().mockReturnValue(true);
         let directive = new MdbDirective();
         directive.target.type = 'SerialPort';
@@ -94,7 +93,7 @@ describe('@/src/modules/directive/communicators/TargetEditor.vue', () => {
     }, 10000);
 
     it('auto send', async ( done ) => {
-        SerialPortMocker.mock();
+        MockSerialport.setup();
         let executeHandler = jest.fn().mockReturnValue(true);
         let directive = new MdbDirective();
         directive.target.type = 'SerialPort';
@@ -122,7 +121,7 @@ describe('@/src/modules/directive/communicators/TargetEditor.vue', () => {
     }, 30000)
 
     it('auto send - stop executing if failed to execute', async ( done ) => {
-        SerialPortMocker.mock();
+        MockSerialport.setup();
         let directive = new MdbDirective();
         directive.target.type = 'SerialPort';
 
