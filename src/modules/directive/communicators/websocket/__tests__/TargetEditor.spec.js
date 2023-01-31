@@ -27,7 +27,7 @@ describe('@/communicators/websocket/TargetEditor.vue', () => {
         let url = targetInput.mock.calls[1][0].wsUrl;
         expect(url).toBe('ws://localhost:8899/demo');
         expect(tester.wrapper.vm.getComKeyByOptions({wsUrl:url})).toBe('WebSocket:ws://localhost:8899/demo');
-        expect(TargetEditor.editorConfig().name).toBe('Web Socket');
+        expect(TargetEditor.editorConfig().name).toBe('Websocket');
     
         // open setting modal
         await tester.emit({ref:'btnSetting'},'click');
