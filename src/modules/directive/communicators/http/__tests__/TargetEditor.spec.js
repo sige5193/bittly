@@ -73,7 +73,7 @@ describe('@/communicators/http/TargetEditor.vue', () => {
         expect(target.httpCookies[0].value).toBe('CookieValue001');
 
         let editorConfig = TargetEditor.editorConfig();
-        expect(editorConfig.name).toBe('HTTP');
+        expect(editorConfig.name).toBe('Http');
         expect(editorConfig.defaultDataType).toBe('string');
         expect(editorConfig.defaultResponseViewer).toBe('text');
     }, 50000)
