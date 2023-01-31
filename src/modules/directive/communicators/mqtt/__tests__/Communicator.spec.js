@@ -1,21 +1,17 @@
 import Tester from '../../../../../utils/test/UnitTester.js'
 import MdbDirective from '@/models/MdbDirective.js';
-import TestCaseSetup from '@/utils/test/Setup.js';
 import Communicator from '../Communicator.js'
 import MdbProject from '@/models/MdbProject.js';
 import RequestParamBuilder from '../../../parameters/Builder.js';
 describe('@/communicators/mqtt/Communicator.js', () => {
-    it('normal use', async ( done ) => {
+    it('debug normal use', async ( done ) => {
         let deviceOnline = null;
-        let setup = new TestCaseSetup();
-        setup.onStoreCommit((commit, data) => {
-            if ( 'communicatorOnline' == commit ) {
-                deviceOnline = data;
-            }
-            if ( 'communicatorOffline' == commit ) {
-                deviceOnline = null;
-            }
-        })
+        let setup = new Tester({
+            mockStoreCommits : {
+                communicatorOnline : data => deviceOnline = data,
+                communicatorOffline : () => deviceOnline = null,
+            },
+        });
         await setup.setup();
         
         // test client
@@ -92,7 +88,7 @@ describe('@/communicators/mqtt/Communicator.js', () => {
         expect(com.getIsOpen()).toBeFalsy();
         await com.open();
         expect(com.getIsOpen()).toBeTruthy();
-        await setup.msleep(100);
+        await setup.msleep(500);
         expect(deviceOnline.key).toBe(com.comkey);
         
         com.onData(async ( data ) => {

@@ -33,7 +33,7 @@ describe('@/communicators/mqtt/TargetEditor.vue', () => {
         expect(target.mqttProtocolVersion).toBe('5');
 
         let editorConfig = TargetEditor.editorConfig();
-        expect(editorConfig.name).toBe('MQTT');
+        expect(editorConfig.name).toBe('Mqtt');
         expect(editorConfig.defaultDataType).toBe('byte');
         expect(editorConfig.defaultResponseViewer).toBe('hex');
     })
