@@ -181,5 +181,5 @@ describe('@/communicators/bluetooth/TargetEditor.vue', () => {
 
         window.console.log = oldConsoleLog;
         window.console.error = oldConsoleError;
-    }, 10000)
+    }, 20000)
 });

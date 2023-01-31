@@ -1,6 +1,6 @@
 import TargetEditor from '../TargetEditor.vue'
 import Tester from '../../../../../utils/test/UnitTester.js'
-import SerialPortMocker from '../../serialport/SerialPortMocker.js'
+import MockSerialport from '../../serialport/__tests__/mocks/MockSerialport';
 describe('@/communicators/modbus/TargetEditor.vue', () => {
     it('target editor basic', async () => {
         let tester = new Tester();
@@ -13,11 +13,10 @@ describe('@/communicators/modbus/TargetEditor.vue', () => {
     });
     
     it('modbus-RTU', async ( ) => {
-        let target = {};
-        SerialPortMocker.mock({
-            list : () => Promise.resolve([{path:'COM1'},{path:'COM2'}]),
-        });
+        let mock = MockSerialport.setup();
+        mock.list.mockImplementation(() => Promise.resolve([{path:'COM1'},{path:'COM2'}]));
 
+        let target = {};
         let tester = new Tester({
             props : {
                 value : target,

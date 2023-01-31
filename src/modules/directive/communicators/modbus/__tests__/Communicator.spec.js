@@ -1,8 +1,8 @@
 import Tester from '../../../../../utils/test/UnitTester.js'
 import ModbusMocker from '../ModbusMocker.js';
-import SerialPortMocker from '../../serialport/SerialPortMocker.js'
 import Buffer from '../../../../../utils/test/Buffer.js';
 import Communicator from '../Communicator.js'
+import MockSerialport from '../../serialport/__tests__/mocks/MockSerialport.js';
 describe('@/communicators/modbus/Communicator.js', () => {
     it('modbus tcp-ip with func code 01', async () => {
         ModbusMocker.setup();
@@ -68,7 +68,7 @@ describe('@/communicators/modbus/Communicator.js', () => {
 
     it('modbus rtu with func code 03', async () => {
         ModbusMocker.setup();
-        SerialPortMocker.mock();
+        MockSerialport.setup();
 
         let tester = new Tester();
         await tester.setup();
