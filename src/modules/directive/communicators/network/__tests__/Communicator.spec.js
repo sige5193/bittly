@@ -2,37 +2,10 @@ import Tester from '../../../../../utils/test/UnitTester.js'
 import MdbDirective from '@/models/MdbDirective.js';
 import Communicator from '../Communicator.js'
 import RequestParamBuilder from '../../../parameters/Builder.js';
+import MockNetSocket from './mocks/MockNetSocket.js';
+import MockDgram from './mocks/MockDgram.js';
 describe('@/communicators/network/Communicator.js', () => {
     it('tcp', async ( done ) => {
-        /** overide network class */
-        window.net = {};
-        window.net.Socket = class {
-            constructor () {
-                this.eventHandlers = {};
-            }
-            on( event, handler ) {
-                this.eventHandlers[event] = handler;
-            }
-            connect(options, callback) {
-                callback();
-            }
-            write( data, callback ) {
-                let $this = this;
-                setTimeout(() => {
-                    $this.eventHandlers.data(data);
-                }, 100);
-                callback();
-            }
-            end() {
-                let $this = this;
-                setTimeout(function() {
-                    $this.isOpen = false;
-                    $this.eventHandlers.close();
-                }, 200);
-            }
-            destroy() {}
-        };
-
         let communicatorOnline = jest.fn();
         let communicatorOffline = jest.fn();
         let tester = new Tester({
@@ -41,6 +14,8 @@ describe('@/communicators/network/Communicator.js', () => {
                 communicatorOffline,
             },
         });
+
+        let mock = MockNetSocket.setup();
         await tester.setup();
         await tester.activeNewProject();
         
@@ -76,48 +51,6 @@ describe('@/communicators/network/Communicator.js', () => {
     })
 
     it('udp', async ( done ) => {
-        /** overide network class */
-        window.dgram = {};
-        window.dgram.createSocket = function() {
-            return new class {
-                constructor () {
-                    this.eventHandlers = {};
-                }
-                on( event, handler ) {
-                    this.eventHandlers[event] = handler;
-                }
-                send(data, x, dataLength, port, host, callback ) {
-                    callback();
-                    let $this = this;
-                    setTimeout(() => {
-                        $this.eventHandlers.message(data);
-                    }, 100);
-                }
-                
-
-                write( data, callback ) {
-                    let $this = this;
-                    setTimeout(() => {
-                        $this.eventHandlers.data(data);
-                    }, 100);
-                    callback();
-                }
-                end() {
-                    let $this = this;
-                    setTimeout(function() {
-                        $this.isOpen = false;
-                        $this.eventHandlers.close();
-                    }, 200);
-                }
-                close() {
-                    let $this = this;
-                    setTimeout(function() {
-                        $this.eventHandlers.close();
-                    }, 200);
-                }
-            };
-        };
-
         let communicatorOnline = jest.fn();
         let communicatorOffline = jest.fn();
         let tester = new Tester({
@@ -126,6 +59,7 @@ describe('@/communicators/network/Communicator.js', () => {
                 communicatorOffline,
             },
         });
+        MockDgram.setup();
         await tester.setup();
         await tester.activeNewProject();
         
