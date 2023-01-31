@@ -455,6 +455,9 @@ export default class UnitTester {
         } catch ( e ) {
             errorHandler(e);
         }
+        if ( 0 === errorHandler.mock.calls.length ) {
+            debugger
+        }
         let throwError = errorHandler.mock.calls[0][0];
         let message = 'string' == typeof(throwError) ? throwError : throwError.message; 
         expect(message).toBe(error);

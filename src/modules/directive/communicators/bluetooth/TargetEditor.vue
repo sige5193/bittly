@@ -120,7 +120,7 @@
 </template>
 <script>
 import Common from '@/utils/Common.js'
-import ClassicHandler from './ClassicHandler.js'
+import BtHandlerClassic from './BtHandlerClassic.js'
 import TargetEditorMixin from '../TargetEditorMixin.js'
 import ElectronBleDeviceScanner from './ElectronBleDeviceScanner.js'
 import MdbRuntimeVariable from '../../../../models/MdbRuntimeVariable.js'
@@ -324,7 +324,7 @@ export default {
             this.isRefreshing = true;
             this.devlist = [];
             
-            let list = await ClassicHandler.list();
+            let list = await BtHandlerClassic.list();
             if ( 0 == list.length ) {
                 this.$message.info(this.$t('directive.communicator.bluetooth.noDeviceFound'));
             }

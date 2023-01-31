@@ -1,5 +1,5 @@
 import CommunicatorBase from '../CommunicatorBase.js';
-import ClassicHandler from './ClassicHandler.js'
+import BtHandlerClassic from './BtHandlerClassic.js'
 import Environment from '../../../../environments/Environment.js'
 import BtHandlerWebBluetoothBle from './BtHandlerWebBluetoothBle.js';
 import BtHandlerElectronBluetoothBle from './BtHandlerElectronBluetoothBle.js'
@@ -54,7 +54,7 @@ export default class Communicator extends CommunicatorBase {
         let env = Environment.getEnv();
         this.handler = null; 
         if ( 'classic' == this.options.btType ) {
-            this.handler = new ClassicHandler(this);
+            this.handler = new BtHandlerClassic(this);
         } else if ( 'ble'== this.options.btType && 'web-bluetooth-ble' === env.bluetoothBleHandler ) {
             this.handler = new BtHandlerWebBluetoothBle(this);
         } else if ( 'ble' === this.options.btType && 'electron-bluetooth-ble' === env.bluetoothBleHandler ) {

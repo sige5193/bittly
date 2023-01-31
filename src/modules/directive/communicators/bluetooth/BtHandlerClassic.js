@@ -3,7 +3,7 @@ import Common from "@/utils/Common";
  * the bluetooth handler for classic device
  * @author sige
  */
-export default class ClassicHandler {
+export default class BtHandlerClassic {
     /**
      * list all availabel devices
      * @return {Promise}
@@ -30,7 +30,6 @@ export default class ClassicHandler {
         let $this = this;
         this.com = communicator;
         this.isOpen = false;
-        this.isClosing = false;
         if ( Common.isEmpty(this.com.options.btAddress) ) {
             throw Error(this.com.$t('selectDevice'));
         }
