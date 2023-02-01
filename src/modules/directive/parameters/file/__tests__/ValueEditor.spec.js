@@ -3,16 +3,11 @@ import ValueEditor from '../ValueEditor.vue'
 describe('@/modules/directive/parameter/file/ValueEditor.vue', () => {
     it('normal use', async ( done ) => {
         let params = {};
-        let tester = new Tester({
-            props: {
-                value : params,
-            },
-            listeners : {
-                input : ( newValue ) => {
-                    expect(newValue).toBe('DEMO-PATH');
-                    done();
-                }
-            }
+        let tester = new Tester();
+        tester.prop('value', params);
+        tester.on('input', newValue => {
+            expect(newValue.path).toBe('DEMO-PATH');
+            done();
         });
         await tester.setup();
         await tester.mount(ValueEditor);

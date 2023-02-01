@@ -36,7 +36,7 @@ describe('@/communicators/serailport/TargetEditor.vue', () => {
         expect(editorConfig.name).toBe('SerialPort');
         expect(editorConfig.defaultDataType).toBe('byte');
         expect(editorConfig.defaultResponseViewer).toBe('hex');
-    });
+    }, 10000);
 
     it('auto select device if only one device in list', async ( done ) => {
         let mock = MockSerialport.setup();

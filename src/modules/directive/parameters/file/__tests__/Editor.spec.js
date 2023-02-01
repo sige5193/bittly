@@ -3,13 +3,6 @@ import MdbDirective from '@/models/MdbDirective.js'
 import Editor from '../Editor.vue'
 describe('@/modules/directive/parameter/file/Editor.vue', () => {
     it('normal use', async ( ) => {
-        window.fs = {
-            constants:{R_OK:1},
-            accessSync : () => {},
-            statSync : () => { return {size:10} },
-            readFileSync : () => 'ABC',
-        };
-
         let directive = new MdbDirective();
         directive.requestContent.file = {path:'SAVE-PATH'};
         
@@ -21,6 +14,13 @@ describe('@/modules/directive/parameter/file/Editor.vue', () => {
         });
         await tester.setup();
         await tester.mount(Editor);
+        
+        window.fs = {
+            constants:{R_OK:1},
+            accessSync : () => {},
+            statSync : () => { return {size:10} },
+            readFileSync : () => 'ABC',
+        };
         
         // Mock codemirror
         let cm = {addLineClass(){},scrollIntoView(){}};

@@ -1,13 +1,11 @@
-import TestCaseSetup from '@/utils/test/Setup.js';
+import Tester from '../../../../../utils/test/UnitTester.js';
 import ValueEditor from '../ValueEditor.vue'
 describe('@/modules/directive/parameter/text/ValueEditor.vue', () => {
     it('normal use', async ( ) => {
         let params = 'AA';
-        let setup = new TestCaseSetup();
-        setup.componentSetProp('value',params);
-        setup.componentOn('input', ( newValue ) => {
-            params = newValue;
-        });
+        let setup = new Tester();
+        setup.prop('value', params);
+        setup.on('input', newValue => params = newValue);
         await setup.setup();
 
         let wrapper = await setup.mount(ValueEditor);

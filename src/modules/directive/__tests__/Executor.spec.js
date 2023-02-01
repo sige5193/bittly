@@ -3,7 +3,7 @@ import Executor from '../Executor.js'
 import MdbDirective from '@/models/MdbDirective.js'
 import HttpMocker from '../communicators/http/HttpMocker.js'
 import HttpRequestParamBuilder from '../communicators/http/RequestParamBuilder.js'
-import SerialPortMocker from '../communicators/serialport/SerialPortMocker.js'
+import MockSerialport from '../communicators/serialport/__tests__/mocks/MockSerialport.js'
 describe('@/src/modules/directive/Executor.js', () => {
     it('basic', async ( done ) => {
         HttpMocker.mock();
@@ -37,8 +37,8 @@ describe('@/src/modules/directive/Executor.js', () => {
     })
 
     it('custom parameters', async () => {
-        let serialportMockWrite = jest.fn(($this, data, callback) => callback());
-        SerialPortMocker.mock({write : serialportMockWrite});
+        let serialport = MockSerialport.setup();
+        serialport.enableEcho = false;
 
         let tester = new Tester();
         await tester.setup();
@@ -60,12 +60,11 @@ describe('@/src/modules/directive/Executor.js', () => {
         await executor.execute();
         await tester.msleep(200);
 
-        expect(serialportMockWrite).toBeCalled();
-        let com = serialportMockWrite.mock.calls[0][0];
-        let data = serialportMockWrite.mock.calls[0][1];
-        com.trigger('data', data);
+        expect(serialport.write).toBeCalled();
+        let data = serialport.write.mock.calls[0][1];
+        serialport.response(data);
         await tester.msleep(200);
-        com.trigger('data', data);
+        serialport.response(data);
         await tester.msleep(200);
 
         let response = executor.getResponseAsForm();

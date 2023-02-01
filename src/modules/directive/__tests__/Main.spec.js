@@ -2,13 +2,26 @@ import MdbDirective from '../../../models/MdbDirective.js';
 import MdbRuntimeVariable from '../../../models/MdbRuntimeVariable.js'
 import Tester from '../../../utils/test/UnitTester.js'
 import Main from '../Main.vue'
-import SerialPortMocker from '../communicators/serialport/SerialPortMocker.js'
 import MdbProject from '../../../models/MdbProject.js';
+import MockSerialport from '../communicators/serialport/__tests__/mocks/MockSerialport.js';
 describe('@/src/modules/directive/Main.vue', () => {
+    let setupTester = async () => {
+        let tester = new Tester({
+            stubs : {
+                'panel-directive' : {
+                    template : '<div></div>',
+                    methods : {}
+                }
+            },
+        });
+        await tester.setup();
+        return tester;
+    };
+    
     beforeEach(() => {
         window.ipcRenderer = {};
         window.ipcRenderer.send = () => {};
-        SerialPortMocker.mock();
+        MockSerialport.setup();
     });
 
     /**
@@ -36,8 +49,7 @@ describe('@/src/modules/directive/Main.vue', () => {
     };
     
     it('open the directives last opened', async() => {
-        let tester = new Tester();
-        await tester.setup();
+        let tester = await setupTester();
         
         let project = await MdbProject.findOne({});
         tester.activeProject(project);
@@ -65,8 +77,7 @@ describe('@/src/modules/directive/Main.vue', () => {
     });
 
     it('no memorized directives', async() => {
-        let tester = new Tester();
-        await tester.setup();
+        let tester = await setupTester();
         
         let project = await MdbProject.findOne({});
         tester.activeProject(project);
@@ -150,8 +161,7 @@ describe('@/src/modules/directive/Main.vue', () => {
     }, 30000);
 
     it('directive tab add', async() => {
-        let tester = new Tester();
-        await tester.setup();
+        let tester = await setupTester();
         
         let project = await MdbProject.findOne({});
         tester.activeProject(project);
@@ -174,8 +184,7 @@ describe('@/src/modules/directive/Main.vue', () => {
     });
 
     it('auto close tab while directive deleted', async() => {
-        let tester = new Tester();
-        await tester.setup();
+        let tester = await setupTester();
         
         let project = await MdbProject.findOne({});
         tester.activeProject(project);
@@ -197,8 +206,7 @@ describe('@/src/modules/directive/Main.vue', () => {
     });
 
     it('new directive saved', async() => {
-        let tester = new Tester();
-        await tester.setup();
+        let tester = await setupTester();
         
         let project = await MdbProject.findOne({});
         tester.activeProject(project);
@@ -220,8 +228,7 @@ describe('@/src/modules/directive/Main.vue', () => {
     });
 
     it('open directive from bittly://', async() => {
-        let tester = new Tester();
-        await tester.setup();
+        let tester = await setupTester();
         
         let project = await MdbProject.findOne({});
         tester.activeProject(project);
@@ -241,8 +248,7 @@ describe('@/src/modules/directive/Main.vue', () => {
     });
 
     it('directive tab more list', async() => {
-        let tester = new Tester();
-        await tester.setup();
+        let tester = await setupTester();
         
         let project = await MdbProject.findOne({});
         tester.activeProject(project);
@@ -262,8 +268,7 @@ describe('@/src/modules/directive/Main.vue', () => {
 
     it('directive tab context menu : CreateNew', async() => {
         window.console.error = () => {};
-        let tester = new Tester();
-        await tester.setup();
+        let tester = await setupTester();
         
         let project = await MdbProject.findOne({});
         tester.activeProject(project);
@@ -281,8 +286,7 @@ describe('@/src/modules/directive/Main.vue', () => {
 
     it('directive tab context menu : DuplicateThis', async() => {
         window.console.error = () => {};
-        let tester = new Tester();
-        await tester.setup();
+        let tester = await setupTester();
         
         let project = await MdbProject.findOne({});
         tester.activeProject(project);
@@ -300,8 +304,7 @@ describe('@/src/modules/directive/Main.vue', () => {
 
     it('directive tab context menu : CopyName', async() => {
         window.console.error = () => {};
-        let tester = new Tester();
-        await tester.setup();
+        let tester = await setupTester();
         
         let project = await MdbProject.findOne({});
         tester.activeProject(project);
@@ -322,8 +325,7 @@ describe('@/src/modules/directive/Main.vue', () => {
 
     it('directive tab context menu : CopyPathName', async() => {
         window.console.error = () => {};
-        let tester = new Tester();
-        await tester.setup();
+        let tester = await setupTester();
         
         let project = await MdbProject.findOne({});
         tester.activeProject(project);
@@ -344,8 +346,7 @@ describe('@/src/modules/directive/Main.vue', () => {
 
     it('directive tab context menu : CloseThis', async() => {
         window.console.error = () => {};
-        let tester = new Tester();
-        await tester.setup();
+        let tester = await setupTester();
         
         let project = await MdbProject.findOne({});
         tester.activeProject(project);
@@ -365,8 +366,7 @@ describe('@/src/modules/directive/Main.vue', () => {
 
     it('directive tab context menu : CloseOthers', async() => {
         window.console.error = () => {};
-        let tester = new Tester();
-        await tester.setup();
+        let tester = await setupTester();
         
         let project = await MdbProject.findOne({});
         tester.activeProject(project);
@@ -393,8 +393,7 @@ describe('@/src/modules/directive/Main.vue', () => {
 
     it('directive tab context menu : CloseAll', async() => {
         window.console.error = () => {};
-        let tester = new Tester();
-        await tester.setup();
+        let tester = await setupTester();
         
         let project = await MdbProject.findOne({});
         tester.activeProject(project);

@@ -24,15 +24,15 @@ describe('@/src/modules/directive/Config.vue', () => {
         await tester.click({ref:'btnAttrDel'},null,0);
 
         // input attribute
-        await tester.input({ref:'attrName_0'},'ATTR01', null, 0);
-        await tester.input({ref:'attrValue_0'},'VAL01', null, 0);
+        await tester.input({ref:'attrName_0',index:0},'ATTR01');
+        await tester.input({ref:'attrValue_0',index:0},'VAL01');
         
         // add attribute and delete it
-        await tester.click({ref:'btnAttrAdd'},null,0);
-        await tester.click({ref:'btnAttrDel'},null,1);
+        await tester.click({ref:'btnAttrAdd',index:0});
+        await tester.click({ref:'btnAttrDel',index:1});
 
         // add an empty attribute
-        await tester.click({ref:'btnAttrAdd'},null,0);
+        await tester.click({ref:'btnAttrAdd',index:0});
         
         // update directive
         await tester.emit({ref:'modalEditor'},'ok');

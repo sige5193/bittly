@@ -22,6 +22,7 @@ export default class MockSerialport {
      * @constructor
      */
     constructor() {
+        this.enableEcho = true;
         this.drainCallback = null;
         this.eventHandlers = {};
         this.list = this.mockList();
@@ -29,6 +30,13 @@ export default class MockSerialport {
         this.write = this.mockWrite();
         this.close = this.mockClose();
         this.on = this.mockOn();
+    }
+
+    /**
+     * @param {*} data 
+     */
+    response( data ) {
+        this.eventHandlers.data(data);
     }
 
     /**
@@ -60,7 +68,9 @@ export default class MockSerialport {
         return jest.fn(($this,data,callback) => {
             callback();
             setTimeout(()=> mock.drainCallback(), 100);
-            setTimeout(()=> mock.eventHandlers.data(data), 200);
+            if ( mock.enableEcho ) {
+                setTimeout(()=> mock.eventHandlers.data(data), 200);
+            }
         });
     }
 

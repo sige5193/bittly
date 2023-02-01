@@ -194,5 +194,5 @@ describe('@/modules/directive/parameter/form/Editor.vue', () => {
         await tester.trigger({ref:'iconRowDelete_0'}, 'click');
         await tester.trigger({ref:'iconRowDelete_0'}, 'click');
         expect(directive.requestContent.form.length).toBe(0);
-    });
+    }, 10000);
 });

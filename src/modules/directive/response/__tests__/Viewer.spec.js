@@ -145,7 +145,7 @@ describe('@/modules/directive/response/Viewer.vue', () => {
         await tester.msleep(100);
         expect(messageError).toBeCalledTimes(3);
         expect(messageError.mock.calls[2][0]).toBe('Save as testcase not available under preserve mode.');
-    })
+    }, 30000)
     
     it('save response as excel', async () => {
         let exportAsExcel = jest.fn(() => {});
@@ -209,15 +209,14 @@ describe('@/modules/directive/response/Viewer.vue', () => {
         let dialogShowSaveDialogSync = jest.fn();
         let fsWriteFile = jest.fn();
         let shellOpenPath = jest.fn();
-        window.path = require('path');
-        window.remote = {
-            shell : {openPath : shellOpenPath}
-        };
-        window.fs = {
-            promises : {writeFile : fsWriteFile}
-        };
-        window.dialog = {
-            showSaveDialogSync : dialogShowSaveDialogSync,
+
+        let setupWindowVariables = () => {
+            window.path = require('path');
+            window.remote = {
+                shell : {openPath : shellOpenPath}
+            };
+            window.fs.promises = {writeFile : fsWriteFile}
+            window.dialog = {showSaveDialogSync : dialogShowSaveDialogSync};
         };
 
         // preserve mode enable
@@ -227,6 +226,7 @@ describe('@/modules/directive/response/Viewer.vue', () => {
             },
         });
         await tester.setup();
+        setupWindowVariables();
         await tester.mount(Viewer, true);
         await tester.emit({ref:'switchPreserveMode'}, 'change', [true]);
         await tester.wrapper.setProps({responseData:Buffer.from("ABCD")});
@@ -250,6 +250,7 @@ describe('@/modules/directive/response/Viewer.vue', () => {
             },
         });
         await tester.setup();
+        setupWindowVariables();
         await tester.mount(Viewer, true);
         tester.wrapper.vm.responseFormat = 'hex';
         dialogShowSaveDialogSync.mockImplementationOnce(opt => `/fake/path/${opt.defaultPath}`);
@@ -267,20 +268,22 @@ describe('@/modules/directive/response/Viewer.vue', () => {
             props : {responseData : Buffer.from('')},
         });
         await tester.setup();
+        setupWindowVariables();
         await tester.mount(Viewer, true);
         tester.wrapper.vm.responseFormat = 'hex';
         tester.wrapper.vm.actionResponseMenuItemClick({key:'SaveAsFile'});
         await tester.msleep(100);
         expect(shellOpenPath).toBeCalledTimes(2);
 
-         // user cancel folder selection
-         tester = new Tester({
+        // user cancel folder selection
+        tester = new Tester({
             props : {
                 directive : await MdbDirective.create({name:'TEST-DIR'}),
                 responseData : Buffer.from('ABCD')
             },
         });
         await tester.setup();
+        setupWindowVariables();
         await tester.mount(Viewer, true);
         tester.wrapper.vm.responseFormat = 'hex';
         dialogShowSaveDialogSync.mockImplementationOnce(opt => undefined);

@@ -38,7 +38,7 @@ describe('@/communicators/mqtt/TargetEditor.vue', () => {
         expect(editorConfig.defaultResponseViewer).toBe('hex');
     })
 
-    it('config v5.0', async ( ) => {
+    it('debug config v5.0', async ( ) => {
         let target = {};
         let tester = new Tester({
             props : {
@@ -76,11 +76,11 @@ describe('@/communicators/mqtt/TargetEditor.vue', () => {
         
         // add user properties
         await tester.click({ref:'btnUserPropertiesAdd'});
-        await tester.input({ref:'inputUserPropertiesName'},'Name001', null, 0);
-        await tester.input({ref:'inputUserPropertiesValue'},'Value001', null, 0);
-        await tester.click({ref:'btnUserPropertiesItemAdd'}, null, 0);
-        await tester.input({ref:'inputUserPropertiesName'},'Name002', null, 1);
-        await tester.input({ref:'inputUserPropertiesValue'},'Value002', null, 1);
+        await tester.input({ref:'inputUserPropertiesName',index:0},'Name001');
+        await tester.input({ref:'inputUserPropertiesValue',index:0},'Value001');
+        await tester.click({ref:'btnUserPropertiesItemAdd',index:0});
+        await tester.input({ref:'inputUserPropertiesName',index:1},'Name002');
+        await tester.input({ref:'inputUserPropertiesValue',index:1},'Value002');
         // delete the first property
         await tester.click({ref:'btnUserPropertiesItemDelete'},null,0);
         await tester.emit({ref:'modalOptions'}, 'ok');

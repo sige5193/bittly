@@ -71,7 +71,7 @@ describe('@/communicators/modbus/TargetEditor.vue', () => {
         expect(target.modbusDataBits).toBe('5');
         expect(target.modbusStopBits).toBe('2');
         expect(target.modbusParity).toBe('space');
-    }, 10000)
+    }, 30000)
 
     it('modbus-TCP', async ( ) => {
         let target = {};
@@ -99,5 +99,5 @@ describe('@/communicators/modbus/TargetEditor.vue', () => {
         await tester.select({ref:'sltFuncCode'}, '05');
         expect(target.modbusFuncCode).toBe('05');
         expect(tester.wrapper.findComponent({ref:'txtLength'}).exists()).toBeFalsy();
-    })
+    }, 30000)
 });

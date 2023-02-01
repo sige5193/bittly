@@ -118,6 +118,15 @@ export default class UnitTester {
     }
 
     /**
+     * set prop value to componement
+     * @param {*} name 
+     * @param {*} value 
+     */
+    prop( name, value ) {
+        this.componentMountPropsData[name] = value;
+    }
+
+    /**
      * setup a test env
      */
     async setup( envName='Electron' ) {
@@ -295,22 +304,6 @@ export default class UnitTester {
             let textarea = com.find('textarea');
             await textarea.setValue(value);
         }
-    }
-
-    /**
-     * change input value
-     */
-    async input( selector, value, wrapper=null, index=0 ) {
-        if ( null === wrapper ) {
-            wrapper = this.wrapper;
-        }
-        
-        if ( 'object' === typeof(selector) ) {
-            let com = wrapper.findAllComponents(selector).at(index);
-            let input = com.find('input');
-            await input.setValue(value);
-        }
-        await this.msleep(200);
     }
 
     /**
@@ -512,17 +505,24 @@ export default class UnitTester {
      */
     getTargetBySelector( wrapper, selector ) {
         let selectorName = JSON.stringify(selector);
+        let querySelector = selector;
+        if ( 'object' === typeof(selector) ) {
+            querySelector = {};
+            if ( undefined != selector.ref ) {
+                querySelector.ref = selector.ref;
+            }
+        }
+
         let index = 0;
         if ( 'object' === typeof(selector) && undefined !== selector.index ) {
             index = selector.index;
-            delete selector.index;
         }
 
         let target = null;
         if ( 0 == index ) {
-            target = wrapper.findComponent(selector);
+            target = wrapper.findComponent(querySelector);
         } else {
-            let list = wrapper.findAllComponents(selector);
+            let list = wrapper.findAllComponents(querySelector);
             if ( 0 === list.length ) {
                 throw Error(`unable to locate target by given selector : ${selectorName}`);
             }
@@ -552,6 +552,21 @@ export default class UnitTester {
         } else {
             await com.vm.$emit('click');
         }
+        await this.msleep(200);
+    }
+
+    /**
+     * change input value
+     */
+    async input( selector, value, wrapper=null) {
+        if ( null === wrapper ) {
+            wrapper = this.wrapper;
+        }
+        let input = this.getTargetBySelector(wrapper, selector);
+        if ( undefined !== input.vm ) {
+            input = input.find(selector.input || 'input');
+        }
+        await input.setValue(value);
         await this.msleep(200);
     }
 }

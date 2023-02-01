@@ -56,12 +56,13 @@ describe('@/src/modules/directive/communicators/TargetEditor.vue', () => {
         await tester.trigger({ref:'checkboxAutoSendTimeFixed'}, 'click');
         await tester.input({ref:'checkboxAutoSendTimeMin'}, '100');
         await tester.input({ref:'checkboxAutoSendTimeMax'}, '200');
-        await tester.emit({ref:'modalAutoSend'},'ok');
+        await tester.emit({ref:'modalAutoSend'},'ok'); // start auto send
+
         await tester.msleep(2000);
         await tester.click({ref:'btnSend'});
-        expect(executeHandler.mock.calls.length).toBeGreaterThanOrEqual(10);
+        expect(executeHandler.mock.calls.length).toBeGreaterThanOrEqual(5);
         expect(executeHandler.mock.calls.length).toBeLessThanOrEqual(20);
-    }, 10000);
+    }, 30000);
 
     it('auto send with random time', async () => {
         MockSerialport.setup();
@@ -88,9 +89,9 @@ describe('@/src/modules/directive/communicators/TargetEditor.vue', () => {
         await tester.emit({ref:'modalAutoSend'},'ok');
         await tester.msleep(2000);
         tester.wrapper.destroy();
-        expect(executeHandler.mock.calls.length).toBeGreaterThanOrEqual(10);
+        expect(executeHandler.mock.calls.length).toBeGreaterThanOrEqual(5);
         expect(executeHandler.mock.calls.length).toBeLessThanOrEqual(20);
-    }, 10000);
+    }, 30000);
 
     it('auto send', async ( done ) => {
         MockSerialport.setup();

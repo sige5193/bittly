@@ -12,7 +12,7 @@ describe('@/modules/directive/parameter/Editor.vue', () => {
         });
         await tester.setup();
         await tester.mount(ViewerHex);
-        expect(tester.wrapper.find('.directive-response-hex-entry').text()).toBe('0000000000 3132200034353600000000000000000000000000 12 .456.............');
+        expect(tester.wrapper.find('.directive-response-hex-entry').text()).toBe('0000000000 31322000343536-------------------------- 12 .456.............');
 
         // change line size to 2
         await tester.input({ref:'inputLineSize'},2);

@@ -1,7 +1,7 @@
 import Tester from '../../../utils/test/UnitTester.js'
 import Execute from '../Execute.vue'
 import MdbDirective from '../../../models/MdbDirective.js'
-import SerialPortMocker from '../communicators/serialport/SerialPortMocker.js'
+import MockSerialport from '../communicators/serialport/__tests__/mocks/MockSerialport.js';
 describe('@/src/modules/directive/Execute.vue', () => {
     it('new directive save', async() => {
         let directiveSavedCallback = jest.fn();
@@ -87,10 +87,8 @@ describe('@/src/modules/directive/Execute.vue', () => {
     });
 
     it('execute', async () => {
-        let serialPortWrite = jest.fn(($this, data, callback) => callback());
-        SerialPortMocker.mock({
-            write : serialPortWrite,
-        });
+        let mock = MockSerialport.setup();
+        mock.enableEcho = false;
 
         let responseViewerNewResponseData = jest.fn();
         let responseViewerStartNewResponse = jest.fn();
@@ -122,14 +120,13 @@ describe('@/src/modules/directive/Execute.vue', () => {
         
         await tester.wrapper.vm.actionSend();
         await tester.msleep(200);
-        expect(serialPortWrite).toBeCalled();
+        expect(mock.write).toBeCalled();
 
         // response data twice
-        let com = serialPortWrite.mock.calls[0][0];
-        let data = serialPortWrite.mock.calls[0][1];
-        com.trigger('data', data);
+        let data = mock.write.mock.calls[0][1];
+        mock.response(data);
         await tester.msleep(200);
-        com.trigger('data', data);
+        mock.response(data);
         await tester.msleep(200);
 
         expect(responseViewerNewResponseData).toBeCalledTimes(2);
@@ -137,11 +134,11 @@ describe('@/src/modules/directive/Execute.vue', () => {
         expect(tester.dataGet('responseData').toString()).toBe('how are you ?how are you ?');
 
         // Failed to send
-        serialPortWrite.mockImplementation(() => { throw Error('TEST-ERROR'); });
+        mock.write.mockImplementation(() => { throw Error('TEST-ERROR'); });
         await tester.wrapper.vm.actionSend();
         await tester.msleep(200);
         expect(tester.dataGet('errorMessage')).toBe('TEST-ERROR');
-    }, 10000);
+    });
 
     it('ui operations', async() => {
         let scriptEditorOpen = jest.fn();
@@ -179,10 +176,11 @@ describe('@/src/modules/directive/Execute.vue', () => {
         await tester.click({ref:'btnOpenConfigModal'});
 
         // share 
-        await tester.trigger({ref:'btnExtAction'}, 'click');
-        await tester.msleep(200);
-        await tester.emit({ref:'menuBtnExtAction'}, 'click', [{key:'directiveExtActionShare'}]);
-        await tester.msleep(200);
+        await tester.dropdownMenuClick(
+            {ref:'btnExtAction'},
+            {ref:'menuBtnExtAction'},
+            {key:'directiveExtActionShare',domEvent:{target:{dataset:{}}}}
+        );
         expect(extActionShareExecute).toBeCalled();
 
         // move mouse
