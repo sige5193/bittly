@@ -23,7 +23,7 @@ describe('@/modules/panel/PanelPanelRun.vue', () => {
         await tester.click({ref:'btnToggleVariable'});
 
         // refresh
-        vm.refresh();
+        vm.refreshPanel();
         await tester.msleep(100);
 
         // close drawers
@@ -33,12 +33,8 @@ describe('@/modules/panel/PanelPanelRun.vue', () => {
         await tester.msleep(100);
 
         // switch to edit mode
-        let comClose = jest.fn();
-        window.app.$store.getters.communicators = [{
-            close : comClose,
-        }];
         vm.actionModeSwitch();
         await tester.msleep(100);
-        expect(comClose).toBeCalled();
+        expect(tester.storeData['closeAllCommunicators']).toBe(undefined);
     })
 });

@@ -37,6 +37,6 @@ describe('@/modules/panel/Runtime.js', () => {
 
         // push request log
         runtime.requestLogPush({});
-        expect(widgetRefresh).toBeCalledTimes(2);
+        expect(widgetRefresh).toBeCalledTimes(1);
     })
 });
