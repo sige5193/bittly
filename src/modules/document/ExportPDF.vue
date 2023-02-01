@@ -186,6 +186,9 @@ export default {
          * event handler on jspdf requires fonts.
          */
         handleJsPdfEventAddFonts( jspdf ) {
+            if ( Common.isEmpty(this.docOptions.fontFile) ) {
+                return ;
+            }
             let fontFileContent = window.fs.readFileSync(this.docOptions.fontFile);
             let fontContent = fontFileContent.toString('base64');
             jspdf.addFileToVFS('custom-normal.ttf', fontContent);
@@ -205,7 +208,9 @@ export default {
          */
         async actionStart() {
             this.docWriter.doc = new jsPDF();
-            this.docWriter.doc.setFont('custom', 'normal');
+            if ( !Common.isEmpty(this.docOptions.fontFile) ) {
+                this.docWriter.doc.setFont('custom', 'normal');
+            }
             this.docWriter.cursorY = this.template.pageMarginTop;
             this.docWriter.currentPageNumber = 1;
             this.docWriter.bookmarkMap = {};
