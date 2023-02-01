@@ -1,4 +1,4 @@
-import TestCaseSetup from '../../../utils/test/Setup.js';
+import TestCaseSetup from '../../../utils/test/UnitTester.js';
 import DropdownEnvSwitch from '../DropdownEnvSwitch.vue'
 import MdbEnvironment from '../../../models/MdbEnvironment.js';
 describe('@/src/modules/environment/DropdownEnvSwitch.vue', () => {
@@ -6,8 +6,8 @@ describe('@/src/modules/environment/DropdownEnvSwitch.vue', () => {
         let setup = new TestCaseSetup();
         await setup.setup();
 
-        let project = await setup.setActiveProject('new');
-        setup.componentSetProp('projectId', project.id);
+        let project = await setup.activeNewProject();
+        setup.prop('projectId', project.id);
 
         let env = new MdbEnvironment();
         env.name = 'ENV-001';
@@ -16,10 +16,8 @@ describe('@/src/modules/environment/DropdownEnvSwitch.vue', () => {
         await env.save();
 
         let wrapper = await setup.mount(DropdownEnvSwitch);
-        await setup.comButtonClick(wrapper, 'btnDropdownTrigger');
-        await setup.msleep(500);
-        await setup.comEmit(wrapper, 'menu', 'click', {key:'0'});
-        await setup.msleep(500);
+        await setup.click({ref:'btnDropdownTrigger'});
+        await setup.emit({ref:'menu'}, 'click', [{key:'0'}]);
         expect(setup.storeData.envActivedIdSet).toBe(env.id);
     })
 });

@@ -37,7 +37,7 @@ export default class WidgetTestHelper {
      */
     static async setupEnvForRunning( widget ) {
         let comMock = {};
-        comMock.refresh = () => {};
+        comMock.refreshPanel = () => {};
         comMock.$refs = {widgets:[]};
 
         let env = {};

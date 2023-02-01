@@ -1,7 +1,7 @@
 <template>
   <div class="d-inline-block mr-2">
     <a-dropdown :trigger="['click']">
-      <span class="app-dropdown-menu-title">{{$t('environment.moduleName')}}</span>
+      <span ref="btnDropdownTrigger" class="app-dropdown-menu-title">{{$t('environment.moduleName')}}</span>
 
       <a-menu ref="menu" slot="overlay" @click="actionHandleMenuItemClicked">
         <a-menu-item key="none">

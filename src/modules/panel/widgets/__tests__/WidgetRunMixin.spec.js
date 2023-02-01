@@ -1,7 +1,7 @@
 import Tester from '../../../../utils/test/UnitTester.js'
 import MdbDirective from '../../../../models/MdbDirective.js';
 import WidgetRunMixin from '../WidgetRunMixin.js';
-import SerialPortMocker from '../../../directive/communicators/serialport/SerialPortMocker.js'
+import MockSerialport from '../../../directive/communicators/serialport/__tests__/mocks/MockSerialport.js';
 describe('@/src/modules/panel/widgets/WidgetRunMixin.js', () => {
     /**
      * mock runtime
@@ -43,13 +43,7 @@ describe('@/src/modules/panel/widgets/WidgetRunMixin.js', () => {
     });
     
     it('execute directive & set full response to variable', async () => {
-        let serialportWrite = jest.fn(($this, data, callback) => {
-            callback();
-            setTimeout(()=> $this.trigger('data', data), 10);
-        });
-        SerialPortMocker.mock({
-            write : serialportWrite,
-        });
+        let serialport = MockSerialport.setup();
         let widget = {
             action : 'directive',
         };
@@ -97,13 +91,13 @@ describe('@/src/modules/panel/widgets/WidgetRunMixin.js', () => {
         expect(runtime.variables.FullResponse.toString()).toBe('AACOM-VALUEBBRTV001CC');
 
         // response again
-        serialportWrite.mock.calls.at(-1)[0].trigger('data', Buffer.from("ABC"));
+        serialport.response(Buffer.from("ABC"));
         await tester.msleep(100);
         expect(runtime.variables.FullResponse.toString()).toBe('AACOM-VALUEBBRTV001CCABC');
     });
 
     it('execute directive & parse response as form', async () => {
-        SerialPortMocker.mock();
+        MockSerialport.setup();
         
         let widget = {};
         let tester = new Tester({props:{widget,runtime}});
@@ -144,7 +138,7 @@ describe('@/src/modules/panel/widgets/WidgetRunMixin.js', () => {
     });
 
     it('execute directive & parse response as json', async () => {
-        SerialPortMocker.mock();
+        MockSerialport.setup();
         let widget = {};
 
         let tester = new Tester({props:{runtime,widget}});

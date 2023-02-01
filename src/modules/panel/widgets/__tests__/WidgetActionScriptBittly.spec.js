@@ -3,7 +3,7 @@ import MdbDirective from '../../../../models/MdbDirective.js';
 import MdbDirectiveEntry from '../../../../models/MdbDirectiveEntry.js';
 import Tester from '../../../../utils/test/UnitTester.js'
 import WidgetActionScriptBittly from '../WidgetActionScriptBittly.js'
-import SerialPortMocker from '../../../directive/communicators/serialport/SerialPortMocker.js'
+import MockSerialport from '../../../directive/communicators/serialport/__tests__/mocks/MockSerialport.js';
 describe('@/modules/panel/widget/WidgetActionScriptBittly.js', () => {
     let runtime = {};
     let bittly = null;
@@ -87,13 +87,7 @@ describe('@/modules/panel/widget/WidgetActionScriptBittly.js', () => {
         expect(serialportNotAvailable).toBeCalled();
         
         // setup serialport
-        let serialportWrite = jest.fn(($this, data, callback) => {
-            callback();
-            setTimeout(()=> $this.trigger('data', data), 10);
-        });
-        SerialPortMocker.mock({
-            write : serialportWrite,
-        });
+        MockSerialport.setup();
 
         // text mode
         let response = await bittly.directiveExecText('TEST', 'hello');
@@ -140,6 +134,7 @@ describe('@/modules/panel/widget/WidgetActionScriptBittly.js', () => {
         await tester.msleep(200);
         
         // directive does not support form
+        delete bittly.component.scriptDirectives['TEST'];
         directive.requestContent.form = undefined;
         directive.save();
         tester.expectError(
@@ -147,5 +142,5 @@ describe('@/modules/panel/widget/WidgetActionScriptBittly.js', () => {
             '[TEST] does not support form as parameter format.'
         );
         await tester.msleep(200);
-    }, 20000)
+    })
 });
