@@ -1,14 +1,14 @@
-import TestcaseSetup from '../../../../utils/test/Setup.js';
+import TestcaseSetup from '../../../../utils/test/UnitTester';
 import ResponseHandler from '../ResponseHandler.vue'
 describe('@/src/tools/utils/mock-server/ResponseHandler.vue', () => {
     it('manual - text', async ( done ) => {
         let setup = new TestcaseSetup();
-        setup.componentSetProp('enable',true);
-        setup.componentSetProp('toolOptions', {
+        setup.prop('enable',true);
+        setup.prop('toolOptions', {
             responseHandler : 'manual',
             responseMode : 'text',
         });
-        setup.componentOn('response-generated', ( data ) => {
+        setup.on('response-generated', ( data ) => {
             expect(data.mode).toBe('text');
             expect(data.content).toBe('hello');
             done();
@@ -20,16 +20,16 @@ describe('@/src/tools/utils/mock-server/ResponseHandler.vue', () => {
         
         let textContent = wrapper.findComponent({ref:'textareaManualContent'});
         textContent.find('textarea').setValue('hello');
-        await setup.comButtonClick(wrapper, 'btnManualSend');
+        await setup.click({ref:'btnManualSend'});
     })
 
     it('echo', async ( done ) => {
         let setup = new TestcaseSetup();
-        setup.componentSetProp('enable',true);
-        setup.componentSetProp('toolOptions', {
+        setup.prop('enable',true);
+        setup.prop('toolOptions', {
             responseHandlers : [{type:'echo',enable:true,label:'ECHO'}],
         });
-        setup.componentOn('response-generated', ( data ) => {
+        setup.on('response-generated', ( data ) => {
             expect(data.clientKey).toBe('client-key');
             expect(data.mode).toBe('hex');
             expect(data.content).toBe('68656C6C6F');
@@ -44,13 +44,13 @@ describe('@/src/tools/utils/mock-server/ResponseHandler.vue', () => {
 
     it('random', async ( done ) => {
         let setup = new TestcaseSetup();
-        setup.componentSetProp('enable',true);
-        setup.componentSetProp('toolOptions', {
+        setup.prop('enable',true);
+        setup.prop('toolOptions', {
             responseHandlers : [{type:'random',enable:true,label:'random'}],
             responseMode : 'text',
             responseRandomTemplate : '{{n}}:{{a}}:{{A}}:{{hex}}:{{internet.ip}}',
         });
-        setup.componentOn('response-generated', ( data ) => {
+        setup.on('response-generated', ( data ) => {
             expect(data.clientKey).toBe('client-key');
             expect(data.mode).toBe('text');
             expect(data.content).toMatch(/\d:[a-z]:[A-Z]:[A-F0-9]:\d+\.\d+\.\d+\.\d+/);
@@ -65,14 +65,14 @@ describe('@/src/tools/utils/mock-server/ResponseHandler.vue', () => {
 
     it('script', async ( done ) => {
         let setup = new TestcaseSetup();
-        setup.componentSetProp('enable',true);
-        setup.componentSetProp('toolOptions', {
+        setup.prop('enable',true);
+        setup.prop('toolOptions', {
             responseHandler : 'script',
             responseHandlers : [{type:'script',enable:true,label:'script'}],
             responseMode : 'text',
             responseScript : '$this.responseText("HELLO")',
         });
-        setup.componentOn('response-generated', ( data ) => {
+        setup.on('response-generated', ( data ) => {
             expect(data.clientKey).toBe('client-key');
             expect(data.mode).toBe('text');
             expect(data.content).toBe('HELLO');
@@ -87,16 +87,16 @@ describe('@/src/tools/utils/mock-server/ResponseHandler.vue', () => {
 
     it('match', async ( done ) => {
         let setup = new TestcaseSetup();
-        setup.componentSetProp('enable',true);
-        setup.componentSetProp('charset','utf8');
-        setup.componentSetProp('toolOptions', {
+        setup.prop('enable',true);
+        setup.prop('charset','utf8');
+        setup.prop('toolOptions', {
             responseHandler : 'match',
             responseHandlers : [{type:'match',enable:true,label:'match'}],
             responseMatchRules : [
                 {enable:true,mode:'text',template:'how are you', response:'{{internet.ip}}'},
             ],
         });
-        setup.componentOn('response-generated', ( data ) => {
+        setup.on('response-generated', ( data ) => {
             expect(data.clientKey).toBe('client-key');
             expect(data.mode).toBe('text');
             expect(data.content).toMatch(/\d+\.\d+\.\d+\.\d+/);
@@ -111,9 +111,9 @@ describe('@/src/tools/utils/mock-server/ResponseHandler.vue', () => {
 
     it('execute response flow : match > script > random > echo', async ( done ) => {
         let setup = new TestcaseSetup();
-        setup.componentSetProp('enable',true);
-        setup.componentSetProp('charset','utf8');
-        setup.componentSetProp('toolOptions', {
+        setup.prop('enable',true);
+        setup.prop('charset','utf8');
+        setup.prop('toolOptions', {
             responseHandler : 'match',
             responseMode : 'text',
             responseHandlers : [
@@ -130,7 +130,7 @@ describe('@/src/tools/utils/mock-server/ResponseHandler.vue', () => {
         });
 
         let responseCounter = 0;
-        setup.componentOn('response-generated', ( data ) => {
+        setup.on('response-generated', ( data ) => {
             expect(data.clientKey).toBe('client-key');
             responseCounter ++;
             switch ( responseCounter ) {
