@@ -1,4 +1,4 @@
-import TestCaseSetup from '../../../utils/test/Setup.js';
+import TestCaseSetup from '../../../utils/test/UnitTester.js';
 import Main from '../Main.vue'
 import MdbDirective from '@/models/MdbDirective.js'
 import MdbDirectiveEntry from '../../../models/MdbDirectiveEntry.js'
@@ -8,8 +8,8 @@ describe('@/src/modules/document/Main.vue', () => {
         let setup = new TestCaseSetup();
         await setup.setup();
 
-        let project = await setup.setActiveProject('new');
-        setup.componentSetProp('projectId', project.id);
+        let project = await setup.activeNewProject();
+        setup.prop('projectId', project.id);
 
         let directive = new MdbDirective();
         directive.projectId = project.id;
@@ -29,7 +29,7 @@ describe('@/src/modules/document/Main.vue', () => {
 
         let wrapper = await setup.mount(Main);
         await setup.msleep(1000);
-        await setup.comEmit(wrapper, 'entryMenu', 'directive-click', directive);
+        await setup.emit({ref:'entryMenu'}, 'directive-click', [directive]);
         
         let header = wrapper.findComponent({ref:'header'});
         expect(header.props('title')).toBe('TEST');

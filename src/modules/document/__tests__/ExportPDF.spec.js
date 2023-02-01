@@ -1,4 +1,4 @@
-import TestCaseSetup from '../../../utils/test/Setup.js';
+import TestCaseSetup from '../../../utils/test/UnitTester.js';
 import ExportPDF from '../ExportPDF.vue'
 import MdbDirective from '@/models/MdbDirective.js'
 import MdbDirectiveEntry from '../../../models/MdbDirectiveEntry.js'
@@ -6,17 +6,10 @@ import { NIL as NIL_UUID } from 'uuid';
 const fs = require('fs');
 describe('@/src/modules/document/ExportPDF.vue', () => {
     it('normal use', async (  ) => {
-        window.fs = fs;
-        window.dialog = {
-            showSaveDialogSync( options ) {
-                return 'TEST.pdf';
-            }
-        };
-        
         let setup = new TestCaseSetup();
         await setup.setup();
 
-        let project = await setup.setActiveProject('new');
+        let project = await setup.activeNewProject();
         project.name = 'TEST';
         project.save();
 
@@ -37,10 +30,16 @@ describe('@/src/modules/document/ExportPDF.vue', () => {
         await directiveEntry.save();
 
         let wrapper = await setup.mount(ExportPDF);
+        window.fs = fs;
+        window.dialog = {
+            showSaveDialogSync( options ) {
+                return 'TEST.pdf';
+            }
+        };
         await setup.msleep(1000);
         wrapper.vm.open();
         await setup.msleep(500);
-        await setup.comButtonClick(wrapper, 'btnStart');
+        await setup.click({ref:'btnStart'});
         await setup.msleep(1000);
 
         expect(fs.existsSync('TEST.pdf')).toBeTruthy();

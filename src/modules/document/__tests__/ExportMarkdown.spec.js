@@ -1,28 +1,14 @@
-import TestCaseSetup from '../../../utils/test/Setup.js';
+import TestCaseSetup from '../../../utils/test/UnitTester.js';
 import ExportMarkdown from '../ExportMarkdown.vue'
 import MdbDirective from '@/models/MdbDirective.js'
 import MdbDirectiveEntry from '../../../models/MdbDirectiveEntry.js'
 import { NIL as NIL_UUID } from 'uuid';
 describe('@/src/modules/document/ExportMarkdown.vue', () => {
     it('normal use', async ( done ) => {
-        window.dialog = {
-            showSaveDialogSync( options ) {
-                return 'test-example';
-            }
-        };
-        window.fs = {
-            promises : {
-                writeFile ( path, content ) {
-                    expect(path).toBe('test-example');
-                    expect(content).toContain('# TEST');
-                    done();
-                },
-            },
-        };
         let setup = new TestCaseSetup();
         await setup.setup();
 
-        let project = await setup.setActiveProject('new');
+        let project = await setup.activeNewProject();
 
         let directive = new MdbDirective();
         directive.projectId = project.id;
@@ -41,8 +27,22 @@ describe('@/src/modules/document/ExportMarkdown.vue', () => {
         await directiveEntry.save();
 
         let wrapper = await setup.mount(ExportMarkdown);
+        window.dialog = {
+            showSaveDialogSync( options ) {
+                return 'test-example';
+            }
+        };
+        window.fs = {
+            promises : {
+                writeFile ( path, content ) {
+                    expect(path).toBe('test-example');
+                    expect(content).toContain('# TEST');
+                    done();
+                },
+            },
+        };
         wrapper.vm.start();
         await setup.msleep(500);
-        await setup.comButtonClick(wrapper, 'btnStart');
+        await setup.click({ref:'btnStart'});
     })
 });

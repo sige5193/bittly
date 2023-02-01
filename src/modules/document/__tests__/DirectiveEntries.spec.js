@@ -1,4 +1,4 @@
-import TestCaseSetup from '../../../utils/test/Setup.js';
+import TestCaseSetup from '../../../utils/test/UnitTester.js';
 import DirectiveEntries from '../DirectiveEntries.vue'
 import MdbDirective from '@/models/MdbDirective.js'
 import MdbDirectiveEntry from '../../../models/MdbDirectiveEntry.js'
@@ -8,9 +8,9 @@ describe('@/src/modules/document/DirectiveEntries.vue', () => {
         let setup = new TestCaseSetup();
         await setup.setup();
 
-        let project = await setup.setActiveProject('new');
-        setup.componentSetProp('projectId', project.id);
-
+        let project = await setup.activeNewProject();
+        setup.prop('projectId', project.id);
+        
         let directive = new MdbDirective();
         directive.projectId = project.id;
         directive.name = 'TEST';
