@@ -1,4 +1,4 @@
-import Setup from '../../../utils/test/Setup.js'
+import Setup from '../../../utils/test/UnitTester'
 import PanelDelete from '../PanelDelete.vue'
 import MdbProject from '@/models/MdbProject.js'
 describe('components/modules/project/PanelDelete.vue', () => {
@@ -10,7 +10,7 @@ describe('components/modules/project/PanelDelete.vue', () => {
         project.name = 'TEST PROJECT';
         project.remoteUuid = 'XXX';
         await project.save();
-        await tester.setActiveProject(project);
+        await tester.activeProject(project);
 
         let wrapper = await tester.mount(PanelDelete);
         await tester.msleep(1000);
@@ -32,7 +32,7 @@ describe('components/modules/project/PanelDelete.vue', () => {
         let project = new MdbProject();
         project.name = 'TEST PROJECT';
         await project.save();
-        await tester.setActiveProject(project);
+        await tester.activeProject(project);
 
         let wrapper = await tester.mount(PanelDelete);
         await tester.msleep(1000);

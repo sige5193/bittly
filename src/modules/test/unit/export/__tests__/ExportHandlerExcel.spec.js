@@ -1,17 +1,16 @@
-import TestCaseSetup from '../../../../utils/test/Setup.js';
+import TestCaseSetup from '../../../../../utils/test/UnitTester.js';
 import ExportHandlerExcel from '../ExportHandlerExcel.js'
 describe('@/src/modules/test/export/ExportHandlerExcel.js', () => {
     it('normal use', async () => {
+        let setup = new TestCaseSetup();
+        await setup.setup();
+        let project = await setup.activeNewProject();
+        window.app.$store.getters.projectActivedId = project.id;
         window.fs = {
             promises : {
                 writeFile : jest.fn()
             }
         };
-
-        let setup = new TestCaseSetup();
-        await setup.setup();
-        let project = await setup.setActiveProject('new');
-        window.app.$store.getters.projectActivedId = project.id;
 
         let handler = new ExportHandlerExcel({
             directives : {},

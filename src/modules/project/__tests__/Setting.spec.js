@@ -1,4 +1,4 @@
-import Setup from '../../../utils/test/Setup.js'
+import Setup from '../../../utils/test/UnitTester.js'
 import Setting from '../Setting.vue'
 import MdbProject from '@/models/MdbProject.js'
 describe('components/modules/project/Setting.vue', () => {
@@ -10,7 +10,7 @@ describe('components/modules/project/Setting.vue', () => {
         project.name = 'TEST PROJECT';
         project.description = 'TEST DESC';
         await project.save();
-        await tester.setActiveProject(project);
+        await tester.activeProject(project);
 
         let wrapper = await tester.mount(Setting);
         await tester.msleep(1000);

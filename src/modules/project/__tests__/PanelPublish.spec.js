@@ -1,4 +1,4 @@
-import Setup from '../../../utils/test/Setup.js'
+import Setup from '../../../utils/test/UnitTester'
 import PanelPublish from '../PanelPublish.vue'
 import MdbProject from '@/models/MdbProject.js'
 describe('components/modules/project/PanelPublish.vue', () => {
@@ -11,7 +11,11 @@ describe('components/modules/project/PanelPublish.vue', () => {
     };
     
     it('remote uuid != "" && source uuid === remote uuid => able to publish source project ', async () => {
-        let tester = new Setup();
+        let tester = new Setup({
+            mockBittlyApiClient : {
+                projectVersionList : () => { return {success:true,data:[]} },
+            }
+        });
         await tester.setup();
         
         let project = new MdbProject();
@@ -19,7 +23,7 @@ describe('components/modules/project/PanelPublish.vue', () => {
         project.remoteUuid = 'XXX';
         project.sourceUuid = 'XXX';
         await project.save();
-        await tester.setActiveProject(project);
+        await tester.activeProject(project);
 
         let wrapper = await tester.mount(PanelPublish);
         await tester.msleep(1000);
@@ -30,7 +34,11 @@ describe('components/modules/project/PanelPublish.vue', () => {
     })
 
     it('source uuid != remote uuid ', async () => {
-        let tester = new Setup();
+        let tester = new Setup({
+            mockBittlyApiClient : {
+                projectVersionList : () => { return {success:true,data:[]} },
+            }
+        });
         await tester.setup();
         
         let project = new MdbProject();
@@ -38,7 +46,7 @@ describe('components/modules/project/PanelPublish.vue', () => {
         project.remoteUuid = 'XXX';
         project.sourceUuid = 'YYY';
         await project.save();
-        await tester.setActiveProject(project);
+        await tester.activeProject(project);
 
         let wrapper = await tester.mount(PanelPublish);
         await tester.msleep(1000);

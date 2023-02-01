@@ -1,4 +1,4 @@
-import Setup from '../../../utils/test/Setup.js'
+import Setup from '../../../utils/test/UnitTester'
 import PageProjectIndex from '../PageProjectIndex.vue'
 import MdbProject from '@/models/MdbProject.js'
 describe('components/modules/project/PageProjectIndex.vue', () => {
@@ -10,7 +10,7 @@ describe('components/modules/project/PageProjectIndex.vue', () => {
         project.name = 'TEST PROJECT';
         project.description = 'TEST DESC';
         await project.save();
-        await tester.setActiveProject(project);
+        await tester.activeProject(project);
 
         let wrapper = await tester.mount(PageProjectIndex);
         await tester.msleep(1000);

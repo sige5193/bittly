@@ -1,5 +1,4 @@
-import { mount } from '@vue/test-utils'
-import Setup from '../../../utils/test/Setup.js'
+import Setup from '../../../utils/test/UnitTester'
 import PanelUpdate from '../PanelUpdate.vue'
 import MdbProject from '@/models/MdbProject.js'
 describe('components/modules/project/PanelUpdate.vue', () => {
@@ -10,7 +9,7 @@ describe('components/modules/project/PanelUpdate.vue', () => {
         let project = new MdbProject();
         project.name = 'TEST PROJECT';
         await project.save();
-        await tester.setActiveProject(project);
+        await tester.activeProject(project);
         
         tester.mockBittlyApiClient.projectGet = function() { 
             return {
@@ -43,7 +42,7 @@ describe('components/modules/project/PanelUpdate.vue', () => {
         project.name = 'TEST PROJECT';
         project.remoteUuid = 'TEST-REMOTE-UUID';
         await project.save();
-        await tester.setActiveProject(project);
+        await tester.activeProject(project);
         
         tester.mockBittlyApiClient.projectGet = function() { 
             return {
