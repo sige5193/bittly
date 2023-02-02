@@ -89,8 +89,10 @@ import ResponseSnippetEditor from '../../response/snippet/Editor.vue'
 import StatusEditor from '../../status/Editor.vue'
 import Formatter from '../../../../utils/Formatter.js'
 import Seperator from '../../../../components/Seperator.vue'
+import MockerBase from '../MockerComponentBase.js'
 export default {
-    mixins : [ComponentBase],
+    name : 'MockMockerSerialport',
+    mixins : [ComponentBase,MockerBase],
     components : {
         'seperator' : Seperator,
         'data-entry-list-viewer' : DataEntryListViewer,

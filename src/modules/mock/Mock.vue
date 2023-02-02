@@ -5,7 +5,10 @@
       <template slot="extra">
         <a-dropdown :trigger="['click']">
           <a-menu slot="overlay" @click="actionOperationMenuItemClicked">
-            <a-menu-item key="Delete"> <a-icon type="delete" /> {{$t('button.delete')}} </a-menu-item>
+            <a-menu-item key="Delete" data-handler="this"> <a-icon type="delete" /> {{$t('button.delete')}} </a-menu-item>
+            <a-menu-item v-for="mockActItem in extOperations" :key="mockActItem.key" data-handler="mocker">
+              <a-icon :type="mockActItem.icon" /> {{mockActItem.label}}
+            </a-menu-item>
           </a-menu>
           <a-button style="margin-left: 8px"> {{$t('mock.operations')}} <a-icon type="down" /> </a-button>
         </a-dropdown>
@@ -25,17 +28,17 @@
 </template>
 <script>
 import ComponentBase from '../../utils/component/Base.js'
-import SerialPortMocker from './mockers/serialport/Mocker.vue'
-import TcpMocker from './mockers/tcp/Mocker.vue'
-import UdpMocker from './mockers/udp/Mocker.vue'
-import WebSocketMocker from './mockers/websocket/Mocker.vue'
+import SerialPortMockViewer from './mockers/serialport/MockViewer.vue'
+import TcpMockviewer from './mockers/tcp/MockViewer.vue'
+import UdpMockViewer from './mockers/udp/MockViewer.vue'
+import WebSocketMockViewer from './mockers/websocket/MockViewer.vue'
 export default {
     mixins : [ComponentBase],
     components : {
-        'mocker-serialport' : SerialPortMocker,
-        'mocker-tcp' : TcpMocker,
-        'mocker-udp' : UdpMocker,
-        'mocker-websocket' : WebSocketMocker,
+        'mocker-serialport' : SerialPortMockViewer,
+        'mocker-tcp' : TcpMockviewer,
+        'mocker-udp' : UdpMockViewer,
+        'mocker-websocket' : WebSocketMockViewer,
     },
     props : {
         /**
@@ -56,6 +59,11 @@ export default {
              * @property {String}
              */
             status : 'stopped',
+            /**
+             * list of ext actions
+             * @property {Array<Object>}
+             */
+            extOperations : [],
         };
     },
     created() {
@@ -70,6 +78,7 @@ export default {
         if ( undefined != this.$store.getters.mocks[this.mock.id] ) {
             this.status = 'running';
         }
+        this.extOperations = this.$refs.mocker.getExtenActions();
     },
     beforeDestroy() {
         this.unregisterAllEventHandlers();
@@ -153,8 +162,13 @@ export default {
          * @param {Event} event
          */
         actionOperationMenuItemClicked( event ) {
-            let handler = `operationHandler${event.key}`;
-            this[handler]();
+            let handelrType = event.domEvent.target.dataset.handler;
+            if ( 'this' === handelrType ) {
+                let handler = `operationHandler${event.key}`;
+                this[handler]();
+            } else {
+                this.$refs.mocker.executeExtenAction(event.key);
+            }
         },
         
         /**
@@ -162,7 +176,7 @@ export default {
          */
         operationHandlerDelete() {
             let id = this.mock.id;
-
+            
             let $this = this;
             this.$confirm({
                 title: this.$t('mock.mockDeleteConfirm'),
