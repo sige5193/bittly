@@ -11,4 +11,7 @@ module.exports = {
     clientRemoveByNotDisconnected : 'Are you sure to disconnect this client and remove it ?',
     keyContent : 'PEM Key Content',
     certContent : 'PEM Cert Content',
+    encoding : 'Encoding',
+    urlCopy : 'Copy Websocket URL',
+    urlCopySuccess : 'Websocket URL copied',
 };

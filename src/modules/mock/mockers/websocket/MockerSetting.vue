@@ -12,7 +12,7 @@
        
       <!-- protocol -->
       <a-form-item :label="$t('mock.mockers.websocket.protocol')">
-        <a-select v-model="mock.options.protocol">
+        <a-select v-model="mock.options.protocol" @change="forceUpdate">
           <a-select-option value="ws">ws</a-select-option>
           <a-select-option value="wss">wss</a-select-option>
         </a-select>
@@ -20,17 +20,25 @@
       
       <!-- host -->
       <a-form-item :label="$t('mock.mockers.websocket.host')">
-        <a-input v-model="mock.options.host"/>
+        <a-input v-model="mock.options.host" @input="forceUpdate"/>
       </a-form-item>
 
       <!-- port -->
       <a-form-item :label="$t('mock.mockers.websocket.port')">
-        <a-input v-model="mock.options.port"/>
+        <a-input v-model="mock.options.port" @input="forceUpdate"/>
       </a-form-item>
 
       <!-- path -->
       <a-form-item :label="$t('mock.mockers.websocket.path')">
-        <a-input v-model="mock.options.path"/>
+        <a-input v-model="mock.options.path" @input="forceUpdate"/>
+      </a-form-item>
+
+      <!-- data format -->
+      <a-form-item :label="$t('mock.mockers.websocket.encoding')">
+        <a-radio-group v-model="mock.options.encoding" button-style="solid" @change="forceUpdate">
+          <a-radio-button value="text">TEXT</a-radio-button>
+          <a-radio-button value="hex">HEX</a-radio-button>
+        </a-radio-group>
       </a-form-item>
 
       <template v-if="'wss' === mock.options.protocol">
@@ -40,6 +48,7 @@
             v-model="mock.options.sslKey" 
             placeholder="-----BEGIN RSA PRIVATE KEY-----" 
             :rows="3"
+            @input="forceUpdate"
           />
         </a-form-item>
         <!-- cert content -->
@@ -48,6 +57,7 @@
             v-model="mock.options.sslCert" 
             placeholder="-----BEGIN CERTIFICATE-----" 
             :rows="3"
+            @input="forceUpdate"
           />
         </a-form-item>
       </template>
@@ -64,6 +74,18 @@ export default {
     name : 'MockMockerUdpSetting',
     mixins : [MockerSettingBase],
     methods : {
+        /**
+         * init mock options
+         * @param {Object} options 
+         */
+        initOptions( options ) {
+            options.protocol = 'ws';
+            options.host = '127.0.0.1';
+            options.port = '8899';
+            options.path = '';
+            options.encoding = 'text';
+        },
+
         /**
          * generate summary by options
          * @param {Object} options 

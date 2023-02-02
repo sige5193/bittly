@@ -40,7 +40,9 @@ export default class WsClientConnection {
         
         // setup socket
         this.ws.on('message', data => this.onData(data));
-        // this.ws.on('close', () => this.handleClientClose(key) );
+        this.ws.on('close', () => this.onClientClose() );
+
+        this.mocker.log(`[client ${this.key}] new`);
     }
 
     /**
@@ -52,10 +54,20 @@ export default class WsClientConnection {
     }
 
     /**
+     * event handler on client disconnect
+     */
+    onClientClose() {
+        this.mocker.log(`[client ${this.key}] disconnected`);
+        this.mocker.trigger('client-close', this);
+    }
+
+    /**
      * event handler on client receive data.
      * @param {*} data 
      */
-    onData(data) {
+    async onData(data) {
+        let logData = ('hex'===this.mocker.options.encoding) ? data.toString('hex') : data.toString();
+        this.mocker.log(`[client ${this.key}] (receive ${this.mocker.options.encoding}) : `, logData);
         this.dataReceiveSize += data.length;
 
         let entry = {};
@@ -89,7 +101,8 @@ export default class WsClientConnection {
             let content = MyObject.copy(rules[i].responseContent);
             content.name = window.app.$t('mock.response.match.entryName',[rules[i].name]);
             content.handler = rules[i].responseHandler;
-            this.send(content);
+            this.mocker.log(`[client ${this.key}] matched "${rules[i].name}"`);
+            await this.send(content);
         }
     }
 
@@ -118,6 +131,8 @@ export default class WsClientConnection {
         let $this = this;
         return new Promise(( resovle, reject ) => {
             $this.ws.send(data, err => {
+                let logData = ('hex'===$this.mocker.options.encoding) ? data.toString('hex') : data.toString();
+                $this.mocker.log(`[client ${$this.key}] (send ${$this.mocker.options.encoding}) : `, logData);
                 err ? reject(err) : resovle();
             });
         });
@@ -128,5 +143,6 @@ export default class WsClientConnection {
      */
     close() {
         this.ws.terminate();
+        this.mocker.log(`[client ${this.key}] close`);
     }
 }

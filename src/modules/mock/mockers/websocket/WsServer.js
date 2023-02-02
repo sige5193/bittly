@@ -1,7 +1,7 @@
 import StatusManager from '../../status/StatusManager.js';
 import WsClientConnection from './WsClientConnection';
 import MockServiceBase from '../MockServiceBase.js';
-export default class Mocker extends MockServiceBase {
+export default class WsServer extends MockServiceBase {
     /**
      * @constructor
      * @param {MdbMock} mock 
@@ -33,10 +33,10 @@ export default class Mocker extends MockServiceBase {
 
     /**
      * start mock serviec
+     * @throws {Error} listen EADDRINUSE: address already in use
      * @returns {Promise<void>}
      */
     async start() {
-        debugger
         let options = {};
         options.path = '/' + this.options.path;
         if ( 'wss' === this.options.protocol ) {
@@ -45,9 +45,28 @@ export default class Mocker extends MockServiceBase {
             options.host = this.options.host;
             options.port = this.options.port;
         }
-        this.server = new window.ws.WebSocketServer(options);
-        this.server.on('connection', ws => this.wsServerHandleConnection(ws));
+        this.server = await this.startServerInstance(options);
+        this.server.on('connection', ws => this.handleOnConnection(ws));
+        this.server.on('error', error => this.handleOnError(error));
         this.serviceOnline();
+        this.log(`start ${this.options.protocol}://${this.options.host}:${this.options.port}/${this.options.path}`);
+    }
+
+    /**
+     * start server instance
+     * @param {Object} options
+     * @returns {Promise<WebSocketServer>}
+     */
+    startServerInstance(options) {
+        return new Promise(( resolve, reject ) => {
+            let errorHandler = error => reject(error);
+            let server = new window.ws.WebSocketServer(options);
+            server.once('error',errorHandler);
+            server.once('listening', () => {
+                server.off('error',errorHandler);
+                resolve(server)
+            });
+        });
     }
 
     /**
@@ -56,7 +75,7 @@ export default class Mocker extends MockServiceBase {
      */
     stop() {
         let $this = this;
-        return new Promise(( resolve, reject ) => {
+        return new Promise(resolve => {
             for ( let key in this.clients ) {
                 $this.clients[key].close();
             }
@@ -66,19 +85,30 @@ export default class Mocker extends MockServiceBase {
                     $this.httpsServer = null;
                 }
                 $this.serviceOffline();
+                this.log('stopped');
                 resolve();
             });
         });
     }
 
     /**
+     * event handelr on websocket server error
+     * @private
+     * @param {Error} error 
+     */
+    handleOnError(error) {
+        throw Error(error);
+    }
+
+    /**
      * event handler on new client connected.
+     * @private
      * @param {*} socket 
      */
-    wsServerHandleConnection(socket) {
+    handleOnConnection(socket) {
         let client = new WsClientConnection(this, socket);
         this.clients[client.key] = client;
-        this.eventManager.trigger('new-client', client);
+        this.eventManager.trigger('client-new', client);
     }
 
     /**
