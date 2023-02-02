@@ -27,7 +27,19 @@ export default {
          */
         open() {
             this.mock = this.value;
+            if ( !this.mock.options.isInited ) {
+                this.initOptions(this.mock.options);
+                this.mock.options.isInited = true;
+            }
             this.enable = true;
+        },
+
+        /**
+         * init mock options
+         * @param {*} options 
+         */
+        initOptions( options ) {
+            // nothing to do here
         },
 
         /**
@@ -47,6 +59,7 @@ export default {
             }
             this.$emit('change');
             this.enable = false;
+            this.mock = null;
         },
 
         /**
@@ -56,6 +69,13 @@ export default {
          */
         generateSummary( options ) {
             return '';
+        },
+
+        /**
+         * force update this component
+         */
+        forceUpdate() {
+            this.$forceUpdate()
         }
     },
 }
