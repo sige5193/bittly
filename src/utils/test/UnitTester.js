@@ -11,6 +11,7 @@ import BittlyApiClient from '@/utils/BittlyApiClient.js'
 import MdbProject from '../../models/MdbProject.js'
 import Environment from '../../environments/Environment.js';
 import EnvElectron from '../../environments/EnvElectron.js';
+import MockStore from './MockStore.js';
 export default class UnitTester {
     /**
      * constructor of testcase setup
@@ -80,7 +81,11 @@ export default class UnitTester {
          * @property {MdbProject|null}
          */
         this.project = null;
-        
+        /**
+         * mocked store instance
+         * @property {MockStore}
+         */
+        this.store = new MockStore(this);
         
         
         
@@ -208,17 +213,19 @@ export default class UnitTester {
         options.mocks = this.componentMountMocks;
         options.mocks.$bittly = this.mockBittlyApiClient;
         options.mocks.$eventBus = this.eventBus;
-        options.mocks.$store = {};
-        options.mocks.$store.commit = (commit, data) => this.storeCommitHandler(commit, data);
-        options.mocks.$store.dispatch = (name, data) => this.storeData[name] = data;
-        options.mocks.$store.getters = this.mockStoreGetters;
-        if ( undefined == options.mocks.$store.getters.communicators ) {
-            options.mocks.$store.getters.communicators = {};
-        }
+        options.mocks.$store = this.store;
 
-        if ( null != this.project ) {
-            options.mocks.$store.getters.projectActivedId = this.project.id;
-        }
+        // options.mocks.$store = {};
+        // options.mocks.$store.commit = (commit, data) => this.storeCommitHandler(commit, data);
+        // options.mocks.$store.dispatch = (name, data) => this.storeData[name] = data;
+        // options.mocks.$store.getters = this.mockStoreGetters;
+        // if ( undefined == options.mocks.$store.getters.communicators ) {
+        //     options.mocks.$store.getters.communicators = {};
+        // }
+
+        // if ( null != this.project ) {
+        //     options.mocks.$store.getters.projectActivedId = this.project.id;
+        // }
 
         this.wrapper = null;
         if ( true === enableShallowMount ) {
