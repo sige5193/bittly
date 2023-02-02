@@ -98,9 +98,8 @@ export default class MockServiceBase {
      * @param  {...any} args 
      */
     log( ... args ) {
-        let message = args.shift();
-        message = `[MOCK (${this.mock.name})] ${message}`;
-        Logger.log({stackIndex:3,message:message,params:args});
+        args.unshift(`[MOCK (${this.mock.name})]`)
+        console.log(... args);
     }
 
     /**
