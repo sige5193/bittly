@@ -109,10 +109,10 @@ import ResponseSnippetEditor from '../../response/snippet/Editor.vue'
 import StatusEditor from '../../status/Editor.vue'
 import Formatter from '../../../../utils/Formatter.js'
 import Seperator from '../../../../components/Seperator.vue'
-import MockerBase from '../MockerComponentBase.js'
+import MockViewerBase from '../MockViewerBase.js'
 export default {
     name : 'MockMockerUDP',
-    mixins : [MockerBase],
+    mixins : [MockViewerBase],
     components : {
         'seperator' : Seperator,
         'data-entry-list-viewer' : DataEntryListViewer,
