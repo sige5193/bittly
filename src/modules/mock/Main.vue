@@ -34,7 +34,7 @@
           >
             <div class="flex-grow">
               <div>{{mock.name}}</div>
-              <small class="text-muted d-block" style="font-size: 0.8em;">
+              <small class="text-black-50 d-block" style="font-size: 0.8em;">
                 <span v-if="mock.summary">{{mock.summary}}</span>
                 <span v-else><a-icon type="ellipsis" /></span>
               </small>
@@ -115,6 +115,7 @@ export default {
         async loadMocks() {
             this.mocks = [];
             this.mocks = await MdbMock.findAll({project_id:this.curProjectId});
+            this.mocks.sort((a,b) => a.name.localeCompare(b.name));
         },
 
         /**
@@ -187,6 +188,3 @@ export default {
     },
 }
 </script>
-<style scoped>
-.mock-type-tag {padding: 2px;font-size: 7px;vertical-align: bottom;}
-</style>
