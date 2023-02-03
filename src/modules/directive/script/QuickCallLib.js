@@ -1,12 +1,37 @@
-import BuildHandler from '../parameters/form/BuildHandler.js';
 import ScriptLib from './ScriptLib.js'
 export default class QuickCallLib {
+    /**
+     * get list of quick call functions.
+     * @returns {Array<Object>}
+     */
+    static list() {
+        let $t = key => window.app.$t(key);
+        return [
+            {func:'crc16modbus', value:'{{@crc16modbus($1,$2,$3,$4)}}', text:$t('directive.quickCallCrc16modbus')},
+            {func:'random', value:'{{@random(min,max)}}', text:$t('directive.quickCallRandom')}, 
+            {func:'lrc',value:'{{@lrc(items, ...)}}', text:$t('directive.quickCallLrc')},
+            {func:'checksum8',value:'{{@checksum8(items, ...)}}',text:$t('directive.quickCallChecksum8')},
+            {func:'bcc',value:'{{@bcc(items, ...)}}',text:$t('directive.quickCallBcc')},
+            {func:'fill',value:'{{@fill(content,count)}}',text:$t('directive.quickCallFill')},
+        ];
+    }
+
     /**
      * @param {*} directive 
      */
     constructor( directive ) {
         this.directive = directive;
         this.scriptLib = new ScriptLib(directive);
+    }
+
+    /**
+     * generate value by given content repeats given count.
+     * @param {*} content 
+     * @param {*} count 
+     * @returns {String}
+     */
+    fill( content, count ) {
+        return content.repeat(count);
     }
 
     /**

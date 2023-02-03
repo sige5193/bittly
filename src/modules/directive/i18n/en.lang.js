@@ -51,6 +51,7 @@ module.exports = {
     quickCallLrc : '<DEC> lrc(items, ...)',
     quickCallChecksum8 : '<DEC> checksum8(items, ...)',
     quickCallBcc : '<DEC> bcc(items, ...)',
+    quickCallFill : '<TEXT> fill(content,count)',
     statusPopoverTitle : 'Directive Status',
     statusClear : 'Clear',
     statusViewerButton : 'Status',

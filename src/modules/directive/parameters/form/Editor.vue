@@ -216,6 +216,7 @@ import MdbDirective from '@/models/MdbDirective.js'
 import TableDraggableWrapper from '@/components/TableDraggableWrapper.vue'
 import Common from '@/utils/Common.js'
 import MyObject from '../../../../utils/datatype/MyObject'
+import QuickCallLib from '../../script/QuickCallLib'
 export default {
     name : 'DirectiveParamEditorFormBlock',
     components : {
@@ -583,18 +584,14 @@ export default {
             let matchText = searchText.substr(searchText.lastIndexOf("{{@"));
             searchText = searchText.substr(0, searchText.lastIndexOf("{{@"));
 
-            let quickCallFullList = [
-                {func:'crc16modbus', value:`${searchText}{{@crc16modbus($1,$2,$3,$4)}}`, text:this.$t('directive.quickCallCrc16modbus')},
-                {func:'random', value:`${searchText}{{@random(min,max)}}`, text:this.$t('directive.quickCallRandom')}, 
-                {func:'lrc',value:`${searchText}{{@lrc(items, ...)}}`,text:this.$t('directive.quickCallLrc')},
-                {func:'checksum8',value:`${searchText}{{@checksum8(items, ...)}}`,text:this.$t('directive.quickCallChecksum8')},
-                {func:'bcc',value:`${searchText}{{@bcc(items, ...)}}`,text:this.$t('directive.quickCallBcc')}
-            ];
+            let quickCallFullList = QuickCallLib.list();
             for ( let i=0; i<quickCallFullList.length; i++ ) {
                 let match = `{{@${quickCallFullList[i].func}(`;
-                if ( matchText.startsWith('{{@') && -1 != match.indexOf(matchText) ) {
-                    this.valueAutoCompleteItems.push(quickCallFullList[i]);
+                if ( !matchText.startsWith('{{@') || -1 == match.indexOf(matchText) ) {
+                    continue;
                 }
+                quickCallFullList[i].value = `${searchText}${quickCallFullList[i].value}`;
+                this.valueAutoCompleteItems.push(quickCallFullList[i]);
             }
         },
 

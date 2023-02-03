@@ -51,6 +51,7 @@ module.exports = {
     quickCallLrc : '<DEC> lrc(items, ...) LRC校验',
     quickCallChecksum8 : '<DEC> checksum8(items, ...) CheckSum校验',
     quickCallBcc : '<DEC> bcc(items, ...) 异或校验',
+    quickCallFill : '<TEXT> fill(content,count) 填充',
     statusPopoverTitle : '指令状态',
     statusClear : '清空',
     statusViewerButton : '状态',
