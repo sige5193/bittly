@@ -6,4 +6,5 @@ module.exports = {
     remove : 'Remove',
     settingTitle : 'UDP Setting',
     clientRemoveByNotDisconnected : 'Are you sure to remove this client ?',
+    encoding : 'Encoding',
 };

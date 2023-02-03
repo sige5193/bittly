@@ -8,17 +8,12 @@ export default class MockDgram {
         window.dgram = {};
         window.dgram.createSocket = function() {
             return new class {
-                constructor () {
-                    this.eventHandlers = {};
-                }
-                on( event, handler ) {
-                    this.eventHandlers[event] = handler;
-                }
+                
                 send(data, x, dataLength, port, host, callback ) {
                     callback();
                     let $this = this;
                     setTimeout(() => {
-                        $this.eventHandlers.message(data);
+                        mock.trigger('message',[data]);
                     }, 100);
                 }
                 
@@ -26,7 +21,7 @@ export default class MockDgram {
                 write( data, callback ) {
                     let $this = this;
                     setTimeout(() => {
-                        $this.eventHandlers.data(data);
+                        mock.trigger('data',[data]);
                     }, 100);
                     callback();
                 }
@@ -34,10 +29,14 @@ export default class MockDgram {
                     let $this = this;
                     setTimeout(function() {
                         $this.isOpen = false;
-                        $this.eventHandlers.close();
+                        mock.trigger('close');
                     }, 200);
                 }
-                close(callback) { mock.close(this,callback); }
+                on(event,callback) {mock.on(event,callback);}
+                once(event,callback) {mock.once(event,callback);}
+                close(callback) { mock.close(callback); }
+                bind(port,host){mock.bind(port,host);}
+                off(event,callback){mock.off(event,callback);}
             };
         };
         return mock;
@@ -47,18 +46,63 @@ export default class MockDgram {
      * @constructor
      */
     constructor() {
-        this.close = this.mockClose();
+        this.eventHandlers = {};
+        this.close = jest.fn((callback) => this.mockClose(callback));
+        this.once = jest.fn((event,callback) => this.mockOnce(event,callback));
+        this.on = jest.fn((event,callback) => this.mockOn(event,callback));
+        this.off = jest.fn((event,callback) => this.mockOff(event,callback));
+        this.bind = jest.fn((port,host)=>this.mockBind(port,host));
+    }
+
+    /**
+     * @param {*} event 
+     * @param {*} params 
+     */
+    trigger( event, params=[]) {
+        this.eventHandlers[event].callback(... params);
+        if (this.eventHandlers[event].once) {
+            delete this.eventHandlers[event];
+        }
+    }
+
+    /**
+     * @param {*} event 
+     * @param {*} callback 
+     */
+    mockOff(event,callback) {
+        delete this.eventHandlers[event];
+    }
+
+    /**
+     * @param {*} event 
+     * @param {*} callback 
+     */
+    mockOn(event,callback) {
+        this.eventHandlers[event] = {callback,once:false};
+    }
+
+    /**
+     * @param {*} event 
+     * @param {*} callback 
+     */
+    mockOnce(event,callback) {
+        this.eventHandlers[event] = {callback,once:true};
+    }
+
+    /**
+     * @param {*} $this 
+     * @param {*} event 
+     * @param {*} callback 
+     */
+    mockBind(port,host) {
+        this.trigger('listening');
     }
 
     /**
      * @returns {Object}
      */
-    mockClose() {
-        return jest.fn(($this,callback) => {
-            callback();
-            setTimeout(() => {
-                $this.eventHandlers.close();
-            }, 200);
-        });
+    mockClose(callback) {
+        callback();
+        setTimeout(() => this.trigger('close'), 200);
     }
 }

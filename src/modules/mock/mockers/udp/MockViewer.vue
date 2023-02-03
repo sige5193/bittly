@@ -1,9 +1,15 @@
 <template>
   <div class="d-flex flex-dir-column h-100">
     <div class="d-flex flex-dir-column" :style="{height:`${dataEntryViewerHeight}px`}">
+      <div class="content-center" v-if="null == mocker">
+        <a-empty :description="false" />
+      </div>
+      <div class="content-center" v-else-if="0 === Object.keys(mocker.clients).length">
+        <a-empty :description="false" />
+      </div>
+
       <!-- client list -->
-      <a-tabs v-if="null != mocker" 
-        tab-position="right" 
+      <a-tabs v-else tab-position="right" 
         class="h-100 tab-h100-pane tab-p0-pane" 
         v-model="activeClientKey"
       >
@@ -101,7 +107,7 @@
 </template>
 <script>
 import DataEntryListViewer from '../../data-entry/ListViewer.vue'
-import Mocker from './Mocker.js'
+import Mocker from './MockService.js'
 import MockerSetting from './MockerSetting.vue'
 import ResponseManualEditor from '../../response/manual/Editor.vue'
 import ResponseMatchRuleEditor from '../../response/match/Editor.vue'
@@ -163,6 +169,7 @@ export default {
         this.mock = this.value;
     },
     mounted() {
+        this.viewerMode = this.mock.options.encoding || 'hex';
         if ( undefined != this.$store.getters.mocks[this.mock.id] ) {
             this.mocker = this.$store.getters.mocks[this.mock.id];
             this.addEventListenersToMocker();

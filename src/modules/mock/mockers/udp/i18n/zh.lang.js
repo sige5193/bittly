@@ -6,4 +6,5 @@ module.exports = {
     remove : '移除',
     settingTitle : 'UDP 配置',
     clientRemoveByNotDisconnected : '是否移除该客户端 ?',
+    encoding : '格式',
 };

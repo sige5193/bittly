@@ -43,7 +43,9 @@ export default class UdpClientConnection {
      * event handler on client receive data.
      * @param {*} data 
      */
-    receiveData(data) {
+    async receiveData(data) {
+        let logData = ('hex'===this.mocker.options.encoding) ? data.toString('hex') : data.toString();
+        this.mocker.log(`[client ${this.key}] (receive ${this.mocker.options.encoding}) : `, logData);
         this.dataReceiveSize += data.length;
 
         let entry = {};
@@ -77,7 +79,8 @@ export default class UdpClientConnection {
             let content = MyObject.copy(rules[i].responseContent);
             content.name = window.app.$t('mock.response.match.entryName',[rules[i].name]);
             content.handler = rules[i].responseHandler;
-            this.send(content);
+            this.mocker.log(`[client ${this.key}] matched "${rules[i].name}"`);
+            await this.send(content);
         }
     }
 
@@ -98,7 +101,18 @@ export default class UdpClientConnection {
         this.dataEntries.push(entry);
         this.dataSendSize += entry.data.length;
 
-        this.mocker.server.send(entry.data, 0, entry.data.length, this.socket.port, this.socket.address);
+        let $this = this;
+        let data = entry.data;
+        return new Promise((resolve, reject) => {
+            this.mocker.server.send(data, 0, data.length, this.socket.port, this.socket.address, err => {
+                if ( null !== err ) {
+                    return reject(err);
+                }
+                let logData = ('hex'===$this.mocker.options.encoding) ? data.toString('hex') : data.toString();
+                this.mocker.log(`[client ${$this.key}] (send ${$this.mocker.options.encoding}) : `, logData);
+                resolve();
+            });
+        });
     }
 
     /**

@@ -1,7 +1,7 @@
 import StatusManager from '../../status/StatusManager.js';
 import UdpClientConnection from './UdpClientConnection.js';
 import MockServiceBase from '../MockServiceBase.js';
-export default class Mocker extends MockServiceBase {
+export default class MockService extends MockServiceBase {
     /**
      * @constructor
      * @param {MdbMock} mock 
@@ -30,22 +30,32 @@ export default class Mocker extends MockServiceBase {
      * start mock serviec
      * @returns {Promise<void>}
      */
-    start() {
+    async start() {
         this.server = window.dgram.createSocket('udp4');
-        this.server.on('message', ( data, client ) => this.udpServerDataReceive(client, data));
-        this.server.on('error', (err) => {
-            $this.$message.error(err.message);
-        });
+        await this.startServerInstance();
+        this.server.on('message', (data,client) => this.handleOnMessage(client, data));
+        this.server.on('error', err => this.handleOnError(err));
+        this.serviceOnline();
+        this.log('start');
+    }
 
+    /**
+     * start server instance
+     * @returns {Promise}
+     */
+    startServerInstance() {
         let $this = this;
-        return new Promise(( resolve, reject ) => {
-            try {
-                $this.server.bind($this.options.port, $this.options.host);
-                $this.serviceOnline();
+        return new Promise((resolve, reject) => {
+            let errorHandler = err => {
+                server.close();
+                reject(err);
+            };
+            $this.server.once('error',errorHandler);
+            $this.server.once('listening', () => {
+                $this.server.off('error',errorHandler);
                 resolve();
-            } catch ( e ) {
-                reject(e);
-            }
+            });
+            $this.server.bind($this.options.port, $this.options.host);
         });
     }
 
@@ -56,14 +66,21 @@ export default class Mocker extends MockServiceBase {
     stop() {
         let $this = this;
         return new Promise(( resolve, reject ) => {
-            for ( let key in this.clients ) {
-                this.clients[key].close();
-            }
             $this.server.close(() => {
                 $this.serviceOffline();
+                $this.log('stop');
                 resolve();
             });
         });
+    }
+
+    /**
+     * event handler on udp error
+     * @param {*} error 
+     */
+    handleOnError(error) {
+        let message = error.message;
+        throw Error(`UDP MOCK ERROR : ${message}`);
     }
 
     /**
@@ -71,7 +88,7 @@ export default class Mocker extends MockServiceBase {
      * @param {Object} client
      * @param {Buffer} data
      */
-    udpServerDataReceive(client, data) {
+    handleOnMessage(client, data) {
         let key = `${client.address}:${client.port}`;
         if ( undefined === this.clients[key] ) {
             let connection = new UdpClientConnection(this, client);
