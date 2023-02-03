@@ -7,7 +7,7 @@
   >
     <a-form :label-col="{span:4}" :wrapper-col="{span:17}">
       <a-form-item :label="$t('mock.name')">
-        <a-input v-model="mock.name" />
+        <a-input v-model="mock.name" @input="forceUpdate"/>
       </a-form-item>
       
       <!-- Path -->
@@ -17,6 +17,7 @@
             style="width: 80%"
             v-model="mock.options.path" 
             :data-source="serialports"
+            @input="forceUpdate"
           ><a-input></a-input></a-auto-complete>
           <a-button style="width:20%;" 
             @click="actionSerialPortListRefresh"
@@ -29,12 +30,13 @@
         <a-auto-complete class="w-100" 
           v-model="mock.options.baudRate" 
           :data-source="baudRates"
+          @input="forceUpdate"
         ><a-input></a-input></a-auto-complete>
       </a-form-item>
       
       <!-- Data Bits -->
       <a-form-item :label="$t('mock.mockers.serialport.dataBits')">
-        <a-select v-model="mock.options.dataBits">
+        <a-select v-model="mock.options.dataBits" @change="forceUpdate">
           <a-select-option value="5">5</a-select-option>
           <a-select-option value="6">6</a-select-option>
           <a-select-option value="7">7</a-select-option>
@@ -44,7 +46,7 @@
 
       <!-- Stop Bits -->
       <a-form-item :label="$t('mock.mockers.serialport.stopBits')">
-        <a-select v-model="mock.options.stopBits">
+        <a-select v-model="mock.options.stopBits" @change="forceUpdate">
           <a-select-option value="1">1</a-select-option>
           <a-select-option value="1.5">1.5</a-select-option>
           <a-select-option value="2">2</a-select-option>
@@ -53,13 +55,21 @@
      
       <!-- Parity -->
       <a-form-item :label="$t('mock.mockers.serialport.parity')">
-        <a-select v-model="mock.options.parity">
+        <a-select v-model="mock.options.parity" @change="forceUpdate">
           <a-select-option value="none">None</a-select-option>
           <a-select-option value="odd">Odd</a-select-option>
           <a-select-option value="even">Even</a-select-option>
           <a-select-option value="mark">Mark</a-select-option>
           <a-select-option value="space">Space</a-select-option>
         </a-select>
+      </a-form-item>
+
+      <!-- data format -->
+      <a-form-item :label="$t('mock.mockers.serialport.encoding')">
+        <a-radio-group v-model="mock.options.encoding" button-style="solid" @change="forceUpdate">
+          <a-radio-button value="text">TEXT</a-radio-button>
+          <a-radio-button value="hex">HEX</a-radio-button>
+        </a-radio-group>
       </a-form-item>
     </a-form>
 
@@ -69,8 +79,10 @@
   </a-modal>
 </template>
 <script>
+import MockerSettingBase from '../MockerSettingBase.js'
 export default {
     name : 'MockMockMockSetting',
+    mixins : [MockerSettingBase],
     props : {
         /**
          * mock instance to edit
@@ -80,16 +92,6 @@ export default {
     },
     data() {
         return {
-            /**
-             * indicate if setting enabled.
-             * @property {Boolean}
-             */
-            enable : false,
-            /**
-             * instance of mock model
-             * @property {MdbMock}
-             */
-            mock : null,
             /**
              * list of serialports
              * @property {Array<Object>}
@@ -108,34 +110,26 @@ export default {
     },
     methods : {
         /**
-         * open setting modal
-         * @public
+         * init mock options
+         * @param {*} options 
          */
-        open() {
-            this.mock = this.value;
-            if ( true === this.mock.isMockInitRequired ) {
-                this.mock.options.baudRate = '9600';
-                this.mock.options.dataBits = '8';
-                this.mock.options.stopBits = '1';
-                this.mock.options.parity = 'none';
-            }
-            this.enable = true;
+        initOptions( options ) {
+            options.baudRate = '9600';
+            options.dataBits = '8';
+            options.stopBits = '1';
+            options.parity = 'none';
+            options.encoding = 'text';
         },
 
         /**
-         * event handler on done setting
+         * generate summary by options
+         * @param {Object} options 
+         * @returns 
          */
-        async actionOk() {
-            let options = this.mock.options;
-            this.mock.summary = `${this.$t('mock.mockers.serialport.typeName')} `
-                + `${options.path}:${options.baudRate} `
-                + `${options.dataBits}-${options.parity[0].toUpperCase()}-${options.stopBits}`;
-            let isSuccess = await this.mock.save();
-            if ( !isSuccess ) {
-                throw Error('Failed to save mock model');
-            }
-            this.$emit('change');
-            this.enable = false;
+        generateSummary( options ) {
+            return `${this.$t('mock.mockers.serialport.typeName')} `
+            + `${options.path}:${options.baudRate} `
+            + `${options.dataBits}-${options.parity[0].toUpperCase()}-${options.stopBits}`;
         },
 
         /**

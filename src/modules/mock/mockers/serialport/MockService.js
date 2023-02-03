@@ -108,12 +108,8 @@ export default class Mocker extends MockServiceBase {
      * @returns 
      */
     serialportWrite( data ) {
-        console.log([
-            `> Mock [${this.mock.name}] ==> `,
-            `Hex : ${Common.convertBufferToHexString(data)}`,
-            `Text : ${data.toString()}`
-        ].join('\n'));
-
+        let logData = ('hex'===this.options.encoding) ? data.toString('hex') : data.toString();
+        this.log(`(write ${this.options.encoding}) : `, logData);
         let $this = this;
         return new Promise(( resolve, reject ) => {
             let isSuccess = $this.serialport.write(data);
@@ -159,13 +155,10 @@ export default class Mocker extends MockServiceBase {
      * event handler on serialport receive data
      * @param {*} data 
      */
-    handleOnSerialPortData( data ) {
+    async handleOnSerialPortData( data ) {
+        let logData = ('hex'===this.options.encoding) ? data.toString('hex') : data.toString();
+        this.log(`(receive ${this.options.encoding}) : `, logData);
         this.dataReceiveSize += data.length;
-        console.log([
-            `> Mock [${this.mock.name}] <== `,
-            `Hex : ${Common.convertBufferToHexString(data)}`,
-            `Text : ${data.toString()}`
-        ].join('\n'));
 
         let entry = {};
         entry.handler = 'Hex';
@@ -205,7 +198,8 @@ export default class Mocker extends MockServiceBase {
             let content = MyObject.copy(rules[i].responseContent);
             content.name = window.app.$t('mock.response.match.entryName',[rules[i].name]);
             content.handler = rules[i].responseHandler;
-            this.send(content);
+            this.log(`matched "${rules[i].name}"`);
+            await this.send(content);
         }
     }
 

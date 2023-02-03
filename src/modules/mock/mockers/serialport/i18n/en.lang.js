@@ -18,4 +18,5 @@ module.exports = {
     deviceRefreshSuccess : 'Serialport device list refreshed',
     deviceRefreshEmpty : 'Unable to find serialport device.',
     disconnected : 'Serial port device {0} disconnected',
+    encoding : 'Encoding',
 };

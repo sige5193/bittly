@@ -18,4 +18,5 @@ module.exports = {
     deviceRefreshSuccess : '串口设备已刷新',
     deviceRefreshEmpty : '未查询到串口设备',
     disconnected : '串口设备 {0} 断开连接',
+    encoding : '格式',
 };
