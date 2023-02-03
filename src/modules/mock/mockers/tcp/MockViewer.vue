@@ -108,7 +108,7 @@
 <script>
 import ComponentBase from '../../../../utils/component/Base.js'
 import DataEntryListViewer from '../../data-entry/ListViewer.vue'
-import Mocker from './Mocker.js'
+import Mocker from './MockService.js'
 import MockerSetting from './MockerSetting.vue'
 import ResponseManualEditor from '../../response/manual/Editor.vue'
 import ResponseMatchRuleEditor from '../../response/match/Editor.vue'
@@ -174,6 +174,7 @@ export default {
         this.mock = this.value;
     },
     mounted() {
+        this.viewerMode = this.mock.options.encoding || 'hex';
         this.registerEventHandler('mock-stop', (key) => this.onMockStop(key));
         if ( undefined != this.$store.getters.mocks[this.mock.id] ) {
             this.mocker = this.$store.getters.mocks[this.mock.id];

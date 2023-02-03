@@ -67,13 +67,16 @@ export default class TcpClientConnection {
      */
     handleOnClose() {
         this.mocker.trigger('client-close', this);
+        this.mocker.log(`[client ${this.key}] close`);
     }
 
     /**
      * event handler on client receive data.
      * @param {*} data 
      */
-    handleOnData(data) {
+    async handleOnData(data) {
+        let logData = ('hex'===this.mocker.options.encoding) ? data.toString('hex') : data.toString();
+        this.mocker.log(`[client ${this.key}] (receive ${this.mocker.options.encoding}) : `, logData);
         this.dataReceiveSize += data.length;
 
         let entry = {};
@@ -115,7 +118,8 @@ export default class TcpClientConnection {
             let content = MyObject.copy(rules[i].responseContent);
             content.name = window.app.$t('mock.response.match.entryName',[rules[i].name]);
             content.handler = rules[i].responseHandler;
-            this.send(content);
+            this.mocker.log(`[client ${this.key}] matched "${rules[i].name}"`);
+            await this.send(content);
         }
     }
 
@@ -136,10 +140,13 @@ export default class TcpClientConnection {
         this.dataEntries.push(entry);
         this.dataSendSize += entry.data.length;
 
+        let data = entry.data;
         let $this = this;
         return new Promise(( resolve ) => {
             $this.socket.write(entry.data, () => {
                 $this.mocker.trigger('client-data-write', $this);
+                let logData = ('hex'===$this.mocker.options.encoding) ? data.toString('hex') : data.toString();
+                this.mocker.log(`[client ${$this.key}] (send ${$this.mocker.options.encoding}) : `, logData);
                 resolve();
             });
         });

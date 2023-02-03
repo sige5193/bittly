@@ -10,4 +10,5 @@ module.exports = {
     clientDisconnectConfirm : '是否断开当前客户端连接 ?',
     failedToStart : '无法启动 TCP Mock 服务 : {0}',
     serverError : 'TCP Mock 服务 "{0}" 错误 : {1}',
+    encoding : '格式',
 };

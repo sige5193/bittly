@@ -36,11 +36,13 @@ export default class Mocker extends MockServiceBase {
      * @returns {Promise<void>}
      */
     async start() {
-        this.server = window.net.createServer(socket => this.tcpServerHandleNewClient(socket));
+        this.server = window.net.createServer();
+        this.server.on('connection',socket => this.tcpServerHandleNewClient(socket));
         this.server.on('error', (err) => this.tcpServerHandleError(err));
         this.server.on('close', () => this.tcpServerHandleClose());
         await this.tcpServerOpen();
         this.serviceOnline();
+        this.log('start');
     }
 
     /**
@@ -54,6 +56,7 @@ export default class Mocker extends MockServiceBase {
                 this.clients[key].close();
             }
             $this.server.close(() => {
+                this.log('stop');
                 resolve();
             });
         });

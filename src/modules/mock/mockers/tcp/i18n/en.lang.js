@@ -10,4 +10,5 @@ module.exports = {
     clientDisconnectConfirm : 'Are you sure to disconnect this client ?',
     failedToStart : 'Unable to start tcp server : {0}',
     serverError : 'Error on TCP server "{0}" : {1}',
+    encoding : 'Encoding',
 };
