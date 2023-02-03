@@ -1,3 +1,4 @@
+import BuildHandler from '../parameters/form/BuildHandler.js';
 import ScriptLib from './ScriptLib.js'
 export default class QuickCallLib {
     /**
@@ -61,7 +62,6 @@ export default class QuickCallLib {
      * @returns 
      */
     checksum8( ... items ) {
-        debugger
         let sum = this.scriptLib.bytesSum(... items);
         if(sum > 255) {
             sum = 255 - sum % 256;
@@ -76,15 +76,14 @@ export default class QuickCallLib {
      * @returns 
      */
     bcc( ... items ) {
+        let buffer =  this.scriptLib.buildBufferFromValueItems(items);
         let result = null;
-        for ( let i=0; i<items.length; i++ ) {
-            let bytes = this.scriptLib.valueToBytes(items[i]);
-            for ( let bi=0; bi<bytes.length; bi++ ) {
-                if ( null === result ) {
-                    result = bytes[bi];
-                } else {
-                    result ^= bytes[bi];
-                }
+        for ( let bi=0; bi<buffer.length; bi++ ) {
+            let byte = buffer[bi];
+            if ( null === result ) {
+                result = byte;
+            } else {
+                result ^= byte;
             }
         }
         return result.toString();

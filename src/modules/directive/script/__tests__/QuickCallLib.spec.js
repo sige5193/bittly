@@ -2,7 +2,7 @@ import Tester from '../../../../utils/test/UnitTester.js';
 import MdbDirective from '@/models/MdbDirective.js'
 import QuickCallLib from '../QuickCallLib.js';
 describe('@/src/modules/directive/script/QuickCallLib.js', () => {
-    it('normal use', async () => {
+    it('debug normal use', async () => {
         let directive = new MdbDirective();
         let tester = new Tester();
         await tester.setup();
@@ -22,16 +22,28 @@ describe('@/src/modules/directive/script/QuickCallLib.js', () => {
         // lec
         expect(quickCall.lrc({type:'byte',format:'hex',value:'FF'})).toBe('1');
 
-        // checksum8
-        expect(quickCall.checksum8(
-            {type:'byte',format:'hex',value:'FF'},
-            {type:'byte',format:'hex',value:'FF'}
-        )).toBe('2');
-
         // bcc
         expect(quickCall.bcc(
             {type:'byte',format:'hex',value:'FF'},
             {type:'byte',format:'hex',value:'AA'}
         )).toBe('85');
     })
+
+    it('checksum8', async() => {
+        let directive = new MdbDirective();
+        let tester = new Tester();
+        await tester.setup();
+        let quickCall = new QuickCallLib(directive);
+
+        expect(quickCall.checksum8(
+            {type:'byte',format:'hex',value:'FF'},
+            {type:'byte',format:'hex',value:'FF'}
+        )).toBe('2');
+
+        expect(quickCall.checksum8(
+            {type:'bits',length:2,format:'bin',value:'01'},
+            {type:'bits',length:6,format:'bin',value:'111100'},
+            {type:'uint8',value:'FF',format:'hex'},
+        )).toBe('133');
+    });
 });

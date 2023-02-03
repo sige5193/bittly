@@ -2,6 +2,8 @@ import crc from 'crc';
 import FormBuildHandler from '../parameters/form/BuildHandler.js';
 import { Buffer } from 'buffer';
 import MdbDirective from '../../../models/MdbDirective.js';
+import BuildHandler from '../parameters/form/BuildHandler.js';
+import MyObject from '../../../utils/datatype/MyObject.js';
 export default class ScriptLib {
     /**
      * constructor of lib
@@ -46,22 +48,20 @@ export default class ScriptLib {
      * @return {Number}
      */
     bytesSum( ... values ) {
+        let buffer = this.buildBufferFromValueItems(values);
         let sum = 0;
-        for ( let i=0; i<values.length; i++ ) {
-            let bytes = this.valueToBytes(values[i]);
-            for ( let bi=0; bi<bytes.length; bi++ ) {
-                sum += bytes[bi];
-            }
+        for ( let i=0; i<buffer.length; i++ ) {
+            sum += buffer[i];
         }
         return sum;
     }
 
     /**
-     * convert value to bytes
-     * @param {Object} value 
+     * Build buffer from value items.
+     * @param {Array<Object>} values 
      * @returns {Buffer}
      */
-    valueToBytes( value ) {
+    buildBufferFromValueItems( values ) {
         let typemap = {
             int8 : 'char_int',
             uint8 : 'byte',
@@ -72,15 +72,19 @@ export default class ScriptLib {
             int64 : 'long_long',
             uint64 : 'unsigned_long_long',
         };
-        if ( undefined != typemap[value.type] ) {
-            value.type = typemap[value.type];
-        }
-        if ( 'number' == typeof(value.value) ) {
-            value.value = `${value.value}`;
-            value.format = 'dec';
+
+        let items = MyObject.copy(values);
+        for ( let i=0; i<items.length; i++ ) {
+            if ( undefined != typemap[items[i].type] ) {
+                items[i].type = typemap[items[i].type];
+            }
+            if ( 'number' == typeof(items[i].value) ) {
+                items[i].value = `${items[i].value}`;
+                items[i].format = 'dec';
+            }
         }
 
-        let buffer = FormBuildHandler.convertFormItemToBin(this.directive, value);
+        let buffer = BuildHandler.packItemsToBuffer(this.directive, items);
         return buffer;
     }
 
