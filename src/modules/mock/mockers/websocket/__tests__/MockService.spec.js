@@ -1,6 +1,6 @@
 import MdbMock from '../../../../../models/MdbMock.js';
 import Tester from '../../../../../utils/test/UnitTester.js'
-import Mocker from '../WsServer.js'
+import MockService from '../MockService.js'
 import MockWebSocketServer from './mocks/MockWebSocketServer.js';
 describe('@/src/modules/mock/mockers/websocket/Mocker.js', () => {
     it('basic', async () => {
@@ -11,7 +11,7 @@ describe('@/src/modules/mock/mockers/websocket/Mocker.js', () => {
         await mock.save();
         
         let server = MockWebSocketServer.setup();
-        let mocker = new Mocker(mock);
+        let mocker = new MockService(mock);
 
         let clientNewEventHandler = jest.fn();
         mocker.on('client-new', clientNewEventHandler);

@@ -117,7 +117,7 @@
 <script>
 import ComponentBase from '../../../../utils/component/Base.js'
 import DataEntryListViewer from '../../data-entry/ListViewer.vue'
-import WsServer from './WsServer.js'
+import MockService from './MockService.js'
 import MockerSetting from './MockerSetting.vue'
 import ResponseManualEditor from '../../response/manual/Editor.vue'
 import ResponseMatchRuleEditor from '../../response/match/Editor.vue'
@@ -200,7 +200,7 @@ export default {
          * @public
          */
         async start() {
-            this.mocker = new WsServer(this.mock);
+            this.mocker = new MockService(this.mock);
             this.registerMockerEventHandlers();
             await this.mocker.start();
         },
