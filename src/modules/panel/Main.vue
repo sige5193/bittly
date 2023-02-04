@@ -109,6 +109,8 @@ export default {
             this.panelActiveIndex = -1;
             this.panels = [];
             let list = await MdbPanel.findAll({project_id:this.curProjectId});
+            list.sort((a,b) => a.name.localeCompare(b.name));
+
             for ( let i=0; i<list.length; i++ ) {
                 let item = {};
                 item.model = list[i];
@@ -150,7 +152,7 @@ export default {
             if ( this.panels.length > 0 ) {
                 this.panelActiveIndex = 0;
             }
-        }
+        },
     },
 }
 </script>
