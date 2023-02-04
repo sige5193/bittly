@@ -13,6 +13,7 @@
           v-model="target.path" 
           :data-source="serialportOptions.serialports"
           :open="showSerialportPathList"
+          :dropdownMatchSelectWidth="false"
           @blur="showSerialportPathList=false"
           @focus="showSerialportPathList=true"
           @change="actionSerialportPathChange"
@@ -170,7 +171,6 @@ export default {
          * refresh serialport list or request 
          */
         async actionSerialPortListRefresh() {
-            debugger
             await this.refreshSerialports();
             if ( 0 === this.serialportOptions.serialports.length ) {
                 this.$message.info(this.$t('directive.communicator.serialport.deviceRefreshEmpty'), 1);
@@ -199,7 +199,11 @@ export default {
             let serialports = await CommunicatorSerialPort.list();
             this.serialportOptions.serialports = [];
             for ( let i=0; i<serialports.length; i++ ) {
-                this.serialportOptions.serialports.push(serialports[i].path);
+                let option = {
+                    value: serialports[i].path,
+                    text: serialports[i].friendlyName,
+                };
+                this.serialportOptions.serialports.push(option);
             }
         },
 
