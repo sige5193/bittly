@@ -251,6 +251,11 @@ module.exports = {
             parserFormFieldName : '属性',
             parserFormFieldExpression : '表达式',
             parserFormFieldExpressionFailed : '属性 {0} 表达式 [{1}] 执行失败 : {2}',
+            parserRegex : '正则表达式',
+            parserRegexPattern : '匹配模式',
+            parserRegexExampleData : '测试内容',
+            parserRegexExampleMatch : '匹配数据',
+            parserRegexRegexIsNotAvailable : '无法解析正则表达式',
         },
     },
     entry : {

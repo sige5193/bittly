@@ -10,6 +10,7 @@
           <a-select-option value="data-frame">{{$t('directive.response.plotter.parserDataFrame')}}</a-select-option>
           <a-select-option value="data-matrix">{{$t('directive.response.plotter.parserDataMatrix')}}</a-select-option>
           <a-select-option value="form">{{$t('directive.response.plotter.parserForm')}}</a-select-option>
+          <a-select-option value="regex">{{$t('directive.response.plotter.parserRegex')}}</a-select-option>
           <a-select-option value="script">{{$t('directive.response.plotter.parseTypeCustom')}}</a-select-option>
         </a-select>
     
@@ -57,6 +58,7 @@
   </div>
 </template>
 <script>
+import MyObject from '../../../../utils/datatype/MyObject.js'
 import Formatter from '../../../../utils/Formatter.js'
 import Chart from 'chart.js'
 import zoom from 'chartjs-plugin-zoom'
@@ -67,7 +69,7 @@ import ParserNumNumCrlf from './parsers/NumNumCrlf.vue'
 import ParserDataFrame from './parsers/DataFrame.vue'
 import ParserDataMatrix from './parsers/DataMatrix.vue'
 import ParserForm from './parsers/Form.vue'
-import MyObject from '../../../../utils/datatype/MyObject.js'
+import ParserRegex from './parsers/Regex.vue'
 export default {
     name : 'BlockResponseViewerPlotter',
     mixins : [ViewerMixin],
@@ -77,6 +79,7 @@ export default {
         'parser-data-frame' : ParserDataFrame,
         'parser-data-matrix' : ParserDataMatrix,
         'parser-form' : ParserForm,
+        'parser-regex' : ParserRegex,
     },
     props: {
         /**

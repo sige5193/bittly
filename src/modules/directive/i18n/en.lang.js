@@ -251,6 +251,11 @@ module.exports = {
             parserFormFieldName : 'Attribute',
             parserFormFieldExpression : 'Expression',
             parserFormFieldExpressionFailed : 'Attribute {0} Expression [{1}] failed to execute : {2}',
+            parserRegex : 'Regex',
+            parserRegexPattern : 'Pattern',
+            parserRegexExampleData : 'Test Content',
+            parserRegexExampleMatch : 'Matched',
+            parserRegexRegexIsNotAvailable : 'Unable to parser regex pattern',
         },
     },
     entry : {
