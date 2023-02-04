@@ -7,4 +7,7 @@ module.exports = {
     protocolCannotBeEmpty : 'Please select network protocol',
     hostCannotBeEmpty : 'Please input server host',
     portCannotBeEmpty : 'Please input server port',
+    udpModeUnicast : 'Unicast',
+    udpModeMulticast : 'Multicast',
+    udpModeBroadcast : 'Broadcast',
 };

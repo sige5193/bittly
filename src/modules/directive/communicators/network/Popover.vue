@@ -17,6 +17,10 @@
             {{$t('directive.communicator.network.address')}} : <span ref="lblHost">{{device.options.host}}</span>
             {{$t('directive.communicator.network.port')}} : {{device.options.port}}
           </p>
+          <p v-if="'UDP' === device.options.protocol">
+            {{$t('directive.communicator.network.udpLocalAddress')}} : {{device.handler.connection.address().address}}
+            {{$t('directive.communicator.network.udpLocalPort')}} : {{device.handler.connection.address().port}}
+          </p>
           <p>
             {{$t('app.device.dataTrans')}} : 
             {{$t('app.device.dataTransSend')}} {{device.getDataSendSize() | filesize}} 

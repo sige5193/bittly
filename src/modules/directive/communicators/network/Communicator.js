@@ -1,5 +1,7 @@
 import Common from "@/utils/Common";
 import CommunicatorBase from '../CommunicatorBase.js'
+import NetHandlerTCP from "./NetHandlerTCP.js";
+import NetHandlerUDP from "./NetHandlerUDP.js";
 /**
  * communicator for network
  * @author sige
@@ -56,24 +58,16 @@ export default class Communicator extends CommunicatorBase {
 
         this.timeDelayBeforeFirstWrite = 100;
         this.comkey = `Network:${options.protocol}:${options.host}:${options.port}`;
-        this.isConnected = false;
         this.options.host = this.applyEnvPlaceholderVariables(this.options.host);
         this.options.port = this.applyEnvPlaceholderVariables(this.options.port);
-        
         this.title = `${options.protocol} ${options.host}:${options.port}`;
+
         if ( 'TCP' == this.options.protocol ) {
-            this.connection = new window.net.Socket();
-            this.connection.on('data', (data) => this.handleOnData(data));
-            this.connection.on('error',(err) => this.handleOnError(err));
-            this.connection.on('close',(err) => this.handleOnClose(err));
-            this.connectReject = null;
-        } else if ( 'UDP' == this.options.protocol ) {
-            this.connection = window.dgram.createSocket('udp4');
-            this.connection.on('close',() => this.handleOnClose(false));
-            this.connection.on('message', (data) => this.handleOnData(data));
-            this.connection.on('error', (err) => this.handleOnError(err));
-            this.isConnected = true;
-            this.deviceOnline();
+            this.handler = new NetHandlerTCP(this);
+        } else if ( 'UDP' === this.options.protocol ) {
+            this.handler = new NetHandlerUDP(this);
+        } else {
+            throw Error(`net protocol "${this.options.protocol}" is not supported.`);
         }
     }
 
@@ -82,46 +76,24 @@ export default class Communicator extends CommunicatorBase {
      * @returns {Boolean}
      */
     getIsOpen() {
-        return this.isConnected;
+        return this.handler.getIsOpen();
     }
 
     /**
      * Open network connection
      * @returns {Promise}
      */
-    open() {
-        let $this = this;
-        return new Promise(function( resolve, reject ) {
-            if ( 'UDP' == $this.options.protocol ) {
-                resolve();
-                return;
-            }
-            $this.connectReject = reject;
-            $this.connection.connect({
-                port : $this.options.port,
-                host : $this.options.host,
-            }, function() {
-                $this.isConnected = true;
-                $this.deviceOnline();
-                resolve();
-            });
-        });
+    async open() {
+        await this.handler.open();
+        this.deviceOnline();
     }
 
     /**
      * close the serial port
      * @returns {Promise}
      */
-    close() {
-        let $this = this;
-        return new Promise(( resolve ) => {
-            if ( 'TCP' == $this.options.protocol ) {
-                $this.connection.destroy();
-                resolve();
-            } else if ( 'UDP' == $this.options.protocol ) {
-                $this.connection.close(() => resolve());
-            }
-        });
+    async close() {
+        await this.handler.close();
     }
 
     /**
@@ -129,64 +101,17 @@ export default class Communicator extends CommunicatorBase {
      * @param {*} data 
      * @returns {Promise}
      */
-    write( data ) {
-        let $this = this;
-        return new Promise(( resolve ) => {
-            $this.log('send',data);
-            if ( 'TCP' == $this.options.protocol ) {
-                $this.connection.write(data, function() {
-                    $this.dataSendSize += data.length;
-                    resolve();
-                });
-            } else if ( 'UDP' == $this.options.protocol ) {
-                $this.connection.send(data, 0, data.length, $this.options.port, $this.options.host, function( err ) {
-                    $this.dataSendSize += data.length;
-                    resolve();
-                }); 
-            }
-        });
+    async write( data ) {
+        await this.handler.write(data);
+        this.dataSendSize += data.length;
     }
 
     /**
-     * error handler
-     * @param {Error} err 
+     * handle disconnect event for net connection handler
+     * @returns {void}
      */
-    handleOnError( err ) {
-        // Failed to connect to target
-        if ( !this.isConnected && null != this.connectReject ) {
-            this.connectReject(err);
-            return;
-        }
-
-        if ( "ECONNRESET" === err.code ) {
-            return;
-        }
-        throw err;
-    }
-
-    /**
-     * handle event on network connection has data come in
-     * @param {*} data 
-     */
-    handleOnData(data) {
-        this.log('receive', data);
-        this.dataReceived(data);
-    }
-
-    /**
-     * handle event on close
-     * @param {*} err 
-     */
-    handleOnClose( err ) {
-        if ( false === this.isConnected ) {
-            return;
-        }
-        if ( true === err ) {
-            this.toast('disconnected', [this.title], 'warning');
-        }
-        this.log('close');
+    deviceDisconnected() {
         this.deviceOffline();
-        this.isConnected = false;
         delete Communicator.instances[this.comkey];
     }
 }

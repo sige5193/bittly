@@ -7,4 +7,9 @@ module.exports = {
     protocolCannotBeEmpty : '请选择网络协议',
     hostCannotBeEmpty : '请输入服务器地址',
     portCannotBeEmpty : '请输入服务器端口号',
+    udpModeUnicast : '单播',
+    udpModeMulticast : '组播',
+    udpModeBroadcast : '广播',
+    udpLocalAddress : '本地地址',
+    udpLocalPort : '本地端口',
 };

@@ -34,6 +34,15 @@
         @change="actionUpdateTarget(true)" 
       />
     </a-col>
+
+    <!-- mode -->
+    <a-col :span="4" class="pr-1" v-if="'UDP' === target.protocol">
+      <a-select class="w-100" v-model="target.netUdpMode" @change="actionUpdateTarget(true)">
+        <a-select-option value="unicast">{{$t('directive.communicator.network.udpModeUnicast')}}</a-select-option>
+        <a-select-option value="multicast">{{$t('directive.communicator.network.udpModeMulticast')}}</a-select-option>
+        <a-select-option value="broadcast">{{$t('directive.communicator.network.udpModeBroadcast')}}</a-select-option>
+      </a-select>
+    </a-col>
   </a-row>
 </template>
 <script>
@@ -57,6 +66,9 @@ export default {
         initTarget() {
             let hasChanged = MyObject.applyDefaultValues(this.target, {
                 protocol : 'TCP',
+                host : '127.0.0.1',
+                port : '8899',
+                netUdpMode : 'unicast',
             });
             if ( hasChanged ) {
                 this.updateVModel();
