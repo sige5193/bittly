@@ -32,9 +32,10 @@ module.exports = {
         browserDownloadClient : '下载 Bittly',
         browserOpenDevTools : '您可以通过浏览器菜单手动打开开发者工具 ~~~ ',
         environmentNotSupportAction : '当前运行环境不支持该操作',
+        environmentBrowserVersionTooOld : 'Bittly 在线运行 需要 Chrome 版本高于或等于 89',
         environmentBrowserNotSupport : '在线版本目前仅支持 Chrome ~~~ ',
         environmentCheckFailed : '运行环境检查失败',
-        
+
         about : '关于',
         quitConfirm : '是否退出应用？',
         device : {

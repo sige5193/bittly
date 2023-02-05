@@ -23,6 +23,11 @@ export default class EnvBrowser {
         if ( -1 === navigator.userAgent.indexOf('Chrome') ) {
             throw Error(window.app.$t('app.environmentBrowserNotSupport'));
         }
+
+        let versionMatch = navigator.userAgent.match(/Chrome\/(?<version>\d+)/);
+        if ( null === versionMatch || versionMatch.groups.version * 1 < 89 ) {
+            throw Error(window.app.$t('app.environmentBrowserVersionTooOld'));
+        }
     }
 
     /**

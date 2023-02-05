@@ -31,6 +31,7 @@ module.exports = {
         browserTip : 'Because of the limitation of browser, there would be some action not available ~~~ You can download bittly and use it without limiation.',
         browserDownloadClient : 'Download Bittly',
         browserOpenDevTools : 'you can open dev tools by browser menu ~~~ ',
+        environmentBrowserVersionTooOld : 'Bittly online version requires chrome verion 89 or later',
         environmentNotSupportAction : 'Current environment does not support this action',
         environmentBrowserNotSupport : 'Bittly online version only available on chrome ~~~ ',
         environmentCheckFailed : 'Runtime environment check failed',
