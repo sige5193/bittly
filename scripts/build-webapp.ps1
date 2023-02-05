@@ -5,7 +5,7 @@
 # start workflow
 Write-Host ""
 Write-Host "Start workflow ..."
-gh workflow run "Build Web App" --repo sige5193/bittly --ref enable-browser-env-support
+gh workflow run "Build Web App" --repo sige5193/bittly
 if ( $false -eq $? ) {
    return ;
 }

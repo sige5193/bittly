@@ -15,8 +15,6 @@ jobs:
     # checkout repository
     - name: Checkout repository
       uses: actions/checkout@v3
-      with:
-        ref: enable-browser-env-support
 
     # setup node
     - name: Setup node 16.14.2
