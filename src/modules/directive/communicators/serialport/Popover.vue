@@ -42,8 +42,8 @@ export default {
         /**
          * Close device
          */
-        actionClose() {
-            this.device.close();
+        async actionClose() {
+            await this.device.close();
         },
     }
 }
