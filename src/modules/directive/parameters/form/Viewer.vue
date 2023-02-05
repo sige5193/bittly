@@ -139,6 +139,9 @@ export default {
             let builder = paramBuilder.getBuildHandler();
             if ( 'form' == builder.getTypeName() ) {
                 formData = builder.getFormRawData();
+                if ( null === formData ) {
+                    formData = [];
+                }
             }
 
             this.values = [];
