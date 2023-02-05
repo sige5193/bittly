@@ -32,6 +32,8 @@ module.exports = {
         browserDownloadClient : 'Download Bittly',
         browserOpenDevTools : 'you can open dev tools by browser menu ~~~ ',
         environmentNotSupportAction : 'Current environment does not support this action',
+        environmentBrowserNotSupport : 'Bittly online version only available on chrome ~~~ ',
+        environmentCheckFailed : 'Runtime environment check failed',
 
         about : 'About',
         quitConfirm : 'Are you sure to exit the app ?',

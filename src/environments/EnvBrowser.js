@@ -15,6 +15,15 @@ export default class EnvBrowser {
         this.bluetoothBleHandler = 'web-bluetooth-ble';
         this.httpHandler = 'axios';
     }
+    
+    /**
+     * check environment
+     */
+    check() {
+        if ( -1 === navigator.userAgent.indexOf('Chrome') ) {
+            throw Error(window.app.$t('app.environmentBrowserNotSupport'));
+        }
+    }
 
     /**
      * @param {*} type 

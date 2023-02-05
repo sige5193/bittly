@@ -21,6 +21,13 @@ export default class EnvElectron {
     }
 
     /**
+     * check environment
+     */
+    check() {
+        // nothing to do here
+    }
+
+    /**
      * @param {*} type 
      * @param {*} name 
      * @param {*} handler 

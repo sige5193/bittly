@@ -124,6 +124,18 @@ export default {
             this.isLoading = true;
             document.title = `Bittly - ${PackageJSON.version}`;
 
+            // setup i18n
+            this.loadingTitle = 'initLoadingStepI18nSetup';
+            this.$i18n.locale = await AppHelper.langCodeGet();
+            
+            // check env
+            try {
+                this.$env.check();
+            } catch ( e ) {
+                this.$error({title: this.$t('app.environmentCheckFailed'),content: e.message});
+                return ;
+            } 
+
             // setup database
             this.loadingTitle = 'initLoadingStepDatabaseSetup';
             await DatabaseSetup.start();
@@ -131,10 +143,6 @@ export default {
             // setup api client
             this.loadingTitle = 'initLoadingStepServerSetup';
             await this.$bittly.start();
-            
-            // setup i18n
-            this.loadingTitle = 'initLoadingStepI18nSetup';
-            this.$i18n.locale = await AppHelper.langCodeGet();
             
             // setup dictionary
             this.loadingTitle = 'initLoadingStepDirectionarySetup';
