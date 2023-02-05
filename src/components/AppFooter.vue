@@ -1,5 +1,5 @@
 <template>
-  <a-layout-footer class="footer border-top">
+  <a-layout-footer class="footer border-top white-space-nowrap">
     <a-row>
       <a-col :span="8">
         <app-action-recorder />

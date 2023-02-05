@@ -1,7 +1,7 @@
 <template>
   <a-layout class="h-100">
     <!-- directive entry -->
-    <a-layout-sider class="bg-white border-right" width="300">
+    <a-layout-sider class="bg-white border-right d-none d-xl-block" width="300">
       <panel-entries 
         ref="entries"
         :projectId="curProjectId"

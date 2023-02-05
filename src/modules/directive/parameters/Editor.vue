@@ -4,7 +4,7 @@
       <a-empty ref="emptyPlaceholder" :description="$t('directive.parameter.notRequired')" />
     </div>
     <template v-else>
-      <div class="border-bottom p-1">
+      <div class="border-bottom p-1 white-space-nowrap">
         <a-radio-group 
           ref="radioGroupParamType"
           name="radioGroup" 

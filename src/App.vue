@@ -26,7 +26,7 @@
     <a-layout v-else class="h-100">
       <a-layout>
         <!-- module menu bar -->
-        <a-layout-sider :defaultCollapsed="true" :trigger="null" class="bg-white border-right">
+        <a-layout-sider :defaultCollapsed="true" :trigger="null" class="bg-white border-right d-none d-xl-block">
           <a-menu id="app-module-menu" mode="inline" :selectedKeys="[moduleName]" @click="actionModuleListMenuItemClicked">
             <a-menu-item v-for="appModule in modulesList" :key="appModule.id" :data-module="appModule.id">
               <a-icon :type="appModule.icon" /> 

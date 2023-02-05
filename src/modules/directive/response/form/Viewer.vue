@@ -224,11 +224,11 @@ export default {
          */
         tableColumns() {
             return [
-                {title: this.$t('directive.response.form.fieldName'), dataIndex: 'name',scopedSlots: { customRender: 'name' }},
-                {title: this.$t('directive.response.form.fieldType'),dataIndex: 'type',scopedSlots: { customRender: 'type' }},
-                {title: this.$t('directive.response.form.fieldValue'),dataIndex: 'value',scopedSlots: { customRender: 'value' }},
-                {title: this.$t('directive.response.form.fieldDesc'),dataIndex: 'desc',scopedSlots: { customRender: 'desc' }},
-                {title: this.$t('directive.response.form.fieldOperations'),key: 'action',scopedSlots: { customRender: 'action' }, className:'text-right'},
+                {title: this.$t('directive.response.form.fieldName'), dataIndex: 'name',scopedSlots: { customRender: 'name' },className:'white-space-nowrap'},
+                {title: this.$t('directive.response.form.fieldType'),dataIndex: 'type',scopedSlots: { customRender: 'type' },className:'white-space-nowrap'},
+                {title: this.$t('directive.response.form.fieldValue'),dataIndex: 'value',scopedSlots: { customRender: 'value' },className:'white-space-nowrap'},
+                {title: this.$t('directive.response.form.fieldDesc'),dataIndex: 'desc',scopedSlots: { customRender: 'desc' },className:'white-space-nowrap'},
+                {title: this.$t('directive.response.form.fieldOperations'),key: 'action',scopedSlots: { customRender: 'action' }, className:'text-right white-space-nowrap'},
             ];
         },
     },

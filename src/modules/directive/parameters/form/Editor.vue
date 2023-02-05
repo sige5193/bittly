@@ -299,11 +299,11 @@ export default {
     computed : {
         tableColumns() {
             return [
-                {title: this.$t('directive.parameter.form.fieldName'), dataIndex: 'name',scopedSlots: { customRender: 'name' }},
-                {title: this.$t('directive.parameter.form.filedType'),dataIndex: 'type',scopedSlots: { customRender: 'type' },width:'250px'},
-                {title: this.$t('directive.parameter.form.filedValue'),dataIndex: 'value',scopedSlots: { customRender: 'value' }},
-                {title: this.$t('directive.parameter.form.filedDesc'),dataIndex: 'desc',scopedSlots: { customRender: 'desc' }},
-                {title: this.$t('directive.parameter.form.filedOperations'), key: 'action',scopedSlots: { customRender: 'action' }, className:'text-right',width:'80px'},
+                {title: this.$t('directive.parameter.form.fieldName'), dataIndex: 'name',scopedSlots: { customRender: 'name' },className:'white-space-nowrap'},
+                {title: this.$t('directive.parameter.form.filedType'),dataIndex: 'type',scopedSlots: { customRender: 'type' },className:'white-space-nowrap'},
+                {title: this.$t('directive.parameter.form.filedValue'),dataIndex: 'value',scopedSlots: { customRender: 'value' },className:'white-space-nowrap'},
+                {title: this.$t('directive.parameter.form.filedDesc'),dataIndex: 'desc',scopedSlots: { customRender: 'desc' },className:'white-space-nowrap'},
+                {title: this.$t('directive.parameter.form.filedOperations'), key: 'action',scopedSlots: { customRender: 'action' }, className:'text-right white-space-nowrap'},
             ];
         },
     },

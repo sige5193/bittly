@@ -5,7 +5,7 @@
     @mouseleave="actionExecutorLeave"
   >
     <a-row>
-      <a-col :span="18">
+      <a-col :span="18" class="white-space-nowrap">
         <h4 v-if="!enableNameQuickEdit">
           <span>{{directive.name}} </span>
           <a-button @click="enableNameQuickEdit = true" icon="edit" size="small" ref="btnNameQuickEdit"></a-button>
@@ -24,7 +24,7 @@
         </div>
       </a-col>
       
-      <a-col :span="6" class="text-right p-2">
+      <a-col :span="6" class="text-right p-2 white-space-nowrap">
         <a-dropdown placement="bottomRight" :trigger="['click']">
           <a-button ref="btnExtAction" icon="ellipsis" size="small"></a-button>
           <a-menu ref="menuBtnExtAction" slot="overlay" @click="actionDirectiveMoreMenuItemClicked">

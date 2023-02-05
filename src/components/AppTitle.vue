@@ -4,57 +4,59 @@
       <div class="app-title-content">
         <img src="../assets/icon-512x512.png" class="app-logo" />
 
-        <!-- File -->
-        <a-dropdown class="mr-2 ml-2" :trigger="['click']">
-          <span class="app-dropdown-menu-title" ref="dmenuTriggerFile">{{$t('app.menu.file.label')}}</span>
-          <a-menu ref="menuFile" slot="overlay" @click="actionMenuItemClick">
-            <a-menu-item key="FileSetting">{{$t('app.menu.setting')}}</a-menu-item>
-            <a-menu-divider />
-            <a-menu-item key="FileToggleAlwaysOnTop">
-              <span v-if="!alwaysOnTopEnable">{{$t('app.menu.file.alwaysOnTopEnable')}}</span>
-              <span v-else>{{$t('app.menu.file.alwaysOnTopDisable')}}</span>
-            </a-menu-item>
-            <a-menu-item key="FileOpenDevTools">{{$t('app.menu.file.opendevtool')}}</a-menu-item>
-            <a-menu-divider />
-            <a-menu-item key="FileExit">{{$t('app.menu.file.exit')}}</a-menu-item>
-          </a-menu>
-        </a-dropdown>
+        <div class="d-none d-md-inline-block">
+          <!-- File -->
+          <a-dropdown class="mr-2 ml-2" :trigger="['click']">
+            <span class="app-dropdown-menu-title" ref="dmenuTriggerFile">{{$t('app.menu.file.label')}}</span>
+            <a-menu ref="menuFile" slot="overlay" @click="actionMenuItemClick">
+              <a-menu-item key="FileSetting">{{$t('app.menu.setting')}}</a-menu-item>
+              <a-menu-divider />
+              <a-menu-item key="FileToggleAlwaysOnTop">
+                <span v-if="!alwaysOnTopEnable">{{$t('app.menu.file.alwaysOnTopEnable')}}</span>
+                <span v-else>{{$t('app.menu.file.alwaysOnTopDisable')}}</span>
+              </a-menu-item>
+              <a-menu-item key="FileOpenDevTools">{{$t('app.menu.file.opendevtool')}}</a-menu-item>
+              <a-menu-divider />
+              <a-menu-item key="FileExit">{{$t('app.menu.file.exit')}}</a-menu-item>
+            </a-menu>
+          </a-dropdown>
+          
+          <project-menu />
+          <env-menu />
+          <plugin-menu />
 
-        <project-menu />
-        <env-menu />
-        <plugin-menu />
+          <!-- Configurable Menus -->
+          <a-dropdown v-for="(menuEntry, menuKey) in menus" :key="menuKey" class="mr-2" :trigger="['click']">
+            <span class="app-dropdown-menu-title" ref="dmenuTriggerConfigurableMenu">{{menuEntry.title}}</span>
+            <a-menu slot="overlay" @click="actionConfigurableMenuItemClick" ref="dmenuConfigurableMenu">
+              <a-menu-item v-for="(menuEntryItem,menuEntryItemIndex) in menuEntry.items" 
+                :key="menuEntryItem.key"
+                :data-menu-key="menuKey"
+                :data-item-index="menuEntryItemIndex"
+              >{{menuEntryItem.title}}</a-menu-item>
+            </a-menu>
+          </a-dropdown>
 
-        <!-- Configurable Menus -->
-        <a-dropdown v-for="(menuEntry, menuKey) in menus" :key="menuKey" class="mr-2" :trigger="['click']">
-          <span class="app-dropdown-menu-title" ref="dmenuTriggerConfigurableMenu">{{menuEntry.title}}</span>
-          <a-menu slot="overlay" @click="actionConfigurableMenuItemClick" ref="dmenuConfigurableMenu">
-            <a-menu-item v-for="(menuEntryItem,menuEntryItemIndex) in menuEntry.items" 
-              :key="menuEntryItem.key"
-              :data-menu-key="menuKey"
-              :data-item-index="menuEntryItemIndex"
-            >{{menuEntryItem.title}}</a-menu-item>
-          </a-menu>
-        </a-dropdown>
+          <!-- Help -->
+          <a-dropdown class="mr-2" :trigger="['click']">
+            <span class="app-dropdown-menu-title" ref="dmenuTriggerHelp">{{$t('app.menu.help.label')}}</span>
+            <a-menu ref="menuHelp" slot="overlay" @click="actionMenuItemClick">
+              <a-menu-item key="HelpGetStart">{{$t('app.menu.help.getStart')}}</a-menu-item>
+              <a-menu-item key="HelpFeedback">{{$t('app.menu.help.feedback')}}</a-menu-item>
+              <a-menu-item key="ActionRecord">{{$t('app.menu.help.actionRecord')}}</a-menu-item>
+              <a-menu-item key="HelpUpdate">{{$t('app.menu.help.update')}}</a-menu-item>
+              <a-menu-item key="HelpAbout">{{$t('app.menu.help.about')}}</a-menu-item>
+            </a-menu>
+          </a-dropdown>
 
-        <!-- Help -->
-        <a-dropdown class="mr-2" :trigger="['click']">
-          <span class="app-dropdown-menu-title" ref="dmenuTriggerHelp">{{$t('app.menu.help.label')}}</span>
-          <a-menu ref="menuHelp" slot="overlay" @click="actionMenuItemClick">
-            <a-menu-item key="HelpGetStart">{{$t('app.menu.help.getStart')}}</a-menu-item>
-            <a-menu-item key="HelpFeedback">{{$t('app.menu.help.feedback')}}</a-menu-item>
-            <a-menu-item key="ActionRecord">{{$t('app.menu.help.actionRecord')}}</a-menu-item>
-            <a-menu-item key="HelpUpdate">{{$t('app.menu.help.update')}}</a-menu-item>
-            <a-menu-item key="HelpAbout">{{$t('app.menu.help.about')}}</a-menu-item>
-          </a-menu>
-        </a-dropdown>
-
-        <app-about ref="appAbout" />
-        <app-setting ref="appSetting" />
+          <app-about ref="appAbout" />
+          <app-setting ref="appSetting" />
+        </div>
       </div>
     </a-col>
 
     <!-- App name -->
-    <a-col :span="8" class="text-center">
+    <a-col :span="8" class="text-center white-space-nowrap">
       <div class="app-name">Bittly {{appVersion}}</div>
       <div v-if="'browser' == $env.name" class="d-inline-block ml-1" style="vertical-align: sub;height: 28px;">
         <iframe frameborder="0" scrolling="0" width="150" height="20" title="GitHub"
@@ -64,7 +66,7 @@
     </a-col>
 
     <!-- other actions -->
-    <a-col :span="8" class="text-right">
+    <a-col :span="8" class="text-right white-space-nowrap">
       <div class="app-title-content">
         <user-login></user-login>
         <template v-if="'electron' === $env.name">

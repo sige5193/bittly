@@ -2,7 +2,7 @@
   <div class="viewer">
     <!-- response status bar -->
     <a-row>
-      <a-col :span="12" class="mt-3">
+      <a-col :span="12" class="mt-3 white-space-nowrap">
         <a-radio-group button-style="solid" v-model="responseFormat">
           <a-radio-button v-for="(viewer,viewerName) in viewers" 
             :key="viewerName" 
@@ -11,7 +11,7 @@
         </a-radio-group>
       </a-col>
  
-      <a-col :span="12" class="mt-3 text-right">
+      <a-col :span="12" class="mt-3 text-right white-space-nowrap">
         <span class="mr-2">
           {{$t('directive.execute.labelResponseDataLength')}} : 
           {{formatAsFileSize(responseDataLength)}}

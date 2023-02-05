@@ -43,8 +43,14 @@
             @click="actionSendToggle" 
             :trigger="['click']"
           >
-            <span v-if="null == autoSendRuntime">{{$t('directive.target.send')}}</span>
-            <span v-else>{{$t('directive.target.autoSendBtnStop')}}</span>
+            <span v-if="null == autoSendRuntime">
+              <a-icon type="play-circle" class="d-inline d-lg-none"/> 
+              <span class="d-none d-lg-inline">{{$t('directive.target.send')}}</span>
+            </span>
+            <span v-else>
+              <a-icon type="stop" class="d-inline d-lg-none" />
+              <span class="d-none d-lg-inline">{{$t('directive.target.autoSendBtnStop')}}</span>
+            </span>
             <div slot="icon" style="position: relative;width: 5px;height: 15px;">
               <a-icon ref="btnSendMenuTrigger" type="more" style="position: absolute;top: 0;left: -5px;"/>
             </div>

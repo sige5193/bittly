@@ -5,7 +5,7 @@
 <template>
   <a-row>
     <!-- path : for node-serialport -->
-    <a-col v-if="'node-serialport' == handlerType" :span="7" class="pr-1">
+    <a-col v-if="'node-serialport' == handlerType" :span="7" class="pr-1 white-space-nowrap">
       <a-input-group compact>
         <a-auto-complete 
           ref="path"
@@ -46,7 +46,7 @@
     </a-col>
 
     <!-- dataBits -->
-    <a-col :span="4" class="pr-1">
+    <a-col :span="4" class="pr-1 white-space-nowrap">
       <a-input-group compact>
         <a-input class="text-body" style="width: 60%" :value="$t('directive.communicator.serialport.dataBits')" disabled />
         <a-select ref="dataBits" style="width: 40%" v-model="target.dataBits" @change="actionUpdateTarget(true)" :showArrow="false" :dropdownMatchSelectWidth="false">
@@ -59,7 +59,7 @@
     </a-col>
 
     <!-- stopBits -->
-    <a-col :span="4" class="pr-1">
+    <a-col :span="4" class="pr-1 white-space-nowrap">
       <a-input-group compact>
         <a-input class="text-body" style="width: 50%" :value="$t('directive.communicator.serialport.stopBits')" disabled />
         <a-select ref="stopBits" style="width: 50%" v-model="target.stopBits" @change="actionUpdateTarget(true)" :showArrow="false" :dropdownMatchSelectWidth="false">
@@ -71,7 +71,7 @@
     </a-col>
     
     <!-- parity -->
-    <a-col :span="4" class="pr-1">
+    <a-col :span="4" class="pr-1 white-space-nowrap">
       <a-input-group compact>
         <a-input class="text-body" style="width: 50%" :value="$t('directive.communicator.serialport.parity')" disabled />
         <a-select ref="parity" style="width: 50%" v-model="target.parity" @change="actionUpdateTarget(true)" :showArrow="false" :dropdownMatchSelectWidth="false">
