@@ -102,6 +102,11 @@ export default class SerialPortHandlerNodeSerialPort {
         let $this = this;
         $this.isClosing = true;
         return new Promise(( resolve, reject ) => {
+            if ( !$this.serialport.isOpen ) {
+                $this.isClosing = false;
+                return resolve();
+            }
+
             $this.serialport.close(error => {
                 $this.isClosing = false;
                 if ( null !== error ) {
