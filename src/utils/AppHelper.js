@@ -6,13 +6,11 @@ export default class AppHelper {
      * @returns {String}
      */
     static async langCodeGet() {
-        let lang = await MdbRuntimeVariable.getVarValue('app_language', null);
-        if ( null == lang ) {
-            let env = Environment.getEnv();
-            let countryLangMap = {CN:'zh'};
-            let countryCode = await env.langCodeGet();
-            lang = countryLangMap[countryCode] || 'zh';
-        }
+        let lang = null;
+        let env = Environment.getEnv();
+        let countryLangMap = {CN:'zh'};
+        let countryCode = await env.langCodeGet();
+        lang = countryLangMap[countryCode] || 'zh';
         return lang;
     }
 }

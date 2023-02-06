@@ -123,9 +123,6 @@ export default {
         async init() {
             this.isLoading = true;
             document.title = `Bittly - ${PackageJSON.version}`;
-
-            // setup i18n
-            this.loadingTitle = 'initLoadingStepI18nSetup';
             this.$i18n.locale = await AppHelper.langCodeGet();
             
             // check env
@@ -139,6 +136,13 @@ export default {
             // setup database
             this.loadingTitle = 'initLoadingStepDatabaseSetup';
             await DatabaseSetup.start();
+            
+            // setup i18n by local setting
+            this.loadingTitle = 'initLoadingStepI18nSetup';
+            let lang = await MdbRuntimeVariable.getVarValue('app_language', null);
+            if ( null !== lang ) {
+                this.$i18n.locale = lang;
+            }
 
             // setup api client
             this.loadingTitle = 'initLoadingStepServerSetup';
