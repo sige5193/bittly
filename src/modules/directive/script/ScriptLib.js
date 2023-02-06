@@ -4,6 +4,7 @@ import { Buffer } from 'buffer';
 import MdbDirective from '../../../models/MdbDirective.js';
 import BuildHandler from '../parameters/form/BuildHandler.js';
 import MyObject from '../../../utils/datatype/MyObject.js';
+import MyDate from '../../../utils/datatype/MyDate.js';
 export default class ScriptLib {
     /**
      * constructor of lib
@@ -115,5 +116,17 @@ export default class ScriptLib {
         let crcData = this.generateCRCData(values);
         let result = crc[mode](crcData);
         return result;
+    }
+
+    /**
+     * @param {*} format 
+     * @param {*} date 
+     * @returns 
+     */
+    date(format, date=null) {
+        if ( null === date ) {
+            date = new Date();
+        }
+        return MyDate.format(date, format);
     }
 }

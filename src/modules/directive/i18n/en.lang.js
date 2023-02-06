@@ -62,6 +62,7 @@ module.exports = {
     quickCallCrc24 : '<DEC> crc24($item, ...)',
     quickCallCrc32 : '<DEC> crc32($item, ...)',
     quickCallCrcjam : '<DEC> crcjam($item, ...)',
+    quickCallDate : '<TEXT> date(format)',
     statusPopoverTitle : 'Directive Status',
     statusClear : 'Clear',
     statusViewerButton : 'Status',

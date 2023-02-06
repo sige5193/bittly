@@ -60,4 +60,45 @@ export default class MyDate {
         text.push(MyNumber.prependZero(date.getMilliseconds(), 3));
         return text.join('');
     }
+
+    /**
+     * foramt date to given foramt pattern
+     * @param {*} date 
+     * @param {*} format 
+     * @returns {String}
+     */
+    static format(date, format) {
+        let result = [];
+        for ( let i=0; i<format.length; i++ ) {
+            let char = format[i];
+            if ( '%' !== char ) {
+                result.push(char);
+                continue;
+            }
+
+            i++;
+            char = format[i];
+            if ( undefined === char ) {
+                break;
+            }
+
+            let value = null;
+            switch ( char ) {
+            case 'd' : value = date.getDate().toString().padStart(2,'0'); break;
+            case 'j' : value = date.getDate().toString(); break;
+            case 'm' : value = (date.getMonth() + 1).toString().padStart(2,'0'); break;
+            case 'n' : value = (date.getMonth() + 1).toString(); break;
+            case 'Y' : value = date.getFullYear().toString(); break;
+            case 'y' : value = date.getFullYear().toString().substr(2); break;
+            case 'H' : value = date.getHours().toString().padStart(2,'0'); break;
+            case 'G' : value = date.getHours().toString(); break;
+            case 'i' : value = date.getMinutes().toString().padStart(2,'0'); break;
+            case 's' : value = date.getSeconds().toString().padStart(2,'0'); break;
+            case 'v' : value = date.getMilliseconds().toString().padStart(3,'0'); break;
+            default : value = char; break;
+            }
+            result.push(value);
+        }
+        return result.join('');
+    }
 }

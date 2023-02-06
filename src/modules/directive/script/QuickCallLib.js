@@ -1,3 +1,4 @@
+import MyDate from '../../../utils/datatype/MyDate.js';
 import ScriptLib from './ScriptLib.js'
 export default class QuickCallLib {
     /**
@@ -23,6 +24,7 @@ export default class QuickCallLib {
             {func:'crc24',value:'{{@crc24($1,$2,$3,$4)}}',text:$t('directive.quickCallCrc24')},
             {func:'crc32',value:'{{@crc32($1,$2,$3,$4)}}',text:$t('directive.quickCallCrc32')},
             {func:'crcjam',value:'{{@crcjam($1,$2,$3,$4)}}',text:$t('directive.quickCallCrcjam')},
+            {func:'date',value:'{{@date(format)}}',text:$t('directive.quickCallDate')},
         ];
     }
 
@@ -222,5 +224,13 @@ export default class QuickCallLib {
             }
         }
         return result.toString();
+    }
+
+    /**
+     * @param {*} format 
+     * @returns {String}
+     */
+    date(format) {
+        return MyDate.format(new Date(), format);
     }
 }
