@@ -205,6 +205,7 @@ body {user-select: none;}
 .table-scroll-body .ant-table-scroll {height: 100%;}
 .table-scroll-body .ant-table-scroll {display: flex; flex-direction: column;}
 .table-scroll-body .ant-table-body {overflow-y: scroll;height: 0;flex-grow: 1;}
+.table-body-m-0 .ant-table-body {margin: 0 !important;}
 
 /* tabs */
 .tab-h100-pane .ant-tabs-content,

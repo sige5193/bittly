@@ -89,6 +89,50 @@ export default class ScriptRuntime {
     }
 
     /**
+     * get parameters by row numbers.
+     * @param  {any} nums 
+     * @example parametersGetByRowNums([5,6,{from:1,to:2}])
+     * @returns 
+     */
+    parameterFormItemsGetByRowNums( nums ) {
+        if ( !Array.isArray(nums) ) {
+            throw Error('row number list should be an array');
+        }
+
+        let rows = [];
+        let errMessagePrefixKey = 'directive.script.parameterFormItemsGetByRowNums';
+        for ( let i=0; i<nums.length; i++ ) {
+            let num  = nums[i];
+            if ( 'number' === typeof(num) ) {
+                let param = this.parameterFormItemGetByIndex(num);
+                if ( null === param ) {
+                    throw Error(window.app.$t(`${errMessagePrefixKey}NumNotExists`,[num]));
+                }
+                rows.push(param);
+                continue;
+            } 
+            
+            if ( 'object' === typeof(num) ) {
+                if ( undefined === num.from ) {
+                    throw Error(window.app.$t(`${errMessagePrefixKey}FromNotSet`));
+                }
+                if ( undefined === num.to ) {
+                    throw Error(window.app.$t(`${errMessagePrefixKey}ToNotSet`));
+                }
+                for ( let ni=num.from; ni<=num.to; ni++ ) {
+                    let param = this.parameterFormItemGetByIndex(ni);
+                    if ( null === param ) {
+                        throw Error(window.app.$t(errMessageKey,[ni]));
+                    }
+                    rows.push(param);
+                }
+                continue;
+            }
+        }
+        return rows;
+    }
+
+    /**
      * get form param item by given index.
      * @param {Number} index
      * @returns {Object} 

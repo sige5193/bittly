@@ -7,12 +7,17 @@
     <a-table 
       bordered
       size="small" 
-      class="directive-parameter-editor-form-table"
+      class="directive-parameter-editor-form-table table-body-m-0"
       :columns="tableColumns" 
       :data-source="fields" 
       :pagination="false" 
       :components="tableComponents"
     >
+      <!-- row number -->
+      <div slot="row_no" slot-scope="text, record, index" class="text-muted">
+        {{index+1}}
+      </div>
+
       <!-- field name -->
       <div slot="name" slot-scope="text, record, index">
         <a-input :ref="`inputName_${index}`" :tab-index="index*1000+1"
@@ -299,6 +304,7 @@ export default {
     computed : {
         tableColumns() {
             return [
+                {title: '#', scopedSlots: { customRender: 'row_no' },className:'white-space-nowrap text-center'},
                 {title: this.$t('directive.parameter.form.fieldName'), dataIndex: 'name',scopedSlots: { customRender: 'name' },className:'white-space-nowrap'},
                 {title: this.$t('directive.parameter.form.filedType'),dataIndex: 'type',scopedSlots: { customRender: 'type' },className:'white-space-nowrap'},
                 {title: this.$t('directive.parameter.form.filedValue'),dataIndex: 'value',scopedSlots: { customRender: 'value' },className:'white-space-nowrap'},

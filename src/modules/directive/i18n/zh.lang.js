@@ -285,6 +285,9 @@ module.exports = {
         snippetStatusSet : '设置状态值',
         snippetsStatusGet : '获取状态值',
         helpLink : '使用帮助',
+        parameterFormItemsGetByRowNumsNumNotExists : '无法通过行号获取参数 : {0}',
+        parameterFormItemsGetByRowNumsFromNotSet : '行号范围未指定起始行号',
+        parameterFormItemsGetByRowNumsToNotSet : '行号范围未指定结束行号',
     },
     target : {
         send : '发送',

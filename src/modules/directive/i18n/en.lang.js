@@ -285,6 +285,9 @@ module.exports = {
         snippetCRC : 'CRC Check',
         snippetStatusSet : 'Set Status Value',
         snippetsStatusGet : 'Get Status Value',
+        parameterFormItemsGetByRowNumsNumNotExists : 'Unable to get parameter by row number : {0}',
+        parameterFormItemsGetByRowNumsFromNotSet : 'Row number range requires start number by "from"',
+        parameterFormItemsGetByRowNumsToNotSet : 'Row number range requires end number by "to"',
     },
     target : {
         send : 'Send',

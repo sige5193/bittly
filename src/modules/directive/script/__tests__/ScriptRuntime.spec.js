@@ -24,4 +24,19 @@ describe('@/src/modules/directive/script/ScriptLib.js', () => {
         expect(runtime.parameterFormValueGetByName('F001')).toEqual('V001');
         expect(runtime.parameterFormValueGetByName('NOT-EXISTS')).toEqual('');
     })
+
+    it('parameterFormItemsGetByRowNums', async () => {
+        let tester = new Tester();
+        await tester.setup();
+        let runtime = new ScriptRuntime();
+        
+        runtime.parametersSet([]);
+        await tester.expectError(() => runtime.parameterFormItemsGetByRowNums([1]), 'Unable to get parameter by row number : 1');
+        await tester.expectError(() => runtime.parameterFormItemsGetByRowNums([{}]), 'Row number range requires start number by \"from\"');
+        await tester.expectError(() => runtime.parameterFormItemsGetByRowNums([{from:1}]), 'Row number range requires end number by \"to\"');
+
+        runtime.parametersSet(["ITEM01","ITEM02","ITEM03"]);
+        expect(runtime.parameterFormItemsGetByRowNums([1])).toEqual(["ITEM01"]);
+        expect(runtime.parameterFormItemsGetByRowNums([1,{from:1,to:2}])).toEqual(["ITEM01","ITEM01","ITEM02"]);
+    })
 });
