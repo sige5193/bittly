@@ -269,6 +269,13 @@ export default {
     },
     methods : {
         /**
+         * 
+         */
+        refresh() {
+            this.actionStartOffsetChange();
+        },
+
+        /**
          * init v-model
          */
         initVModel() {
