@@ -182,6 +182,8 @@ module.exports = {
             locate : '定位',
             bytes : '字节数',
             offsetNotAvailable : '请输入有效的偏移量',
+            formParserTitle : '格式化解析',
+            formParserNoRules : '未配置解析规则',
         },
         text : {
             name : '文本',

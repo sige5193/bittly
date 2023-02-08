@@ -182,6 +182,8 @@ module.exports = {
             locate : 'Location',
             bytes : 'Bytes',
             offsetNotAvailable : 'Please input available offset',
+            formParserTitle : 'Format Parser',
+            formParserNoRules : 'No parser rules',
         },
         text : {
             name : 'Text',
