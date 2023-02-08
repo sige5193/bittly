@@ -66,12 +66,11 @@
             v-model="fields[index]['type']" 
             @change="actionTypeChange(index, $event)"
           >
-            <template v-for="(item, itemKey) in $dict.items('DIRECTIVE_PARAM_DATATYPE')">
+            <template v-for="dataType in dataTypes">
               <a-select-option 
-                v-if="'file' != item.value && 'bits' != item.value"
-                :key="itemKey"
-                :value="item.value"
-              >{{ $t(`directive.parameter.form.dataType.${item.value}`)}}</a-select-option>
+                :key="dataType"
+                :value="dataType"
+              >{{ $t(`directive.parameter.form.dataType.${dataType}`)}}</a-select-option>
             </template>
           </a-select>
        
@@ -210,6 +209,19 @@ export default {
                     wrapper: TableDraggableWrapper,
                 },
             },
+            /**
+             * instance of response paser.
+             * @property {ResponseParser|null}
+             */
+            parser : null,
+            /**
+             * values of datatype
+             * @property {String[]}
+             */
+            dataTypes : [
+                'byte','char_int','char','unsigned_char','short','unsigned_short','int','unsigned_int',
+                'long','unsigned_long','long_long','unsigned_long_long','float','double','string','bytes'
+            ],
         };
     },
     provide() {
@@ -407,6 +419,9 @@ export default {
          * enable / disable parse to last.
          */
         actionParseToLastEnableToggle() {
+            if ( null !== this.parser ) {
+                this.parser.setCursor(0);
+            }
             this.parseToLastEnable = !this.parseToLastEnable;
             this.updateFormValues();
         },
@@ -416,16 +431,20 @@ export default {
          */
         updateFormValues() {
             this.values = [];
-            let parser = new ResponseParser(this.directive, this.content, false);
+            if ( null === this.parser ) {
+                this.parser = new ResponseParser(this.directive, this.content, false);
+            }
+            this.parser.setResponseBuffer(this.content);
+            
             if ( this.parseToLastEnable ) {
-                this.valuesList = parser.parseToLast();
-                this.values = parser.getValues();
+                this.valuesList = this.parser.parseToLast();
+                this.values = this.parser.getValues();
             } else {
-                parser.parse();
-                this.values = parser.getValues();
+                this.parser.setCursor(0);
+                this.parser.parse();
+                this.values = this.parser.getValues();
                 this.valuesList = [this.values];
             }
-            
             this.$forceUpdate();
             
             if ( 'table' == this.mode ) {

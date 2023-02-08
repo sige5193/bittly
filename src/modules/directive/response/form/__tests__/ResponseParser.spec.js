@@ -1,5 +1,4 @@
 import Tester from '../../../../../utils/test/UnitTester.js'
-import TestCaseSetup from '@/utils/test/Setup.js';
 import MdbDirective from '@/models/MdbDirective.js'
 import ResponseParser from '../ResponseParser.js'
 import Buffer from '../../../../../utils/test/Buffer.js'

@@ -12,13 +12,21 @@ export default class ResponseParser {
      */
     constructor( directive, responseBuffer, autoStart ) {
         /**
+         * instance of directive model
+         * @property {MdbDirective}
+         */
+        this.directive = directive;
+        /**
          * byte index where to start parse
          * @property {Number}
          */
-        this.startPosition = 0;
-
-        this.directive = directive;
+        this.cursor = 0;
+        /**
+         * buffer of response data
+         * @property {Buffer}
+         */
         this.responseBuffer = responseBuffer;
+
         this.values = [];
         this.isComplete = true;
         if ( undefined === autoStart || true === autoStart ) {
@@ -26,6 +34,22 @@ export default class ResponseParser {
         }
     }
     
+    /**
+     * set response buffer to parser.
+     * @param {*} buffer 
+     */
+    setResponseBuffer( buffer ) {
+        this.responseBuffer = buffer;
+    }
+
+    /**
+     * set cursor to parser
+     * @param {Number} cursor 
+     */
+    setCursor( cursor ) {
+        this.cursor = cursor;
+    }
+
     /**
      * parse to last complete match
      * @returns {Object}
@@ -78,8 +102,7 @@ export default class ResponseParser {
             return false;
         }
         
-        let view = Common.convertBufferToDataView(this.responseBuffer);
-        let byteIndex = this.startPosition;
+        let byteIndex = this.cursor;
         this.isComplete = true;
         for ( let i=0; i<this.directive.responseFormatter.fields.length; i++ ) {
             let field = this.directive.responseFormatter.fields[i];
@@ -98,11 +121,11 @@ export default class ResponseParser {
             if ( -1 !== ['char'].indexOf(field.type) ) {
                 byteIndex = this.parseAsChar(field, byteIndex);
             } else if ( -1 !== ['short','char_int','int','long','long_long'].indexOf(field.type) ) {
-                byteIndex = this.parseAsSignedNumber(view, byteIndex, field);
+                byteIndex = this.parseAsSignedNumber(field, byteIndex);
             } else if ( -1 !== ['byte','unsigned_char', 'unsigned_short','unsigned_int','unsigned_long','unsigned_long_long'].indexOf(field.type) ) {
-                byteIndex = this.parseAsUnsignedNumber(view, byteIndex, field);
+                byteIndex = this.parseAsUnsignedNumber(field, byteIndex);
             } else if ( -1 !== ['float','double'].indexOf(field.type) ) {
-                byteIndex = this.parseAsFloat(view, byteIndex, field);
+                byteIndex = this.parseAsFloat(field, byteIndex);
             } else if ( 'string' == field.type ) {
                 byteIndex = this.parseAsString(field, byteIndex);
             } else if ( 'bytes' == field.type ) {
@@ -111,7 +134,7 @@ export default class ResponseParser {
         }
         
         if ( this.isComplete ) {
-            this.startPosition = byteIndex;
+            this.cursor = byteIndex;
         }
 
         return byteIndex;
@@ -150,9 +173,11 @@ export default class ResponseParser {
 
     /**
      * parse signed number, and returns the pased number.
+     * @param {Object} field
+     * @param {Number} index
      * @return {Number} 
      */
-    parseAsSignedNumber(dataView, index, field) {
+    parseAsSignedNumber(field, index) {
         let dataTypeLength = Dictionary.voption('DIRECTIVE_PARAM_DATATYPE', field.type, 'length');
         let getter = `getInt${8*dataTypeLength}`;
         if ( 8 == dataTypeLength ) {
@@ -165,45 +190,22 @@ export default class ResponseParser {
         } else {
             isLittleEndian = 'little-endian' == field.endianness;
         }
-        let value = dataView[getter](index, isLittleEndian);
+
+        let buffer = this.responseBuffer.slice(index, index + dataTypeLength);
+        let dataView = Common.convertBufferToDataView(buffer);
+        let value = dataView[getter](0, isLittleEndian);
         value = this.executeExpression(field, value);
         this.values.push(value.toString());
         return index + dataTypeLength;
     }
 
     /**
-     * parse data to float or double
-     * @param {*} dataView 
-     * @param {*} index 
-     * @param {*} field 
-     * @returns 
-     */
-    parseAsFloat(dataView, index, field) {
-        let length = 4;
-        let getter = 'getFloat32';
-        if ( 'double' === field.type ) {
-            length = 8;
-            getter = 'getFloat64';
-        }
-        
-        let isLittleEndian = false;
-        if ( !field.endianness || 'default' === field.endianness ) {
-            isLittleEndian = 'little-endian' == this.directive.endianness;
-        } else {
-            isLittleEndian = 'little-endian' == field.endianness;
-        }
-
-        let value = dataView[getter](index, isLittleEndian);
-        value = this.executeExpression(field, value);
-        this.values.push(value.toString());
-        return index + length;
-    }
-
-    /**
      * parse unsigned number, and returns the pased number.
+     * @param {Object} field
+     * @param {Number} index
      * @return {Number} 
      */
-    parseAsUnsignedNumber(dataView, index, field) {
+    parseAsUnsignedNumber(field, index) {
         let dataTypeLength = Dictionary.voption('DIRECTIVE_PARAM_DATATYPE', field.type, 'length');
         let getter = `getUint${8*dataTypeLength}`;
         if ( 8 == dataTypeLength ) {
@@ -216,7 +218,10 @@ export default class ResponseParser {
         } else {
             isLittleEndian = 'little-endian' == field.endianness;
         }
-        let value = dataView[getter](index,isLittleEndian);
+        
+        let buffer = this.responseBuffer.slice(index, index + dataTypeLength);
+        let dataView = Common.convertBufferToDataView(buffer);
+        let value = dataView[getter](0,isLittleEndian);
         
         if ( field.expression ) {
             value = this.executeExpression(field, value);
@@ -236,6 +241,35 @@ export default class ResponseParser {
         }
         this.values.push(value);
         return index + dataTypeLength;
+    }
+
+    /**
+     * parse data to float or double
+     * @param {*} index 
+     * @param {*} field 
+     * @returns 
+     */
+    parseAsFloat(field, index) {
+        let length = 4;
+        let getter = 'getFloat32';
+        if ( 'double' === field.type ) {
+            length = 8;
+            getter = 'getFloat64';
+        }
+        
+        let isLittleEndian = false;
+        if ( !field.endianness || 'default' === field.endianness ) {
+            isLittleEndian = 'little-endian' == this.directive.endianness;
+        } else {
+            isLittleEndian = 'little-endian' == field.endianness;
+        }
+        
+        let buffer = this.responseBuffer.slice(index, index + length);
+        let dataView = Common.convertBufferToDataView(buffer);
+        let value = dataView[getter](0, isLittleEndian);
+        value = this.executeExpression(field, value);
+        this.values.push(value.toString());
+        return index + length;
     }
 
     /**
