@@ -6,6 +6,13 @@ import MyDate from '../../../utils/datatype/MyDate.js'
 export default {
     methods : {
         /**
+         * refresh this viewer to render data by current options
+         */
+        refresh() {
+            // nothing to do here
+        },
+
+        /**
          * Generate excel file by options
          * @param {Object} options options for excel content
          * - columns : {Array}, e.g. [{header:'Name',key:'name'}, ...]

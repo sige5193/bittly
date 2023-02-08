@@ -86,6 +86,7 @@
         ref="viewer"
         :is="`viewer-${responseFormat}`"
         :content="responseData"
+        :viewerSwitch="viewerSwitchHandler"
         v-model="directive"
       ></component>
     </div>
@@ -167,6 +168,10 @@ export default {
              * 
              */
             responseFormat : 'stream',
+            /**
+             * @property {Function}
+             */
+            viewerSwitchHandler : null,
         };
     },
     watch : {
@@ -175,6 +180,8 @@ export default {
         }
     },
     created() {
+        this.viewerSwitchHandler = (name,options) => this.viewerSwitch(name,options);
+
         this.viewers = {};
         this.viewers.stream = {name:'stream',label:this.$t('directive.response.stream.name')};
         this.viewers.text = {name:'text',label:this.$t('directive.response.text.name')};
@@ -189,6 +196,20 @@ export default {
         this.preservedResponseData = [];
     },
     methods : {
+        /**
+         * switch viewer by given name and options.
+         */
+        async viewerSwitch( name, options={} ) {
+            this.responseFormat = name;
+            await this.$nextTick();
+
+            let viewer = this.$refs.viewer;
+            for ( let key in options ) {
+                viewer[key] = options[key];
+            }
+            viewer.refresh();
+        },
+
         /**
          * register response viewer
          * @public
