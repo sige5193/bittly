@@ -199,6 +199,7 @@ module.exports = {
             parseToLast : '解析到末尾',
             saveAsExcelFieldListEmpty : '格式化配置为空，无法导出Excel',
             expression : '表达式',
+            startOffset : '起始地址',
         },
         plotter : {
             name : '绘图',

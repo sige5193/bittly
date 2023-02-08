@@ -16,6 +16,13 @@
           @click="actionParseToLastEnableToggle"
         ><a-icon type="vertical-left" /></a-button>
       </a-tooltip>
+
+      <a-input type="number" class="d-inline-block ml-1" size="small" style="width:180px;"
+        min="0" step="1"
+        v-model="startOffset"
+        :addon-before="$t('directive.response.form.startOffset')"
+        @change="actionStartOffsetChange"
+      />
     </div>
 
     <!-- mode : table -->
@@ -222,6 +229,11 @@ export default {
                 'byte','char_int','char','unsigned_char','short','unsigned_short','int','unsigned_int',
                 'long','unsigned_long','long_long','unsigned_long_long','float','double','string','bytes'
             ],
+            /**
+             * address offset to start parser
+             * @property {Number}
+             */
+            startOffset : 0,
         };
     },
     provide() {
@@ -282,6 +294,20 @@ export default {
             formatter.fields = fields;
             this.directive.responseFormatter = formatter;
             this.$emit('input', this.directive);
+            this.updateFormValues();
+        },
+
+        /**
+         * event handler on start offset changed
+         */
+        actionStartOffsetChange() {
+            let offset = parseInt(this.startOffset);
+            if ( isNaN(offset) || 0 > offset ) {
+                return ;
+            }
+            if ( null !== this.parser ) {
+                this.parser.setCursor(offset);
+            }
             this.updateFormValues();
         },
 
@@ -440,7 +466,11 @@ export default {
                 this.valuesList = this.parser.parseToLast();
                 this.values = this.parser.getValues();
             } else {
-                this.parser.setCursor(0);
+                let offset = parseInt(this.startOffset);
+                if ( isNaN(offset) || 0 > offset ) {
+                    offset = 0;
+                }
+                this.parser.setCursor(offset);
                 this.parser.parse();
                 this.values = this.parser.getValues();
                 this.valuesList = [this.values];

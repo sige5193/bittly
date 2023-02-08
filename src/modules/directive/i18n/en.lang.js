@@ -199,6 +199,7 @@ module.exports = {
             parseToLast : 'Parse to end',
             saveAsExcelFieldListEmpty : 'Unable to export excel file because format field list is empty.',
             expression : 'Expression',
+            startOffset : 'Start Offset',
         },
         plotter : {
             name : 'Plotter',
