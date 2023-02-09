@@ -12,4 +12,5 @@ module.exports = {
     udpModeBroadcast : '广播',
     udpLocalAddress : '本地地址',
     udpLocalPort : '本地端口',
+    udpOpenFailed : '无法打开UDP连接 : {0}',
 };

@@ -10,4 +10,5 @@ module.exports = {
     udpModeUnicast : 'Unicast',
     udpModeMulticast : 'Multicast',
     udpModeBroadcast : 'Broadcast',
+    udpOpenFailed : 'Failed to open udp connection : {0}',
 };

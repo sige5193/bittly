@@ -40,22 +40,35 @@ export default class NetHandlerUDP {
             $this.connection.on('close',() => $this.handleOnClose());
             $this.connection.on('message', data => $this.handleOnData(data));
             $this.connection.on('error', err => $this.handleOnError(err));
-            $this.connection.bind(() => {
-                if ( 'unicast' === $this.com.options.netUdpMode ) {
-                    // nothing to do here
-                } else if ('multicast' === $this.com.options.netUdpMode ) {
-                    $this.connection.setMulticastTTL(128);
-                    $this.connection.addMembership($this.com.options.host);
-                } else if ( 'broadcast' === $this.com.options.netUdpMode ) {
-                    $this.connection.setBroadcast(true);
-                } else {
-                    return reject(`udp mode "${$this.com.options.netUdpMode}" is not supported`);
-                }
-                $this.isOpen = true;
-                $this.com.log(`open : ${$this.com.options.netUdpMode}`);
-                resolve();
-            });
+            $this.connection.bind(() => $this.handleOnListening(resolve, reject));
         });
+    }
+
+    /**
+     * callback handler for 'listening' event 
+     * @param {Function} resolve
+     * @param {Function} reject
+     */
+    handleOnListening(resolve, reject) {
+        try {
+            if ( 'unicast' === this.com.options.netUdpMode ) {
+                // nothing todo here
+            } else if ('multicast' === this.com.options.netUdpMode ) {
+                this.connection.setMulticastTTL(128);
+                this.connection.addMembership(this.com.options.host);
+            } else if ( 'broadcast' === $this.com.options.netUdpMode ) {
+                this.connection.setBroadcast(true);
+            } else {
+                throw Error(`udp mode "${this.com.options.netUdpMode}" is not supported`);
+            }
+        } catch ( e ) {
+            reject(Error(this.com.$t('udpOpenFailed', [e.message])));
+            return ;
+        }
+
+        this.isOpen = true;
+        this.com.log(`open : ${this.com.options.netUdpMode}`);
+        resolve();
     }
 
     /**
