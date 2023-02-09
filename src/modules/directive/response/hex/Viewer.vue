@@ -1,5 +1,26 @@
 <template>
   <div class="border rounded h-100 d-flex flex-dir-column">
+    <!-- formatted viewer -->
+    <a-popover trigger="click" 
+      v-model="formatPopoverVisible" 
+      @visibleChange="actionFormatedPopoverVisibleChange"
+    >
+      <template slot="title">
+        {{$t('directive.response.hex.formParserTitle')}}
+        <a-icon type="edit" class="float-right pt-1" @click="actionEditFormatter"/>
+      </template>
+      <template slot="content">
+        <a-empty v-if="false === formatedFields" :description="$t('directive.response.hex.formParserNoRules')"/>
+        <template v-else>
+          <p v-for="(field,findex) in formatedFields" :key="findex" class="white-space-nowrap">
+            <span>{{field.name}} : </span>
+            <span class="text-muted">{{field.value}}</span>
+          </p>
+        </template>
+      </template>
+      <div ref="byteItemColver" class="byte-item-cover"></div>
+    </a-popover>
+
     <a-row class="p-1 bg-light border-bottom">
       <a-col :span="12">
         <!-- address mode -->
@@ -22,13 +43,16 @@
     </a-row>
     
     <!-- content -->
-    <div class="flex-grow h-0" @mousemove="actionContentItemContainerMouseMove">
+    <div class="flex-grow h-0" 
+      @mousemove="actionContentItemContainerMouseMove"
+      @click="actionContentItemContainerClick"
+    >
       <virtual-list ref="virtualList" class="h-100 overflow-y-auto"
         :keeps="30" 
         :data-key="'no'" 
         :data-sources="lines"
         :data-component="lineEntryItem"
-        :extra-props="{lineNumberRadix}"
+        :extra-props="{lineNumberRadix,highlightRange}"
       />
     </div>
   </div>
@@ -36,6 +60,7 @@
 <script>
 import VirtualList from 'vue-virtual-scroll-list'
 import MyObject from '../../../../utils/datatype/MyObject.js';
+import ResponseParser from '../form/ResponseParser.js';
 import ViewerLineItem from './ViewerLineItem.vue'
 export default {
     name : 'ModuleDirectiveResponseHexViewer',
@@ -52,6 +77,11 @@ export default {
          * @property {MdbDirective}
          */
         value:{},
+        /**
+         * function to switch viewer
+         * @property {Function}
+         */
+        viewerSwitch : {},
     },
     data() {
         return {
@@ -88,6 +118,22 @@ export default {
              * @property {Object|null}
              */
             activeCharPos : null,
+            /**
+             * @property {Object}
+             */
+            highlightRange : null,
+            /**
+             * @property {Boolean}
+             */
+            formatPopoverVisible : false,
+            /**
+             * @property {Object|null}
+             */
+            formatedFields : null,
+            /**
+             * @property {Number}
+             */
+            formatOffset : 0,
         };
     },
     watch : {
@@ -184,6 +230,75 @@ export default {
         },
 
         /**
+         * event handler on clicked content area
+         * @param {Event} event
+         */
+        actionContentItemContainerClick(event) {
+            let target = event.target;
+            if ( 'yes' === target.dataset.isByteItem ) {
+                let pos = target.getBoundingClientRect();
+                let covStyle = this.$refs.byteItemColver.style;
+                covStyle.display = 'block';
+                covStyle.height = pos.height + 'px';
+                covStyle.width = pos.width + 'px';
+                covStyle.top = pos.top + 'px';
+                covStyle.left = pos.left + 'px';
+                this.formatPopoverVisible = true;
+                
+                let offset = target.dataset.offset * 1;
+                this.formatedFields = this.formatDataToFrom(offset);
+                this.formatOffset = offset;
+            }
+        },
+
+        /**
+         * format buffer to form fields
+         * @param {Number} offset
+         * @public
+         */
+        formatDataToFrom( offset ) {
+            let directive = this.value;
+            if ( undefined == directive.responseFormatter.fields ) {
+                return false;
+            }
+            
+            let parser = new ResponseParser(directive, this.content, false);
+            parser.setCursor(offset);
+            let endpos = parser.parse();
+
+            let fields = [];
+            for ( let i=0; i<directive.responseFormatter.fields.length; i++ ) {
+                let field = directive.responseFormatter.fields[i];
+                let name = '' === field.name.trim() ? `$${i+1}` : field.name.trim();
+                let prefix = field.prefix || '';
+                let value = parser.getValueByIndex(i);
+                fields.push({name:name,value:`${prefix}${value}`});
+            }
+            this.highlightRange = {from:offset,to:endpos};
+            return fields;
+        },
+
+        /**
+         * event handler for popover visible changed
+         * @param {Boolean} visible
+         */
+        actionFormatedPopoverVisibleChange(visible) {
+            if ( false === visible ) {
+                this.formatedFields = null;
+                this.highlightRange = null;
+                this.$refs.byteItemColver.style.display = 'none';
+            }
+        },
+
+        /**
+         * open form editor by given offset
+         */
+        actionEditFormatter() {
+            this.formatPopoverVisible = false;
+            this.viewerSwitch('form', {startOffset:this.formatOffset});
+        },
+
+        /**
          * event handler on mouse move on hex content area.
          */
         actionContentItemContainerMouseMove(event) { 
@@ -235,6 +350,7 @@ export default {
 .directive-response-hex-char:hover {background: #e9e9e9;color: black;border-radius: 5px;}
 </style>
 <style scoped>
+.byte-item-cover {background: transparent;position: fixed;z-index: 1;}
 .content-separator {width: 7px;background-image: linear-gradient(90deg, #d9d9d9 0px, #d9d9d9 1px, transparent 1px);background-size: 2px;cursor: col-resize;}
 .byte {display: inline-block;text-align: center;padding: 5px 0;cursor: default;width: 20px;}
 .byte.active {background: #e9e9e9;color: black;border-radius: 5px;}

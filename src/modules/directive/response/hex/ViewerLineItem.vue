@@ -9,9 +9,11 @@
       <!-- hex -->
       <div class="line-hex border-right">
         <span v-for="(byte, index) in hexList" :key="index" 
-          class="directive-response-hex-byte" 
+          data-is-byte-item="yes" 
+          :class="{'directive-response-hex-byte':true,'highlight':-1!==highlightItems.indexOf(index)}" 
           :data-line="source.no" 
           :data-col="index"
+          :data-offset="source.address + index"
         >{{byte}}</span>
       </div>
       
@@ -45,12 +47,38 @@ export default {
        * 
        */
       lineNumberRadix : {type:String,default:'hex'},
+      /**
+       * range of highlight items
+       * @property {null|Object}
+       */
+      highlightRange : {},
     },
     data() {
         return {
             hexList : [],
             charList : [],
         };
+    },
+    computed : {
+        /**
+         * computed high light items by given highlight range
+         * @returns {Array<Number>}
+         */
+        highlightItems() {
+            if ( null === this.highlightRange ) {
+                return [];
+            }
+            
+            let range = this.highlightRange;
+            let items = [];
+            for ( let i=0; i<this.source.colSize; i++ ) {
+                let address = this.source.address + i;
+                if ( address >= range.from && address < range.to ) {
+                    items.push(i);
+                }
+            }
+            return items;
+        }
     },
     created() {
         this.refreshContent();
@@ -120,4 +148,5 @@ export default {
 .line-addr {text-align: right;padding: 5px;cursor: default;width: 100%;}
 .line-text {white-space: pre !important;padding: 5px;}
 .line-hex {white-space: pre !important;padding: 5px;}
+.highlight {background: #e1ffe1;}
 </style>
