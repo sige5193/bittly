@@ -1,13 +1,19 @@
 <template>
   <div class="h-100 d-flex flex-dir-column">
-    <div class="p-1 text-right bg-light rounded-top border">
-      <a-radio-group ref="radioMode" size="small" v-model="mode" @change="actionViewerModeChange"> 
-        <a-radio-button value="text">RAW</a-radio-button>
-        <a-radio-button value="xml">XML</a-radio-button>
-        <a-radio-button value="htmlmixed">HTML</a-radio-button>
-        <a-radio-button value="javascript">JSON</a-radio-button>
-      </a-radio-group>
-    </div>
+    <a-row class="p-1 bg-light rounded-top border">
+      <a-col :span="12">
+        <a-button ref="btnClear" size="small" class="ml-1" @click="actionResponseClear"><a-icon type="delete" /></a-button>
+      </a-col>
+      <a-col :span="12" class="text-right">
+        <a-radio-group ref="radioMode" size="small" v-model="mode" @change="actionViewerModeChange"> 
+          <a-radio-button value="text">RAW</a-radio-button>
+          <a-radio-button value="xml">XML</a-radio-button>
+          <a-radio-button value="htmlmixed">HTML</a-radio-button>
+          <a-radio-button value="javascript">JSON</a-radio-button>
+        </a-radio-group>
+      </a-col>
+    </a-row>
+    
     <div class="flex-grow content border-left border-right border-bottom rounded-bottom">
       <div class="h-100">
         <codemirror 
@@ -21,6 +27,7 @@
   </div>
 </template>
 <script>
+import ResponseViewerBase from '../ViewerMixin.js'
 import { codemirror } from 'vue-codemirror'
 import "codemirror/theme/ambiance.css";
 import 'codemirror/addon/fold/foldgutter.css'
@@ -34,6 +41,7 @@ require("codemirror/addon/fold/comment-fold");
 import Common from '@/utils/Common.js'
 export default {
     name : 'BlockResponseViewerText',
+    mixins : [ResponseViewerBase],
     props: ['content', 'value'],
     components : {
         codemirror

@@ -80,6 +80,7 @@
       :isExecuting="isExecuting"
       :errorMessage="errorMessage"
       :responseData="responseData"
+      :responseClearHandler="() => responseClear()"
     ></response-viewer>
 
     <config-editor ref="modalConfig"></config-editor>
@@ -217,6 +218,13 @@ export default {
         this.$log("done");
     },
     methods : {
+        /**
+         * clear responsedata
+         */
+        responseClear() {
+            this.responseData = Buffer.alloc(0);
+        },
+
         /**
          * register ext action of directive
          * @public

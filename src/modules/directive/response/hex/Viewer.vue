@@ -36,6 +36,8 @@
             @change="actionColSizeChange"
           />
         </a-input-group>
+
+        <a-button ref="btnClear" size="small" class="ml-1" @click="actionResponseClear"><a-icon type="delete" /></a-button>
       </a-col>
       <a-col :span="12" class="text-right pr-1">
        {{$t('directive.response.hex.bytes')}} : {{content ? Number(content.length).toLocaleString() : 0}}
@@ -58,12 +60,14 @@
   </div>
 </template>
 <script>
+import ResponseViewerBase from '../ViewerMixin.js'
 import VirtualList from 'vue-virtual-scroll-list'
 import MyObject from '../../../../utils/datatype/MyObject.js';
 import ResponseParser from '../form/ResponseParser.js';
 import ViewerLineItem from './ViewerLineItem.vue'
 export default {
     name : 'ModuleDirectiveResponseHexViewer',
+    mixins : [ResponseViewerBase],
     components: { 
         'virtual-list' : VirtualList,
     },
@@ -147,6 +151,15 @@ export default {
     },
     methods : {
         /**
+         * clear response data
+         */
+        actionResponseClear() {
+            this.lines = [];
+            this.refreshPos = 0;
+            this.responseClearHandler();
+        },
+
+        /**
          * init v-model
          */
         initVModel() {
@@ -186,6 +199,11 @@ export default {
          * refresh display
          */
         refresh() {
+            this.highlightRange = null;
+            this.formatPopoverVisible = false;
+            this.formatedFields = null;
+            this.formatOffset = 0;
+            
             this.lines = [];
             this.refreshPos = 0;
             this.updateContentViewer();

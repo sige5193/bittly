@@ -4,7 +4,21 @@ import MyDate from '../../../utils/datatype/MyDate.js'
  * @method exportAsExcel() export response as excel file.
  */
 export default {
+    props : {
+        /**
+         * callback handlerto clear response data
+         * @property {Function}
+         */
+        responseClearHandler : {},
+    },
     methods : {
+        /**
+         * clear response data
+         */
+        actionResponseClear() {
+            this.responseClearHandler();
+        },
+
         /**
          * refresh this viewer to render data by current options
          */

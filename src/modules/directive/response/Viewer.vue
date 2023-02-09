@@ -84,10 +84,11 @@
     <div v-else class="mt-1 flex-grow">
       <component
         ref="viewer"
+        v-model="directive"
         :is="`viewer-${responseFormat}`"
         :content="responseData"
         :viewerSwitch="viewerSwitchHandler"
-        v-model="directive"
+        :responseClearHandler="responseClearHandler"
       ></component>
     </div>
   </div>
@@ -136,6 +137,10 @@ export default {
          * @property {MdbDirective}
          */
         directive : {},
+        /**
+         * @property {Function}
+         */
+        responseClearHandler : {},
     },
     data() {
         return {
