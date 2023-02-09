@@ -236,7 +236,18 @@ export default {
                 let server = await device.gatt.connect();
                 this.bleIsRefreshing = false;
                 let services = await server.getPrimaryServices();
-                let service = services[0];
+                let service = null;
+                let serviceId = BluetoothUUID.getService(this.target.btBleServiceId.toLowerCase());
+                for ( let i=0; i<services.length; i++ ) {
+                    if ( services[i].uuid === serviceId ) {
+                        service = services[i];
+                        break;
+                    }
+                }
+                if ( null === server ) {
+                    throw Error('unable to get service');
+                }
+                
                 this.bleCharList = await service.getCharacteristics();
                 this.$message.destroy();
 

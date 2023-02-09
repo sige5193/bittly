@@ -24,4 +24,5 @@ module.exports = {
     typeBle : 'BLE',
     connecting : 'Connecting ...',
     noDeviceFound : 'No device found',
+    writeFailed : 'Failed to write data : {0}',
 };

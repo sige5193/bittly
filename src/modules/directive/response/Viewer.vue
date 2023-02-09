@@ -407,7 +407,7 @@ export default {
          * @param {Buffer} data
          */
         newResponseData( data ) {
-            if ( 'stream' == this.responseFormat ) {
+            if ( 'stream' == this.responseFormat && undefined != this.$refs.streamViewer) {
                 this.$refs.streamViewer.newResponseData(data);
             }
         },
@@ -417,7 +417,7 @@ export default {
          * @param {Buffer} data
          */
         newRequestData(data) {
-            if ( 'stream' == this.responseFormat ) {
+            if ( 'stream' == this.responseFormat && undefined != this.$refs.streamViewer) {
                 this.$refs.streamViewer.newRequestData(data);
             }
         },

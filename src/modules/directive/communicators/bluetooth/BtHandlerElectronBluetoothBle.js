@@ -95,14 +95,17 @@ export default class BtHandlerElectronBluetoothBle {
         this.com.log(`ble service : ${service.uuid}`);
         let char = await service.getCharacteristic(this.com.options.btBleCharId);
         this.com.log(`ble characteristic : ${char.uuid}`);
-        await char.startNotifications();
         
-        // add event listener on value change
-        if ( undefined !== char.valueChangeCallback ) {
-            char.removeEventListener('characteristicvaluechanged',char.valueChangeCallback);
+        if ( char.properties.notify ) {
+            this.com.log(`ble characteristic listening : ${char.uuid}`);
+            await char.startNotifications();
+            // add event listener on value change
+            if ( undefined !== char.valueChangeCallback ) {
+                char.removeEventListener('characteristicvaluechanged',char.valueChangeCallback);
+            }
+            char.valueChangeCallback = event => this.handleOnData(event);
+            char.addEventListener('characteristicvaluechanged',char.valueChangeCallback);
         }
-        char.valueChangeCallback = event => this.handleOnData(event);
-        char.addEventListener('characteristicvaluechanged',char.valueChangeCallback);
         
         this.device = device;
         this.characteristic = char;
@@ -113,8 +116,26 @@ export default class BtHandlerElectronBluetoothBle {
      * @param {Buffer} data 
      * @returns {Promise}
      */
-    write (data) {
-        return this.characteristic.writeValue(data);
+    async write (data) {
+        if ( 0 !== data.length ) {
+            try {
+                this.com.log(`ble characteristic write : `, data);
+                await this.characteristic.writeValue(data);
+            } catch ( e ) {
+                this.device.gatt.disconnect();
+                throw Error(this.com.$t('writeFailed',[e.message]));
+            }
+        }
+        
+        // read value if needed
+        if ( !this.characteristic.properties.notify && this.characteristic.properties.read ) {
+            let $this = this;
+            setTimeout(async () => {
+                let value = await $this.characteristic.readValue();
+                value = Buffer.from(value.buffer);
+                $this.handleOnData({target:{value:{buffer:value}}});
+            }, 10);
+        }
     }
 
     /**
