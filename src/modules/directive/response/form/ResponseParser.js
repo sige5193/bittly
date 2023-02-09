@@ -102,16 +102,21 @@ export default class ResponseParser {
             return false;
         }
         
+        let bitOffset = 0;
         let byteIndex = this.cursor;
         this.isComplete = true;
         for ( let i=0; i<this.directive.responseFormatter.fields.length; i++ ) {
             let field = this.directive.responseFormatter.fields[i];
-            
             let dataTypeLength = Dictionary.voption('DIRECTIVE_PARAM_DATATYPE', field.type, 'length', 0);
             if ( 0 == dataTypeLength ) {
                 dataTypeLength = field.length;
             }
-            if ( byteIndex + dataTypeLength > this.responseBuffer.length ) {
+            if ( 'bits' === field.type )  {
+                dataTypeLength = Math.ceil(dataTypeLength/8);
+            }
+
+            if ( byteIndex + dataTypeLength > this.responseBuffer.length 
+            || ('bits' !== field.type && 0 !== bitOffset) ) {
                 this.values.push('');
                 this.isComplete = false;
                 byteIndex = this.responseBuffer.length;
@@ -130,6 +135,10 @@ export default class ResponseParser {
                 byteIndex = this.parseAsString(field, byteIndex);
             } else if ( 'bytes' == field.type ) {
                 byteIndex = this.parseAsBytes(field, byteIndex);
+            } else if ( 'bits' === field.type ) {
+                byteIndex = this.parseAsBits(field, byteIndex, bitOffset);
+                bitOffset += field.length;
+                bitOffset %= 8;
             }
         }
         
@@ -157,6 +166,47 @@ export default class ResponseParser {
         } catch ( e ) {
             return 'Expression Error';
         }
+    }
+
+    /**
+     * parser as bits
+     * @param {*} field 
+     * @param {*} index 
+     * @param {*} bitOffset 
+     */
+    parseAsBits(field, index, bitOffset ) {
+        let byteCount = Math.ceil((field.length * 1 + bitOffset) / 8);
+        if ( 0 === byteCount ) {
+            throw Error('the length of response data type "bits" can not be 0');
+        }
+
+        let offset = bitOffset;
+        let length = field.length * 1;
+        let bits = [];
+        let bytes = this.responseBuffer.slice(index, index + byteCount);
+        for ( let i=0; i<bytes.length; i++ ) {
+            while ( offset < 8 && 0 < length) {
+                let bit = bytes[i] >> (7 - offset) & 0x01;
+                bits.push(bit);
+                length --;
+                offset ++;
+            }
+            offset = 0;
+        }
+
+        bits = '0b' + bits.join('');
+        let value = BigInt(bits);
+        value = this.executeExpression(field, value);
+        
+        let radixMap = {bin:2,oct:8,dec:10,hex:16};
+        value = value.toString(radixMap[field.format]).toUpperCase();
+        if ( 'bin' === field.format ) {
+            value = value.padStart(field.length * 1,'0');
+            value = value.replaceAll(/(....)/g,'$1 ').trim();
+        }
+        this.values.push(value);
+        index += Math.floor((field.length * 1 + bitOffset) / 8);
+        return index;
     }
 
     /**

@@ -227,7 +227,8 @@ export default {
              */
             dataTypes : [
                 'byte','char_int','char','unsigned_char','short','unsigned_short','int','unsigned_int',
-                'long','unsigned_long','long_long','unsigned_long_long','float','double','string','bytes'
+                'long','unsigned_long','long_long','unsigned_long_long','float','double','string','bytes',
+                'bits'
             ],
             /**
              * address offset to start parser
@@ -343,7 +344,10 @@ export default {
             // we set default length to 1 to prevent endless loop
             // @link https://git.sigechen.com/sige/bittly/issues/43
             this.fields[index].length = this.$dict.voption('DIRECTIVE_PARAM_DATATYPE',type,'length', 1);
-            
+            if ( 0 === this.fields[index].length ) {
+                this.fields[index].length = 1;
+            }
+
             this.updateVModel();
         },
 
