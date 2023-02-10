@@ -59,8 +59,10 @@
 <script>
 import MdbRuntimeVariable from '../models/MdbRuntimeVariable';
 import Formatter from '../utils/Formatter';
+import ComponentBase from '../utils/component/Base.js'
 export default {
     name : 'AppFeedback',
+    mixins : [ComponentBase],
     props : {
         /**
          * message count to display in modal
@@ -253,6 +255,10 @@ export default {
          * send image message
          */
         async actionToolbarImageClicked() {
+            if ( 'electron' !== this.$env.name ) {
+                return this.environmentNotSupport();
+            }
+            
             let path = await window.dialog.showOpenDialogSync({
                 filters:[{name:this.$t('app.feedback.imageFileSelectFilterName'),extensions:['jpg','png']}],
             });
