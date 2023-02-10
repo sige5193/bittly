@@ -120,12 +120,12 @@ export default {
          * done selection
          */
         actionOk() {
-            this.enable = false;
             if ( 0 === this.selectedEntryIds.length ) {
                 this.$message.error(this.$t('directive.entry.folderSelectIsRequired'));
                 return;
             }
             
+            this.enable = false;
             let entryId = this.selectedEntryIds[0] || null;
             this.actResolve(entryId);
         }
