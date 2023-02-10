@@ -143,6 +143,10 @@ export default {
          * @parma {Event} event
          */
         actionCreateMenuItemClicked( event ) {
+            if ( 'browser' === this.$env.name ) {
+                return this.environmentNotSupport();
+            }
+            
             let mock = new MdbMock();
             mock.isMockInitRequired = true;
             mock.projectId = this.curProjectId;
