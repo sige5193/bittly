@@ -12,6 +12,152 @@ export default class ScriptLib {
      */
     constructor(directive) {
         this.directive = directive;
+
+        // data format
+        this.BIN = 'bin';
+        this.OCT = 'oct';
+        this.DEC = 'dec';
+        this.HEX = 'hex';
+    }
+
+    /**
+     * create new value as uint8
+     * @param {String} value 
+     * @param {String} format 
+     * @returns {Object}
+     */
+    createUint8(value, format='hex') {
+        return {type:'byte',value,format};
+    }
+
+    /**
+     * create new value as int8
+     * @param {String} value 
+     * @param {String} format 
+     * @returns {Object}
+     */
+    createInt8(value) {
+        return {type:'char_int',value};
+    }
+
+    /**
+     * create new value as char
+     * @param {String} value 
+     * @returns {Object}
+     */
+    createChar(value) {
+        return {type:'char',value};
+    }
+
+    /**
+     * create new value as short
+     * @param {String} value 
+     * @returns {Object}
+     */
+    createUchar(value) {
+        return {type:'unsigned_char',value};
+    }
+
+    /**
+     * create new value as uint16
+     * @param {String} value 
+     * @param {String} format 
+     * @returns {Object}
+     */
+    createUint16(value, format='hex') {
+        return {type:'unsigned_short',value,format};
+    }
+
+    /**
+     * create new value as int16
+     * @param {String} value 
+     * @returns {Object}
+     */
+    createInt16(value) {
+        return {type:'short',value};
+    }
+
+    /**
+     * create new value as uint32
+     * @param {String} value 
+     * @param {String} format 
+     * @returns {Object}
+     */
+    createUint32(value, format='hex') {
+        return {type:'unsigned_int',value,format};
+    }
+
+    /**
+     * create new value as int32
+     * @param {String} value 
+     * @returns {Object}
+     */
+    createInt32(value) {
+        return {type:'int',value};
+    }
+
+    /**
+     * create new value as uint64
+     * @param {String} value 
+     * @param {String} format 
+     * @returns {Object}
+     */
+    createUint64(value, format='hex') {
+        return {type:'unsigned_long_long',value,format};
+    }
+
+    /**
+     * create new value as int64
+     * @param {String} value 
+     * @returns {Object}
+     */
+    createInt64(value) {
+        return {type:'long_long',value};
+    }
+
+    /**
+     * create new value as float
+     * @param {String} value 
+     * @returns {Object}
+     */
+    createFloat(value) {
+        return {type:'float',value};
+    }
+
+    /**
+     * create new value as double
+     * @param {String} value 
+     * @returns {Object}
+     */
+    createDouble(value) {
+        return {type:'double',value};
+    }
+
+    /**
+     * create new value as string
+     * @param {String} value 
+     * @returns {Object}
+     */
+    createString(value,length) {
+        return {type:'string',value,length};
+    }
+
+    /**
+     * create new value as bytes
+     * @param {String} value 
+     * @returns {Object}
+     */
+    createBytes(value,length) {
+        return {type:'bytes',value,length};
+    }
+
+    /**
+     * create new value as bits
+     * @param {String} value 
+     * @returns {Object}
+     */
+    createBits(value,length) {
+        return {type:'bits',value,length};
     }
 
     /**
