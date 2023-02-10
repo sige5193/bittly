@@ -60,14 +60,14 @@ export default {
          * open QQ link
          */
         actionStartQQ() {
-            window.shell.openExternal("http://wpa.qq.com/msgrd?v=1&uin=568109749&site=qq&menu=yes");
+            this.$env.browserOpen("http://wpa.qq.com/msgrd?v=1&uin=568109749&site=qq&menu=yes");
         },
 
         /**
          * start github page
          */
         actionStartGithub() {
-            window.shell.openExternal("https://github.com/sige5193/bittly");
+            this.$env.browserOpen("https://github.com/sige5193/bittly");
         },
     },
 }

@@ -234,7 +234,7 @@ export default {
          * open help link
          */
         actionOpenScriptHelpLink() {
-            window.shell.openExternal("https://bittly.sigechen.com/manual/panel-widgets-script?src=bittly");
+            this.$env.browserOpen("https://bittly.sigechen.com/manual/panel-widgets-script?src=bittly");
         },
     },
 }

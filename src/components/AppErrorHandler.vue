@@ -186,7 +186,7 @@ export default {
                 errorInfo.componentPath.push(com.$options.name || 'Anonymouse');
                 com = com.$parent;
             }
-            
+
             this.reportError(errorInfo);
 
             this.hasError = true;
@@ -219,14 +219,14 @@ export default {
          * Open QQ Link
          */
         actionStartQQ() {
-            window.shell.openExternal("http://wpa.qq.com/msgrd?v=1&uin=568109749&site=qq&menu=yes");
+            this.$env.browserOpen("http://wpa.qq.com/msgrd?v=1&uin=568109749&site=qq&menu=yes");
         },
 
         /**
          * Open QQ group link
          */
         actionStartQQGroup() {
-            window.shell.openExternal('https://qm.qq.com/cgi-bin/qm/qr?k=NqSWCMQAFL5RE-ic1tC8U0Fp5gtc1XwB&jump_from=webapi');
+            this.$env.browserOpen('https://qm.qq.com/cgi-bin/qm/qr?k=NqSWCMQAFL5RE-ic1tC8U0Fp5gtc1XwB&jump_from=webapi');
         },
     },
 }

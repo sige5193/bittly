@@ -127,7 +127,7 @@ export default {
          * open help link
          */
         actionOpenHelpDoc() {
-            window.shell.openExternal('https://bittly.sigechen.com/manual/directive-response-plotter-script?src=bittly');
+            this.$env.browserOpen('https://bittly.sigechen.com/manual/directive-response-plotter-script?src=bittly');
         },
 
         /**

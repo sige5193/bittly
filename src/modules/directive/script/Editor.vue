@@ -157,7 +157,7 @@ export default {
          * open help link
          */
         actionOpenHelpLink() {
-            window.shell.openExternal("https://bittly.sigechen.com/manual/directive-script?src=bittly");
+            this.$env.browserOpen("https://bittly.sigechen.com/manual/directive-script?src=bittly");
         },
     },
 }
