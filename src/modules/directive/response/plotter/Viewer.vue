@@ -432,8 +432,14 @@ export default {
 
         /**
          * export response as excel file.
+         * @override
          */
         async exportAsExcel() {
+            if ( 0 >= this.channelDataList.length ) {
+                this.$message.info(this.$t('directive.response.saveAsExcelDataEmpty'));
+                return ;
+            }
+            
             let options = {};
             
             // headers
