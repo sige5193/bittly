@@ -271,6 +271,7 @@ module.exports = {
         editTitle : '文件夹编辑',
         folderSelectTitle : '选择文件夹',
         folderSelectRootName : '根目录',
+        folderSelectIsRequired : '请选择文件夹',
     },
     script : {
         configTitle : '脚本配置',

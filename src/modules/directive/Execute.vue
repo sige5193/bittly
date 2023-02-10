@@ -320,11 +320,7 @@ export default {
             let isNew = this.directive.isNew;
             let folderEntryId = null;
             if ( isNew ) {
-                try {
-                    folderEntryId = await this.$refs.dialogFolderSelect.select();
-                } catch {
-                    folderEntryId = null; 
-                }
+                folderEntryId = await this.$refs.dialogFolderSelect.select();
                 if ( null === folderEntryId ) {
                     return false;
                 }

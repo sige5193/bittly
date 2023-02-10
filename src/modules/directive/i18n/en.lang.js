@@ -271,6 +271,7 @@ module.exports = {
         editTitle : 'Folder Edit',
         folderSelectTitle : 'Select Folder',
         folderSelectRootName : 'Root',
+        folderSelectIsRequired : 'Please selector the folder',
     },
     script : {
         configTitle : 'Script Config',

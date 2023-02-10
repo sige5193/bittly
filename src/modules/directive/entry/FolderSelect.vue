@@ -1,16 +1,16 @@
 <template>
   <div>
-    <a-modal 
+    <a-modal v-if="enable"
       ref="modelSelect"
-      v-model="enable" 
+      v-model="enable"
       :title="$t('directive.entry.folderSelectTitle')" 
       :cancelText="$t('button.cancel')"
       :okText="$t('button.ok')"
       @ok="actionOk" 
       @cancel="actionCancel"
     >
-      <a-tree v-if="enable"
-        ref="treeDir"
+      <a-tree ref="treeDir"
+        :selectedKeys="selectedEntryIds"
         :load-data="actionLoadData" 
         :tree-data="treeData"
         @select="actionFolderSelected"
@@ -26,32 +26,44 @@ export default {
     name : 'DialogFolderSelect',
     data() {
         return {
+            /**
+             * indicate whether folder selector is enabled.
+             * @property {Boolean}
+             */
             enable : false,
+            /**
+             * list of entry items
+             * @property {Array<Object>}
+             */
             treeData: [],
-            selectedEntryId : null,
+            /**
+             * list of selected entry ids, but only one is allowed here.
+             * @property {Array<String>}
+             */
+            selectedEntryIds : [],
+            /**
+             * action handler to resolve selector
+             * @property {Function}
+             */
             actResolve : null,
-            actReject : null,
         };
     },
     methods : {
         /**
-         * open dialog to list all folders
-         * @returns {Promise}
+         * open dialog to list all folders and returns the selected id.
+         * @returns {Promise<String|null>}
          */
-        select ( ) {
-            this.selectedEntryId = null;
+        select () {
+            let rootId = MyString.uuidNil();
+            this.selectedEntryIds = [rootId];
             this.treeData = [{ 
                 title: this.$t('directive.entry.folderSelectRootName'), 
-                key:MyString.uuidNil(), 
-                value:MyString.uuidNil()
+                key:rootId, 
+                value:rootId,
             }];
 
-            let $this = this;
-            return new Promise(function( resolve, reject ) {
-                $this.enable = true;
-                $this.actResolve = resolve;
-                $this.actReject = reject;
-            });
+            this.enable = true;
+            return new Promise(resolve => this.actResolve = resolve);
         },
 
         /**
@@ -88,12 +100,12 @@ export default {
 
         /**
          * event handle for item selected.
+         * @param {Array<String>}
          */
         actionFolderSelected( selectedKeys ) {
-            if ( 0 == selectedKeys.length ) {
-                this.selectedEntryId = null;
-            } else {
-                this.selectedEntryId = selectedKeys[0];
+            this.selectedEntryIds = [];
+            if ( 0 < selectedKeys.length ) {
+                this.selectedEntryIds.push(selectedKeys[0]);
             }
         },
 
@@ -101,7 +113,7 @@ export default {
          * cancel selection
          */
         actionCancel() {
-            this.actReject(Error('user cancel folder selection'));
+            this.actResolve(null);
         },
 
         /**
@@ -109,7 +121,13 @@ export default {
          */
         actionOk() {
             this.enable = false;
-            this.actResolve(this.selectedEntryId);
+            if ( 0 === this.selectedEntryIds.length ) {
+                this.$message.error(this.$t('directive.entry.folderSelectIsRequired'));
+                return;
+            }
+            
+            let entryId = this.selectedEntryIds[0] || null;
+            this.actResolve(entryId);
         }
     }
 }
