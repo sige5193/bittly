@@ -101,6 +101,8 @@ export default {
         }
     },
     async mounted() {
+        this.$store.commit('moduleIdSet', 'environment');
+        
         await this.loadMocks();
         this.registerEventHandler('mock-start', () => this.$forceUpdate());
         this.registerEventHandler('mock-stop', () => this.$forceUpdate());

@@ -112,13 +112,18 @@ export default class Mocker extends MockServiceBase {
         this.log(`(write ${this.options.encoding}) : `, logData);
         let $this = this;
         return new Promise(( resolve, reject ) => {
-            let isSuccess = $this.serialport.write(data);
-            if ( !isSuccess ) {
-                $this.serialport.once('drain', () => $this.handleOnSerialPortDrain(data, resolve, reject));
-                return ;
+            if ( 0 === data.length || !$this.serialport.isOpen ) {
+                return resolve();
             }
-            $this.dataSendSize += data.length;
-            resolve();
+            $this.serialport.write(data, err => {
+                if (undefined !== err) {
+                    return reject($this.$t('unableToWrite', [$this.options.path, err.message]));
+                }
+            });
+            $this.serialport.drain(() => {
+                $this.dataSendSize += data.length;
+                resolve();
+            });
         });
     }
 
@@ -193,9 +198,19 @@ export default class Mocker extends MockServiceBase {
         }
         this.dataEntries.push(entry);
 
-        // send matched content
+        await this.sendContentsByMatchedRules(rules);
+    }
+
+    /**
+     * send contents by rule list
+     * @param {Array<Object>} rules 
+     */
+    async sendContentsByMatchedRules( rules ) {
         for ( let i=0; i<rules.length; i++ ) {
             let content = MyObject.copy(rules[i].responseContent);
+            if ( undefined === content ) {
+                continue;
+            }
             content.name = window.app.$t('mock.response.match.entryName',[rules[i].name]);
             content.handler = rules[i].responseHandler;
             this.log(`matched "${rules[i].name}"`);

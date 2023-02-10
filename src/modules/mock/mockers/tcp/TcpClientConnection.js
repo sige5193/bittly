@@ -112,10 +112,19 @@ export default class TcpClientConnection {
         }
         this.dataEntries.push(entry);
         this.mocker.trigger('client-data', this);
+        await this.sendContentsByMatchedRules(rules);
+    }
 
-        // send matched content
+    /**
+     * send contents by rule list
+     * @param {Array<Object>} rules 
+     */
+    async sendContentsByMatchedRules( rules ) {
         for ( let i=0; i<rules.length; i++ ) {
             let content = MyObject.copy(rules[i].responseContent);
+            if ( undefined === content ) {
+                continue;
+            }
             content.name = window.app.$t('mock.response.match.entryName',[rules[i].name]);
             content.handler = rules[i].responseHandler;
             this.mocker.log(`[client ${this.key}] matched "${rules[i].name}"`);
