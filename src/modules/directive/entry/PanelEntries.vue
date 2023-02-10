@@ -270,7 +270,8 @@ export default {
             if ( action.dropToGap ) {
                 parentId = MyString.uuidNil();
             } else {
-                if ( undefined === action.node.$vnode 
+                if ( null === action.node || undefined === action.node
+                || undefined === action.node.$vnode 
                 || 'folder' != action.node.$vnode.data.props.type ) {
                     return;
                 }
