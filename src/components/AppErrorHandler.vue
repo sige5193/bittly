@@ -178,6 +178,15 @@ export default {
             errorInfo.info = `Vue Error Handler : ${info}`;
             errorInfo.componentName = vm.$options.name;
             errorInfo.componentData = JSON.stringify(vm.$data);
+            
+            // we need to know which component occures the error
+            errorInfo.componentPath = [];
+            let com = vm;
+            while ( undefined !== com.$parent ) {
+                errorInfo.componentPath.push(com.$options.name || 'Anonymouse');
+                com = com.$parent;
+            }
+            
             this.reportError(errorInfo);
 
             this.hasError = true;
