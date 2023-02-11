@@ -1,5 +1,5 @@
 import MyDate from '../../../utils/datatype/MyDate.js';
-import ScriptLib from './ScriptLib.js'
+import ScriptLib from './Bittly.js'
 export default class QuickCallLib {
     /**
      * get list of quick call functions.

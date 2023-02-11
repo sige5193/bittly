@@ -3,9 +3,8 @@ import FormBuildHandler from '../parameters/form/BuildHandler.js';
 import { Buffer } from 'buffer';
 import MdbDirective from '../../../models/MdbDirective.js';
 import BuildHandler from '../parameters/form/BuildHandler.js';
-import MyObject from '../../../utils/datatype/MyObject.js';
 import MyDate from '../../../utils/datatype/MyDate.js';
-export default class ScriptLib {
+export default class Bittly {
     /**
      * constructor of lib
      * @param {MdbDirective} directive 
@@ -26,7 +25,11 @@ export default class ScriptLib {
      * @param {String} format 
      * @returns {Object}
      */
-    createUint8(value, format='hex') {
+    uint8(value, format='hex') {
+        if ( 'number' === typeof(value) ) {
+            value = value.toString();
+            format = 'dec';
+        }
         return {type:'byte',value,format};
     }
 
@@ -36,7 +39,8 @@ export default class ScriptLib {
      * @param {String} format 
      * @returns {Object}
      */
-    createInt8(value) {
+    int8(value) {
+        value = value.toString();
         return {type:'char_int',value};
     }
 
@@ -45,7 +49,7 @@ export default class ScriptLib {
      * @param {String} value 
      * @returns {Object}
      */
-    createChar(value) {
+    char(value) {
         return {type:'char',value};
     }
 
@@ -54,7 +58,7 @@ export default class ScriptLib {
      * @param {String} value 
      * @returns {Object}
      */
-    createUchar(value) {
+    uchar(value) {
         return {type:'unsigned_char',value};
     }
 
@@ -64,7 +68,11 @@ export default class ScriptLib {
      * @param {String} format 
      * @returns {Object}
      */
-    createUint16(value, format='hex') {
+    uint16(value, format='hex') {
+        if ( 'number' === typeof(value) ) {
+            value = value.toString();
+            format = 'dec';
+        }
         return {type:'unsigned_short',value,format};
     }
 
@@ -73,7 +81,8 @@ export default class ScriptLib {
      * @param {String} value 
      * @returns {Object}
      */
-    createInt16(value) {
+    int16(value) {
+        value = value.toString();
         return {type:'short',value};
     }
 
@@ -83,7 +92,11 @@ export default class ScriptLib {
      * @param {String} format 
      * @returns {Object}
      */
-    createUint32(value, format='hex') {
+    uint32(value, format='hex') {
+        if ( 'number' === typeof(value) ) {
+            value = value.toString();
+            format = 'dec';
+        }
         return {type:'unsigned_int',value,format};
     }
 
@@ -92,7 +105,8 @@ export default class ScriptLib {
      * @param {String} value 
      * @returns {Object}
      */
-    createInt32(value) {
+    int32(value) {
+        value = value.toString();
         return {type:'int',value};
     }
 
@@ -102,7 +116,11 @@ export default class ScriptLib {
      * @param {String} format 
      * @returns {Object}
      */
-    createUint64(value, format='hex') {
+    uint64(value, format='hex') {
+        if ( 'number' === typeof(value) ) {
+            value = value.toString();
+            format = 'dec';
+        }
         return {type:'unsigned_long_long',value,format};
     }
 
@@ -111,7 +129,8 @@ export default class ScriptLib {
      * @param {String} value 
      * @returns {Object}
      */
-    createInt64(value) {
+    int64(value) {
+        value = value.toString();
         return {type:'long_long',value};
     }
 
@@ -120,7 +139,8 @@ export default class ScriptLib {
      * @param {String} value 
      * @returns {Object}
      */
-    createFloat(value) {
+    float(value) {
+        value = value.toString();
         return {type:'float',value};
     }
 
@@ -129,7 +149,8 @@ export default class ScriptLib {
      * @param {String} value 
      * @returns {Object}
      */
-    createDouble(value) {
+    double(value) {
+        value = value.toString();
         return {type:'double',value};
     }
 
@@ -138,7 +159,8 @@ export default class ScriptLib {
      * @param {String} value 
      * @returns {Object}
      */
-    createString(value,length) {
+    string(value, length=null) {
+        length = length || value.length;
         return {type:'string',value,length};
     }
 
@@ -147,7 +169,11 @@ export default class ScriptLib {
      * @param {String} value 
      * @returns {Object}
      */
-    createBytes(value,length) {
+    bytes(value,length=null) {
+        if ( 'string' !== typeof(value) ) {
+            throw Error('value for bittly.bytes() must be a string of hex');
+        }
+        length = length || Math.ceil(value.replaceAll(/\s/g,'').length / 2);
         return {type:'bytes',value,length};
     }
 
@@ -156,8 +182,12 @@ export default class ScriptLib {
      * @param {String} value 
      * @returns {Object}
      */
-    createBits(value,length) {
-        return {type:'bits',value,length};
+    bits(value,length=null) {
+        if ( 'string' !== typeof(value) ) {
+            throw Error('value for bittly.bits() must be a string of hex');
+        }
+        length = length || value.replaceAll(/\s/g,'').length;
+        return {type:'bits', value, length, format:'bin'};
     }
 
     /**
@@ -195,44 +225,12 @@ export default class ScriptLib {
      * @return {Number}
      */
     bytesSum( ... values ) {
-        let buffer = this.buildBufferFromValueItems(values);
+        let buffer = BuildHandler.packItemsToBuffer(this.directive, values);
         let sum = 0;
         for ( let i=0; i<buffer.length; i++ ) {
             sum += buffer[i];
         }
         return sum;
-    }
-
-    /**
-     * Build buffer from value items.
-     * @param {Array<Object>} values 
-     * @returns {Buffer}
-     */
-    buildBufferFromValueItems( values ) {
-        let typemap = {
-            int8 : 'char_int',
-            uint8 : 'byte',
-            int16 : 'short',
-            uint16 : 'unsigned_short',
-            int32 : 'int',
-            uint32 : 'unsigned_int',
-            int64 : 'long_long',
-            uint64 : 'unsigned_long_long',
-        };
-
-        let items = MyObject.copy(values);
-        for ( let i=0; i<items.length; i++ ) {
-            if ( undefined != typemap[items[i].type] ) {
-                items[i].type = typemap[items[i].type];
-            }
-            if ( 'number' == typeof(items[i].value) ) {
-                items[i].value = `${items[i].value}`;
-                items[i].format = 'dec';
-            }
-        }
-
-        let buffer = BuildHandler.packItemsToBuffer(this.directive, items);
-        return buffer;
     }
 
     /**

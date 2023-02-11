@@ -39,7 +39,7 @@ import "codemirror/addon/hint/show-hint.css"
 require("codemirror/mode/javascript/javascript");
 require("codemirror/addon/hint/show-hint");
 require("codemirror/addon/hint/javascript-hint")
-import ScriptLibJavascriptBittly from '../../../script/ScriptLib.js'
+import ScriptLibJavascriptBittly from '../../../script/Bittly.js'
 import ChannelParserCustomScriptRuntime from './ParserScriptRuntime.js'
 export default {
     name : 'DirectiveResponsePlotterParserScript',

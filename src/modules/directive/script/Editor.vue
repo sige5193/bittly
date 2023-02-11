@@ -49,7 +49,7 @@ require("codemirror/mode/lua/lua");
 require("codemirror/addon/hint/show-hint");
 require("codemirror/addon/hint/javascript-hint")
 import ScriptRuntime from './ScriptRuntime.js'
-import ScriptLib from './ScriptLib.js'
+import ScriptLib from './Bittly.js'
 import Executor from './Executor.js';
 export default {
     components : {
