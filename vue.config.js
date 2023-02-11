@@ -5,11 +5,15 @@ console.log(`NODE_ENV : ${process.env.NODE_ENV}`);
 console.log(`BITTLY_HOST_TYPE : ${process.env.BITTLY_HOST_TYPE}`);
 console.log(`BITTLY_WEBAPP_ASSETS_PATH : ${process.env.BITTLY_WEBAPP_ASSETS_PATH}`);
 
+let productionSourceMap = false;
 let publicPath = '/';
 let pageTemplate = 'public/index.html';
-if ( 'production' === process.env.NODE_ENV && 'browser' === process.env.BITTLY_HOST_TYPE ) {
+if ( 'development' === process.env.NODE_ENV ) {
+    productionSourceMap = true;
+} else if ( 'production' === process.env.NODE_ENV && 'browser' === process.env.BITTLY_HOST_TYPE ) {
     publicPath = process.env.BITTLY_WEBAPP_ASSETS_PATH;
     pageTemplate = 'public/index-webapp.html';
+    productionSourceMap = true;
 }
 
 /**
@@ -23,6 +27,13 @@ module.exports = {
      * @link https://cli.vuejs.org/config/#publicpath
      */
     publicPath : publicPath,
+
+    /**
+     * Setting this to false can speed up production builds if you don't need source maps for production.
+     * @property {String}
+     * @link https://cli.vuejs.org/config/#productionsourcemap
+     */
+    productionSourceMap : productionSourceMap,
 
     /**
      * webpack configurations
