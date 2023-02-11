@@ -62,5 +62,20 @@ describe('@/src/modules/directive/script/Bittly.js', () => {
 
         expect(bittly.uint8(1).value).toBe('1');
         expect(bittly.int8(1).value).toBe('1');
+        expect(bittly.char('C').value).toBe('C');
+        expect(bittly.uchar('C').value).toBe('C');
+        expect(bittly.uint16(1).value).toBe('1');
+        expect(bittly.int16(1).value).toBe('1');
+        expect(bittly.uint32(1).value).toBe('1');
+        expect(bittly.int32(1).value).toBe('1');
+        expect(bittly.uint64(1).value).toBe('1');
+        expect(bittly.int64(1).value).toBe('1');
+        expect(bittly.float(3.14).value).toBe('3.14');
+        expect(bittly.double(3.14).value).toBe('3.14');
+        expect(bittly.string('hello').value).toBe('hello');
+        expect(bittly.bytes('AABBCC').value).toBe('AABBCC');
+        expect(bittly.bits('00111100').value).toBe('00111100');
+        tester.expectError(() => bittly.bytes(0xFFFF), 'value for bittly.bytes() must be a string of hex');
+        tester.expectError(() => bittly.bits(0b110001), 'value for bittly.bits() must be a string of hex');
     });
 });

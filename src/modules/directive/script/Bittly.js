@@ -50,6 +50,7 @@ export default class Bittly {
      * @returns {Object}
      */
     char(value) {
+        value = value.toString();
         return {type:'char',value};
     }
 
@@ -59,6 +60,7 @@ export default class Bittly {
      * @returns {Object}
      */
     uchar(value) {
+        value = value.toString();
         return {type:'unsigned_char',value};
     }
 
