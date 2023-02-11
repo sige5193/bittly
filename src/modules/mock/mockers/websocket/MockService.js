@@ -58,14 +58,19 @@ export default class WsServer extends MockServiceBase {
      * @returns {Promise<WebSocketServer>}
      */
     startServerInstance(options) {
+        let $this = this;
         return new Promise(( resolve, reject ) => {
-            let errorHandler = error => reject(error);
             let server = new window.ws.WebSocketServer(options);
-            server.once('error',errorHandler);
-            server.once('listening', () => {
-                server.off('error',errorHandler);
-                resolve(server)
-            });
+            if ( 'ws' === $this.options.protocol ) {
+                let errorHandler = error => reject(error);
+                server.once('error',errorHandler);
+                server.once('listening', () => {
+                    server.off('error',errorHandler);
+                    resolve(server);
+                });
+            } else {
+                resolve(server);
+            }
         });
     }
 

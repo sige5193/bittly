@@ -42,6 +42,7 @@ window.nodeBuffer = Buffer;
 // http
 window.https = require('https');
 window.http = require('http');
+window.pem = require('pem')
 
 window.path = require('path');
 window.envName = 'Electron';

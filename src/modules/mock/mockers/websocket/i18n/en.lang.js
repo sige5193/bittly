@@ -14,4 +14,8 @@ module.exports = {
     encoding : 'Encoding',
     urlCopy : 'Copy Websocket URL',
     urlCopySuccess : 'Websocket URL copied',
+    certGenerate : 'Generate Cert',
+    certGenerateFailed : 'Failed to generate cert files : {0}',
+    certExportCerFileFailed : 'Export cert.cer failed : {0}',
+    certExportCerFileSuccess : 'Export cert.cer successfully.',
 };

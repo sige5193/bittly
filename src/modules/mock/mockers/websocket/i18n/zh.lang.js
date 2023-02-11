@@ -14,4 +14,9 @@ module.exports = {
     encoding : '格式',
     urlCopy : '复制 Websocket 链接',
     urlCopySuccess : 'Websocket 链接已复制到剪切板',
+    certGenerate : '生成证书',
+    certGenerateFailed : '无法生成证书文件 : {0}',
+    certExportCerFile : '导出 cert.cer',
+    certExportCerFileFailed : '导出 cert.cer 文件失败 : {0}',
+    certExportCerFileSuccess : '成功导出 cert.cer 文件',
 };
