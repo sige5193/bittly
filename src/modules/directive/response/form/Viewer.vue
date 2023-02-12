@@ -55,6 +55,11 @@
         :pagination="false"
         :components="tableComponents"
       >
+        <!-- Field Index -->
+        <div slot="index" slot-scope="text, record, index">
+          {{index + 1}}
+        </div>
+
         <!-- Field Name -->
         <div slot="name" slot-scope="text, record, index">
           <a-input size="small" class="border-none"
@@ -82,15 +87,18 @@
           </a-select>
        
           <!-- Data Type Length -->
-          <a-input-number size="small"
-            v-if="0 == $dict.voption('DIRECTIVE_PARAM_DATATYPE',record.type,'length',0)" 
-            v-model="fields[index]['length']"
-            class="w-20 border-none"
-            :min="1"
-            :placeholder="$t('directive.response.form.dataLengthPlaceholder')"
-            :ref="`inputDataLength_${index}`"
-            @change="actionDataLengthInput(index)"
+          <div v-if="0 == $dict.voption('DIRECTIVE_PARAM_DATATYPE',record.type,'length',0)" 
+            class="d-inline-block w-20 pl-1"
+          >
+            <a-input-number size="small"
+              v-model="fields[index]['length']"
+              class="w-100 border-none"
+              :min="1"
+              :placeholder="$t('directive.response.form.dataLengthPlaceholder')"
+              :ref="`inputDataLength_${index}`"
+              @change="actionDataLengthInput(index)"
           />
+          </div>
         </div>
       
         <!-- Field Value -->
@@ -249,6 +257,7 @@ export default {
          */
         tableColumns() {
             return [
+                {title: '#',scopedSlots: { customRender: 'index' },className:'text-center white-space-nowrap'},
                 {title: this.$t('directive.response.form.fieldName'), dataIndex: 'name',scopedSlots: { customRender: 'name' },className:'white-space-nowrap'},
                 {title: this.$t('directive.response.form.fieldType'),dataIndex: 'type',scopedSlots: { customRender: 'type' },className:'white-space-nowrap'},
                 {title: this.$t('directive.response.form.fieldValue'),dataIndex: 'value',scopedSlots: { customRender: 'value' },className:'white-space-nowrap'},
