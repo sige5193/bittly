@@ -187,9 +187,11 @@ export default {
             await this.openedDirectiveMemoryUpdate();
             this.hasInited = true;
 
+            await this.$nextTick();
             if ( 'electron' === this.$env.name ) {
                 setTimeout(() => this.$env.ipcRendererSend('window-app-ready'), 100);
             }
+            this.$emit('ready');
             this.$appLog('module.directive.main:actionEntryMenuInited() => done');
         },
 
@@ -217,7 +219,7 @@ export default {
             if ( '' != this.openedDirectiveMemory.value ) {
                 let list = this.openedDirectiveMemory.value.split(',');
                 for ( let i=0; i<list.length; i++ ) {
-                    let directive = this.$refs.entries.getDirectiveById(list[i]);
+                    let directive = await this.$refs.entries.getDirectiveById(list[i]);
                     await this.actionDirectiveEntryClicked(directive);
                 }
             }

@@ -148,7 +148,7 @@ export default {
             // if serialport path is empty and only one device in the list, then we use that 
             // device as serialport path.
             if ( Common.isEmpty(this.target.path) && 1 == this.serialportOptions.serialports.length ) {
-                this.target.path = this.serialportOptions.serialports[0];
+                this.target.path = this.serialportOptions.serialports[0].value;
                 hasChanged = true;
             }
             if ( hasChanged ) {
@@ -179,7 +179,7 @@ export default {
             
             this.$message.success(this.$t('directive.communicator.serialport.deviceRefreshSuccess'), 1);
             if ( 1 === this.serialportOptions.serialports.length ) {
-                this.target.path = this.serialportOptions.serialports[0];
+                this.target.path = this.serialportOptions.serialports[0].value;
                 this.updateVModel();
                 this.$forceUpdate();
             } else {
