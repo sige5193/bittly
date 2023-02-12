@@ -1,3 +1,5 @@
+import StorageSqlite from "./StorageSqlite";
+
 export default class MigrationBase {
     /**
      * execute database update
@@ -124,7 +126,7 @@ export default class MigrationBase {
         }
         return new Promise(function( resolve, reject ) {
             $this.log(sql);
-            window.database.run(sql, params, function( err ) {
+            StorageSqlite.getDatabase().run(sql, params, function( err ) {
                 if ( null != err ) {
                     reject(err);
                     return;
@@ -145,7 +147,7 @@ export default class MigrationBase {
         }
 
         return new Promise(function( resolve, reject ) {
-            window.database.all(sql, params, function( err, rows ) {
+            StorageSqlite.getDatabase().all(sql, params, function( err, rows ) {
                 if ( null != err ) {
                     reject(err);
                     return;

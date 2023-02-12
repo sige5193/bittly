@@ -1,6 +1,7 @@
 import Environment from '../../environments/Environment.js';
 import MdbRuntimeVariable from '../../models/MdbRuntimeVariable.js'
 import MigrationBase from './MigrationBase.js';
+import StorageSqlite from './StorageSqlite.js';
 export default class Setup {
     /**
      * command list of migrations
@@ -466,7 +467,7 @@ export default class Setup {
      */
     execMigrationString(sql) {
         return new Promise(function( resolve, reject ) {
-            window.database.run(sql, [], function( err ) {
+            StorageSqlite.getDatabase().run(sql, [], function( err ) {
                 if ( null != err ) {
                     reject(err);
                     return;

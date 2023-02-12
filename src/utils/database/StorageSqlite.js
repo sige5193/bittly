@@ -1,5 +1,30 @@
 export default class StorageSqlite {
     /**
+     * instance of database
+     * @property {Object|null}
+     */
+    static database = null;
+
+    /**
+     * set database instance
+     * @param {*} database 
+     */
+    static setDatabase( database ) {
+        StorageSqlite.database = database;
+    }
+
+    /**
+     * get database instance
+     * @returns {Object}
+     */
+    static getDatabase() {
+        if ( null === StorageSqlite.database ) {
+            StorageSqlite.database = window.database;
+        }
+        return StorageSqlite.database;
+    }
+
+    /**
      * update data by given options
      * @param {*} options options for updating
      * - table : (required) name of database table 
@@ -17,7 +42,7 @@ export default class StorageSqlite {
         values.push(options.id);
         let sql = `UPDATE ${options.table} SET ${attrs.join(',')} WHERE id = ?`;
         return new Promise(( resolve, reject ) => {
-            window.database.run(sql, values, err => {
+            StorageSqlite.getDatabase().run(sql, values, err => {
                 if ( null != err ) {
                     return reject(false);
                 }
@@ -45,7 +70,7 @@ export default class StorageSqlite {
         
         let sql = `INSERT INTO ${options.table} (${names.join(',')}) VALUES (${holders.join(',')})`;
         return new Promise(( resolve, reject ) => {
-            window.database.run(sql, values,  err => {
+            StorageSqlite.getDatabase().run(sql, values,  err => {
                 if ( null != err ) {
                     return reject(false);
                 }
@@ -87,7 +112,7 @@ export default class StorageSqlite {
         }
 
         return new Promise(( resolve, reject ) => {
-            window.database.all(sql.join(' '), params, ( err, rows ) => {
+            StorageSqlite.getDatabase().all(sql.join(' '), params, ( err, rows ) => {
                 if ( null != err ) {
                     return reject(err);
                 }
@@ -105,7 +130,7 @@ export default class StorageSqlite {
     delete( options ) {
         let sql = `DELETE FROM ${options.table} WHERE id = ?`;
         return new Promise(( resolve, reject ) => {
-            window.database.run(sql, [options.id], err => {
+            StorageSqlite.getDatabase().run(sql, [options.id], err => {
                 if ( null != err ) {
                     return reject(false);
                 }

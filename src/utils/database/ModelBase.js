@@ -502,7 +502,7 @@ export default class ModelBase {
         let $this = this;
         let sql = `DELETE FROM ${model.tbname} ${conditionList} ${limit}`;
         return new Promise(function( resolve, reject ) {
-            window.database.run(sql, params, function( err ) {
+            StorageSqlite.getDatabase().run(sql, params, function( err ) {
                 if ( null != err ) {
                     reject(err);
                     return;
@@ -594,7 +594,7 @@ export default class ModelBase {
      */
     query( sql, params ) {
         return new Promise(function( resolve, reject ) {
-            window.database.all(sql, params, function( err, rows ) {
+            StorageSqlite.getDatabase().all(sql, params, function( err, rows ) {
                 if ( null != err ) {
                     reject(err);
                 } else {
@@ -612,7 +612,7 @@ export default class ModelBase {
      */
     static executeSQL ( sql, params ) {
         return new Promise(function( resolve, reject ) {
-            window.database.run(sql, params, function( err ) {
+            StorageSqlite.getDatabase().run(sql, params, function( err ) {
                 if ( null != err ) {
                     reject(err);
                     return;
