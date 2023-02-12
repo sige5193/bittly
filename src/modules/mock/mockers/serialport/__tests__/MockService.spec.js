@@ -29,7 +29,7 @@ describe('@/src/modules/mock/mockers/serialport/MockService.js', () => {
         
         serialport.response("HELLO");
         await tester.msleep(1000);
-        expect(serialport.write.mock.calls.length).toBeCalledTimes(1);
+        expect(serialport.write).toBeCalledTimes(1);
         
         await service.stop();
     })

@@ -1,6 +1,6 @@
 import MdbMock from '../../../../../models/MdbMock.js';
 import Tester from '../../../../../utils/test/UnitTester.js'
-import WsServer from '../WsServer.js'
+import WsServer from '../MockService.js'
 import MockWebSocketServer from './mocks/MockWebSocketServer.js';
 describe('@/src/modules/mock/mockers/websocket/Mocker.js', () => {
     it('basic', async () => {
