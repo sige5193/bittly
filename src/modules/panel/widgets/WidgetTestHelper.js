@@ -58,6 +58,7 @@ export default class WidgetTestHelper {
             await env.tester.wrapper.vm.$nextTick();
         }
         await env.tester.setup();
+        await env.tester.activeNewProject();
         window.console.log = () => {};
         return env;
     }

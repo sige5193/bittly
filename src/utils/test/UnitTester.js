@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import Vuex from 'vuex'
 import { createLocalVue, mount, shallowMount } from '@vue/test-utils'
 import Antd from 'ant-design-vue';
 import i18n from '@/i18n/index.js'
@@ -11,7 +12,10 @@ import BittlyApiClient from '@/utils/BittlyApiClient.js'
 import MdbProject from '../../models/MdbProject.js'
 import Environment from '../../environments/Environment.js';
 import EnvElectron from '../../environments/EnvElectron.js';
+import Store from '../../store/index.js'
 import MockStore from './MockStore.js';
+import MyObject from '../datatype/MyObject.js';
+import StorageSqlite from '../database/StorageSqlite.js';
 export default class UnitTester {
     /**
      * constructor of testcase setup
@@ -31,6 +35,16 @@ export default class UnitTester {
          * @property {VueComponent}
          */
         this.localVue = null;
+        /**
+         * mocked store instance
+         * @property {Object}
+         */
+        this.store = require('../../store/index').default;
+
+
+
+
+
         /**
          * mock bittly api client
          * @property {Object}
@@ -81,11 +95,7 @@ export default class UnitTester {
          * @property {MdbProject|null}
          */
         this.project = null;
-        /**
-         * mocked store instance
-         * @property {MockStore}
-         */
-        this.store = new MockStore(this);
+        
         
         
         
@@ -135,17 +145,14 @@ export default class UnitTester {
      * setup a test env
      */
     async setup( envName='Electron' ) {
+        // window.console.log = () => {};
         window.envName = 'test';
         this.setupEnvironment(envName);
         Environment.switchEnv(envName);
         
-        // clean database
-        if ( undefined != window.database ) {
-            window.database.close();
-            window.database = undefined;
-        }
         let sqlite3DB = sqlite3.verbose()
-        window.database = new sqlite3DB.Database('');
+        let database = new sqlite3DB.Database('');
+        StorageSqlite.setDatabase(database);
         await DatabaseSetup.start();
 
         // setup localvue
@@ -153,6 +160,7 @@ export default class UnitTester {
         localVue.prototype.$env = Environment.getEnv();
         localVue.prototype.$log = () => {};
 
+        localVue.use(Vuex);
         localVue.use(Antd);
         localVue.use(VueShortkey);
         localVue.use(VueThermometer)
@@ -161,7 +169,7 @@ export default class UnitTester {
         BittlyApiClient.setupVue(localVue);
         await Dictionary.load();
         this.localVue = localVue;
-        this.mount({template:'<div></div>'});
+        await this.mount({template:'<div></div>'});
     }
 
     /**
@@ -205,6 +213,7 @@ export default class UnitTester {
     async mount( component, enableShallowMount=false ) {
         let options = {};
         options.localVue = this.localVue;
+        options.store = new Vuex.Store(Store);
         options.provide = this.componentMountProvide;
         options.propsData = this.componentMountPropsData;
         options.stubs = this.componentMountStubs; 
@@ -213,20 +222,6 @@ export default class UnitTester {
         options.mocks = this.componentMountMocks;
         options.mocks.$bittly = this.mockBittlyApiClient;
         options.mocks.$eventBus = this.eventBus;
-        options.mocks.$store = this.store;
-
-        // options.mocks.$store = {};
-        // options.mocks.$store.commit = (commit, data) => this.storeCommitHandler(commit, data);
-        // options.mocks.$store.dispatch = (name, data) => this.storeData[name] = data;
-        // options.mocks.$store.getters = this.mockStoreGetters;
-        // if ( undefined == options.mocks.$store.getters.communicators ) {
-        //     options.mocks.$store.getters.communicators = {};
-        // }
-
-        // if ( null != this.project ) {
-        //     options.mocks.$store.getters.projectActivedId = this.project.id;
-        // }
-
         this.wrapper = null;
         if ( true === enableShallowMount ) {
             this.wrapper = shallowMount(component, options);
@@ -237,17 +232,6 @@ export default class UnitTester {
         window.app = this.wrapper.vm;
         await this.msleep(200);
         return this.wrapper;
-    }
-
-    /**
-     * @param {*} commit 
-     * @param {*} data 
-     */
-    storeCommitHandler( commit, data ) {
-        if ( undefined == this.mockStoreCommits[commit] ) {
-            return;
-        }
-        this.mockStoreCommits[commit](data);
     }
 
     /**
@@ -416,6 +400,7 @@ export default class UnitTester {
         activeProject.name = 'TEMP-PROJECT';
         await activeProject.save();
         this.project = activeProject;
+        this.store.state.projectActivedId = activeProject.id;
         return activeProject;
     }
 
@@ -425,6 +410,7 @@ export default class UnitTester {
      */
     activeProject( project ) {
         this.project = project;
+        this.store.state.projectActivedId = project.id;
     }
 
     /**
@@ -575,5 +561,14 @@ export default class UnitTester {
         }
         await input.setValue(value);
         await this.msleep(200);
+    }
+
+    /**
+     * execute dispatch to current store
+     * @param {*} action 
+     * @param {*} payload 
+     */
+    async storeDispatch( action, payload ) {
+        await this.wrapper.vm.$store.dispatch(action, payload);
     }
 }
