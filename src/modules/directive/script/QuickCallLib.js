@@ -1,4 +1,5 @@
 import MyDate from '../../../utils/datatype/MyDate.js';
+import ParameterFormBuildHandler from '../parameters/form/BuildHandler.js';
 import ScriptLib from './Bittly.js'
 export default class QuickCallLib {
     /**
@@ -213,7 +214,7 @@ export default class QuickCallLib {
      * @returns 
      */
     bcc( ... items ) {
-        let buffer =  this.scriptLib.buildBufferFromValueItems(items);
+        let buffer = ParameterFormBuildHandler.packItemsToBuffer(this.directive, items);
         let result = null;
         for ( let bi=0; bi<buffer.length; bi++ ) {
             let byte = buffer[bi];
