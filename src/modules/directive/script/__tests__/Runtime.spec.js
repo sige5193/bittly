@@ -1,6 +1,6 @@
 import Tester from '../../../../utils/test/UnitTester.js';
-import ScriptRuntime from '../ScriptRuntime.js';
-describe('@/src/modules/directive/script/ScriptLib.js', () => {
+import ScriptRuntime from '../Runtime.js';
+describe('@/src/modules/directive/script/Runtime.js', () => {
     it('normal use', async () => {
         let tester = new Tester();
         await tester.setup();
