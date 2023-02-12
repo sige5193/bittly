@@ -48,9 +48,10 @@ require("codemirror/mode/javascript/javascript");
 require("codemirror/mode/lua/lua");
 require("codemirror/addon/hint/show-hint");
 require("codemirror/addon/hint/javascript-hint")
-import ScriptRuntime from './ScriptRuntime.js'
+import ScriptRuntime from './Runtime.js'
 import ScriptLib from './Bittly.js'
 import Executor from './Executor.js';
+import FormScriptParameterHandler from '../parameters/form/ScriptParameterHandler.js';
 export default {
     components : {
         codemirror,
@@ -90,8 +91,12 @@ export default {
             let $this = this;
 
             // set up input suggestions
-            window.$this = new ScriptRuntime(this.directive);
-            window.$this.parametersSet(directive.requestContent[directive.requestFormat]);
+            let runtime = new ScriptRuntime(this.directive);
+            if ( 'form' === directive.requestFormat ) {
+                runtime.parameter = new FormScriptParameterHandler();
+            }
+            window.$this = runtime;
+            
             window.bittly = new ScriptLib(this.directive);
             window.project = {};
             Executor.getProjectScriptObjectOfCurrentProject().then( project => {

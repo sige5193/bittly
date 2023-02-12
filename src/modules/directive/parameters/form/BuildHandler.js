@@ -2,6 +2,7 @@ import Dictionary from '@/utils/Dictionary.js'
 import Common from '@/utils/Common.js';
 import ParameterBuilder from '../Builder.js'
 import MyNumber from '@/utils/datatype/MyNumber.js'
+import ScriptParameterHandler from './ScriptParameterHandler.js';
 export default class BuildHandler {
     /**
      * construct of build handler
@@ -48,7 +49,9 @@ export default class BuildHandler {
         }
 
         // execute script and quick call
-        this.builder.executeRequestScript();
+        let scriptParameterHandler = new ScriptParameterHandler();
+        scriptParameterHandler.fields = fields;
+        this.builder.executeRequestScript({parameter:scriptParameterHandler});
         for ( let i=0; i<fields.length; i++ ) {
             fields[i].value = this.builder.applyStatusVariableToString(fields[i].value);
             fields[i].value = this.builder.applyScriptResultToString(fields[i].value);

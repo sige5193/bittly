@@ -21,7 +21,7 @@ let params = $this.parametersGet();`,
 `/* get the value of form item */
 /* "itemName" : the name of form item */
 /* val : the text content of form value */
-let val = $this.parameterFormValueGetByName("itemName");`
+let val = $this.parameter.valueGetByName("itemName");`
     },
     paramFormItemGetByName : {
         name : 'snippetParamFormItemGetByName',
@@ -29,7 +29,7 @@ let val = $this.parameterFormValueGetByName("itemName");`
 `/* get the item object of form item */
 /* "itemName" : the name of form item */
 /* val : the object of form item */
-let item = $this.parameterFormItemGetByName("itemName");`
+let item = $this.parameter.itemGetByName("itemName");`
     },
     paramFormItemGetByIndex : {
         name : 'snippetParamFormItemGetByIndex',
@@ -37,7 +37,7 @@ let item = $this.parameterFormItemGetByName("itemName");`
 `/* get the item object of form item by index */
 /* 1 : the index of form item, the index starts from 1 */
 /* val : the object of form item */
-let item = $this.parameterFormItemGetByIndex(1);`
+let item = $this.parameter.itemGetByIndex(1);`
     },
     paramFormItemValueGetByIndex : {
         name : 'snippetParamFormItemValueGetByIndex',
@@ -45,7 +45,7 @@ let item = $this.parameterFormItemGetByIndex(1);`
 `/* get the value of form item */
 /* 1 : the index of form item, the index starts from 1 */
 /* val : the text content of form value */
-let val = $this.parameterFormItemValueGetByIndex(1);`
+let val = $this.parameter.valueGetByIndex(1);`
     },
     timestamp : {
         name : 'snippetTimestamp',

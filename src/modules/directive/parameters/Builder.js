@@ -179,8 +179,9 @@ export default class Builder {
 
     /**
      * execute script
+     * @param {Object}
      */
-    executeRequestScript() {
+    executeRequestScript( options={} ) {
         if ( null != this.scriptResult ) {
             return this.scriptResult;
         }
@@ -191,6 +192,7 @@ export default class Builder {
         }
 
         let executor = new Executor(this.directive);
+        executor.setProp('parameter', options.parameter || null);
         executor.setProp('params', Common.objCopy(this.paramContent));
         executor.setProject(this.project);
         this.scriptResult = executor.exec(this.directive.requestScript);
