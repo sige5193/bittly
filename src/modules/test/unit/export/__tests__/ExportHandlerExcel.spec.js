@@ -4,8 +4,7 @@ describe('@/src/modules/test/export/ExportHandlerExcel.js', () => {
     it('normal use', async () => {
         let setup = new TestCaseSetup();
         await setup.setup();
-        let project = await setup.activeNewProject();
-        window.app.$store.getters.projectActivedId = project.id;
+        await setup.activeNewProject();
         window.fs = {
             promises : {
                 writeFile : jest.fn()

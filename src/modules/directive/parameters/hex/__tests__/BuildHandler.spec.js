@@ -6,8 +6,7 @@ describe('@/modules/directive/parameter/hex/BuildHandler.js', () => {
         let tester = new Tester();
         await tester.setup();
         let project = await tester.activeNewProject();
-
-        window.app.$store.getters.envVariables = {
+        tester.store.state.envVariables = {
             envVar001 : {value:'BB'},
         };
 

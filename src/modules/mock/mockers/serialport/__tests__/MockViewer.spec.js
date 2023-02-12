@@ -24,11 +24,11 @@ describe('@/src/modules/mock/mockers/tcp/MockViewer.vue', () => {
         // start the mocker
         await vm.start();
         await tester.msleep(100);
-        expect(tester.store.getters.mocks[mock.id]).not.toBeUndefined();
+        expect(vm.$store.getters.mocks[mock.id]).not.toBeUndefined();
 
         // stop the mocker
         await vm.stop();
         await tester.msleep(100);
-        expect(tester.store.getters.mocks[mock.id]).toBeUndefined();
+        expect(vm.$store.getters.mocks[mock.id]).toBeUndefined();
     })
 });

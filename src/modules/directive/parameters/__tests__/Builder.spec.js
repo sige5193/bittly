@@ -98,7 +98,7 @@ describe('@/modules/directive/parameter/Builder.js', () => {
     it('apply env variables', async ( ) => {
         let tester = new Tester();
         await tester.setup();
-        window.app.$store.getters.envVariables = {
+        tester.store.state.envVariables = {
             envName : {value:'ENV-VALUE'}
         };
         let project = await tester.activeNewProject();

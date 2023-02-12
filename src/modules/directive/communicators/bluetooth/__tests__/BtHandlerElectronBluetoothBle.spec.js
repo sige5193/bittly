@@ -34,6 +34,9 @@ describe('@/communicators/bluetooth/BleHandler.js', () => {
                     return [{
                         getCharacteristic() {
                             return {
+                                properties : {
+                                    notify : true,
+                                },
                                 eventHandlers : {},
                                 addEventListener(name, callback){
                                     this.eventHandlers[name] = callback;

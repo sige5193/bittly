@@ -5,12 +5,12 @@ import BuildHandler from '../BuildHandler.js'
 describe('@/modules/directive/parameter/form/BuildHandler.js', () => {
     it('basic', async ( ) => {
         let tester = new Tester();
-        await tester.setup();
-        let project = await tester.activeNewProject();
-
-        window.app.$store.getters.envVariables = {
+        tester.store.state.envVariables = {
             envVar001 : {value:'EV01'},
         };
+        await tester.setup();
+        
+        let project = await tester.activeNewProject();
 
         window.fs = {
             constants : { R_OK : 1 },

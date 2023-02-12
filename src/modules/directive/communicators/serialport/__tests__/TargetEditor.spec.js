@@ -38,9 +38,9 @@ describe('@/communicators/serailport/TargetEditor.vue', () => {
         expect(editorConfig.defaultResponseViewer).toBe('hex');
     }, 10000);
 
-    it('auto select device if only one device in list', async ( done ) => {
+    it('auto select device if only one device in list on refresh button clicked', async ( done ) => {
         let mock = MockSerialport.setup();
-        mock.list.mockImplementation(() => Promise.resolve([{path:'COM1'}]));
+        mock.list.mockImplementation(() => Promise.resolve([{path:'COM1',friendlyName:'DEV-01'}]));
 
         let isRefreshed = false;
         let target = {};
@@ -61,10 +61,10 @@ describe('@/communicators/serailport/TargetEditor.vue', () => {
         await tester.click({ref:'btnSerialPortRefresh'});
     });
 
-    it('debug device list should be opened after clicking refresh button', async ( ) => {
+    it('device list should be opened after clicking refresh button', async ( ) => {
         let mock = MockSerialport.setup();
         mock.list.mockImplementation(() => {
-            return Promise.resolve([{path:'COM1'},{path:'COM2'}])
+            return Promise.resolve([{path:'COM1',friendlyName:'DEV-01'},{path:'COM2',friendlyName:'DEV-01'}])
         });
 
         let target = {};
@@ -80,23 +80,18 @@ describe('@/communicators/serailport/TargetEditor.vue', () => {
         expect(tester.wrapper.vm.$data.showSerialportPathList).toBeTruthy();
     });
 
-    it('should auto select device if only one deivce in the list if target path is empty during initation.', async ( done ) => {
+    it('should auto select device if only one deivce in the list if target path is empty during initation.', async () => {
         let mock = MockSerialport.setup();
-        mock.list.mockImplementation(() => Promise.resolve([{path:'COM1'}]));
+        mock.list.mockImplementation(() => Promise.resolve([{path:'COM1',friendlyName:'DEV-01'}]));
 
         let target = {};
-        let tester = new Tester({
-            props : {
-                value : target,
-            },
-            listeners : {
-                input : ( newTarget ) => {
-                    expect(newTarget.path).toBe('COM1');
-                    done();
-                }
-            }
-        });
+        let tester = new Tester();
+        tester.prop('value', target);
+        tester.on('input', newTarget => target = newTarget);
         await tester.setup();
+        
         await tester.mount(TargetEditor);
+        await tester.msleep(500);
+        expect(target.path).toBe('COM1');
     });
 });

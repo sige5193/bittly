@@ -43,7 +43,7 @@ describe('@/src/modules/directive/script/QuickCallLib.js', () => {
         expect(quickCall.checksum8(
             {type:'bits',length:2,format:'bin',value:'01'},
             {type:'bits',length:6,format:'bin',value:'111100'},
-            {type:'uint8',value:'FF',format:'hex'},
+            {type:'bytes',value:'FF',format:'hex'},
         )).toBe('133');
     });
 });

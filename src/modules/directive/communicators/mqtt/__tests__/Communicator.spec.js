@@ -4,14 +4,8 @@ import Communicator from '../Communicator.js'
 import MdbProject from '@/models/MdbProject.js';
 import RequestParamBuilder from '../../../parameters/Builder.js';
 describe('@/communicators/mqtt/Communicator.js', () => {
-    it('debug normal use', async ( done ) => {
-        let deviceOnline = null;
-        let setup = new Tester({
-            mockStoreCommits : {
-                communicatorOnline : data => deviceOnline = data,
-                communicatorOffline : () => deviceOnline = null,
-            },
-        });
+    it('normal use', async ( done ) => {
+        let setup = new Tester();
         await setup.setup();
         
         // test client
@@ -89,7 +83,7 @@ describe('@/communicators/mqtt/Communicator.js', () => {
         await com.open();
         expect(com.getIsOpen()).toBeTruthy();
         await setup.msleep(500);
-        expect(deviceOnline.key).toBe(com.comkey);
+        expect(setup.wrapper.vm.$store.getters.communicators[com.comkey]).toBe(com);
         
         com.onData(async ( data ) => {
             data = data.toString();
@@ -97,7 +91,7 @@ describe('@/communicators/mqtt/Communicator.js', () => {
             expect(com.getDataReceiveSize()).toBe(testContent.length);
             await com.close();
             await setup.msleep(500);
-            expect(deviceOnline).toBeNull();
+            expect(setup.wrapper.vm.$store.getters.communicators[com.comkey]).toBeUndefined();
             done();
         });
 

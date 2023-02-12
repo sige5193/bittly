@@ -2,7 +2,7 @@ import Tester from '../../../../utils/test/UnitTester.js';
 import MdbDirective from '@/models/MdbDirective.js'
 import Executor from '../Executor.js';
 describe('@/src/modules/directive/script/Executor.js', () => {
-    it('normal use', async () => {
+    it('debug normal use', async () => {
         let directive = new MdbDirective();
         let tester = new Tester();
         await tester.setup();
@@ -36,13 +36,13 @@ describe('@/src/modules/directive/script/Executor.js', () => {
         tester.expectError(()=>executor.execQuickCall('not-exists', []), 'invalid quick function name : not-exists');
 
         // get project object
-        window.app.$store.getters.projectActivedId = 'not-exists';
+        await tester.storeDispatch('projectActivedIdSet', 'not-exists');
         let projectObj = await Executor.getProjectScriptObjectOfCurrentProject();
         expect(projectObj).toEqual({});
 
         project.script = `project.hello = ( name ) => 'hello ' + name;`;
         await project.save();
-        window.app.$store.getters.projectActivedId = project.id;
+        await tester.storeDispatch('projectActivedIdSet', project.id);
         projectObj = await Executor.getProjectScriptObjectOfCurrentProject();
         expect(typeof(projectObj.hello)).toBe('function');
     })

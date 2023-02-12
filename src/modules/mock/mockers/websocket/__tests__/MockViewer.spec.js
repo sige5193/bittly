@@ -18,7 +18,7 @@ describe('@/src/modules/mock/mockers/websocket/MockViewer.vue', () => {
         // start the mocker
         await vm.start();
         await tester.msleep(100);
-        expect(tester.store.getters.mocks[mock.id]).not.toBeUndefined();
+        expect(tester.wrapper.vm.$store.getters.mocks[mock.id]).not.toBeUndefined();
 
         // a new client connected
         server.newClient({address:'127.0.0.1',port:'65535'});
@@ -28,6 +28,6 @@ describe('@/src/modules/mock/mockers/websocket/MockViewer.vue', () => {
         // stop the mocker
         await vm.stop();
         await tester.msleep(100);
-        expect(tester.store.getters.mocks[mock.id]).toBeUndefined();
+        expect(tester.wrapper.vm.$store.getters.mocks[mock.id]).toBeUndefined();
     })
 });

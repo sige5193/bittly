@@ -1,7 +1,7 @@
 import TestCaseSetup from '../../../../../utils/test/UnitTester';
 import Exportor from '../Exportor.js'
 describe('@/src/modules/test/export/Exportor.js', () => {
-    it('normal use', async () => {
+    it('debug normal use', async () => {
         let setup = new TestCaseSetup();
         await setup.setup();
         window.fs = {
@@ -14,9 +14,8 @@ describe('@/src/modules/test/export/Exportor.js', () => {
                 return 'xxx';
             },
         };
-        let project = await setup.activeNewProject();
-        window.app.$store.getters.projectActivedId = project.id;
-
+        await setup.activeNewProject();
+        
         let handler = new Exportor();
         await handler.export('html');
         

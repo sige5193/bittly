@@ -11,14 +11,7 @@ describe('@/communicators/websocket/Communicator.js', () => {
             WebSocket : WebSocket
         };
 
-        let communicatorOnline = jest.fn();
-        let communicatorOffline = jest.fn();
-        let tester = new Tester({
-            mockStoreCommits : {
-                communicatorOnline : communicatorOnline,
-                communicatorOffline : communicatorOffline,
-            }
-        });
+        let tester = new Tester();
         await tester.setup();
         await tester.activeNewProject();
 
@@ -36,7 +29,7 @@ describe('@/communicators/websocket/Communicator.js', () => {
         await com.open();
         await server.connected;
         expect(com.getIsOpen()).toBeTruthy();
-        expect(communicatorOnline.mock.calls[0][0].com.comkey).toBe(com.comkey);
+        expect(tester.wrapper.vm.$store.getters.communicators[com.comkey]).toBe(com);
         
         com.onData(async ( data ) => {
             await expect(server).toReceiveMessage(Buffer.from(testContent));
@@ -44,7 +37,7 @@ describe('@/communicators/websocket/Communicator.js', () => {
             expect(com.getDataReceiveSize()).toBe(testContent.length);
             await com.close();
             await tester.msleep(500);
-            expect(communicatorOffline.mock.calls[0][0]).toBe(com.comkey);
+            expect(tester.wrapper.vm.$store.getters.communicators[com.comkey]).toBeUndefined();
             server.close();
             done();
         });

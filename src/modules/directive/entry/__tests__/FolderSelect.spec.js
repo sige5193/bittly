@@ -36,11 +36,11 @@ describe('@/modules/directive/entry/FolderSelect.vue', () => {
         await tester.emit({ref:'modelSelect'}, 'ok');
         expect(selectedEntryId).toBe('0000');
 
-        let userCancelSelection = jest.fn();
+        // returns null if user cancel selection.
         await wrapper.vm.actionLoadData({dataRef : {children:true}});
-        wrapper.vm.select().then().catch(userCancelSelection);
+        wrapper.vm.select().then(entryId => selectedEntryId = entryId);
         await tester.msleep(100);
         await tester.emit({ref:'modelSelect'}, 'cancel');
-        expect(userCancelSelection).toBeCalled();
+        expect(selectedEntryId).toBeNull();
     })
 });

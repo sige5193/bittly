@@ -5,16 +5,9 @@ import RequestParamBuilder from '../../../parameters/Builder.js';
 import MockSerialport from './mocks/MockSerialport.js';
 describe('@/communicators/serialport/Communicator.js', () => {
     it('basic', async ( done ) => {
-        let communicatorOnline = jest.fn();
-        let communicatorOffline = jest.fn();
-
-        let tester = new Tester({
-            mockStoreCommits : {
-                communicatorOnline : communicatorOnline,
-                communicatorOffline : communicatorOffline,
-            },
-        });
         MockSerialport.setup();
+
+        let tester = new Tester();
         await tester.setup();
         await tester.activeNewProject();
         
@@ -36,19 +29,15 @@ describe('@/communicators/serialport/Communicator.js', () => {
         expect(com.getIsOpen()).toBeFalsy();
         await com.open();
         expect(com.getIsOpen()).toBeTruthy();
-        expect(communicatorOnline.mock.calls[0][0].key).toBe(com.comkey);
+        expect(tester.wrapper.vm.$store.getters.communicators[com.comkey]).toBe(com);
         
-        // if we try to open it again, it would not work
-        await com.open();
-        expect(communicatorOnline.mock.calls.length).toBe(1);
-
         com.onData(async ( data ) => {
             data = data.toString();
             expect(data).toBe(testContent);
             expect(com.getDataReceiveSize()).toBe(testContent.length);
             await com.close();
             await tester.msleep(500);
-            expect(communicatorOffline).toBeCalled();
+            expect(tester.wrapper.vm.$store.getters.communicators[com.comkey]).toBeUndefined();
             done();
         });
         

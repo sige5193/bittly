@@ -4,15 +4,16 @@ import Tester from '../../../../../utils/test/UnitTester.js'
 describe('@/communicators/http/RequestParamBuilder.js', () => {
     it('full post', async() => {
         let tester = new Tester();
-        await tester.setup();
-
-        window.app.$store.getters.envVariables = {
+        tester.store.state.envVariables = {
             urlEnv : {value:'ENV-URL'},
             headerEnvName : {value:'ENV-HEADER-NAME'},
             headerEnvValue : {value:'ENV-HEADER-VALUE'},
             cookieEvnName : {value:'ENV-COOKIE-NAME'},
             cookieEnvValue : {value:'ENV-COOKIE-VALUE'},
         };
+        await tester.setup();
+
+        
 
         let directive = new MdbDirective();
         directive.requestScript = '$this.variableSet("scriptValue","SCRIPTVVALUE");';
@@ -65,7 +66,7 @@ describe('@/communicators/http/RequestParamBuilder.js', () => {
     it('RequestParamBuilder::getBody - text', async () => {
         let tester = new Tester();
         await tester.setup();
-        window.app.$store.getters.envVariables = {
+        tester.store.state.envVariables = {
             test : {value:'ENVTEST'}
         };
 
@@ -84,7 +85,7 @@ describe('@/communicators/http/RequestParamBuilder.js', () => {
     it('RequestParamBuilder::getBody - form - multipart/form-data', async () => {
         let tester = new Tester();
         await tester.setup();
-        window.app.$store.getters.envVariables = {
+        tester.store.state.envVariables = {
             test : {value:'ENVTEST'}
         };
         window.fs = {
@@ -118,10 +119,11 @@ describe('@/communicators/http/RequestParamBuilder.js', () => {
 
     it('RequestParamBuilder::getBody - form - application/x-www-form-urlencoded', async () => {
         let tester = new Tester();
-        await tester.setup();
-        window.app.$store.getters.envVariables = {
+        tester.store.state.envVariables = {
             test : {value:'ENVTEST'}
         };
+        await tester.setup();
+        
         window.fs = {
             accessSync : () => {},
             constants : {R_OK:true},
@@ -145,10 +147,11 @@ describe('@/communicators/http/RequestParamBuilder.js', () => {
 
     it('RequestParamBuilder::getBody - form - other content types', async () => {
         let tester = new Tester();
-        await tester.setup();
-        window.app.$store.getters.envVariables = {
+        tester.store.state.envVariables = {
             test : {value:'ENVTEST'}
         };
+        await tester.setup();
+        
         window.fs = {
             accessSync : () => {},
             constants : {R_OK:true},
@@ -194,11 +197,11 @@ describe('@/communicators/http/RequestParamBuilder.js', () => {
 
     it('RequestParamBuilder::getHeaders', async () => {
         let tester = new Tester();
-        await tester.setup();
-        window.app.$store.getters.envVariables = {
+        tester.store.state.envVariables = {
             test : {value:'ENVTEST'}
         };
-
+        await tester.setup();
+        
         let directive = new MdbDirective();
         directive.requestScript = '$this.variableSet("scriptValue","SCRIPTVVALUE");';
         directive.target.httpHeaders = [
@@ -229,11 +232,11 @@ describe('@/communicators/http/RequestParamBuilder.js', () => {
 
     it('RequestParamBuilder::getHeaders - content type detect', async () => {
         let tester = new Tester();
-        await tester.setup();
-        window.app.$store.getters.envVariables = {
+        tester.store.state.envVariables = {
             test : {value:'ENVTEST'}
         };
-
+        await tester.setup();
+        
         let directive = new MdbDirective();
         directive.requestFormat = 'hex';
         directive.target.httpMethod = 'POST';

@@ -18,7 +18,7 @@ describe('@/src/modules/mock/mockers/websocket/Mocker.js', () => {
 
         // start server
         await mocker.start();
-        expect(tester.store.getters.mocks[mock.id]).not.toBeUndefined();
+        expect(tester.wrapper.vm.$store.getters.mocks[mock.id]).not.toBeUndefined();
 
         // new client
         server.newClient({address:'127.0.0.1',port:'8899'});
@@ -28,6 +28,6 @@ describe('@/src/modules/mock/mockers/websocket/Mocker.js', () => {
 
         // stop
         await mocker.stop();
-        expect(tester.store.getters.mocks[mock.id]).toBeUndefined();
+        expect(tester.wrapper.vm.$store.getters.mocks[mock.id]).toBeUndefined();
     })
 });

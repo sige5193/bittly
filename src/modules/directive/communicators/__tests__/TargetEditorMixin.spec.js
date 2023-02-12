@@ -18,19 +18,11 @@ describe('@/communicators/TargetEditorMixin.js', () => {
         
         let parameterEditorEnableChange = jest.fn();
         let communicatorClose = jest.fn().mockResolvedValue(true);
-        let tester = new Tester({
-            mockStoreGetters : {
-                communicators : {
-                    'test-com' : {
-                        close : communicatorClose,
-                    }
-                }
-            },
-            listeners : {
-                'parameter-editor-enable-change' : parameterEditorEnableChange,
-            }
-        });
+        let tester = new Tester();
+        tester.store.state.communicators = {'test-com':{close:communicatorClose}};
+        tester.on('parameter-editor-enable-change',parameterEditorEnableChange);
         await tester.setup();
+
         await tester.mount(componment);
         tester.wrapper.vm.actionForceUpdate();
         expect(tester.wrapper.vm.getComKeyByOptions()).toBe('test-com');
