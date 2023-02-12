@@ -50,18 +50,20 @@ export default class NetHandlerUDP {
      * @param {Function} reject
      */
     handleOnListening(resolve, reject) {
+        let $this = this;
         try {
             if ( 'unicast' === this.com.options.netUdpMode ) {
                 // nothing todo here
             } else if ('multicast' === this.com.options.netUdpMode ) {
                 this.connection.setMulticastTTL(128);
                 this.connection.addMembership(this.com.options.host);
-            } else if ( 'broadcast' === $this.com.options.netUdpMode ) {
+            } else if ( 'broadcast' === this.com.options.netUdpMode ) {
                 this.connection.setBroadcast(true);
             } else {
                 throw Error(`udp mode "${this.com.options.netUdpMode}" is not supported`);
             }
         } catch ( e ) {
+            setTimeout(() => $this.close(), 100);
             reject(Error(this.com.$t('udpOpenFailed', [e.message])));
             return ;
         }
