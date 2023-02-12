@@ -33,7 +33,7 @@ module.exports = {
      * @property {String}
      * @link https://cli.vuejs.org/config/#productionsourcemap
      */
-    productionSourceMap : productionSourceMap,
+    // productionSourceMap : productionSourceMap,
 
     /**
      * webpack configurations
