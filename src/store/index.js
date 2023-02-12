@@ -1,9 +1,6 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
 import MdbEnvironment from '../models/MdbEnvironment.js'
 import MdbRuntimeVariable from '../models/MdbRuntimeVariable.js'
-Vue.use(Vuex)
-export default new Vuex.Store({
+export default {
     state: {
         /** 当前项目ID */
         projectActivedId : null,
@@ -219,4 +216,4 @@ export default new Vuex.Store({
             context.commit('isClosingAllCommunicators', false);
         }
     },
-})
+}
