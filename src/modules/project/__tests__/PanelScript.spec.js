@@ -1,4 +1,3 @@
-// import TestCaseSetup from '../../../utils/test/Setup.js'
 // import PanelScript from '../PanelScript.vue'
 describe('@/modules/project/PanelScript.vue', () => {
     it('normal use', async () => {

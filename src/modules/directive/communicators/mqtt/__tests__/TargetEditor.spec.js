@@ -1,4 +1,3 @@
-import TestCaseSetup from '../../../../../utils/test/Setup.js';
 import Tester from '../../../../../utils/test/UnitTester.js'
 import TargetEditor from '../TargetEditor.vue'
 describe('@/communicators/mqtt/TargetEditor.vue', () => {

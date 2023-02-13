@@ -13,7 +13,6 @@ import MdbProject from '../../models/MdbProject.js'
 import Environment from '../../environments/Environment.js';
 import EnvElectron from '../../environments/EnvElectron.js';
 import Store from '../../store/index.js'
-import MockStore from './MockStore.js';
 import MyObject from '../datatype/MyObject.js';
 import StorageSqlite from '../database/StorageSqlite.js';
 export default class UnitTester {
