@@ -470,6 +470,9 @@ export default {
          * @private
          */
         async activedDirectiveTabMemorySetValue( directiveId ) {
+            if ( null === this.activedDirectiveTabMemory ) {
+                return ;
+            }
             this.activedDirectiveTabMemory.value = directiveId;
             await this.activedDirectiveTabMemory.save();
         },
