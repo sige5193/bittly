@@ -199,16 +199,6 @@ jobs:
         VERSION: ${{steps.package-version.outputs.current-version}}
 
     # update server variables
-    - name: Update release size for appimage i386
-      run: >
-        curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
-        --form 'key="linux_released_size_appimage_i386"' 
-        --form "value=$(du -h ./dist_electron/bittly-$VERSION-i386.AppImage | cut -f1)" 
-        --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"' -s
-      env:
-        VERSION: ${{steps.package-version.outputs.current-version}}
-
-    # update server variables
     - name: Update release size for appimage x86_64
       run: >
         curl --location --request POST 'https://bittly.sigechen.com/deploy/set-variable' 
