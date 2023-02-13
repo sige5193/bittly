@@ -96,6 +96,7 @@ export default class Communicator extends CommunicatorBase {
         }
 
         let options = {};
+        options.rejectUnauthorized = false;
         options.headers = {};
         let headerList = this.options.wsHeaders || [];
         for ( let i=0; i<headerList.length; i++ ) {
@@ -123,7 +124,7 @@ export default class Communicator extends CommunicatorBase {
             $this.connection.onopen = ( event ) => $this.handleOnOpen(event, resolve) ;
             $this.connection.onmessage = ( event ) => $this.handleOnData(event);
             $this.connection.onclose = ( event ) => $this.handleOnClose(event);
-            $this.connection.onerror = () => $this.handleOpenOnError(reject);
+            $this.connection.onerror = (... args) => $this.handleOpenOnError(reject, ... args);
         });
     }
 
@@ -183,7 +184,9 @@ export default class Communicator extends CommunicatorBase {
      * handle error event on openning.
      * @param {CallableFunction} reject 
      */
-    handleOpenOnError( reject ) {
+    handleOpenOnError( reject, ... args ) {
+        debugger
+        console.log(args);
         reject(this.$t('connectFailed',[this.options.wsUrl]));
     }
 
