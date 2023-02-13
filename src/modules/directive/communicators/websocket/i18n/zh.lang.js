@@ -7,7 +7,7 @@ module.exports = {
     headerAction : '操作',
     protocols : '协议',
     addressPlaceholder : '示例 ws://localhost:8899/demo',
-    connectFailed : '无法连接到服务器 {0}',
+    connectFailed : '无法连接到服务器 {0} , 错误 : {1}',
     disconnected : '服务器断开链接 {0}',
     addressCannotBeEmpty : '请输入服务器地址',
 };

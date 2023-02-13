@@ -124,7 +124,7 @@ export default class Communicator extends CommunicatorBase {
             $this.connection.onopen = ( event ) => $this.handleOnOpen(event, resolve) ;
             $this.connection.onmessage = ( event ) => $this.handleOnData(event);
             $this.connection.onclose = ( event ) => $this.handleOnClose(event);
-            $this.connection.onerror = (... args) => $this.handleOpenOnError(reject, ... args);
+            $this.connection.onerror = err => $this.handleOpenOnError(err, reject);
         });
     }
 
@@ -184,10 +184,8 @@ export default class Communicator extends CommunicatorBase {
      * handle error event on openning.
      * @param {CallableFunction} reject 
      */
-    handleOpenOnError( reject, ... args ) {
-        debugger
-        console.log(args);
-        reject(this.$t('connectFailed',[this.options.wsUrl]));
+    handleOpenOnError( error, reject ) {
+        reject(this.$t('connectFailed',[this.options.wsUrl,error.message]));
     }
 
     /**
