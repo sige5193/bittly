@@ -47,7 +47,7 @@ export default class MockService extends MockServiceBase {
         let $this = this;
         return new Promise((resolve, reject) => {
             let errorHandler = err => {
-                server.close();
+                $this.server.close();
                 reject(err);
             };
             $this.server.once('error',errorHandler);
