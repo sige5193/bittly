@@ -101,7 +101,7 @@ export default {
          * refresh response data to viewer
          * @param {Buffer} data
          */
-        newResponseData( data ) {
+        async newResponseData( data ) {
             let entry = {};
             entry.key = `entry_${this.entries.length}`;
             entry.dir = 'receive';
@@ -109,14 +109,16 @@ export default {
             entry.data = data;
             this.entries.all.push(entry);
             this.entries.receive.push(entry);
-            this.$nextTick(() => this.$refs.virtualList.scrollToBottom());
+            
+            await this.$nextTick();
+            this.$refs.virtualList.scrollToBottom();
         },
 
         /**
          * refresh response data to viewer
          * @param {Buffer} data
          */
-        newRequestData(data) {
+        async newRequestData(data) {
             let entry = {};
             entry.key = `entry_${this.entries.length}`;
             entry.dir = 'send';
@@ -124,7 +126,9 @@ export default {
             entry.data = data;
             this.entries.all.push(entry);
             this.entries.send.push(entry);
-            this.$nextTick(() => this.$refs.virtualList.scrollToBottom());
+            
+            await this.$nextTick();
+            this.$refs.virtualList.scrollToBottom()
         },
     },
 
