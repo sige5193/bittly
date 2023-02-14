@@ -286,6 +286,7 @@ export default class ResponseParser {
             if ( 0 != value.length%2 ) {
                 value = `0${value}`;
             }
+            value = value.padStart(field.length * 2,'0');
             value = value.replace(/../g, function(item){ return `${item} ` });
             value = value.trim();
         }
