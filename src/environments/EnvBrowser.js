@@ -95,4 +95,11 @@ export default class EnvBrowser {
     browserOpen(link) {
         window.open(link);
     }
+
+    /**
+     * @returns {String}
+     */
+    getEnvFullName() {
+        return 'browser';
+    }
 }

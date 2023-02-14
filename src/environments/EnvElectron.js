@@ -123,4 +123,12 @@ export default class EnvElectron {
     ipcRendererSend ( ... params ) {
         window.ipcRenderer.send( ... params );
     }
+
+    /**
+     * @returns {String}
+     */
+    getEnvFullName() {
+        let os = window.os;
+        return `${os.version()} ${os.arch()}`;
+    }
 }

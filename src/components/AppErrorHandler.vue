@@ -103,6 +103,7 @@ export default {
             error.userAgent = navigator.userAgent;
             error.version = packageInfo.version;
             error.moduleId = this.$store.getters.moduleId;
+            error.evnname = this.$env.getEnvFullName();
             this.$bittly.errorReport(error);
         },
         
