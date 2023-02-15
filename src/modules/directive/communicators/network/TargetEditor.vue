@@ -5,7 +5,7 @@
 <template>
   <a-row v-if="'none' !== $env.networkHandler">
     <!-- protocol -->
-    <a-col :span="5" class="pr-1">
+    <a-col :span="4" class="pr-1">
       <a-input-group compact class="my-input-group">
         <span class="label">{{$t('directive.communicator.network.protocol')}}</span>
         <a-select ref="protocol" class="input" v-model="target.protocol" @change="actionUpdateTarget(true)">
@@ -16,7 +16,7 @@
     </a-col>
 
     <!-- host -->
-    <a-col :span="10" class="pr-1">
+    <a-col :span="8" class="pr-1">
       <a-input 
         ref="host" 
         :addon-before="$t('directive.communicator.network.address')" 
@@ -36,13 +36,23 @@
     </a-col>
 
     <!-- mode -->
-    <a-col :span="4" class="pr-1" v-if="'UDP' === target.protocol">
-      <a-select class="w-100" v-model="target.netUdpMode" @change="actionUpdateTarget(true)">
+    <a-col :span="2" class="pr-1" v-if="'UDP' === target.protocol">
+      <a-select class="w-100" v-model="target.netUdpMode" @change="actionUpdateTarget(true)" :showArrow="false">
         <a-select-option value="unicast">{{$t('directive.communicator.network.udpModeUnicast')}}</a-select-option>
         <a-select-option value="multicast">{{$t('directive.communicator.network.udpModeMulticast')}}</a-select-option>
         <a-select-option value="broadcast">{{$t('directive.communicator.network.udpModeBroadcast')}}</a-select-option>
       </a-select>
     </a-col>
+
+    <!-- local port -->
+    <a-col :span="5" class="pr-1" v-if="'UDP' === target.protocol">
+      <a-input 
+        v-model="target.netUdpLocalPort"
+        :addon-before="$t('directive.communicator.network.localPort')" 
+        @input="actionUpdateTarget(true)" 
+      />
+    </a-col>
+
   </a-row>
 </template>
 <script>

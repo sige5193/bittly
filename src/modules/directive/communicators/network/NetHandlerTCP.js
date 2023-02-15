@@ -1,5 +1,17 @@
 export default class NetHandlerTCP {
     /**
+     * Generate device key by given options
+     * @param {*} options 
+     */
+    static generateKeyFromOptions( options ) {
+        let keys = ['Network'];
+        keys.push(options.protocol);
+        keys.push(options.host);
+        keys.push(options.port);
+        return keys.join(':');
+    }
+
+    /**
      * @constructor
      * @param {Communicator} com 
      */

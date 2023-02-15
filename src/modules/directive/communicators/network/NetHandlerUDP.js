@@ -1,5 +1,19 @@
 export default class NetHandlerUDP {
     /**
+     * Generate device key by given options
+     * @param {*} options 
+     */
+    static generateKeyFromOptions( options ) {
+        let keys = ['Network'];
+        keys.push(options.protocol);
+        keys.push(options.host);
+        keys.push(options.port);
+        keys.push(options.netUdpMode);
+        keys.push(options.netUdpLocalPort);
+        return keys.join(':');
+    }
+
+    /**
      * @constructor
      * @param {Communicator} com 
      */
@@ -39,8 +53,21 @@ export default class NetHandlerUDP {
             $this.connection = window.dgram.createSocket('udp4');
             $this.connection.on('close',() => $this.handleOnClose());
             $this.connection.on('message', data => $this.handleOnData(data));
-            $this.connection.on('error', err => $this.handleOnError(err));
-            $this.connection.bind(() => $this.handleOnListening(resolve, reject));
+            
+            let port = $this.com.options.netUdpLocalPort || 0;
+            if ( 0 !== $this.com.options.netUdpLocalPort ) {
+                port = parseInt(port);
+                if ( isNaN(port) ) {
+                    return reject(Error($this.com.$t('localPortNotAvailable',[$this.com.options.netUdpLocalPort])));
+                }
+            }
+            
+            let openErrorHandler = err => reject(err);
+            $this.connection.on('error', openErrorHandler);
+            $this.connection.bind({port : port}, () => {
+                $this.connection.off('error', openErrorHandler);
+                $this.handleOnListening(resolve, reject);
+            });
         });
     }
 
@@ -70,6 +97,7 @@ export default class NetHandlerUDP {
 
         this.isOpen = true;
         this.com.log(`open : ${this.com.options.netUdpMode}`);
+        this.connection.on('error', err => this.handleOnError(err));
         resolve();
     }
 

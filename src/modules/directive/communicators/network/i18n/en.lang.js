@@ -3,6 +3,8 @@ module.exports = {
     protocol : 'Protocol',
     address : 'Host',
     port : 'Port',
+    localPort : 'Local Port',
+    localPortNotAvailable : 'UDP local port "{0}" is not available',
     disconnected : 'Network disconnected {0}',
     protocolCannotBeEmpty : 'Please select network protocol',
     hostCannotBeEmpty : 'Please input server host',

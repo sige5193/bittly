@@ -31,11 +31,13 @@ export default class Communicator extends CommunicatorBase {
      * @param {*} options 
      */
      static generateKeyFromOptions( options ) {
-        let keys = ['Network'];
-        keys.push(options.protocol);
-        keys.push(options.host);
-        keys.push(options.port);
-        return keys.join(':');
+        if ( 'TCP' == options.protocol ) {
+            return NetHandlerTCP.generateKeyFromOptions(options);
+        } else if ( 'UDP' === options.protocol ) {
+            return NetHandlerUDP.generateKeyFromOptions(options);
+        } else {
+            throw Error(`net protocol "${options.protocol}" is not supported.`);
+        }
     }
 
     /**
