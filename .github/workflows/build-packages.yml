@@ -35,6 +35,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v1
 
+      # remove .npmrc
+      - name: Remove .npmrc
+        run: Remove-Item .npmrc
+
       # get version
       - name: Read package version
         id: package-json
