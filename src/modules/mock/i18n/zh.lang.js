@@ -34,6 +34,15 @@ module.exports = {
     responseFailed : '发送内容失败： {0}',
     responseContentCanNotBeEmpty : '发送内容不可为空',
     response : {
+        fileter : {
+            settingTitle : '过滤配置',
+            direction : '方向',
+            directionAll : '所有',
+            directionSend : '发送',
+            directionReceive : '接收',
+            ruleName : '名称',
+            dataContent : '内容',
+        },
         match : {
             title : '匹配',
             columnStatus : '状态',

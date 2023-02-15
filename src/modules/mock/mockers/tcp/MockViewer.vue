@@ -20,6 +20,13 @@
         >
           <a-row class="p-1">
             <a-col :span="12">
+              <!-- fileter -->
+              <filter-setting class="mr-1" v-model="mock.options.filter" 
+                :match-rules="mock.options.responseMatchRules"
+                :snippets="mock.options.responseSnippets"
+                @change="actionEditorOptionChange"
+              />
+
               <a-radio-group button-style="solid" size="small" class="mr-1" v-model="viewerMode">
                 <a-radio-button value="hex">HEX</a-radio-button>
                 <a-radio-button value="text">TEXT</a-radio-button>
@@ -62,6 +69,7 @@
           <data-entry-list-viewer :ref="`dataEntryListViewer_${client.key}`" class="flex-grow"
             :mode="viewerMode"
             :entries="client.dataEntries"
+            :filter="mock.options.filter"
           />
         </a-tab-pane>
       </a-tabs>
@@ -117,6 +125,7 @@ import StatusEditor from '../../status/Editor.vue'
 import Formatter from '../../../../utils/Formatter.js'
 import Seperator from '../../../../components/Seperator.vue'
 import MockViewerBase from '../MockViewerBase.js'
+import FilterSetting from '../../data-entry/FilterSetting.vue'
 export default {
     name : 'MockMockerTCP',
     mixins : [ComponentBase,MockViewerBase],
@@ -128,6 +137,7 @@ export default {
         'response-snippet-editor' : ResponseSnippetEditor,
         'response-match-rule-editor' : ResponseMatchRuleEditor,
         'response-manual-editor' : ResponseManualEditor,
+        'filter-setting' : FilterSetting,
     },
     props : {
         /**

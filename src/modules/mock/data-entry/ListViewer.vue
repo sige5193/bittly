@@ -4,7 +4,7 @@
       <a-empty :description="false" />
     </div>
     <div ref="dataEntryList" class="h-100 overflow-y-auto" v-else>
-      <div v-for="(entry,index) in entries" :key="index" :class="`mb-1 data-entry-${entry.dir}`">
+      <div v-for="(entry,index) in filteredEntries" :key="index" :class="`mb-1 data-entry-${entry.dir}`">
         <div>
           <small>
             {{formatAsTimeDotMS(entry.time)}} 
@@ -49,6 +49,48 @@ export default {
          * @protected {String}
          */
         mode : {},
+        /**
+         * setting of filter
+         * @protected {Object}
+         */
+        filter : {},
+    },
+    computed : {
+        /**
+         * generate list entries
+         * @returns {Array<Object>}
+         */
+        filteredEntries() {
+            let filter = this.filter || {};
+            let entries = [];
+            for ( let i=0;i<this.entries.length; i++ ) {
+                let entry = this.entries[i];
+                let ignore = false;
+                
+                let filterDir = filter.direction || 'all';
+                if ( 'all' !== filterDir && entry.dir !== filterDir ) {
+                    ignore = true;
+                }
+
+                let filterName = filter.name || '';
+                if ( !ignore && '' !== filterName && -1 === entry.name.indexOf(filterName) ) {
+                    ignore = true;
+                }
+
+                let filterContent = filter.content || '';
+                if ( !ignore && '' !== filterContent ) {
+                    let entryContent = Buffer.from(entry.data).toString('text'===this.mode ? '' : 'hex');
+                    if ( -1 === entryContent.indexOf(filterContent) ) {
+                        ignore = true;
+                    }
+                }
+
+                if ( !ignore ) {
+                    entries.push(entry);
+                }
+            }
+            return entries;
+        }
     },
     methods : {
         /**

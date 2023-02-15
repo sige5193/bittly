@@ -34,6 +34,15 @@ module.exports = {
     responseFailed : 'Failed to send content : {0}',
     responseContentCanNotBeEmpty : 'Response content can not be empty.',
     response : {
+        fileter : {
+            settingTitle : 'Filter Setting',
+            direction : 'Direction',
+            directionAll : 'All',
+            directionSend : 'Send',
+            directionReceive : 'Receive',
+            ruleName : 'Name',
+            dataContent : 'Content',
+        },
         match : {
             title : 'Match',
             columnStatus : 'Status',
