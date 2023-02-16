@@ -266,6 +266,10 @@ export default {
          * @param {Object} action
          */
         async actionMenuItemDrop( action ) {
+            if ( null === action.dragNode ) {
+                return ;
+            }
+            
             let parentId = null;
             if ( action.dropToGap ) {
                 parentId = MyString.uuidNil();
