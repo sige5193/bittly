@@ -43,9 +43,9 @@
     </div>
     
     <!-- result list -->
-    <div v-else class="border-top" style="height:200px;">
+    <div v-else class="border-top" style="height:300px;">
       <virtual-list ref="result" class="h-100 overflow-y-auto"
-        :keeps="30"
+        :keeps="100"
         :data-key="'index'"
         :data-sources="results"
         :data-component="resultItem"
@@ -228,7 +228,7 @@ export default {
 }
 </script>
 <style scoped>
-.result {width: 100%;height: 200px;background: #f2f2f2;line-height: 10px;overflow-y: auto;}
+.result {width: 100%;height: 300px;background: #f2f2f2;line-height: 10px;overflow-y: auto;}
 .result::-webkit-scrollbar{width:0;}
 .item {display: inline-block;height: 10px;width: 10px;border: solid 1px white;}
 .item.success {background: green;}

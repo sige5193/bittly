@@ -46,7 +46,7 @@ module.exports = {
         count : 'Count',
         executeRepeatedly : 'Execute Repeatedly',
         executeFailed : 'Filed to execute testcase : {0}',
-        responseValidate : 'Validate',
+        responseValidate : 'Response Validate',
     },
 
     // functional test

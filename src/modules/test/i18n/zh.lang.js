@@ -46,7 +46,7 @@ module.exports = {
         count : '次数',
         executeRepeatedly : '重复执行',
         executeFailed : '测试用例执行失败 : {0}',
-        responseValidate : '验证',
+        responseValidate : '响应验证',
     },
 
     // functional
