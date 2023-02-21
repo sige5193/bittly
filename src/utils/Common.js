@@ -132,7 +132,7 @@ class Common {
      */
     static convertStringToHex(content) {
         let contentRaw = content;
-        if ( undefined === content ) {
+        if ( undefined === content || null === content ) {
             return new Uint8Array(0);
         }
 
