@@ -214,7 +214,7 @@ export default {
          * event handler for new widget droped in.
          * @param {Event} event
          */
-        editorWidgetDropHandlerNewWidget(event) {
+        async editorWidgetDropHandlerNewWidget(event) {
             let widgetIndex = event.dataTransfer.getData("widgetIndex");
             let editorPos = this.$refs.editor.getBoundingClientRect();
             let widget = Common.objCopy(this.widgets[widgetIndex]);
@@ -228,12 +228,9 @@ export default {
             this.panel.widgets.push(widget);
             this.onPanelChagned();
 
-            let $this = this;
-            this.$nextTick(function() {
-                debugger
-                let lastWidgetIndex = $this.panel.widgets.length - 1;
-                $this.$refs.widgets[lastWidgetIndex].setting();
-            });
+            await this.$nextTick();
+            let lastWidgetIndex = this.panel.widgets.length - 1;
+            this.$refs.widgets[lastWidgetIndex].setting();
         },
 
         /**

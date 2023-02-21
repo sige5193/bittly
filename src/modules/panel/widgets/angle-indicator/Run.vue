@@ -5,7 +5,7 @@
         <img :style="sizeStyle" src="./images/fi_box.svg">
         <img :style="sizeStyle" src="./images/heading_yaw.svg">
         <img ref="indicator" :style="sizeStyle" src="./images/fi_needle.svg">
-        <span class="value" :style="valueStyle">{{angle}}°</span>
+        <span class="value" :style="valueStyle">{{value}}°</span>
       </div>
     </a-tooltip>
   </div>
@@ -17,12 +17,22 @@ export default {
     mixins : [WidgetViewerMixin],
     data() {
         return {
+            /**
+             * angle of offset
+             * @public
+             * @property {Number}
+             */
             value : 0,
-            angle : 0,
+            /**
+             * @property {Object}
+             */
             sizeStyle : {
                 width:`${this.widget.sizeWidth}px`,
                 height:`${this.widget.sizeHeight}px`
             },
+            /**
+             * @property {Object}
+             */
             valueStyle : {
                 fontSize : `${Math.max(this.widget.sizeWidth, this.widget.sizeHeight)/10}px`
             },
@@ -52,8 +62,8 @@ export default {
          * @override
          */
         updateWidget() {
-            this.angle = this.value * 1;
-            this.$refs.indicator.style.transform = `rotate(${90+this.angle}deg)`;
+            let angle = this.value * 1;
+            this.$refs.indicator.style.transform = `rotate(${90+angle}deg)`;
         }
     },
 }
