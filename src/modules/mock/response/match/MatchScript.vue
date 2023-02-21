@@ -59,9 +59,14 @@ export default {
         if ( undefined === this.options ) {
             this.options = {};
         }
-        MyObject.applyDefaultValues(this.options, {
+        
+        let isChanged = MyObject.applyDefaultValues(this.options, {
             content:'',
         });
+        if ( isChanged ) {
+            this.actionUpdateVModel();
+        }
+
         window.$this = new RequestMatcherScriptRuntime();
     },
     methods: {

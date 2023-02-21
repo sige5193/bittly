@@ -67,14 +67,18 @@ export default {
             options : {},
         };
     },
-    created() {
+    mounted() {
         this.options = this.value;
         if ( undefined === this.options ) {
             this.options = {};
         }
-        MyObject.applyDefaultValues(this.options, {
+
+        let isChanged = MyObject.applyDefaultValues(this.options, {
             content:'',nlStyle:'CRLF',enableRegex:false
         });
+        if ( isChanged ) {
+            this.actionUpdateVModel();
+        }
     },
     methods: {
         /**
