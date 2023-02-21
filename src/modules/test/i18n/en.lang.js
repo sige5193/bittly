@@ -29,6 +29,10 @@ module.exports = {
     responseFormat : 'Expect Response Format',
     stopOnError : 'Stop on error',
 
+    // comparator
+    comparatorMode : 'Comparator Mode',
+    comparatorAcutalValue : 'Actual',
+
     // unit test
     unit : {
         title : 'Unit',
@@ -41,6 +45,8 @@ module.exports = {
         interval : 'Interval',
         count : 'Count',
         executeRepeatedly : 'Execute Repeatedly',
+        executeFailed : 'Filed to execute testcase : {0}',
+        responseValidate : 'Validate',
     },
 
     // functional test

@@ -209,40 +209,7 @@ export default {
          * execute testcase repeatedly
          */
         actionExecuteRepeatedly() {
-            this.$refs.modalExecuteRepeatedly.open(this);
-        },
-
-        /**
-         * execute testcase quietly
-         * @returns {Boolean}
-         */
-        async executeQuietly() {
-            // execute before script
-            let isBeforeScriptSuccessed = await this.executeScript(this.testcase.beforeScript,'before');
-            if ( !isBeforeScriptSuccessed ) {
-                return false;
-            }
-            
-            // execute directive
-            let executor = new DirectiveExecutor(this.directive);
-            executor.setCustomParams(this.testcase.paramFormat, this.testcase.params.value);
-            try {
-                await executor.execute();
-            } catch {
-                return false;
-            }
-
-            // check response
-            await Common.msleep(this.testcase.timeout);
-            let comparator = new DataComparator();
-            comparator.type = this.testcase.expectFormat;
-            comparator.executor = executor;
-            comparator.expectData = this.testcase.expect.value;
-            let isSuccess = comparator.compare();
-
-            // execute after script.
-            await this.executeScript(this.testcase.afterScript, 'after');
-            return isSuccess;
+            this.$refs.modalExecuteRepeatedly.open(this.testcase);
         },
 
         /**

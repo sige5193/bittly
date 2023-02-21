@@ -123,4 +123,11 @@ export default class TestcaseLibBittly {
     async msleep( time ) {
         await Common.msleep(time);
     }
+
+    /**
+     * @param {*} message 
+     */
+    abort( message ) {
+        throw Error(message);
+    }
 }

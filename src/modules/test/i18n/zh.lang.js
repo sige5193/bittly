@@ -29,6 +29,10 @@ module.exports = {
     responseFormat : '期待响应格式',
     stopOnError : '遇到失败时停止',
 
+    // comparator
+    comparatorMode : '验证模式',
+    comparatorAcutalValue : '实际值',
+    
     // unit test
     unit : {
         title : '单元测试',
@@ -41,6 +45,8 @@ module.exports = {
         interval : '间隔',
         count : '次数',
         executeRepeatedly : '重复执行',
+        executeFailed : '测试用例执行失败 : {0}',
+        responseValidate : '验证',
     },
 
     // functional

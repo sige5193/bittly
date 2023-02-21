@@ -1,7 +1,18 @@
 <template>
-  <a-modal v-model="enable" :title="$t('test.unit.executeRepeatedly')" 
-    :closable="false" :maskClosable="false" :keyboard="false" :bodyStyle="{padding:0}"
-  >
+  <a-modal v-model="enable" :closable="false" :maskClosable="false" :keyboard="false" :bodyStyle="{padding:0}">
+    <!-- header -->
+    <template slot="title">
+      <a-row>
+        <a-col :span="12" class="text-left">{{$t('test.unit.executeRepeatedly')}}</a-col>
+        <a-col :span="12" class="text-right">
+          <a-radio-group v-model="viewerMode" size="small" button-style="solid">
+            <a-radio-button value="grid"><a-icon type="table" /></a-radio-button>
+            <a-radio-button value="list"><a-icon type="menu" /></a-radio-button>
+          </a-radio-group>
+        </a-col>
+      </a-row>
+    </template>
+
     <!-- statistic -->
     <a-row>
       <a-col :span="5" class="text-center">
@@ -20,12 +31,26 @@
       </a-col>
     </a-row>
 
-    <!-- result map -->
-    <div class="result" ref="result">
-      <div v-for="(result,index) in results" :key="index" 
-        :class="`item ${result.status}`" 
-        :title="`${result.index} @ ${result.duration}`"
-      ></div>
+    <div v-if="'grid' === viewerMode" class="position-relative">
+      <!-- result map -->
+      <div class="result" ref="result">
+        <div v-for="(result,index) in results" :key="index" 
+          :data-index="index"
+          :class="`item ${result.status}`" 
+          :title="`${result.index} @ ${result.duration}`"
+        ></div>
+      </div>
+    </div>
+    
+    <!-- result list -->
+    <div v-else class="border-top" style="height:200px;">
+      <virtual-list ref="result" class="h-100 overflow-y-auto"
+        :keeps="30"
+        :data-key="'index'"
+        :data-sources="results"
+        :data-component="resultItem"
+        :extra-props="{}"
+      />
     </div>
 
     <!-- footer -->
@@ -38,7 +63,7 @@
         </a-col>
         <a-col :span="8">
           <a-button v-if="!isExecuting" @click="actionClose">{{$t('button.cancel')}}</a-button>
-          <a-button type="danger" v-if="isExecuting" @click="actionStop">{{$t('test.buttonStop')}}</a-button>
+          <a-button type="danger" v-if="isExecuting" :loading="isStopping" @click="actionStop">{{$t('test.buttonStop')}}</a-button>
           <a-button type="primary" v-else @click="actionStart">{{$t('test.buttonStart')}}</a-button>
         </a-col>
       </a-row>
@@ -48,11 +73,26 @@
 <script>
 import Formatter from '../../../utils/Formatter.js'
 import Common from '../../../utils/Common.js'
-import MyDate from '../../../utils/datatype/MyDate.js';
+import VirtualList from 'vue-virtual-scroll-list'
+import TestcaseExecutor from './TestcaseExecutor.js'
+import ExecuteRepeatedlyResultItem from './ExecuteRepeatedlyResultItem.vue'
 export default {
     name : 'TestUnitExecuteRepeatedly',
+    components : {
+        'virtual-list' : VirtualList,
+    },
     data() {
         return {
+            /**
+             * name of viewer mode
+             * @property {String}
+             */
+            viewerMode : 'grid',
+            /**
+             * instance of testcase model
+             * @property {MdbTestcase|null}
+             */
+            testcase : null,
             /**
              * @property {Boolean}
              */
@@ -65,10 +105,6 @@ export default {
              * @property {Number}
              */
             count : 0,
-            /**
-             * @property {componment}
-             */
-            executor : null,
             /**
              * @property {Array<Boolean>}
              */
@@ -85,64 +121,86 @@ export default {
              * @property {Object}
              */
             statistic : {},
+            /**
+             * @property {ExecuteRepeatedlyResultItem}
+             */
+            resultItem : ExecuteRepeatedlyResultItem,
         };
     },
     methods : {
         /**
          * open execution modal
+         * @property {MdbTestcase} testcase
          */
-        open( executor ) {
-            this.executor = executor;
-            this.reset();
+        async open( testcase ) {
+            this.testcase = testcase;
+            await this.reset();
             this.enable = true;
         },
 
         /**
          * reset this data
          */
-        reset() {
+        async reset() {
             this.results = [];
             this.statistic.total = 0;
             this.statistic.success = 0;
             this.statistic.failed = 0;
             this.statistic.duration = 0;
+            await this.$nextTick();
         },
 
         /**
          * start execution
          */
         async actionStart() {
-            this.reset();
+            await this.reset();
             let startAt = (new Date).getTime();
             this.isExecuting = true;
             for ( let i=0; i<this.count || 0 == this.count; i++ ) {
                 if ( this.isStopping ) {
                     break;
                 }
-                
+
+                let isSuccess = await this.executeTestcase(i);
+                this.statistic.duration = (new Date).getTime() - startAt;
                 this.statistic.total ++;
-                let isSuccess = await this.executor.executeQuietly();
                 if ( isSuccess ) {
                     this.statistic.success ++;
                 } else {
                     this.statistic.failed ++;
                 }
-                
-                this.statistic.duration = (new Date).getTime() - startAt;
-                this.results.push({
-                    index : i,
-                    status : isSuccess ? 'success' : 'failed',
-                    duration : Formatter.asDurationMS(this.statistic.duration),
-                });
-                this.$forceUpdate();
-                await Common.msleep(this.interval);
-                
-                let container = this.$refs.result;
-                this.$nextTick(() => container.scrollTop = container.scrollHeight);
             }
             await this.$store.dispatch('closeAllCommunicators');
             this.isExecuting = false;
             this.isStopping = false;
+        },
+        
+        /**
+         * execute testcase once
+         * @returns {Boolean}
+         */
+        async executeTestcase( index ) {
+            let executor = new TestcaseExecutor(this.testcase);
+            await executor.execute();
+            
+            let result = {};
+            result.index = index;
+            result.status = executor.isSuccess() ? 'success' : 'failed';
+            result.duration = Formatter.asDurationMS(this.statistic.duration);
+            result.executor = executor;
+            this.results.push(result);
+
+            await Common.msleep(this.interval);
+            await this.$nextTick();
+            if ( 'grid' === this.viewerMode ) {
+                let container = this.$refs.result;
+                container.scrollTop = container.scrollHeight;
+            } else {
+                this.$refs.result.scrollToBottom();
+            }
+
+            return executor.isSuccess();
         },
         
         /**

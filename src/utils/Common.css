@@ -196,6 +196,7 @@ body {user-select: none;}
 .content-center {width: 100%;height: 100%;display: flex;flex-direction: column;align-content: center;justify-content: center;}
 
 /* table */
+.table-tiny th, .table-tiny td {padding: 3px !important;}
 .table-mini th, .table-mini td {padding: 5px !important;}
 .table-scroll-body, 
 .table-scroll-body .ant-spin-nested-loading,

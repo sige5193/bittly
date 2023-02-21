@@ -1,6 +1,11 @@
 <template>
   <div class="border rounded viewer h-100 overflow-auto">
-    <a-row>
+    <!-- simple mode-->
+    <pre v-if="'simple' === mode"
+      class="m-0 p-2 white-space-pre-line"
+    >{{hexList.join(' ')}}</pre>
+    
+    <a-row v-else>
       <!-- HEX Viewer -->
       <a-col :span="12" class="p-1 border-right" ref="hexViewer">
         <div
@@ -34,6 +39,11 @@ export default {
          * @property {Executor}
          */
         executor:{},
+        /**
+         * name of viewer viewer mode
+         * @property {String}
+         */
+        mode : {type:String},
     },
     data() {
         return {
