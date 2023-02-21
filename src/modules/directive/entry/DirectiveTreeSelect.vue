@@ -48,34 +48,37 @@ export default {
          */
         async setupTreeData() {
             await this.actionLoadTreeData(null);
-
             if ( undefined == this.directiveId ) {
                 return;
             }
 
-            let isFoundInInitTreeData = false;
             for ( let i=0; i<this.treeData.length; i++ ) {
                 if ( this.treeData[i].value == this.directiveId ) {
-                    isFoundInInitTreeData = true;
+                    return ;
                 }
             }
-            if ( !isFoundInInitTreeData ) {
-                let entry = await MdbDirectiveEntry.findOne({
-                    type:'directive',
-                    target:this.directiveId,
-                });
-                let directiveName = await entry.targetName();
-                this.treeDataInitId = this.directiveId;
-                this.treeData.unshift({ 
-                    id: entry.id, 
-                    pId: 0, 
-                    value: entry.target,
-                    title: directiveName,
-                    isLeaf: true,
-                    selectable : true,
-                    entry : entry,
-                });
+
+            let entry = await MdbDirectiveEntry.findOne({
+                type : 'directive',
+                target : this.directiveId,
+            });
+            if ( null === entry ) {
+                return ;
             }
+
+            // if given directive id does not exists in loaded tree data at first level,
+            // we need to push the directive item to the list.
+            let directiveName = await entry.targetName();
+            this.treeDataInitId = this.directiveId;
+            this.treeData.unshift({ 
+                id: entry.id, 
+                pId: 0, 
+                value: entry.target,
+                title: directiveName,
+                isLeaf: true,
+                selectable : true,
+                entry : entry,
+            });
         },
 
         /**
