@@ -213,7 +213,7 @@ export default {
             let serialports = await window.SerialPort.list();
             this.serialportOptions.serialports = [];
             for ( let i=0; i<serialports.length; i++ ) {
-                this.serialportOptions.serialports.push(serialports[i].path);
+                this.serialportOptions.serialports.push(serialports[i].path || serialports[i].title);
             }
 
             if ( 0 == this.path.trim().length || 1 == this.serialportOptions.serialports.length ) {
