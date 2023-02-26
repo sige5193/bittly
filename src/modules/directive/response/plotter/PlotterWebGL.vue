@@ -22,7 +22,6 @@
   </div>
 </template>
 <script>
-import math from 'mathjs'
 import { WebglPlot, WebglLine, ColorRGBA } from "webgl-plot";
 import MyNumber from '../../../../utils/datatype/MyNumber';
 export default {
@@ -70,19 +69,10 @@ export default {
              */
             drag : null,
             /**
-             * max range of axis-y
-             * @property {Object}
-             */
-            axisYMaxRange : {max:0,min:0},
-            /**
              * x-y of mouse pointer inside plot
              * @property {Object}
              */
             pointer : {x:0,y:0},
-            /**
-             * @property {Boolean}
-             */
-            tipVisible : false,
         };
     },
     mounted() {
@@ -110,11 +100,13 @@ export default {
         let canvasPlotMain =  this.$refs.canvasPlotMain;
         canvasPlotMain.width = canvasPlotMain.clientWidth * devicePixelRatio;
         canvasPlotMain.height = canvasPlotMain.clientHeight * devicePixelRatio;
+        canvasPlotMain.addEventListener("mouseenter", event => this.handleMouseenter(event));
+        canvasPlotMain.addEventListener("mouseleave", event => this.handleMouseleave(event));
         canvasPlotMain.addEventListener("mousemove", event => this.handleMousemove(event));
         canvasPlotMain.addEventListener("mousedown", event => this.handleMousedown(event));
         canvasPlotMain.addEventListener("mouseup", event => this.handleMouseup(event));
         canvasPlotMain.addEventListener("wheel", event => this.handleWheel(event));
-
+        
         // init webgl plot
         let plot = new WebglPlot(canvasPlotMain);
         plot.removeAllLines();
@@ -130,7 +122,7 @@ export default {
         // grid
         let gridXLineCount = 9;
         let gridYLineCount = 9;
-        let gridColor = new ColorRGBA(0.5, 0.5, 0.5, 1);
+        let gridColor = this.convertWebRGBAToPlotRGBA(236,236,236);
         for (let i = 0; i < gridXLineCount; i++) {
             let line = new WebglLine(gridColor, 2);
             let divPoint = (2 * i) / (gridXLineCount - 1) - 1;
@@ -146,10 +138,43 @@ export default {
             this.gridLines.y.push(line);
         }
 
-        this.refresh();
+        plot.update();
+        this.axisUpdate();
         this.rectCanvasPlotMain = canvasPlotMain.getBoundingClientRect();
+        requestAnimationFrame(() => this.animationDataRefresh());
     },
     methods : {
+        /**
+         * convert web RGBA to plot RGBA
+         * @param {number} red
+         * @param {number} green
+         * @param {number} blue
+         * @param {number} alpha
+         */
+        convertWebRGBAToPlotRGBA( red, green, blue, alpha=1 ) {
+            return new ColorRGBA(red/256, green/256, blue/256, alpha);
+        },
+
+        /**
+         * event handler on mouse entered
+         * @param {Event} event
+         */
+        handleMouseenter(event) {
+            this.crossLineShow(event.pageX, event.pageY);
+            this.tipShow(event.clientX, event.clientY);
+        },
+
+        /**
+         * event handler on mouse leave
+         * @param {Event} event
+         */
+        handleMouseleave(event) {
+            this.tipHide();
+            this.crossLineHide();
+            this.dragStop();
+            this.axisUpdate();
+        },
+
         /**
          * event handler for canvas-plot-main mousedown
          * @param {Event} event
@@ -166,24 +191,34 @@ export default {
          */
         handleMouseup(event) {
             this.dragStop();
-            console.log(`[plotter:drag]:stop clientY=${event.clientY}`);
-            // console.log(`[plotter:mouseup]@end OffsetY=${this.plot.gOffsetY} ${JSON.stringify(this.pointer)}`);
+            this.axisUpdate();
         },
 
         /**
          * event handler for canvas-plot-main mousemove
+         * - drag move on dragging enabled
+         * - update cross line
+         * - update grid
+         * - update the value tip
+         * - update axis on dragging
          * @param {Event} event
          */
         handleMousemove(event) {
             this.dragMove(event.clientX, event.clientY);
             this.crossLineUpdate(event.pageX, event.pageY);
             this.gridUpdate();
-            this.refresh({axisx:false,axisy:false});
             this.tipUpdate(event.clientX, event.clientY);
+            if ( this.dragIsMoving() ) {
+                this.axisUpdate();
+            }
         },
 
         /**
          * event handler for canvas-plot-main wheel
+         * - exec zooming
+         * - update cross line
+         * - update grid
+         * - update axis
          * @param {Event} event
          */
         handleWheel(event) {
@@ -195,78 +230,7 @@ export default {
             }
             this.crossLineUpdate(event.pageX, event.pageY);
             this.gridUpdate();
-            this.refresh();
-        },
-
-        /**
-         * 
-         */
-        tipUpdate(x, y) {
-            let tipStyle = this.$refs.tip.style;
-            tipStyle.display = 'block';
-            tipStyle.top = `${y-35}px`;
-            tipStyle.left = `${x+5}px`;
-            this.$refs.tip.innerHTML = `Y:${this.pointer.y} X:${this.pointer.x}`;
-        },
-
-        /**
-         * update grid 
-         */
-        gridUpdate() {
-            let plot = this.plot;
-            
-            let xStart = -(plot.gOffsetX + 1) / plot.gScaleX;
-            let xEnd = -(plot.gOffsetX - 1) / plot.gScaleX;
-            let xRange = (-(plot.gOffsetX - 1) / plot.gScaleX) - (-(plot.gOffsetX + 1) / plot.gScaleX);
-            
-            let yStart = -(plot.gOffsetY + 1) / plot.gScaleY;
-            let yEnd = -(plot.gOffsetY - 1) / plot.gScaleY;
-            let yRange = (-(plot.gOffsetY - 1) / plot.gScaleY) - (-(plot.gOffsetY + 1) / plot.gScaleY);
-
-            for (let i = 0; i < this.gridLines.x.length; i++) {
-                let line = this.gridLines.x[i];
-                let divPoint = (xRange * i) / (this.gridLines.x.length - 1) + xStart;
-                line.xy = new Float32Array([divPoint, yStart, divPoint, yEnd]);
-            }
-
-            for (let i = 0; i < this.gridLines.y.length; i++) {
-                let line = this.gridLines.y[i];
-                let divPoint = (yRange * i) / (this.gridLines.y.length - 1) + yStart;
-                line.xy = new Float32Array([xStart, divPoint, xEnd, divPoint]);
-            }
-        },
-
-        /**
-         * update cross line by given pagex and pagey
-         * @param {Number} pageX
-         * @param {Number} pageY
-         */
-        crossLineUpdate(pageX, pageY) {
-            let plot = this.plot;
-            let contentRect = this.rectCanvasPlotMain;
-            let auxLines = this.auxLines;
-
-            let mcWidth = contentRect.width;
-            let x =(1 / plot.gScaleX) * ( 2 * (pageX - contentRect.left) / mcWidth - 1 - plot.gOffsetX);
-            x = MyNumber.round(x, 2);
-            plot.linesAux[auxLines.crossX.index].xy = new Float32Array([
-                /* start x-y */
-                x, -(plot.gOffsetY + 1) / plot.gScaleY, 
-                /* end x-y */
-                x, -(plot.gOffsetY - 1) / plot.gScaleY
-            ]);
-
-            let mcHeight = contentRect.height;
-            let y =(1 / plot.gScaleY) * ( 0 - 2 * (pageY - contentRect.top) / mcHeight + 1 - plot.gOffsetY);
-            y = MyNumber.round(y, 2);
-            plot.linesAux[auxLines.crossY.index].xy = new Float32Array([
-                /* start x-y */
-                -(plot.gOffsetX + 1) / plot.gScaleX, y,
-                /* end x-y */ 
-                -(plot.gOffsetX - 1) / plot.gScaleX, y
-            ]);
-
-            this.pointer = {x:x,y:y};
+            this.axisUpdate();
         },
 
         /**
@@ -372,6 +336,69 @@ export default {
             plot.gOffsetX = offset;
             plot.gScaleX = scale;
         },
+        
+        /**
+         * update grid 
+         */
+        gridUpdate() {
+            let plot = this.plot;
+            
+            let xStart = -(plot.gOffsetX + 1) / plot.gScaleX;
+            let xEnd = -(plot.gOffsetX - 1) / plot.gScaleX;
+            let xRange = (-(plot.gOffsetX - 1) / plot.gScaleX) - (-(plot.gOffsetX + 1) / plot.gScaleX);
+            
+            let yStart = -(plot.gOffsetY + 1) / plot.gScaleY;
+            let yEnd = -(plot.gOffsetY - 1) / plot.gScaleY;
+            let yRange = (-(plot.gOffsetY - 1) / plot.gScaleY) - (-(plot.gOffsetY + 1) / plot.gScaleY);
+
+            for (let i = 0; i < this.gridLines.x.length; i++) {
+                let line = this.gridLines.x[i];
+                let divPoint = (xRange * i) / (this.gridLines.x.length - 1) + xStart;
+                line.xy = new Float32Array([divPoint, yStart, divPoint, yEnd]);
+            }
+
+            for (let i = 0; i < this.gridLines.y.length; i++) {
+                let line = this.gridLines.y[i];
+                let divPoint = (yRange * i) / (this.gridLines.y.length - 1) + yStart;
+                line.xy = new Float32Array([xStart, divPoint, xEnd, divPoint]);
+            }
+        },
+
+        /**
+         * update axis
+         * @returns {void}
+         */
+        axisUpdate() {
+            let plot = this.plot;
+
+            // update axis-x
+            let axisXdivs = 8;
+            let canvasAxisX = this.$refs.canvasPlotAxisX;
+            let canvasPlotAxisXCtx2d = this.ctx2dPlotAxisX;
+            canvasPlotAxisXCtx2d.clearRect(0, 0, canvasAxisX.width, canvasAxisX.height);
+            for (let i = 0; i < axisXdivs; i++) {
+                let midpoint = -(plot.gOffsetX - i / (axisXdivs / 2) + 1) / plot.gScaleX;
+                let x = (i / axisXdivs) * canvasAxisX.width;
+                canvasPlotAxisXCtx2d.fillText(`${midpoint.toFixed(2)}`, x, 15);
+                canvasPlotAxisXCtx2d.moveTo(x, 0);
+                canvasPlotAxisXCtx2d.lineTo(x, 10);
+                canvasPlotAxisXCtx2d.stroke();
+            }
+            
+            // update axis-y
+            let axisYdivs = 8;
+            let canvasAxisY = this.$refs.canvasPlotAxisY;
+            let canvasPlotAxisYCtx2d = this.ctx2dPlotAxisY;
+            canvasPlotAxisYCtx2d.clearRect(0, 0, canvasAxisY.width, canvasAxisY.height);
+            for (let i = 0; i < axisYdivs; i++) {
+                const midpoint = -(plot.gOffsetY + i / (axisYdivs / 2) - 1) / plot.gScaleY;
+                const y = (i / axisYdivs) * canvasAxisY.height;
+                canvasPlotAxisYCtx2d.fillText(`${midpoint.toFixed(2)}`, 5, y);
+                canvasPlotAxisYCtx2d.moveTo(canvasAxisY.width - 10, y);
+                canvasPlotAxisYCtx2d.lineTo(canvasAxisY.width, y);
+                canvasPlotAxisYCtx2d.stroke();
+            }
+        },
 
         /**
          * start drag operation
@@ -387,22 +414,16 @@ export default {
             this.drag.initialY = clientY;
             this.drag.offsetOldY = plot.gOffsetY;
             this.$refs.canvasPlotMain.style.cursor = 'move';
-
-            console.log(`[plotter:drag]:start clientY=${clientY}`);
         },
 
         /**
-         * stop drag
+         * get whether is dragging
+         * @returns {Boolean}
          */
-        dragStop() {
-            if ( null === this.drag ) {
-                return ;
-            }
-            this.drag = null;
-            this.refresh();
-            this.$refs.canvasPlotMain.style.cursor = 'default';
+        dragIsMoving() {
+            return null != this.drag;
         },
-        
+
         /**
          * move drag operation
          * @param {Number} clientX
@@ -428,78 +449,158 @@ export default {
         },
 
         /**
-         * refresh plotter
-         * @param {Object} options options for plot refreshing
-         * - axisx : {Boolean}
-         * - axisy : {Boolean}
+         * stop drag
          */
-        refresh( options ) {
-            // this.refreshAutoZoomToFit(options);
-
-            if ( undefined === options ) {
-                options = {};
+        dragStop() {
+            if ( null === this.drag ) {
+                return ;
             }
-            let plot = this.plot;
-            plot.update();
-            
-
-            if ( undefined === options.axisx || false !== options.axisx ) {
-                let axisXdivs = 8;
-                let canvasAxisX = this.$refs.canvasPlotAxisX;
-                let canvasPlotAxisXCtx2d = this.ctx2dPlotAxisX;
-                canvasPlotAxisXCtx2d.clearRect(0, 0, canvasAxisX.width, canvasAxisX.height);
-                for (let i = 0; i < axisXdivs; i++) {
-                    let midpoint = -(plot.gOffsetX - i / (axisXdivs / 2) + 1) / plot.gScaleX;
-                    let x = (i / axisXdivs) * canvasAxisX.width;
-                    canvasPlotAxisXCtx2d.fillText(`${midpoint.toFixed(2)}`, x, 15);
-                    canvasPlotAxisXCtx2d.moveTo(x, 0);
-                    canvasPlotAxisXCtx2d.lineTo(x, 10);
-                    canvasPlotAxisXCtx2d.stroke();
-                }
-            }
-
-            if ( undefined === options.axisy || false !== options.axisy ) {
-                let axisYdivs = 8;
-                let canvasAxisY = this.$refs.canvasPlotAxisY;
-                let canvasPlotAxisYCtx2d = this.ctx2dPlotAxisY;
-                canvasPlotAxisYCtx2d.clearRect(0, 0, canvasAxisY.width, canvasAxisY.height);
-                for (let i = 0; i < axisYdivs; i++) {
-                    const midpoint = -(plot.gOffsetY + i / (axisYdivs / 2) - 1) / plot.gScaleY;
-                    const y = (i / axisYdivs) * canvasAxisY.height;
-                    canvasPlotAxisYCtx2d.fillText(`${midpoint.toFixed(2)}`, 5, y);
-                    canvasPlotAxisYCtx2d.moveTo(canvasAxisY.width - 10, y);
-                    canvasPlotAxisYCtx2d.lineTo(canvasAxisY.width, y);
-                    canvasPlotAxisYCtx2d.stroke();
-                }
-            }
+            this.drag = null;
+            this.$refs.canvasPlotMain.style.cursor = 'default';
         },
 
         /**
-         * auto zoom to fit for axis-y
+         * show cross line
+         * @param {Number} pageX
+         * @param {Number} pageY
+         */
+        crossLineShow(pageX, pageY) {
+            let auxLines = this.auxLines;
+            this.plot.linesAux[auxLines.crossX.index].visible = true;
+            this.plot.linesAux[auxLines.crossY.index].visible = true;
+            this.crossLineUpdate(pageX, pageY);
+        },
+
+        /**
+         * hide cross line
          * @returns {void}
          */
-        refreshAutoZoomToFit() {
-            console.log(this.axisYMaxRange.max, this.axisYMaxRange.min);
-            let range = this.axisYMaxRange.max - this.axisYMaxRange.min;
-            if ( 0 === this.axisYMaxRange.max && 0 === this.axisYMaxRange.min ) {
+        crossLineHide() {
+            let auxLines = this.auxLines;
+            this.plot.linesAux[auxLines.crossX.index].visible = false;
+            this.plot.linesAux[auxLines.crossY.index].visible = false;
+        },
+
+        /**
+         * update cross line by given pagex and pagey
+         * @param {Number} pageX
+         * @param {Number} pageY
+         */
+        crossLineUpdate(pageX, pageY) {
+            let plot = this.plot;
+            let contentRect = this.rectCanvasPlotMain;
+            let auxLines = this.auxLines;
+
+            let mcWidth = contentRect.width;
+            let x =(1 / plot.gScaleX) * ( 2 * (pageX - contentRect.left) / mcWidth - 1 - plot.gOffsetX);
+            plot.linesAux[auxLines.crossX.index].xy = new Float32Array([
+                /* start x-y */
+                x, -(plot.gOffsetY + 1) / plot.gScaleY, 
+                /* end x-y */
+                x, -(plot.gOffsetY - 1) / plot.gScaleY
+            ]);
+
+            let mcHeight = contentRect.height;
+            let y =(1 / plot.gScaleY) * ( 0 - 2 * (pageY - contentRect.top) / mcHeight + 1 - plot.gOffsetY);
+            plot.linesAux[auxLines.crossY.index].xy = new Float32Array([
+                /* start x-y */
+                -(plot.gOffsetX + 1) / plot.gScaleX, y,
+                /* end x-y */ 
+                -(plot.gOffsetX - 1) / plot.gScaleX, y
+            ]);
+
+            this.pointer = {x:x,y:y};
+        },
+
+        /**
+         * show tip
+         * @param {Number} x
+         * @param {Number} y
+         * @returns {void}
+         */
+        tipShow(x, y) {
+            this.$refs.tip.style.display = 'block';
+            this.tipUpdate(x, y);
+        },
+
+        /**
+         * update tip modal by given location
+         * @param {Number} x
+         * @param {Number} y
+         */
+        tipUpdate(x, y) {
+            let tipStyle = this.$refs.tip.style;
+            tipStyle.top = `${y-35}px`;
+            tipStyle.left = `${x+5}px`;
+            if ( 150 > window.innerWidth-(x+5) ) {
+                tipStyle.left = `${x-150}px`;
+            }
+
+            let valueX = MyNumber.round(this.pointer.x, 5);
+            let valueY = MyNumber.round(this.pointer.y, 5);
+            this.$refs.tip.innerHTML = `Y:${valueX} X:${valueY}`;
+        },
+
+        /**
+         * hide the tip
+         * @returns {void}
+         */
+        tipHide() {
+            this.$refs.tip.style.display = 'none';
+        },
+
+        /**
+         * append batch data to plot lines
+         * @public
+         * @param {Array<Array<Number>>} batchValues
+         * @example 
+         * ```javascript
+         *   // for 3 lines to push 4 data items for each
+         *   [[1,2,3],[4,5,6],[7,8,9],[10,11,12]] 
+         * ```
+         */
+        dataBatchAppend( batchValues ) {
+            if ( 0 === batchValues.length ) {
                 return ;
-            } else if ( range > 2 ) { // zoom out
-                this.plot.gScaleY = 2 / range * 0.8;
-                this.plot.gOffsetY = -0.8;
-            } else { // zoom in
-                this.plot.gScaleY = 1.6 / range;
-                this.plot.gOffsetY = -0.8;
+            }
+
+            // setup data lines with first group of values
+            if ( 0 === this.dataLines.length ) {
+                this.dataLineInit(batchValues.shift());
+            }
+
+            let lines = this.plot.linesData;
+            for (let i=0; i<this.dataLines.length; i++) {
+                let values = [];
+                
+                for ( let li=0; li<batchValues.length; li++ ) {
+                    let value = batchValues[li][i];
+                    values.push(value);
+                }
+                
+                let index = this.dataLines[i].index;
+                lines[index].shiftAdd(values);
             }
         },
         
         /**
-         * init data line by given count
-         * @param {Number} count
+         * init data line by given values for each line
+         * @private
+         * @param {Array} values
          */
         dataLineInit( values ) {
+            // colors for the first 10 lines
+            let colors = [
+                [244,67,54], [156,39,176], [63,81,181], [210,180,140], [0,150,136], 
+                [76,175,80], [255,193,7],  [121,85,72], [158,158,158], [0,0,0]
+            ];
+            
             let numX = 10000;
             for (let i=0; i<values.length; i++) {
-                let color = new ColorRGBA(Math.random(), Math.random(), Math.random(), 1);
+                // use buildin colors for the first 10 lines, and random color for the rest.
+                let color = colors[i] || [MyNumber.random(0,255),MyNumber.random(0,255),MyNumber.random(0,255)];
+                color = this.convertWebRGBAToPlotRGBA(color[0],color[1],color[2]);
+
                 let line = new WebglLine(color, numX);
                 line.lineSpaceX(-1, 2 / numX);
                 for ( let di=0; di<numX; di++ ) {
@@ -508,28 +609,18 @@ export default {
                 this.dataLines.push({index:this.plot.linesData.length});
                 this.plot.addDataLine(line);
             }
-
-            // this.axisYMaxRange.max = Math.max(... values);
-            // this.axisYMaxRange.min = Math.min(... values);
         },
 
         /**
-         * append data to lines
-         * @param {Array} values
+         * refresh plot data
+         * @private
          */
-        dataAppend( values ) {
-            if ( 0 === this.dataLines.length ) {
-                this.dataLineInit(values);
+        animationDataRefresh() {
+            if ( this._isDestroyed ) {
+                return ;
             }
-
-            let lines = this.plot.linesData;
-            for (let i=0; i<this.dataLines.length; i++) {
-                let index = this.dataLines[i].index;
-                let value = values[i];
-                lines[index].shiftAdd([value]);
-                this.axisYMaxRange.max = Math.max(value, this.axisYMaxRange.max);
-                this.axisYMaxRange.min = Math.min(value, this.axisYMaxRange.min);
-            }
+            this.plot.update();
+            requestAnimationFrame(() => this.animationDataRefresh());
         }
     },
 }
