@@ -548,6 +548,37 @@ export default {
         tipHide() {
             this.$refs.tip.style.display = 'none';
         },
+        
+        /**
+         * set data line labels
+         * @param {Array<String>} labels
+         */
+        dataLineLabelsSet(labels) {
+            for ( let i=0; i<labels.length; i++ ) {
+                let line = this.dataLines[i];
+                line.label = labels[i];
+                this.$set(this.dataLines, i, line);
+            }
+        },
+
+        /**
+         * get all data lines
+         * @returns {Array<Object>}
+         */
+        dataLineGetAll() {
+            return this.dataLines;
+        },
+
+        /**
+         * set data line visible
+         * @param {Number} index
+         * @param {Boolean} visible
+         */
+        dataLineVisibleSet ( index, visible ) {
+            let line = this.dataLines[index];
+            line.visible = visible;
+            this.plot.linesData[line.index].visible = visible;
+        },
 
         /**
          * append batch data to plot lines
@@ -599,14 +630,19 @@ export default {
             for (let i=0; i<values.length; i++) {
                 // use buildin colors for the first 10 lines, and random color for the rest.
                 let color = colors[i] || [MyNumber.random(0,255),MyNumber.random(0,255),MyNumber.random(0,255)];
-                color = this.convertWebRGBAToPlotRGBA(color[0],color[1],color[2]);
+                let lineColor = this.convertWebRGBAToPlotRGBA(color[0],color[1],color[2]);
 
-                let line = new WebglLine(color, numX);
+                let line = new WebglLine(lineColor, numX);
                 line.lineSpaceX(-1, 2 / numX);
                 for ( let di=0; di<numX; di++ ) {
                     line.setY(di, values[i]);
                 }
-                this.dataLines.push({index:this.plot.linesData.length});
+                this.dataLines.push({
+                    index:this.plot.linesData.length,
+                    label:`CH ${i+1}`,
+                    color:color,
+                    visible:true
+                });
                 this.plot.addDataLine(line);
             }
         },
