@@ -4,10 +4,11 @@
  - [O] cross line (zoomed, dragged)
  - [O] drag (zoomed)
  - [O] grid (dragged)
+ - [O] tip
  - @TODO release as a npm package
 -->
 <template>
-  <div class="flex-grow h-0 d-flex flex-dir-column pt-1 pr-1">
+  <div class="flex-grow h-0 d-flex flex-dir-column pt-1 pr-1 position-relative">
     <div class="flex-grow h-0 d-flex flex-dir-row">
       <canvas ref="canvasPlotAxisY" class="border-right" style="width:30px;"></canvas>
       <canvas ref="canvasPlotMain" class="flex-grow w-0"></canvas>
@@ -16,6 +17,8 @@
       <div style="width:30px;height: 1em;"></div>
       <canvas ref="canvasPlotAxisX" class="flex-grow border-top" style="height: 1em;width:0;"></canvas>
     </div>
+
+    <div class="tip-holder" ref="tip"></div>
   </div>
 </template>
 <script>
@@ -76,6 +79,10 @@ export default {
              * @property {Object}
              */
             pointer : {x:0,y:0},
+            /**
+             * @property {Boolean}
+             */
+            tipVisible : false,
         };
     },
     mounted() {
@@ -172,6 +179,7 @@ export default {
             this.crossLineUpdate(event.pageX, event.pageY);
             this.gridUpdate();
             this.refresh({axisx:false,axisy:false});
+            this.tipUpdate(event.clientX, event.clientY);
         },
 
         /**
@@ -188,6 +196,17 @@ export default {
             this.crossLineUpdate(event.pageX, event.pageY);
             this.gridUpdate();
             this.refresh();
+        },
+
+        /**
+         * 
+         */
+        tipUpdate(x, y) {
+            let tipStyle = this.$refs.tip.style;
+            tipStyle.display = 'block';
+            tipStyle.top = `${y-35}px`;
+            tipStyle.left = `${x+5}px`;
+            this.$refs.tip.innerHTML = `Y:${this.pointer.y} X:${this.pointer.x}`;
         },
 
         /**
@@ -515,3 +534,21 @@ export default {
     },
 }
 </script>
+<style scoped>
+.tip-holder {
+    display: none;
+    left: 0;
+    top: 0;
+    position: fixed;
+    min-width: 2px;
+    min-height: 2px;
+    background: red;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
+    color: #fff;
+    background-color: rgb(0 0 0 / 50%);
+    border-radius: 5px;
+    padding: 10px;
+    text-align: center;
+    line-height: 10px;
+}
+</style>
