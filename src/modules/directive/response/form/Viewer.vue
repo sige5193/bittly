@@ -72,7 +72,7 @@
         <!-- Field Data Type -->
         <div slot="type" slot-scope="text, record, index">
           <a-select size="small" 
-            :class="0 == $dict.voption('DIRECTIVE_PARAM_DATATYPE',record.type,'length',0) ? `border-none w-80` : `border-none w-100`"
+            :class="0 == $dict.voption('DIRECTIVE_PARAM_DATATYPE',record.type,'length',0) ? `border-none w-75` : `border-none w-100`"
             :ref="`selectDataType_${index}`"
             :dropdownMatchSelectWidth="false"
             v-model="fields[index]['type']" 
@@ -88,7 +88,7 @@
        
           <!-- Data Type Length -->
           <div v-if="0 == $dict.voption('DIRECTIVE_PARAM_DATATYPE',record.type,'length',0)" 
-            class="d-inline-block w-20 pl-1"
+            class="d-inline-block w-25 pl-1"
           >
             <a-input-number size="small"
               v-model="fields[index]['length']"
@@ -259,7 +259,7 @@ export default {
             return [
                 {title: '#',scopedSlots: { customRender: 'index' },className:'text-center white-space-nowrap'},
                 {title: this.$t('directive.response.form.fieldName'), dataIndex: 'name',scopedSlots: { customRender: 'name' },className:'white-space-nowrap'},
-                {title: this.$t('directive.response.form.fieldType'),dataIndex: 'type',scopedSlots: { customRender: 'type' },className:'white-space-nowrap'},
+                {title: this.$t('directive.response.form.fieldType'),dataIndex: 'type',scopedSlots: { customRender: 'type' },className:'white-space-nowrap',width:'200px'},
                 {title: this.$t('directive.response.form.fieldValue'),dataIndex: 'value',scopedSlots: { customRender: 'value' },className:'white-space-nowrap'},
                 {title: this.$t('directive.response.form.fieldDesc'),dataIndex: 'desc',scopedSlots: { customRender: 'desc' },className:'white-space-nowrap'},
                 {title: this.$t('directive.response.form.fieldOperations'),key: 'action',scopedSlots: { customRender: 'action' }, className:'text-right white-space-nowrap'},

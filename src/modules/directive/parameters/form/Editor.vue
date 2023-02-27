@@ -30,7 +30,7 @@
       <!-- field type -->
       <div slot="type" slot-scope="text, record, index">
         <a-select size="small" class="border-none"
-          :class="{'w-100':('bits'!==record.type),'w-80':('bits'===record.type)}"
+          :class="{'w-100':('bits'!==record.type),'w-75':('bits'===record.type)}"
           v-model="fields[index]['type']" 
           :ref="`selectDataType_${index}`"
           :tab-index="index*1000+2"
@@ -43,7 +43,7 @@
         </a-select>
 
         <!-- bits length -->
-        <div class="w-20 pl-1 d-inline-block" v-if="$dict.match('DIRECTIVE_PARAM_DATATYPE','BITS',record.type)">
+        <div class="w-25 pl-1 d-inline-block" v-if="$dict.match('DIRECTIVE_PARAM_DATATYPE','BITS',record.type)">
           <a-input-number size="small" v-model="fields[index]['length']"
             class="w-100 border-none"
             :min="1"
@@ -306,7 +306,7 @@ export default {
             return [
                 {title: '#', scopedSlots: { customRender: 'row_no' },className:'white-space-nowrap text-center'},
                 {title: this.$t('directive.parameter.form.fieldName'), dataIndex: 'name',scopedSlots: { customRender: 'name' },className:'white-space-nowrap'},
-                {title: this.$t('directive.parameter.form.filedType'),dataIndex: 'type',scopedSlots: { customRender: 'type' },className:'white-space-nowrap'},
+                {title: this.$t('directive.parameter.form.filedType'),dataIndex: 'type',scopedSlots: { customRender: 'type' },className:'white-space-nowrap',width:'200px'},
                 {title: this.$t('directive.parameter.form.filedValue'),dataIndex: 'value',scopedSlots: { customRender: 'value' },className:'white-space-nowrap'},
                 {title: this.$t('directive.parameter.form.filedDesc'),dataIndex: 'desc',scopedSlots: { customRender: 'desc' },className:'white-space-nowrap'},
                 {title: this.$t('directive.parameter.form.filedOperations'), key: 'action',scopedSlots: { customRender: 'action' }, className:'text-right white-space-nowrap'},
