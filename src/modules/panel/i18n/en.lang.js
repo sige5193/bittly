@@ -90,6 +90,7 @@ module.exports = {
         groupbox : require('../widgets/groupbox/i18n/en.lang.js'),
         map : require('../widgets/map/i18n/en.lang.js'),
         threeDOriViewer : require('../widgets/3d-orientation-viewer/i18n/en.lang.js'),
+        stateViewer : require('../widgets/state-viewer/i18n/en.lang.js'),
     },
     dialogWidgetSetting : {
         title : 'Widget Setting',

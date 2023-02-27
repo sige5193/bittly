@@ -22,6 +22,7 @@ import WidgetProgress from './progress-bar/Run.vue'
 import WidgetTextViewer from './text-viewer/Run.vue'
 import WidgetNumberViewer from './number-viewer/Run.vue'
 import Widget3dOrientationViewer from './3d-orientation-viewer/Run.vue'
+import WidgetStateViewer from './state-viewer/Run.vue'
 export default {
     /**
      * widget list
@@ -51,5 +52,6 @@ export default {
         'widget-map' : WidgetMap,
         'widget-angle-indicator' : WidgetAngleIndicator,
         'widget-3d-orientation-viewer' : Widget3dOrientationViewer,
+        'widget-state-viewer' : WidgetStateViewer,
     },
 };

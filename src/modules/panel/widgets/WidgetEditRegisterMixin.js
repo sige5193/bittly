@@ -22,6 +22,7 @@ import WidgetSelect from './select/Edit.vue'
 import WidgetMap from './map/Edit.vue'
 import WidgetAngleIndicator from './angle-indicator/Edit.vue'
 import Widget3dOrientationViewer from './3d-orientation-viewer/Edit.vue'
+import WidgetStateViewer from './state-viewer/Edit.vue'
 export default {
     /**
      * componments list
@@ -51,6 +52,7 @@ export default {
         'widget-map':WidgetMap,
         'widget-angle-indicator' : WidgetAngleIndicator,
         'widget-3d-orientation-viewer' : Widget3dOrientationViewer,
+        'widget-state-viewer' : WidgetStateViewer,
     },
     data() {
         return {
@@ -66,6 +68,7 @@ export default {
                 WidgetProgressViewer.widgetInfo(),
                 WidgetTextViewer.widgetInfo(),
                 WidgetNumberViewer.widgetInfo(),
+                WidgetStateViewer.widgetInfo(),
                 WidgetBattery.widgetInfo(),
                 WidgetThermometer.widgetInfo(),
                 WidgetGauge.widgetInfo(),

@@ -110,6 +110,7 @@ module.exports = {
         groupbox : require('../widgets/groupbox/i18n/zh.lang.js'),
         map : require('../widgets/map/i18n/zh.lang.js'),
         threeDOriViewer : require('../widgets/3d-orientation-viewer/i18n/zh.lang.js'),
+        stateViewer : require('../widgets/state-viewer/i18n/zh.lang.js'),
     },
     
     dialogVariableSetting : {
