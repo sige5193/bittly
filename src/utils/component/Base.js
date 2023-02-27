@@ -18,26 +18,38 @@ export default {
          * @param {*} eventName 
          * @param {*} callback 
          */
-        registerEventHandler(eventName, callback) {
-            this.eventHandlers[eventName] = callback;
-            this.$eventBus.$on(eventName, callback);
+        registerEventHandler(eventName, callback, target='eventbus') {
+            let eventkey = `${eventName}@${target}`;
+            this.eventHandlers[eventkey] = {callback, target,name:eventName};
+            if ( 'eventbus' === target ) {
+                this.$eventBus.$on(eventName, callback);
+            } else if ( 'window' === target ) {
+                window.addEventListener(eventName, callback);
+            }
         },
 
         /**
          * unregister event handelr
          * @param {*} eventName 
          */
-        unregisterEventHandler(eventName) {
-            this.$eventBus.$off(eventName, this.eventHandlers[eventName]);
-            delete this.eventHandlers[eventName];
+        unregisterEventHandler(eventName, target='eventbus') {
+            let eventkey = `${eventName}@${target}`;
+            let callback = this.eventHandlers[eventkey].callback;
+            if ( 'eventbus' === target ) {
+                this.$eventBus.$off(eventName,callback);
+            } else if ( 'window' === target ) {
+                window.removeEventListener(eventName,callback);
+            }
+            delete this.eventHandlers[eventkey];
         },
 
         /**
          * unregister all event handlers
          */
         unregisterAllEventHandlers() {
-            for ( let eventName in this.eventHandlers ) {
-                this.unregisterEventHandler(eventName);
+            for ( let eventkey in this.eventHandlers ) {
+                let handlers = this.eventHandlers[eventkey];
+                this.unregisterEventHandler(handlers.name, handlers.target);
             }
         },
 

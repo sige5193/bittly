@@ -1,6 +1,16 @@
 import { Buffer } from 'buffer';
 class MyNumber {
     /**
+     * @param {*} num 
+     * @param {*} digits 
+     * @returns 
+     */
+    static round(num, digits) {
+        let base = Math.pow(10, digits);
+        return Math.round(num * base) / base;
+    }
+
+    /**
      * add 0 to head of number.
      * @param {Number} num 
      * @param {Number} count 

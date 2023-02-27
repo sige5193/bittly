@@ -417,6 +417,22 @@ export default {
         },
 
         /**
+         * auto fix y-axis by given max and min value
+         * @param {Number} max
+         * @param {Number} min
+         */
+        axisYAutoFit( max, min ) {
+            let mid = ( max - min ) / 2;
+            if ( max === min ) {
+                this.plot.gScaleY = 1;
+                this.plot.gOffsetY = 0 - max;
+            } else {
+                this.plot.gScaleY = 2 / ( ( max - min ) * 2 );
+                this.plot.gOffsetY = (0 - min + mid) * this.plot.gScaleY - 1;
+            }
+        },
+
+        /**
          * start drag operation
          * @param {Number} clientX
          * @param {Number} clientY
@@ -554,7 +570,7 @@ export default {
 
             let valueX = MyNumber.round(this.pointer.x, 5);
             let valueY = MyNumber.round(this.pointer.y, 5);
-            this.$refs.tip.innerHTML = `Y:${valueX} X:${valueY}`;
+            this.$refs.tip.innerHTML = `Y:${valueY} X:${valueX}`;
         },
 
         /**
@@ -611,13 +627,20 @@ export default {
                 return ;
             }
 
+            let batchStartIndex = 0;
             // setup data lines with first group of values
             if ( 0 === this.dataLines.length ) {
-                this.dataLineInit(batchValues.shift());
+                this.dataLineInit(batchValues[0]);
+                batchStartIndex ++;
+                let $this = this;
+                this.$nextTick(()=>{
+                    $this.gridUpdate();
+                    $this.axisUpdate();
+                });
             }
 
             let lines = this.plot.linesData;
-            for (let i=0; i<this.dataLines.length; i++) {
+            for (let i=batchStartIndex; i<this.dataLines.length; i++) {
                 let values = [];
                 
                 for ( let li=0; li<batchValues.length; li++ ) {
@@ -661,6 +684,8 @@ export default {
                 });
                 this.plot.addDataLine(line);
             }
+
+            this.axisYAutoFit(Math.max(... values), Math.min(... values));
         },
 
         /**

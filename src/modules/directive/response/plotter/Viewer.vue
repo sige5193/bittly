@@ -1,7 +1,7 @@
 <template>
   <div class="border p-1 rounded d-flex flex-dir-column h-100" style="min-height:300px;">
     <a-row>
-      <a-col :span="12">
+      <a-col :span="6">
         <!-- parser selector -->
         <a-select size="small" class="ml-1 mr-1" style="width: 150px" ref="selectParser"
           v-model="parserOptions.parser" @change="actionParserHandlerChanged"
@@ -24,45 +24,24 @@
           @option-update="actionParserOptionUpdate"
         ></component>
       </a-col>
-
-      <a-col :span="12" class="text-right">
-        <div class="border rounded d-inline-block mr-1">
-          <span class="d-inline-block pl-2 pr-2 border-right" style="background-color:#f5f5f5;line-height: 22px;">
-            {{$t('directive.response.plotter.dataPoint')}}
-          </span> 
-          <a-switch class="ml-1 mr-1" size="small" style="vertical-align: super;" default-checked 
-            v-model="parserOptions.dataPointEnable" 
-            @change="actionParserOptionUpdate"
-          />
+      
+      <a-col :span="18" class="text-right">
+        <!-- labels -->
+        <div class="data-line-label" v-for="(line,index) in dataLines" :key="index">
+          <div class="color" :style="{background:`rgb(${line.color[0]} ${line.color[1]} ${line.color[2]})`}"></div>
+          <div :class="{label:true, invisible:!line.visible}" @click="actionDataLineLableClick(index)">{{line.label}}</div>
         </div>
       </a-col>
     </a-row>
 
-    <!-- chart viewer -->
-    <div class="flex-grow h-0 d-flex flex-dir-column">
-      <canvas class="flex-grow h-0" ref="canvasPlotter"></canvas>
-      <a-slider range :min="0" :max="channelDataItemCount" :step="1" 
-        v-model="xAxisRange" class="my-0 mx-2"
-        :tip-formatter="actionXAxisRangeTipFormatter"
-        @afterChange="actionXAxisRangeChange"
-      />
-      <a-row class="text-small">
-        <a-col :span="8">{{timelineItems[0]}}</a-col>
-        <a-col :span="8" class="text-center">
-          [{{timelineItems[xAxisRange[0]]}} ~ {{timelineItems[xAxisRange[1]-1]}}] 
-          [{{xAxisRange[0]}} ~ {{this.xAxisRange[1]}} / {{this.channelDataItemCount}}]
-        </a-col>
-        <a-col :span="8" class="text-right">{{this.timelineItems.at(-1)}}</a-col>
-      </a-row>
-    </div>
+    <plotter-webgl ref="plotter"></plotter-webgl>
   </div>
 </template>
 <script>
-import MyObject from '../../../../utils/datatype/MyObject.js'
-import Formatter from '../../../../utils/Formatter.js'
-import Chart from 'chart.js'
-import zoom from 'chartjs-plugin-zoom'
 import Common from '@/utils/Common.js'
+import ComponentBase from '../../../../utils/component/Base.js'
+import MyObject from '../../../../utils/datatype/MyObject.js'
+import PlotterWebGL from './PlotterWebGL.vue'
 import ViewerMixin from '../ViewerMixin.js'
 import ParserScript from './parsers/Script.vue'
 import ParserNumNumCrlf from './parsers/NumNumCrlf.vue'
@@ -72,8 +51,9 @@ import ParserForm from './parsers/Form.vue'
 import ParserRegex from './parsers/Regex.vue'
 export default {
     name : 'BlockResponseViewerPlotter',
-    mixins : [ViewerMixin],
+    mixins : [ComponentBase, ViewerMixin],
     components : {
+        'plotter-webgl' : PlotterWebGL,
         'parser-script' : ParserScript,
         'parser-num-num-crlf' : ParserNumNumCrlf,
         'parser-data-frame' : ParserDataFrame,
@@ -108,249 +88,64 @@ export default {
              */
             parserOptions : {},
             /**
-             * the position of content where start to parse
-             * @property {Number}
-             */
-            parseStartPos : 0,
-            /**
              * data of parsed channels
              * @property {Array<Array<Number>>}
              */
             channelDataList : [],
             /**
-             * instance of charjs
-             * @property {Object}
-             */
-            chart : null,
-            /**
-             * size of x
+             * the position of content where start to parse
              * @property {Number}
              */
-            channelDataItemCount : 0,
+            parseStartPos : 0,
             /**
-             * @property {Array<Number>}
+             * list of data lines to config
+             * @property {Array<Object>}
              */
-            xAxisRange : [0,0],
+            dataLines : [],
+            
             /**
-             * @property {Array<Number>}
+             * values of parsed response data
+             * @property {Array<Array<Number>>}
              */
-            renderedXAxisRange : [0,0],
-            /**
-             * timestamp in microseconds of time first data.
-             * @property {Number|null} 
-             */
-            startTime : null,
-            /**
-             * @property {Array<String>}
-             */
-            timelineItems : [],
-            /**
-             * @property {Callback}
-             */
-            executorResizedCallback : null,
+            batchValues : [],
         };
     },
     watch : {
         content() {
-            this.refresh();
+            debugger
+            this.parseResponseData();
         },
     },
     created() {
-        this.initVModel();
+        this.directive = this.value;
+        this.parserOptions = {};
+        if ( undefined != this.directive.responseFormatter.plotter ) {
+            this.parserOptions = this.directive.responseFormatter.plotter;
+        }
+        MyObject.applyDefaultValues(this.parserOptions,{parser:'data-matrix'});
     },
     /**
-     * - register event handler for `directive-executor-resized` 
-     * - create chartjs instance
+     * setup componment on mounted
      */
-    mounted() {
-        window.plotter = this;
-        this.executorResizedCallback = () => this.onExecutorResized();
-        this.$eventBus.$on('directive-executor-resized', this.executorResizedCallback);
-        this.setupChart();
-        this.$nextTick(() => this.refresh());
+    async mounted() {
+        this.registerEventHandler('resize',() => this.handleViewerResized(), 'window');
+        this.registerEventHandler('directive-executor-resized', () => this.handleViewerResized());
+        await this.$nextTick();
+        this.parseResponseData();
     },
     /**
-     * - remove event handler for `directive-executor-resized`
-     * - destory the chartjs instance
+     * clean up the componment
      */
     beforeDestroy() {
-        this.$eventBus.$off('directive-executor-resized', this.executorResizedCallback);
-        this.chart.chart.destroy();
-        this.chart = null;
+        this.unregisterAllEventHandlers();
     },
     methods : {
         /**
-         * init v-model
-         */
-        initVModel() {
-            this.directive = this.value;
-
-            this.parserOptions = {};
-            if ( undefined != this.directive.responseFormatter.plotter ) {
-                this.parserOptions = this.directive.responseFormatter.plotter;
-            }
-            MyObject.applyDefaultValues(this.parserOptions, {
-                parser : 'data-matrix',
-                dataPointEnable : true,
-            });
-        },
-
-        /**
-         * update v-model
-         */
-        updateVModel() {
-            let responseFormatter = Common.objCopy(this.directive.responseFormatter);
-            responseFormatter.plotter = this.parserOptions;
-            this.directive.responseFormatter = Common.objCopy(responseFormatter);
-            this.$emit('input', this.directive);
-        },
-
-        /**
          * event handlr on executor resized
          */
-        async onExecutorResized() {
-            this.chart.chart.resize();
-        },
-
-        /**
-         * setup chart
-         */
-        setupChart() {
-            let ctx = this.$refs.canvasPlotter.getContext('2d');
-            this.chart = new Chart(ctx, {
-                type: 'line',
-                data: {labels: [],datasets: []},
-                plugins: [zoom],
-                options: {
-                    maintainAspectRatio: false,
-                    responsive: true,  
-                    animation : {duration : 0},
-                    hover: {animationDuration: 0},
-                    responsiveAnimationDuration: 0,
-                    elements: {line: {tension: 0}},
-                    scales: {
-                        xAxes:[{ticks: {display: false}}],
-                        yAxes: [{position: 'right'}]
-                    },
-                    plugins: {
-                        zoom: {
-                            pan: {
-                                enabled: true,
-                                mode: 'y',
-                                threshold: 10,
-                                onPan: () => this.handleChartZoom(),
-                                onPanComplete: () => this.handleChartZoom(),
-                            },
-                            zoom: {
-                                enabled: true,
-                                drag: false,
-                                mode: 'y',
-                                speed: 0.1,
-                                threshold: 2,
-                                sensitivity: 3,
-                                onZoom: () => this.handleChartZoom(),
-                                onZoomComplete: () => this.handleChartZoom(),
-                            }
-                        }
-                    }
-                },
-            });
-        },
-
-        /**
-         * event handler on chart zoom/zoomComplete pan/panComplete
-         */
-        handleChartZoom() {
-            if ( null === this.chart ) {
-                return ;
-            }
-            this.chart.options.scales.xAxes[0].ticks.display = false;
-            this.chart.update(0);
-        },
-
-        /**
-         * push data to channel data list
-         */
-        channelDataPush(values) {
-            if ( null === this.startTime ) {
-                this.startTime = Date.now();
-            }
-            this.timelineItems.push(Formatter.asDurationMS(Date.now()-this.startTime));
-
-            let nowDate = new Date();
-            for ( let i=0; i<values.length; i++ ) {
-                if ( undefined == this.channelDataList[i] ) {
-                    this.channelDataList[i] = [];
-                }
-                this.channelDataList[i].push({y:values[i], x:nowDate});
-            }
-            if ( this.xAxisRange[1] == this.channelDataItemCount ) {
-                this.xAxisRange[1] ++;
-                if ( 0 != this.xAxisRange[0] ) {
-                    this.xAxisRange[0] ++;
-                }
-                this.$forceUpdate();
-            }
-            this.channelDataItemCount ++;
-        },
-
-        /**
-         * event handler on parser option updated
-         */
-        actionParserOptionUpdate() {
-            this.updateVModel();
-            this.chart.data.datasets = [];
-            this.chart.data.labels = [];
-            this.parseStartPos = 0;
-            this.channelDataList = [];
-            this.renderedXAxisRange = [0,0];
-            this.xAxisRange = [0,0];
-            this.channelDataItemCount = 0;
-            this.refresh();
-        },
-
-        /**
-         * refresh chart on event time the content changed. 
-         */
-        refresh() {
-            if ( null == this.content ) {
-                return ;
-            }
-
-            let parseContent = this.content.slice(this.parseStartPos);
-            try {
-                this.parseStartPos += this.$refs.parser.parse(parseContent);
-            } catch ( e ) {
-                this.$message.error(e.message);
-                return;
-            }
-
-            for ( let i=0; i<this.channelDataList.length; i++ ) {
-                if ( undefined !== this.chart.data.datasets[i] ) {
-                    continue;
-                }
-                this.chart.data.datasets.push({
-                    label: this.$refs.parser.getChannelLabel(i),
-                    fill:false,
-                    borderColor: this.generateRandomColor(),
-                    borderWidth : 2,
-                    pointRadius : this.parserOptions.dataPointEnable ? 2 : 0,
-                    data: [],
-                });
-            }
-
-            this.refreshChartContent();
-        },
-        
-        /**
-         * Generate randome color for channel
-         * @return {String}
-         */
-        generateRandomColor() {
-            let r = Math.floor(Math.random() * 255);
-            let g = Math.floor(Math.random() * 255);
-            let b = Math.floor(Math.random() * 255);
-            return `rgb(${r},${g},${b})`;
+        async handleViewerResized() {
+            await this.$nextTick();
+            this.$refs.plotter.resize();
         },
 
         /**
@@ -361,73 +156,83 @@ export default {
         },
 
         /**
-         * update chart content by given display range
+         * event handler on parser option updated
          */
-        refreshChartContent() {
-            let datasets = this.chart.data.datasets;
-            
-            let start = this.xAxisRange[0] || 1;
-            if ( this.renderedXAxisRange[0] < start-1 ) {
-                this.chart.data.labels.reverse();
-                for ( let ci=0; ci<this.channelDataList.length; ci++ ) {
-                    this.chart.data.datasets[ci].data.reverse();
-                }
+        actionParserOptionUpdate() {
+            let responseHandler = MyObject.copy(this.directive.responseFormatter);
+            responseHandler.plotter = this.parserOptions;
+            this.directive.responseFormatter = MyObject.copy(responseHandler);
+            this.$emit('input', this.directive);
 
-                for ( let i=this.renderedXAxisRange[0]; i<start-1; i++ ) {
-                    this.chart.data.labels.pop();
-                    for ( let ci=0; ci<this.channelDataList.length; ci++ ) {
-                        this.chart.data.datasets[ci].data.pop();
-                    }
-                    this.renderedXAxisRange[0]++;
-                }
+            this.parseStartPos = 0;
+            this.channelDataList = [];
+            this.$refs.plotter.dataClear();
+            this.parseResponseData();
+        },
 
-                for ( let ci=0; ci<this.channelDataList.length; ci++ ) {
-                    this.chart.data.datasets[ci].data.reverse();
+        /**
+         * event handle on data line lable clicked
+         * @param {Number} index
+         */
+        actionDataLineLableClick(index) {
+            let visible = !this.dataLines[index].visible;
+            let plotter = this.$refs.plotter;
+
+            plotter.dataLineVisibleSet(index, visible);
+            this.dataLines = plotter.dataLineGetAll();
+        },
+
+        /**
+         * push data to channel data list
+         * @public
+         * @param {Array<Number>} values
+         */
+        channelDataPush(values) {
+            this.batchValues.push(values);
+            for ( let i=0; i<values.length; i++ ) {
+                if ( undefined === this.channelDataList[i] ) {
+                    this.channelDataList[i] = [];
                 }
-                this.chart.data.labels.reverse();
+                this.channelDataList[i].push({value:values[i]});
+            }
+        },
+
+        /**
+         * each time we receive new response data, this response viewer
+         * would start to parse new data.
+         * @private
+         */
+        parseResponseData() {
+            if ( null == this.content ) {
+                return ;
             }
 
-            if ( this.renderedXAxisRange[0] > start-1 ) {
-                this.chart.data.labels.reverse();
-                for ( let ci=0; ci<this.channelDataList.length; ci++ ) {
-                    this.chart.data.datasets[ci].data.reverse();
-                }
-
-                for ( let i=this.renderedXAxisRange[0]; i>start-1; i-- ) {
-                    this.chart.data.labels.push(this.timelineItems[i-1]);
-                    for ( let ci=0; ci<this.channelDataList.length; ci++ ) {
-                        this.chart.data.datasets[ci].data.push(this.channelDataList[ci][i-1]);
-                    }
-                    this.renderedXAxisRange[0]--;
-                }
-
-                this.chart.data.labels.reverse();
-                for ( let ci=0; ci<this.channelDataList.length; ci++ ) {
-                    this.chart.data.datasets[ci].data.reverse();
-                }
+            let isFirstTime = 0 === this.parseStartPos;
+            this.batchValues = [];
+            let cursor = this.parseStartPos;
+            let parseContent = this.content.slice(cursor);
+            let parsedLength = 0;
+            try {
+                parsedLength = this.$refs.parser.parse(parseContent);
+            } catch ( e ) {
+                console.error(e);
+                this.$message.error(e.message);
+                return ;
             }
 
-            // append new data to end of list of each channels
-            if ( this.renderedXAxisRange[1] < this.xAxisRange[1] ) {
-                if ( this.renderedXAxisRange[1] < this.xAxisRange[0] ) {
-                    this.renderedXAxisRange[1] = this.xAxisRange[0] - 1;
-                }
-                for ( let i=this.renderedXAxisRange[1]; i<this.xAxisRange[1]; i++ ) {
-                    this.chart.data.labels.push(this.timelineItems[i]);
-                    this.channelDataList.forEach((cd,ci) => datasets[ci].data.push(cd[i]), this);
-                    this.renderedXAxisRange[1]++;
-                }
-            }
+            let plotter = this.$refs.plotter;
+            this.parseStartPos = cursor + parsedLength;
+            plotter.dataBatchAppend(this.batchValues);
 
-            for ( let i=this.renderedXAxisRange[1]; i>this.xAxisRange[1]; i-- ) {
-                this.chart.data.labels.pop();
-                for ( let ci=0; ci<this.channelDataList.length; ci++ ) {
-                    this.chart.data.datasets[ci].data.pop();
+            // for the first time, we need to setup the labels
+            if ( isFirstTime && 0 < this.batchValues.length ) {
+                let labels = [];
+                for ( let i=0; i<this.batchValues[0].length; i++ ) {
+                    labels.push(this.$refs.parser.getChannelLabel(i));
                 }
-                this.renderedXAxisRange[1]--;
+                plotter.dataLineLabelsSet(labels);
+                this.dataLines = plotter.dataLineGetAll();
             }
-
-            this.chart.update();
         },
 
         /**
@@ -435,6 +240,8 @@ export default {
          * @override
          */
         async exportAsExcel() {
+            debugger
+
             if ( 0 >= this.channelDataList.length ) {
                 this.$message.info(this.$t('directive.response.saveAsExcelDataEmpty'));
                 return ;
@@ -453,30 +260,35 @@ export default {
             for ( let rowIndex=0; rowIndex<this.channelDataList[0].length; rowIndex++ ) {
                 let cells = {};
                 for ( let colIndex=0; colIndex<this.channelDataList.length; colIndex++ ) {
-                    cells[`ch_${colIndex}`] = this.channelDataList[colIndex][rowIndex].y;
+                    cells[`ch_${colIndex}`] = this.channelDataList[colIndex][rowIndex].value;
                 }
                 options.data.push(cells);
             }
 
             await this.generateResponseExcelFile(options);
         },
-
-        /**
-         * handle event on x axis range changed.
-         */
-        actionXAxisRangeChange() {
-            this.refreshChartContent();
-        },
-
-        /**
-         * format x range slide tip content
-         * @param {Number} value
-         * @returns {String}
-         */
-        actionXAxisRangeTipFormatter( value ) {
-            let time = this.timelineItems[value] || '~';
-            return `${value} @ ${time}`;
-        }
     },
 }
 </script>
+<style scoped>
+.data-line-label {
+    display: inline-block;
+    margin-right: 5px;
+}
+.data-line-label .label {
+    display: inline-block;
+    font-size: 0.8em;
+    cursor: pointer;
+}
+.data-line-label .label.invisible {
+    text-decoration: line-through 2px #616161;
+}
+.data-line-label .color {
+    display: inline-block;
+    width:20px;
+    height: 10px;
+    vertical-align: middle;
+    border-radius: 5px;
+    margin-right: 5px;
+}
+</style>
