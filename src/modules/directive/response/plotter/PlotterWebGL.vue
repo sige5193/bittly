@@ -73,77 +73,93 @@ export default {
              * @property {Object}
              */
             pointer : {x:0,y:0},
+            /**
+             * number of x
+             * @property {Number}
+             */
+            numberOfX : 10000,
         };
     },
     mounted() {
-        let devicePixelRatio = window.devicePixelRatio || 1;
-
-        // init axis-y
-        let canvasPlotAxisY = this.$refs.canvasPlotAxisY;
-        this.ctx2dPlotAxisY = canvasPlotAxisY.getContext("2d");
-        this.ctx2dPlotAxisY.font = "10px Courier New";
-        this.ctx2dPlotAxisY.fillStyle = "#a7a7a7";
-        this.ctx2dPlotAxisY.strokeStyle = "#a7a7a7";
-        canvasPlotAxisY.width = canvasPlotAxisY.clientWidth * devicePixelRatio;
-        canvasPlotAxisY.height = canvasPlotAxisY.clientHeight * devicePixelRatio;
-
-        // init axis-x
-        let canvasPlotAxisX = this.$refs.canvasPlotAxisX;
-        this.ctx2dPlotAxisX = canvasPlotAxisX.getContext("2d");
-        this.ctx2dPlotAxisX.font = "16px Courier New";
-        this.ctx2dPlotAxisX.fillStyle = "#a7a7a7";
-        this.ctx2dPlotAxisX.strokeStyle = "#a7a7a7";
-        canvasPlotAxisX.width = canvasPlotAxisX.clientWidth * devicePixelRatio;
-        canvasPlotAxisX.height = canvasPlotAxisX.clientHeight * devicePixelRatio;
-
-        // main plot
-        let canvasPlotMain =  this.$refs.canvasPlotMain;
-        canvasPlotMain.width = canvasPlotMain.clientWidth * devicePixelRatio;
-        canvasPlotMain.height = canvasPlotMain.clientHeight * devicePixelRatio;
-        canvasPlotMain.addEventListener("mouseenter", event => this.handleMouseenter(event));
-        canvasPlotMain.addEventListener("mouseleave", event => this.handleMouseleave(event));
-        canvasPlotMain.addEventListener("mousemove", event => this.handleMousemove(event));
-        canvasPlotMain.addEventListener("mousedown", event => this.handleMousedown(event));
-        canvasPlotMain.addEventListener("mouseup", event => this.handleMouseup(event));
-        canvasPlotMain.addEventListener("wheel", event => this.handleWheel(event));
-        
-        // init webgl plot
-        let plot = new WebglPlot(canvasPlotMain);
-        plot.removeAllLines();
-        plot.gScaleX = 1;
-        this.plot = plot;
-
-        // add cross line
-        let crossLineColor = new ColorRGBA(0.1, 0.9, 0.1, 1);
-        plot.addAuxLine(new WebglLine(crossLineColor, 2));
-        plot.addAuxLine(new WebglLine(crossLineColor, 2));
-        this.auxLines = {crossX:{index:0},crossY:{index:1}};
-
-        // grid
-        let gridXLineCount = 9;
-        let gridYLineCount = 9;
-        let gridColor = this.convertWebRGBAToPlotRGBA(236,236,236);
-        for (let i = 0; i < gridXLineCount; i++) {
-            let line = new WebglLine(gridColor, 2);
-            let divPoint = (2 * i) / (gridXLineCount - 1) - 1;
-            line.xy = new Float32Array([divPoint, -1, divPoint, 1]);
-            plot.addLine(line);
-            this.gridLines.x.push(line);
-        }
-        for (let i = 0; i < gridYLineCount; i++) {
-            let line = new WebglLine(gridColor, 2);
-            let divPoint = (2 * i) / (gridYLineCount - 1) - 1;
-            line.xy = new Float32Array([-1, divPoint, 1, divPoint]);
-            plot.addLine(line);
-            this.gridLines.y.push(line);
-        }
-
-        plot.update();
-        this.axisUpdate();
-        this.rectCanvasPlotMain = canvasPlotMain.getBoundingClientRect();
+        this.plotSetup('create');
         requestAnimationFrame(() => this.animationDataRefresh());
     },
     methods : {
+        /**
+         * setup plot
+         * @param {String} action
+         */
+        plotSetup( action ) {
+            let devicePixelRatio = window.devicePixelRatio || 1;
+
+            // init axis-y
+            let canvasPlotAxisY = this.$refs.canvasPlotAxisY;
+            this.ctx2dPlotAxisY = canvasPlotAxisY.getContext("2d");
+            this.ctx2dPlotAxisY.font = "10px Courier New";
+            this.ctx2dPlotAxisY.fillStyle = "#a7a7a7";
+            this.ctx2dPlotAxisY.strokeStyle = "#a7a7a7";
+            canvasPlotAxisY.width = canvasPlotAxisY.clientWidth * devicePixelRatio;
+            canvasPlotAxisY.height = canvasPlotAxisY.clientHeight * devicePixelRatio;
+
+            // init axis-x
+            let canvasPlotAxisX = this.$refs.canvasPlotAxisX;
+            this.ctx2dPlotAxisX = canvasPlotAxisX.getContext("2d");
+            this.ctx2dPlotAxisX.font = "16px Courier New";
+            this.ctx2dPlotAxisX.fillStyle = "#a7a7a7";
+            this.ctx2dPlotAxisX.strokeStyle = "#a7a7a7";
+            canvasPlotAxisX.width = canvasPlotAxisX.clientWidth * devicePixelRatio;
+            canvasPlotAxisX.height = canvasPlotAxisX.clientHeight * devicePixelRatio;
+
+            // main plot
+            let canvasPlotMain =  this.$refs.canvasPlotMain;
+            canvasPlotMain.width = canvasPlotMain.clientWidth * devicePixelRatio;
+            canvasPlotMain.height = canvasPlotMain.clientHeight * devicePixelRatio;
+            if ( 'create' === action ) {
+                canvasPlotMain.addEventListener("mouseenter", event => this.handleMouseenter(event));
+                canvasPlotMain.addEventListener("mouseleave", event => this.handleMouseleave(event));
+                canvasPlotMain.addEventListener("mousemove", event => this.handleMousemove(event));
+                canvasPlotMain.addEventListener("mousedown", event => this.handleMousedown(event));
+                canvasPlotMain.addEventListener("mouseup", event => this.handleMouseup(event));
+                canvasPlotMain.addEventListener("wheel", event => this.handleWheel(event));
+            }
+
+            // init webgl plot
+            let plot = new WebglPlot(canvasPlotMain);
+            plot.removeAllLines();
+            plot.gScaleX = 1;
+            this.plot = plot;
+
+            // add cross line
+            let crossLineColor = new ColorRGBA(0.1, 0.9, 0.1, 1);
+            plot.addAuxLine(new WebglLine(crossLineColor, 2));
+            plot.addAuxLine(new WebglLine(crossLineColor, 2));
+            this.auxLines = {crossX:{index:0},crossY:{index:1}};
+
+            // grid
+            this.gridLines = {x:[],y:[]};
+            let gridXLineCount = 9;
+            let gridYLineCount = 9;
+            let gridColor = this.convertWebRGBAToPlotRGBA(236,236,236);
+            for (let i = 0; i < gridXLineCount; i++) {
+                let line = new WebglLine(gridColor, 2);
+                let divPoint = (2 * i) / (gridXLineCount - 1) - 1;
+                line.xy = new Float32Array([divPoint, -1, divPoint, 1]);
+                plot.addLine(line);
+                this.gridLines.x.push(line);
+            }
+            for (let i = 0; i < gridYLineCount; i++) {
+                let line = new WebglLine(gridColor, 2);
+                let divPoint = (2 * i) / (gridYLineCount - 1) - 1;
+                line.xy = new Float32Array([-1, divPoint, 1, divPoint]);
+                plot.addLine(line);
+                this.gridLines.y.push(line);
+            }
+
+            plot.update();
+            this.axisUpdate();
+            this.rectCanvasPlotMain = canvasPlotMain.getBoundingClientRect();
+        },
+
         /**
          * convert web RGBA to plot RGBA
          * @param {number} red
@@ -206,9 +222,9 @@ export default {
         handleMousemove(event) {
             this.dragMove(event.clientX, event.clientY);
             this.crossLineUpdate(event.pageX, event.pageY);
-            this.gridUpdate();
             this.tipUpdate(event.clientX, event.clientY);
             if ( this.dragIsMoving() ) {
+                this.gridUpdate();
                 this.axisUpdate();
             }
         },
@@ -626,7 +642,7 @@ export default {
                 [76,175,80], [255,193,7],  [121,85,72], [158,158,158], [0,0,0]
             ];
             
-            let numX = 10000;
+            let numX = this.numberOfX;
             for (let i=0; i<values.length; i++) {
                 // use buildin colors for the first 10 lines, and random color for the rest.
                 let color = colors[i] || [MyNumber.random(0,255),MyNumber.random(0,255),MyNumber.random(0,255)];
@@ -648,6 +664,14 @@ export default {
         },
 
         /**
+         * clean 
+         */
+        dataClear() {
+            this.dataLines = [];
+            this.plot.clear();
+        },
+
+        /**
          * refresh plot data
          * @private
          */
@@ -657,7 +681,45 @@ export default {
             }
             this.plot.update();
             requestAnimationFrame(() => this.animationDataRefresh());
-        }
+        },
+        
+        /**
+         * resize the plotter
+         */
+        resize() {
+            // cache data lines 
+            let numX = this.numberOfX;
+            let datalinesCache = [];
+            for ( let i=0; i<this.dataLines.length; i++ ) {
+                let line = this.dataLines[i];
+                let plotDataLine = this.plot.linesData[line.index];
+                let values = [];
+                for ( let di=0; di<numX; di++ ) {
+                    values.push(plotDataLine.getY(di));
+                }
+                datalinesCache.push(values);
+            }
+
+            // reset and update
+            let canvasPlotMain =  this.$refs.canvasPlotMain;
+            canvasPlotMain.width = 0;
+            canvasPlotMain.height = 0;
+            this.plotSetup('update');
+
+            // restore data lines
+            for ( let i=0; i<datalinesCache.length; i++ ) {
+                let line = this.dataLines[i];
+                let lineColor = this.convertWebRGBAToPlotRGBA(line.color[0],line.color[1],line.color[2]);
+                let plotLine = new WebglLine(lineColor, numX);
+                plotLine.visible = line.visible;
+                plotLine.lineSpaceX(-1, 2 / numX);
+                plotLine.shiftAdd(datalinesCache[i]);
+                this.plot.addDataLine(plotLine);
+                line.index = this.plot.linesData.length - 1;
+            }
+
+            this.gridUpdate();
+        },
     },
 }
 </script>
