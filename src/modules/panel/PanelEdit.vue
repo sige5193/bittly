@@ -224,7 +224,7 @@ export default {
                 x : Math.floor(event.clientX - editorPos.x), 
                 y : Math.floor(event.clientY - editorPos.y),
             };
-            widget.zindex = 0;
+            widget.zindex = 1000;
             this.panel.widgets.push(widget);
             this.onPanelChagned();
 
