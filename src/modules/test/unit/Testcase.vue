@@ -32,7 +32,9 @@
                 <div class="pre word-break-all">{{testcase.params.value}}</div>
               </template>
               <template v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','FILE',testcase.paramFormat)">
-                <div class="pre word-break-all"><a-icon type="file" /> {{testcase.params.value.path}}</div>
+                <div class="pre word-break-all"><a-icon type="file" /> 
+                  {{testcase.params.value ? testcase.params.value.path : ''}}
+                </div>
               </template>
               <template v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','NONE',testcase.paramFormat)">
                 <a-empty :description="$t('directive.parameter.none.notRequired')" />
