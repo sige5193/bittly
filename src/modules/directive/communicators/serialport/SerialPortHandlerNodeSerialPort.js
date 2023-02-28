@@ -25,21 +25,38 @@ export default class SerialPortHandlerNodeSerialPort {
         /**
          * @property {SerialPort}
          */
-        this.serialport = new window.SerialPort({
-            path : this.com.applyEnvPlaceholderVariables(options.path),
-            baudRate: parseInt(this.com.applyEnvPlaceholderVariables(options.baudRate)),
-            dataBits: parseInt(this.com.applyEnvPlaceholderVariables(options.dataBits)),
-            stopBits: parseInt(this.com.applyEnvPlaceholderVariables(options.stopBits)),
-            parity: this.com.applyEnvPlaceholderVariables(options.parity),
-            autoOpen: false,
-        });
-        
-        // bind event handlers
+        this.serialport = this.createConnection(options);
         this.serialport.on('open', () => this.handleOnOpen());
         this.serialport.on('data', (data) => this.handleOnData(data));
         this.serialport.on('error',(err) => this.handleOnError(err));
         this.serialport.on('close',(err) => this.handleOnClose(err));
         this.serialport.on('drain',(err) => console.log('SERIAL PORT ON DRAIN',err));
+    }
+
+    /**
+     * create serailport connection
+     * @param {Object} options 
+     * @returns {SerialPort}
+     */
+    createConnection(options) {
+        debugger
+        
+        let openOptions = {};
+        openOptions.path = this.com.applyEnvPlaceholderVariables(options.path);
+        openOptions.baudRate = parseInt(this.com.applyEnvPlaceholderVariables(options.baudRate));
+        openOptions.dataBits = parseInt(this.com.applyEnvPlaceholderVariables(options.dataBits));
+        openOptions.stopBits = parseInt(this.com.applyEnvPlaceholderVariables(options.stopBits));
+        openOptions.parity = this.com.applyEnvPlaceholderVariables(options.parity);
+        openOptions.autoOpen = false;
+        if ( options.flowControl ) {
+            if ( 'software' === options.flowControl ) {
+                openOptions.xon = true;
+                openOptions.xoff = true;
+            } else if ( 'hardware' === options.flowControl ) {
+                openOptions.rtscts = true;
+            }
+        }
+        return new window.SerialPort(openOptions);
     }
 
     /**
@@ -78,6 +95,7 @@ export default class SerialPortHandlerNodeSerialPort {
      * @returns {Promise}
      */
     write( data ) {
+        debugger
         let $this = this;
         return new Promise(( resolve, reject ) => {
             if ( 0 === data.length || !$this.serialport.isOpen || $this.isClosing) {

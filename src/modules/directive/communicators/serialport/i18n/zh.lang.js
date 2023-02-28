@@ -23,4 +23,9 @@ module.exports = {
     webSerialDeviceRefreshed : '设备列表已刷新',
     webSerialDeviceInuse : '该设备正在被 [{0}] 使用中， 是否变更到 [{1}] ?',
     webSerialDeviceRequestManually : '请为 [{0}] 选择设备',
+    extSettingTitle : '串口配置',
+    flowControl : '流控',
+    flowControlNone : '无',
+    flowControlSoftware : '软件 (XON/XOFF)',
+    flowControlHardware : '硬件',
 };

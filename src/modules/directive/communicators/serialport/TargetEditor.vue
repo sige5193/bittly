@@ -5,7 +5,7 @@
 <template>
   <a-row>
     <!-- path : for node-serialport -->
-    <a-col v-if="'node-serialport' == handlerType" :span="7" class="pr-1 white-space-nowrap">
+    <a-col v-if="'node-serialport' == handlerType" :span="12" class="pr-1 white-space-nowrap">
       <a-input-group compact>
         <a-auto-complete 
           ref="path"
@@ -27,7 +27,7 @@
     </a-col>
 
      <!-- path : for web-serial -->
-    <a-col v-if="'web-serial' == handlerType" :span="7" class="pr-1">
+    <a-col v-if="'web-serial' == handlerType" :span="12" class="pr-1">
       <web-serial-device-selector v-model="target.path"
         @change="actionUpdateTarget(true)"
       ></web-serial-device-selector>
@@ -45,43 +45,55 @@
       </a-auto-complete>
     </a-col>
 
-    <!-- dataBits -->
+    <!-- ext setting -->
     <a-col :span="4" class="pr-1 white-space-nowrap">
-      <a-input-group compact>
-        <a-input class="text-body" style="width: 60%" :value="$t('directive.communicator.serialport.dataBits')" disabled />
-        <a-select ref="dataBits" style="width: 40%" v-model="target.dataBits" @change="actionUpdateTarget(true)" :showArrow="false" :dropdownMatchSelectWidth="false">
-          <a-select-option value="5">5</a-select-option>
-          <a-select-option value="6">6</a-select-option>
-          <a-select-option value="7">7</a-select-option>
-          <a-select-option value="8">8</a-select-option>
-        </a-select>
-      </a-input-group>
-    </a-col>
+      <a-button @click="actionExtSettingOpen"><a-icon type="setting" /></a-button>
 
-    <!-- stopBits -->
-    <a-col :span="4" class="pr-1 white-space-nowrap">
-      <a-input-group compact>
-        <a-input class="text-body" style="width: 50%" :value="$t('directive.communicator.serialport.stopBits')" disabled />
-        <a-select ref="stopBits" style="width: 50%" v-model="target.stopBits" @change="actionUpdateTarget(true)" :showArrow="false" :dropdownMatchSelectWidth="false">
-          <a-select-option value="1">1</a-select-option>
-          <a-select-option value="1.5">1.5</a-select-option>
-          <a-select-option value="2">2</a-select-option>
-        </a-select>
-      </a-input-group>
-    </a-col>
-    
-    <!-- parity -->
-    <a-col :span="4" class="pr-1 white-space-nowrap">
-      <a-input-group compact>
-        <a-input class="text-body" style="width: 50%" :value="$t('directive.communicator.serialport.parity')" disabled />
-        <a-select ref="parity" style="width: 50%" v-model="target.parity" @change="actionUpdateTarget(true)" :showArrow="false" :dropdownMatchSelectWidth="false">
-          <a-select-option value="none">None</a-select-option>
-          <a-select-option value="odd">Odd</a-select-option>
-          <a-select-option value="even">Even</a-select-option>
-          <a-select-option value="mark">Mark</a-select-option>
-          <a-select-option value="space">Space</a-select-option>
-        </a-select>
-      </a-input-group>
+      <a-modal v-if="null != extSettings" :visible="null != extSettings"
+        :title="$t('directive.communicator.serialport.extSettingTitle')"
+        :okText="$t('button.ok')"
+        :cancelText="$t('button.cancel')"
+        @ok="actionExtSettingOk"
+        @cancel="actionExtSettingCancel"
+      >
+        <a-form :label-col="{ span: 5 }" :wrapper-col="{ span: 16 }">
+          <!-- dataBits -->
+          <a-form-item :label="$t('directive.communicator.serialport.dataBits')">
+            <a-select v-model="extSettings.dataBits" @change="actionForceUpdate">
+              <a-select-option value="5">5</a-select-option>
+              <a-select-option value="6">6</a-select-option>
+              <a-select-option value="7">7</a-select-option>
+              <a-select-option value="8">8</a-select-option>
+            </a-select>
+          </a-form-item>
+          <!-- stopBits -->
+          <a-form-item :label="$t('directive.communicator.serialport.stopBits')">
+            <a-select v-model="extSettings.stopBits" @change="actionForceUpdate">
+              <a-select-option value="1">1</a-select-option>
+              <a-select-option value="1.5">1.5</a-select-option>
+              <a-select-option value="2">2</a-select-option>
+            </a-select>
+          </a-form-item>
+          <!-- parity -->
+          <a-form-item :label="$t('directive.communicator.serialport.parity')">
+            <a-select v-model="extSettings.parity" @change="actionForceUpdate">
+              <a-select-option value="none">None</a-select-option>
+              <a-select-option value="odd">Odd</a-select-option>
+              <a-select-option value="even">Even</a-select-option>
+              <a-select-option value="mark">Mark</a-select-option>
+              <a-select-option value="space">Space</a-select-option>
+            </a-select>
+          </a-form-item>
+          <!-- flow control -->
+          <a-form-item :label="$t('directive.communicator.serialport.flowControl')">
+            <a-select v-model="extSettings.flowControl" @change="actionForceUpdate">
+              <a-select-option value="none">{{$t('directive.communicator.serialport.flowControlNone')}}</a-select-option>
+              <a-select-option value="software">{{$t('directive.communicator.serialport.flowControlSoftware')}}</a-select-option>
+              <a-select-option value="hardware">{{$t('directive.communicator.serialport.flowControlHardware')}}</a-select-option>
+            </a-select>
+          </a-form-item>
+        </a-form>
+      </a-modal>
     </a-col>
   </a-row>
 </template>
@@ -100,6 +112,11 @@ export default {
     },
     data() {
         return {
+            /**
+             * ext settings for serialport connection.
+             * @property {Object}
+             */
+            extSettings : null,
             /**
              * name of serialport handler
              * @property {String}
@@ -142,7 +159,8 @@ export default {
                 parity : 'none',
                 stopBits : '1',
                 dataBits : '8',
-                baudRate : '9600'
+                baudRate : '9600',
+                flowControl : 'none',
             });
 
             // if serialport path is empty and only one device in the list, then we use that 
@@ -216,6 +234,29 @@ export default {
         getComKeyByOptions(options) {
             return CommunicatorSerialPort.generateKeyFromOptions(options);
         },
+
+        /**
+         * open extension setting modal
+         */
+        actionExtSettingOpen() {
+            this.extSettings = MyObject.copy(this.target);
+        },
+
+        /**
+         * update target setting
+         */
+        actionExtSettingOk() {
+            this.target = MyObject.copy(this.extSettings);
+            this.extSettings = null;
+            this.actionUpdateTarget(true);
+        },
+
+        /**
+         * close the ext setting modal
+         */
+        actionExtSettingCancel() {
+            this.extSettings = null;
+        }
     },
     /**
      * target editor config

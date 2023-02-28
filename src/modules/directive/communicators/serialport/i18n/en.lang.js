@@ -22,4 +22,9 @@ module.exports = {
     webSerialDeviceRefreshed : 'Device list refreshed',
     webSerialDeviceInuse : '"{0}" is using this device, are you sure to switch to {1} ?',
     webSerialDeviceRequestManually : 'Please select device for "{0}"',
+    extSettingTitle : 'Setting',
+    flowControl : 'Flow Control',
+    flowControlNone : 'None',
+    flowControlSoftware : 'Software (XON/XOFF)',
+    flowControlHardware : 'Hardware',
 };
