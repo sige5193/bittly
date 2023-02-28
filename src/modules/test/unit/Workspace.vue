@@ -86,6 +86,13 @@ export default {
             this.testcases = await MdbTestcase.findAll({
                 directive_id : this.directive.id,
             });
+            this.testcases.sort(( itemA, itemB ) => {
+                if ( itemA.type == itemB.type ) {
+                    return itemA.title.localeCompare(itemB.title);
+                } else {
+                    return 'folder' == itemA.type ? -1 : 1;
+                }
+            });
         },
 
         /**
