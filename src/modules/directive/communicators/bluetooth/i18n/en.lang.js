@@ -4,6 +4,7 @@ module.exports = {
     address : 'Address',
     service : 'Service',
     characteristic : 'Characteristic',
+    characteristicProperties : 'Properties',
     servicePlaceholder : 'Name or UUID',
     serviceIdCannotBeEmpty : 'Please input service name or UUID',
     unableToAccessBluetoothDevice : 'unable to access bluetooth device',

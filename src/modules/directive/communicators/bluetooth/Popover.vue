@@ -13,17 +13,14 @@
             <span ref="lblClassicAddress">{{device.options.btAddress}}</span>
           </p>
           <template v-if="'ble' == device.options.btType">
-            <p> 
-              {{$t('directive.communicator.bluetooth.deviceId')}} : <br/> 
-              <span>{{device.options.btBleId}}</span>
-            </p>
-            <p> 
-              {{$t('directive.communicator.bluetooth.service')}} : <br/> 
-              <span>{{device.options.btBleServiceId}}</span>
-            </p>
-            <p> 
-              {{$t('directive.communicator.bluetooth.characteristic')}} : <br/> 
-              <span>{{device.options.btBleCharId}}</span>
+            <p>{{$t('directive.communicator.bluetooth.deviceId')}}:<br/><span>{{device.options.btBleId}}</span></p>
+            <p>{{$t('directive.communicator.bluetooth.service')}}:<br/><span>{{device.options.btBleServiceId}}</span></p>
+            <p>{{$t('directive.communicator.bluetooth.characteristic')}}:<br/><span>{{device.options.btBleCharId}}</span></p>
+            <p>
+              {{$t('directive.communicator.bluetooth.characteristicProperties')}}:<br/>
+              <a-icon class="text-small" :type="device.handler.characteristic.properties.notify ? 'check-circle' : 'close-circle'" /> Notify
+              <a-icon class="text-small" :type="device.handler.characteristic.properties.read ? 'check-circle' : 'close-circle'" /> Read
+              <a-icon class="text-small" :type="device.handler.characteristic.properties.writeWithoutResponse ? 'check-circle' : 'close-circle'" /> Write Without Response
             </p>
           </template>
           <p>
@@ -52,6 +49,9 @@ export default {
         return {
             isClosing : false,
         };
+    },
+    mounted() {
+        window.bt = this;
     },
     methods : {
         /**

@@ -104,11 +104,9 @@ export default class ElectronBleDeviceScanner {
             throw Error(window.app.$t('directive.communicator.bluetooth.serviceIdCannotBeEmpty'));
         }
         
-        let serviceId = this.serviceId;
+        let serviceId = this.serviceId.toLowerCase();
         if ( this.serviceId.toLowerCase().startsWith('0x') ) {
             serviceId = this.serviceId * 1;
-        } else {
-            serviceId = this.serviceId.toLowerCase();
         }
         
         let requestOptions = {};

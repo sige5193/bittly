@@ -237,7 +237,12 @@ export default {
                 this.bleIsRefreshing = false;
                 let services = await server.getPrimaryServices();
                 let service = null;
-                let serviceId = BluetoothUUID.getService(this.target.btBleServiceId.toLowerCase());
+                
+                let serviceId = this.target.btBleServiceId.toLowerCase();
+                if ( '0x' === serviceId.substr(0, 2) ) {
+                    serviceId = parseInt(serviceId);
+                }
+                serviceId = BluetoothUUID.getService(serviceId);
                 for ( let i=0; i<services.length; i++ ) {
                     if ( services[i].uuid === serviceId ) {
                         service = services[i];
@@ -365,6 +370,8 @@ export default {
             
             this.bleDeviceRefreshEnable = false;
             this.target.btBleId = '';
+            this.target.btBleCharId = '';
+            this.bleCharList = [];
             this.bleDeviceList = [];
             if ( null === this.bleElectronScanner ) {
                 this.bleElectronScanner = ElectronBleDeviceScanner.getScanner();

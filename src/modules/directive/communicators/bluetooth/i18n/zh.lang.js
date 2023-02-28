@@ -4,6 +4,7 @@ module.exports = {
     address : '地址',
     service : '服务',
     characteristic : '特征值',
+    characteristicProperties : '特性',
     servicePlaceholder : '名称或UUID',
     serviceIdCannotBeEmpty : '请输入服务名称或UUID',
     unableToAccessBluetoothDevice : '无法访问蓝牙设备',
