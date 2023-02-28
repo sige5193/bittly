@@ -39,8 +39,6 @@ export default class SerialPortHandlerNodeSerialPort {
      * @returns {SerialPort}
      */
     createConnection(options) {
-        debugger
-        
         let openOptions = {};
         openOptions.path = this.com.applyEnvPlaceholderVariables(options.path);
         openOptions.baudRate = parseInt(this.com.applyEnvPlaceholderVariables(options.baudRate));
@@ -95,7 +93,6 @@ export default class SerialPortHandlerNodeSerialPort {
      * @returns {Promise}
      */
     write( data ) {
-        debugger
         let $this = this;
         return new Promise(( resolve, reject ) => {
             if ( 0 === data.length || !$this.serialport.isOpen || $this.isClosing) {
