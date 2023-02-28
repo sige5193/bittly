@@ -1,7 +1,7 @@
 <template>
   <div class="h-100 d-flex flex-dir-column mt-1">
     <!-- no entries -->
-    <a-empty v-if="0 == entries.all.length" class="mt-5" :description="false" />
+    <a-empty v-if="0 == entriesAll.length" class="mt-5" :description="false" />
 
     <template v-else>
       <!-- toolbar -->
@@ -24,7 +24,7 @@
           style="height: 100%; overflow-y: auto;"
           :keeps="20"
           :data-key="'key'"
-          :data-sources="entries[filter]"
+          :data-sources="entries"
           :data-component="entryItem"
           :extra-props="{mode,directive}"
         />
@@ -58,10 +58,20 @@ export default {
              */
             directive : null,
             /**
-             * list of transition data
-             * @property {Object<String:Array<Object>>}
+             * list of data entries that sent and reserved
+             * @property {Array<Object>}
              */
-            entries : {all:[],receive:[],send:[]},
+            entriesAll : [],
+            /**
+             * list of data entries that reserved
+             * @property {Array<Object>}
+             */
+            entriesReceive : [],
+            /**
+             * list of data entries that send
+             * @property {Array<Object>}
+             */
+            entriesSend : [],
             /**
              * display data mode
              * @property {String}
@@ -79,6 +89,20 @@ export default {
             entryItem : EntryItem,
         };
     },
+    computed : {
+        /**
+         * get entries of items
+         * @returns {Array}
+         */
+        entries() {
+            switch ( this.filter ) {
+            case 'all' : return this.entriesAll; 
+            case 'receive' : return this.entriesReceive;
+            case 'send' : return this.entriesSend;
+            default : return [];
+            }
+        }
+    },
     created() {
         this.initVModel();
     },
@@ -94,7 +118,9 @@ export default {
          * clear all entries
          */
         actionClear() {
-            this.entries = {all:[],receive:[],send:[]};
+            this.entriesAll = [];
+            this.entriesSend = [];
+            this.entriesReceive = [];
         },
 
         /**
@@ -107,8 +133,8 @@ export default {
             entry.dir = 'receive';
             entry.time = new Date();
             entry.data = data;
-            this.entries.all.push(entry);
-            this.entries.receive.push(entry);
+            this.entriesAll.push(entry);
+            this.entriesReceive.push(entry);
             
             await this.$nextTick();
             this.$refs.virtualList.scrollToBottom();
@@ -124,8 +150,8 @@ export default {
             entry.dir = 'send';
             entry.time = new Date();
             entry.data = data;
-            this.entries.all.push(entry);
-            this.entries.send.push(entry);
+            this.entriesAll.push(entry);
+            this.entriesSend.push(entry);
             
             await this.$nextTick();
             this.$refs.virtualList.scrollToBottom()
