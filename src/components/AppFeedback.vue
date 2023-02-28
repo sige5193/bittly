@@ -60,6 +60,7 @@
 import MdbRuntimeVariable from '../models/MdbRuntimeVariable';
 import Formatter from '../utils/Formatter';
 import ComponentBase from '../utils/component/Base.js'
+import Common from '../utils/Common.js'
 export default {
     name : 'AppFeedback',
     mixins : [ComponentBase],
@@ -284,16 +285,16 @@ export default {
         /**
          * open message modal
          */
-        actionShow() {
+        async actionShow() {
             this.enable = true;
             this.newMessageCount = 0;
-            this.pull();
-
-            let $this = this;
-            this.$nextTick(() => {
-                let messageContainer = $this.$refs['messages-block'];
-                messageContainer.scrollTop = messageContainer.scrollHeight;
-            });
+            
+            await this.$nextTick();
+            await Common.msleep(300);
+            let messageContainer = this.$refs['messages-block'];
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+            
+            await this.pull();
         },
 
         /**
