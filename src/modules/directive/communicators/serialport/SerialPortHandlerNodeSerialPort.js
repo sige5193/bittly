@@ -1,3 +1,4 @@
+import Common from "../../../../utils/Common";
 import MyObject from "../../../../utils/datatype/MyObject";
 export default class SerialPortHandlerNodeSerialPort {
     /**
@@ -41,7 +42,15 @@ export default class SerialPortHandlerNodeSerialPort {
     createConnection(options) {
         let openOptions = {};
         openOptions.path = this.com.applyEnvPlaceholderVariables(options.path);
+        if ( Common.isEmpty(openOptions.path) ) {
+            throw Error(this.com.$t('pathCannotBeEmpty'));
+        }
+
         openOptions.baudRate = parseInt(this.com.applyEnvPlaceholderVariables(options.baudRate));
+        if ( Common.isEmpty(openOptions.path) ) {
+            throw Error(this.com.$t('baudRateCannotBeEmpty'));
+        }
+
         openOptions.dataBits = parseInt(this.com.applyEnvPlaceholderVariables(options.dataBits));
         openOptions.stopBits = parseInt(this.com.applyEnvPlaceholderVariables(options.stopBits));
         openOptions.parity = this.com.applyEnvPlaceholderVariables(options.parity);
