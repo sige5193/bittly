@@ -219,7 +219,7 @@ export default {
             for ( let i=0; i<serialports.length; i++ ) {
                 let option = {
                     value: serialports[i].path,
-                    text: serialports[i].friendlyName,
+                    text: serialports[i].friendlyName || serialports[i].path,
                 };
                 this.serialportOptions.serialports.push(option);
             }
