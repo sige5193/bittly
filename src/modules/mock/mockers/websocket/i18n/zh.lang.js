@@ -19,4 +19,6 @@ module.exports = {
     certExportCerFile : '导出 cert.cer',
     certExportCerFileFailed : '导出 cert.cer 文件失败 : {0}',
     certExportCerFileSuccess : '成功导出 cert.cer 文件',
+    opensslNotFound : '生成证书需要openssl支持，请安装 openssl v1',
+    opensslV1NotFound : '生成证书仅支持 openssl 1.x.x，当前版本 {0}',
 };

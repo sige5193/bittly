@@ -18,4 +18,6 @@ module.exports = {
     certGenerateFailed : 'Failed to generate cert files : {0}',
     certExportCerFileFailed : 'Export cert.cer failed : {0}',
     certExportCerFileSuccess : 'Export cert.cer successfully.',
+    opensslNotFound : 'unable to found "openssl"',
+    opensslV1NotFound : 'only openssl 1.x.x is supported, current version is : {0}',
 };

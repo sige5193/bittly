@@ -1,6 +1,22 @@
 import encoding from 'encoding';
 class Common {
     /**
+     * @param {*} command 
+     * @returns {Promise}
+     */
+    static shellExec( command ) {
+        return new Promise((resolve, reject) => {
+            window.exec(command, (err,stdout, stderr) => {
+                if ( err ) {
+                    reject(err);
+                } else {
+                    resolve({stdout,stderr});
+                }
+            })
+        });
+    }
+
+    /**
      * @param {Buffer} buf 
      * @returns {DataView}
      */

@@ -44,5 +44,6 @@ window.https = require('https');
 window.http = require('http');
 window.pem = require('pem')
 
+window.exec = require('child_process').exec;
 window.path = require('path');
 window.envName = 'Electron';

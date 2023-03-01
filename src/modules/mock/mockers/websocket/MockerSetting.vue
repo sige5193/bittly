@@ -83,6 +83,7 @@
   </a-modal>
 </template>
 <script>
+import Common from '../../../../utils/Common.js';
 import MyString from '../../../../utils/datatype/MyString.js';
 import MockerSettingBase from '../MockerSettingBase.js'
 export default {
@@ -127,16 +128,30 @@ export default {
         /**
          * generate cert 
          */
-        actionGenerateCert() {
-            let $this = this;
-            $this.isGeneratingCert = true;
-            
+        async actionGenerateCert() {
+            let opensslVersionCmdResult = null;
+            try {
+                opensslVersionCmdResult = await Common.shellExec('openssl version');
+            } catch (e) {
+                console.error(e);
+                this.$message.error(this.$t('mock.mockers.websocket.opensslNotFound'));
+                return ;
+            }
+
+            let opensslVersionMatch = opensslVersionCmdResult.stdout.match(/OpenSSL (?<major>\d)/);
+            if ( null === opensslVersionMatch || '1' != opensslVersionMatch.groups.major ) {
+                this.$message.error(this.$t('mock.mockers.websocket.opensslV1NotFound',[opensslVersionCmdResult.stdout.trim()]));
+                return ;
+            }
+
+            this.isGeneratingCert = true;
             let csrOptions = {};
             csrOptions.commonName = $this.mock.options.host
             csrOptions.organization = 'Bittly';
+            let $this = this;
             window.pem.createCSR(csrOptions, (csrErr, csrData) => {
                 if (null !== csrErr) {
-                     $this.$message.error($this.$t('mock.mockers.websocket.certGenerateFailed',[csrErr.message]));
+                    $this.$message.error($this.$t('mock.mockers.websocket.certGenerateFailed',[csrErr.message]));
                     return ;
                 }
 
