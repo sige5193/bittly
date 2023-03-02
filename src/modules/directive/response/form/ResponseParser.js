@@ -287,7 +287,11 @@ export default class ResponseParser {
                 value = `0${value}`;
             }
             value = value.padStart(field.length * 2,'0');
-            value = value.replace(/../g, function(item){ return `${item} ` });
+            value = value.replace(/../g, item => `${item} `);
+            value = value.trim();
+        } else if ( 'bin' === field.format ) {
+            value = value.padStart(field.length * 8, '0');
+            value = value.replace(/..../g, item => `${item} `);
             value = value.trim();
         }
         this.values.push(value);
