@@ -1,10 +1,10 @@
 <template>
   <div class="d-flex flex-dir-column h-100">
     <div class="d-flex flex-dir-column" :style="{height:`${dataEntryViewerHeight}px`}">
-      <div class="content-center" v-if="null == mocker">
+      <div class="content-center" v-if="null == service">
         <a-empty :description="false" />
       </div>
-      <div class="content-center" v-else-if="0 === Object.keys(mocker.clients).length">
+      <div class="content-center" v-else-if="0 === Object.keys(service.clients).length">
         <a-empty :description="false" />
       </div>
       <!-- client list -->
@@ -13,7 +13,7 @@
         class="h-100 tab-h100-pane tab-p0-pane"
         v-model="activeClientKey"
       >
-        <a-tab-pane v-for="client in mocker.clients" :key="client.key" 
+        <a-tab-pane v-for="client in service.clients" :key="client.key" 
           class="d-flex flex-dir-column tab-client-pane" 
           :forceRender="true"
         >
@@ -137,7 +137,7 @@ import MockViewerBase from '../MockViewerBase.js'
 import FilterSetting from '../../data-entry/FilterSetting.vue'
 export default {
     name : 'MockMockerWebsocket',
-    mixins : [ComponentBase,MockViewerBase],
+    mixins : [ComponentBase, MockViewerBase],
     components : {
         'seperator' : Seperator,
         'data-entry-list-viewer' : DataEntryListViewer,
@@ -148,21 +148,8 @@ export default {
         'response-manual-editor' : ResponseManualEditor,
         'filter-setting' : FilterSetting,
     },
-    props : {
-        value : {type:Object},
-    },
     data () {
         return {
-            /**
-             * instance of mock model
-             * @property {MdbMock}
-             */
-            mock : null,
-            /**
-             * instance of mock service
-             * @property {Mocker}
-             */
-            mocker : null,
             /**
              * name of viewer mode
              * @property {String}
@@ -178,71 +165,36 @@ export default {
              * @property {String}
              */
             activeClientKey : null,
-            /**
-             * list of event handler for mocker
-             * @property {Object}
-             */
-            mockerEventHandlers : {},
         };
-    },
-    created() {
-        this.mock = this.value;
     },
     mounted() {
         this.registerEventHandler('mock-stop', (key) => this.onMockStop(key));
         this.viewerMode = this.mock.options.encoding || 'hex';
-        if ( undefined != this.$store.getters.mocks[this.mock.id] ) {
-            this.mocker = this.$store.getters.mocks[this.mock.id];
-            this.registerMockerEventHandlers();
+        if ( null !== this.service ) {
+            this.serviceEventOnAll();
             this.activeClientAutomatically();
         }
     },
     beforeDestroy() {
         this.unregisterAllEventHandlers();
-        if ( null != this.mocker ) {
-            this.unregisterMockerEventHandlers();
+        if ( null != this.service ) {
+            this.serviceEventOffAll();
         }
     },
     methods : {
         /**
-         * start mocker, 
-         * this function would be called by parent component
-         * @public
+         * register mocker event handlers to mocker
          */
-        async start() {
-            this.mocker = new MockService(this.mock);
-            this.registerMockerEventHandlers();
-            await this.mocker.start();
-        },
-
-        /**
-         * stop mocker, 
-         * this function would be called by parent component
-         * @public
-         */
-        async stop() {
-            this.unregisterMockerEventHandlers();
-            await this.mocker.stop();
-        },
-
-        /**
-         * enable mocker setting
-         * @public
-         */
-        setting() {
-            this.$refs.setting.open();
-        },
-
-        /**
-         * get mocker instance
-         * @returns {Mocker}
-         */
-        getMocker() {
-            return this.mocker;
+        serviceEventOnAll() {
+            this.serviceEventOn('client-new', client => this.onClientNew(client));
+            this.serviceEventOn('client-data', (client,item) => this.onClientData(client,item));
+            this.serviceEventOn('client-data-write', (client,item) => this.onClientData(client,item));
+            this.serviceEventOn('client-close', client => this.onClientClose(client));
         },
 
         /**
          * get operation menu items
+         * @override
          * @returns {Array<Object>}
          */
         getExtenActions() {
@@ -252,6 +204,30 @@ export default {
         },
         
         /**
+         * start mocker, 
+         * this function would be called by parent component
+         * @public
+         * @override
+         */
+        async start() {
+            this.service = new MockService(this.mock);
+            this.serviceEventOnAll();
+            await this.service.start();
+        },
+
+        /**
+         * stop mocker, 
+         * this function would be called by parent component
+         * @public
+         * @override
+         */
+        async stop() {
+            this.activeClientKey = null;
+            this.serviceEventOffAll();
+            await this.service.stop();
+        },
+
+        /**
          * copy ws url to clipboard
          */
         async executeExtenActionCopy() {
@@ -259,41 +235,6 @@ export default {
             let url = `${options.protocol}://${options.host}:${options.port}/${options.path}`;
             await navigator.clipboard.writeText(url);
             this.$message.info(this.$t('mock.mockers.websocket.urlCopySuccess'))
-        },
-
-        /**
-         * register mocker event handlers to mocker
-         */
-        registerMockerEventHandlers() {
-            this.mockerEventHandlers['client-new'] = client => this.onClientNew(client);
-            this.mockerEventHandlers['client-data'] = client => this.onClientData(client);
-            this.mockerEventHandlers['client-data-write'] = client => this.onClientData(client);
-            this.mockerEventHandlers['client-close'] = client => this.onClientClose(client);
-            this.mocker.on('client-new', this.mockerEventHandlers['client-new']);
-            this.mocker.on('client-data', this.mockerEventHandlers['client-data']);
-            this.mocker.on('client-data-write', this.mockerEventHandlers['client-data-write']);
-            this.mocker.on('client-close', this.mockerEventHandlers['client-close']);
-        },
- 
-        /**
-         * unregister mocker event handlers
-         */
-        unregisterMockerEventHandlers() {
-            this.mocker.off('client-new', this.mockerEventHandlers['client-new']);
-            this.mocker.off('client-data', this.mockerEventHandlers['client-data']);
-            this.mocker.off('client-data-write', this.mockerEventHandlers['client-data-write']);
-            this.mocker.off('client-close', this.mockerEventHandlers['client-close']);
-        },
-
-        /**
-         * event handler on mock stopped.
-         * @param {String} key
-         */
-        onMockStop( key ) {
-            if ( key != this.mock.id ) {
-                return ;
-            }
-            this.mocker = null;
         },
 
         /**
@@ -308,20 +249,36 @@ export default {
         },
 
         /**
+         * event handler on client receive data
+         */
+        onClientData( client, item ) {
+            let viewer = this.$refs[`dataEntryListViewer_${client.key}`][0];
+            viewer.entryItemPush(item);
+            this.$forceUpdate();
+        },
+
+        /**
+         * event handler on mock stopped.
+         * @param {String} key
+         */
+        onMockStop( key ) {
+            if ( key != this.mock.id ) {
+                return ;
+            }
+            this.service = null;
+        },
+
+        /**
          * event handler on manual send button clicked.
          * @param {Object} content
          */
         async actionContentSend( content ) {
             try {
-                await this.mocker.clients[this.activeClientKey].send(content);
+                await this.service.clients[this.activeClientKey].send(content);
             } catch ( e ) {
                 this.$message.error(this.$t('mock.responseFailed',[e.message]));
                 return ;
             }
-            
-            let viewer = this.$refs[`dataEntryListViewer_${this.activeClientKey}`][0];
-            viewer.$forceUpdate();
-            this.$nextTick(() => viewer.scrollToBottom());
         },
 
         /**
@@ -359,16 +316,6 @@ export default {
         },
 
         /**
-         * event handler on client receive data
-         */
-        onClientData( client ) {
-            let viewer = this.$refs[`dataEntryListViewer_${client.key}`][0];
-            viewer.$forceUpdate();
-            this.$forceUpdate();
-            this.$nextTick(() => viewer.scrollToBottom());
-        },
-
-        /**
          * disconnect client by given key
          * @param {String} clientKey
          */
@@ -377,7 +324,7 @@ export default {
             this.$confirm({
                 title: this.$t('mock.mockers.websocket.clientDisconnectConfirm'),
                 onOk() {
-                    $this.mocker.clients[clientKey].close();
+                    $this.service.clients[clientKey].close();
                     $this.$forceUpdate();
                 },
                 okText : this.$t('button.ok'),
@@ -390,10 +337,10 @@ export default {
          * @param {String} clientKey
          */
         actionClientRemove(clientKey) {
-            let client = this.mocker.clients[clientKey];
+            let client = this.service.clients[clientKey];
             if ( !client.getIsConnected() ) {
                 this.activeClientKey = null;
-                delete this.mocker.clients[clientKey];
+                delete this.service.clients[clientKey];
                 this.activeClientAutomatically();
                 this.$forceUpdate();
                 return ;
@@ -403,8 +350,8 @@ export default {
             this.$confirm({
                 title: this.$t('mock.mockers.websocket.clientRemoveByNotDisconnected'),
                 onOk() {
-                    $this.mocker.clients[clientKey].close();
-                    delete $this.mocker.clients[clientKey];
+                    $this.service.clients[clientKey].close();
+                    delete $this.service.clients[clientKey];
                     $this.activeClientKey = null;
                     $this.activeClientAutomatically();
                     $this.$forceUpdate();
@@ -421,9 +368,9 @@ export default {
             if ( null != this.activeClientKey ) {
                 return ;
             }
-            let clients = Object.keys(this.mocker.clients);
+            let clients = Object.keys(this.service.clients);
             if ( 0 < clients.length ) {
-                this.activeClientKey = this.mocker.clients[clients[0]].key;
+                this.activeClientKey = this.service.clients[clients[0]].key;
             }
         }
     },

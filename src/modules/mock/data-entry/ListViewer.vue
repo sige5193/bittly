@@ -40,11 +40,6 @@ export default {
     },
     props : {
         /**
-         * list of entries
-         * @property {Array<Object>}
-         */
-        entries : {},
-        /**
          * name of viewer mode
          * @protected {String}
          */
@@ -54,6 +49,15 @@ export default {
          * @protected {Object}
          */
         filter : {},
+    },
+    data() {
+        return {
+            /**
+             * list of entries
+             * @property {Array<Object>}
+             */
+            entries : [],
+        };
     },
     computed : {
         /**
@@ -94,12 +98,14 @@ export default {
     },
     methods : {
         /**
-         * scroll to bottom
-         * @public
+         * push entry item to entry list.
+         * @param {Object} item
          */
-        scrollToBottom() {
+        async entryItemPush( item ) {
+            this.entries.push(item);
+            await this.$nextTick();
             let listContainer = this.$refs.dataEntryList;
-            this.$nextTick(() => listContainer.scrollTop = listContainer.scrollHeight);
+            listContainer.scrollTop = listContainer.scrollHeight;
         },
 
         /**

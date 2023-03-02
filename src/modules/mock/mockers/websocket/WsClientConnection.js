@@ -95,7 +95,7 @@ export default class WsClientConnection {
         }
         entry.name = window.app.$t('mock.response.match.entryName',[names.join('; ')]);
         this.dataEntries.push(entry);
-        this.mocker.trigger('client-data', this);
+        this.mocker.trigger('client-data', this, entry);
         await this.sendContentsByMatchedRules(rules);
     }
 
@@ -132,7 +132,8 @@ export default class WsClientConnection {
         entry.data = generator.generate(entry);
         this.dataEntries.push(entry);
         this.dataSendSize += entry.data.length;
-
+        this.mocker.trigger('client-data-write', this, entry);
+        
         let data = entry.data;
         if ( 'text' === entry.mode ) {
             data = data.toString();
