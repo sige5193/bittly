@@ -1,5 +1,17 @@
 class Formatter {
     /**
+     * 配置 Vue
+     */
+    static setupVue( vue ) {
+        vue.prototype.$format = ( value, formatter, options={} ) => {
+            let handler = 'as' + formatter;
+            return Formatter[handler](value, options);
+        };
+    }
+
+
+
+    /**
      * @param {*} time 
      */
     static asDurationMS( time ) {
