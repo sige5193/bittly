@@ -122,6 +122,13 @@ export default {
         },
 
         /**
+         * clear all entry items
+         */
+        entryItemsClear() {
+            this.entries = [];
+        },
+
+        /**
          * format time as time with ms
          * @returns {String}
          */

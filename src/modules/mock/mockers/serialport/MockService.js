@@ -98,7 +98,8 @@ export default class Mocker extends MockServiceBase {
         entry.dir = 'send';
         entry.data = generator.generate(entry);
         this.dataEntries.push(entry);
-        
+        this.eventManager.trigger('send', entry);
+
         await this.serialportWrite(entry.data);
     }
 
@@ -197,6 +198,7 @@ export default class Mocker extends MockServiceBase {
             entry.name = window.app.$t('mock.response.match.entryNameNotMatch');
         }
         this.dataEntries.push(entry);
+        this.eventManager.trigger('receive', entry);
 
         await this.sendContentsByMatchedRules(rules);
     }

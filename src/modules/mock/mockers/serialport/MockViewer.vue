@@ -32,18 +32,18 @@
         <a-col :span="12" class="text-right">
           <a-input size="small" style="width:120px;" class="mr-1" disabled 
             :addon-before="$t('mock.dataReceiveSize')" 
-            :value="null == mocker ? 0 : formatAsFileSize(mocker.dataReceiveSize)" 
+            :value="null == service ? 0 : $format(service.dataReceiveSize,'FileSize')" 
           />
           <a-input size="small" style="width:120px;" class="mr-1" disabled 
             :addon-before="$t('mock.dataSendSize')" 
-            :value="null == mocker ? 0 : formatAsFileSize(mocker.dataSendSize)" 
+            :value="null == service ? 0 : $format(service.dataSendSize,'FileSize')" 
           />
         </a-col>
       </a-row>
       <!-- data entries -->
       <data-entry-list-viewer ref="dataEntryListViewer" class="flex-grow"
         :mode="viewerMode"
-        :entries="null !== mocker ? mocker.dataEntries : []"
+        :init-entries="null !== service ? service.dataEntries : []"
         :filter="mock.options.filter"
       />
     </div>
@@ -95,7 +95,6 @@ import ResponseManualEditor from '../../response/manual/Editor.vue'
 import ResponseMatchRuleEditor from '../../response/match/Editor.vue'
 import ResponseSnippetEditor from '../../response/snippet/Editor.vue'
 import StatusEditor from '../../status/Editor.vue'
-import Formatter from '../../../../utils/Formatter.js'
 import Seperator from '../../../../components/Seperator.vue'
 import MockViewerBase from '../MockViewerBase.js'
 import FilterSetting from '../../data-entry/FilterSetting.vue'
@@ -112,25 +111,8 @@ export default {
         'response-manual-editor' : ResponseManualEditor,
         'filter-setting' : FilterSetting,
     },
-    props : {
-        /**
-         * instance of mock module
-         * @property {MdbMock}
-         */
-        value : {type:Object},
-    },
     data () {
         return {
-            /**
-             * instance of mock model
-             * @property {MdbMock}
-             */
-            mock : null,
-            /**
-             * instance of mock service
-             * @property {Mocker}
-             */
-            mocker : null,
             /**
              * name of viewer mode
              * @property {String}
@@ -143,20 +125,58 @@ export default {
             dataEntryViewerHeight : 300,
         };
     },
-    created() {
-        this.mock = this.value;
-    },
     mounted() {
         this.viewerMode = this.mock.options.encoding || 'hex';
         this.registerEventHandler('mock-stop', (key) => this.onMockStop(key));
-        if ( undefined != this.$store.getters.mocks[this.mock.id] ) {
-            this.mocker = this.$store.getters.mocks[this.mock.id];
+        if ( null != this.service ) {
+            this.serviceEventOnAll();
         }
     },
     beforeDestroy() {
         this.unregisterAllEventHandlers();
+        this.serviceEventOffAll();
     },
     methods : {
+        /**
+         * register all event handler to service
+         */
+        serviceEventOnAll() {
+            this.serviceEventOn('receive', entry => this.handleOnReceive(entry));
+            this.serviceEventOn('send', entry => this.handleOnSend(entry));
+        },
+
+        /**
+         * @param {Object} entry
+         */
+        handleOnReceive(entry) {
+            this.$refs.dataEntryListViewer.entryItemPush(entry);
+        },
+
+        /**
+         * @param {Object} entry
+         */
+        handleOnSend(entry) {
+            this.$refs.dataEntryListViewer.entryItemPush(entry);
+        },
+
+        /**
+         * event handler on manual send button clicked.
+         * @param {Object} content
+         */
+        async actionContentSend( content ) {
+            if ( null === this.service ) {
+                this.$message.error(this.$t('mock.mockerNotStarted'));
+                return ;
+            }
+
+            try {
+                await this.service.send(content);
+            } catch ( e ) {
+                this.$message.error(this.$t('mock.responseFailed',[e.message]));
+                return ;
+            }
+        },
+        
         /**
          * event handler on mock started
          * @param {Object} mocker
@@ -177,59 +197,25 @@ export default {
             if ( key != this.mock.id ) {
                 return ;
             }
-            this.mocker = null;
-        },
-
-        /**
-         * enable mocker setting
-         * @public
-         */
-        setting() {
-            this.$refs.setting.open();
+            this.serviceEventOffAll();
+            this.service = null;
         },
 
         /**
          * start mocker
          */
         async start() {
-            this.mocker = new Mocker(this.mock);
-            await this.mocker.start();
+            this.$refs.dataEntryListViewer.entryItemsClear();
+            this.service = new Mocker(this.mock);
+            this.serviceEventOnAll();
+            await this.service.start();
         },
 
         /**
          * stop mocker
          */
         async stop() {
-            await this.mocker.stop();
-        },
-
-        /**
-         * get mocker instance
-         * @returns {Mocker}
-         */
-        getMocker() {
-            return this.mocker;
-        },
-
-        /**
-         * event handler on manual send button clicked.
-         * @param {Object} content
-         */
-        async actionContentSend( content ) {
-            if ( null === this.mocker ) {
-                this.$message.error(this.$t('mock.mockerNotStarted'));
-                return ;
-            }
-
-            try {
-                await this.mocker.send(content);
-            } catch ( e ) {
-                this.$message.error(this.$t('mock.responseFailed',[e.message]));
-                return ;
-            }
-            
-            this.$forceUpdate();
-            this.$refs.dataEntryListViewer.scrollToBottom();
+            await this.service.stop();
         },
 
         /**
@@ -238,14 +224,6 @@ export default {
         async actionEditorOptionChange() {
             await this.mock.save();
             this.$forceUpdate();
-        },
-
-        /**
-         * format number as file size
-         * @returns {Number}
-         */
-        formatAsFileSize( size ) {
-            return Formatter.asFileSize(size);
         },
 
         /**

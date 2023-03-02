@@ -58,6 +58,9 @@ export default {
          * turn off all event handlers for event service
          */
         serviceEventOffAll() {
+            if ( null === this.service ) {
+                return ;
+            }
             for ( let eventName in this.serviceEventHandlers ) {
                 let callback = this.serviceEventHandlers[eventName];
                 this.service.off(eventName, callback);
