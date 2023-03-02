@@ -53,7 +53,7 @@ export default {
          * list of entries
          * @property {Array<Object>}
          */
-        initEntries : [],
+        initEntries : {},
     },
     data() {
         return {
@@ -112,6 +112,9 @@ export default {
          * @param {Object} item
          */
         async entryItemPush( item ) {
+            if ( -1 != this.entries.indexOf(item) ) {
+                return ;
+            }
             this.entries.push(item);
             await this.$nextTick();
             let listContainer = this.$refs.dataEntryList;

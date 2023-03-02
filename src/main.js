@@ -13,6 +13,7 @@ import VueThermometer from 'vuejs-thermometer'
 import BittlyApiClient from './utils/BittlyApiClient';
 import Logger from './utils/Logger.js'
 import Environment from './environments/Environment.js';
+import Formatter from './utils/Formatter';
 
 /** 
  * setup env 
@@ -50,6 +51,7 @@ Vue.use(VueThermometer)
 Logger.setupVue(Vue);
 Dictionary.setupVue(Vue);
 BittlyApiClient.setupVue(Vue);
+Formatter.setupVue(Vue);
 window.app = new Vue({
     store : new Vuex.Store(Store),
     i18n,

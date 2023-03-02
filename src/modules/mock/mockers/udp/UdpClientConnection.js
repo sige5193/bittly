@@ -73,7 +73,7 @@ export default class UdpClientConnection {
         }
         entry.name = window.app.$t('mock.response.match.entryName',[names.join('; ')]);
         this.dataEntries.push(entry);
-        this.mocker.trigger('client-data', this);
+        this.mocker.trigger('client-data', this, entry);
         await this.sendContentsByMatchedRules(rules);
     }
 
@@ -114,12 +114,13 @@ export default class UdpClientConnection {
         let $this = this;
         let data = entry.data;
         return new Promise((resolve, reject) => {
-            this.mocker.server.send(data, 0, data.length, this.socket.port, this.socket.address, err => {
+            $this.mocker.server.send(data, 0, data.length, $this.socket.port, $this.socket.address, err => {
                 if ( null !== err ) {
                     return reject(err);
                 }
                 let logData = ('hex'===$this.mocker.options.encoding) ? data.toString('hex') : data.toString();
-                this.mocker.log(`[client ${$this.key}] (send ${$this.mocker.options.encoding}) : `, logData);
+                $this.mocker.log(`[client ${$this.key}] (send ${$this.mocker.options.encoding}) : `, logData);
+                $this.mocker.trigger('client-data', $this, entry);
                 resolve();
             });
         });
