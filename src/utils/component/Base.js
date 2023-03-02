@@ -61,6 +61,23 @@ export default {
                 title: this.$t('app.environmentNotSupportAction'),
                 okText : this.$t('button.ok'),
             });
+        },
+
+        /**
+         * @param {*} title 
+         * @returns {Promise<Boolean>}
+         */
+        confirm( title ) {
+            let $this = this;
+            return new Promise(resolve => {
+                $this.$confirm({
+                    title: title,
+                    okText : this.$t('button.ok'),
+                    cancelText : this.$t('button.cancel'),
+                    onOk : () => resolve(true),
+                    onCancel : () => resolve(false),
+                });
+            });
         }
     }
 }

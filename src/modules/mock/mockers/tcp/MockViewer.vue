@@ -2,7 +2,7 @@
   <div class="d-flex flex-dir-column h-100">
     <div class="d-flex flex-dir-column" :style="{height:`${dataEntryViewerHeight}px`}">
       <!-- not client -->
-      <div class="content-center" v-if="null === mocker || 0 === Object.keys(mocker.clients).length">
+      <div class="content-center" v-if="null === service || 0 === Object.keys(service.clients).length">
         <a-empty :description="false" />
       </div>
       
@@ -12,7 +12,7 @@
         v-model="activeClientKey"
       >
         <!--- tab content -->
-        <a-tab-pane v-for="client in mocker.clients" :key="client.key" 
+        <a-tab-pane v-for="client in service.clients" :key="client.key" 
           class="d-flex flex-dir-column"
           :tab="client.key" 
           :forceRender="true"
@@ -56,11 +56,11 @@
               >{{$t('mock.mockers.tcp.disconnect')}}</a-button>
               <a-input size="small" style="width:120px;" class="mr-1" disabled 
                 :addon-before="$t('mock.dataReceiveSize')" 
-                :value="formatAsFileSize(client.dataReceiveSize)" 
+                :value="$format(client.dataReceiveSize,'FileSize')" 
               />
               <a-input size="small" style="width:120px;" class="mr-1" disabled 
                 :addon-before="$t('mock.dataSendSize')" 
-                :value="formatAsFileSize(client.dataSendSize)" 
+                :value="$format(client.dataSendSize,'FileSize')" 
               />
             </a-col>
           </a-row>
@@ -68,7 +68,7 @@
           <!-- data entries -->
           <data-entry-list-viewer :ref="`dataEntryListViewer_${client.key}`" class="flex-grow"
             :mode="viewerMode"
-            :entries="client.dataEntries"
+            :init-entries="client.dataEntries"
             :filter="mock.options.filter"
           />
         </a-tab-pane>
@@ -139,25 +139,8 @@ export default {
         'response-manual-editor' : ResponseManualEditor,
         'filter-setting' : FilterSetting,
     },
-    props : {
-        /**
-         * instance of mock module
-         * @property {MdbMock}
-         */
-        value : {type:Object},
-    },
     data () {
         return {
-            /**
-             * instance of mock model
-             * @property {MdbMock}
-             */
-            mock : null,
-            /**
-             * instance of mock service
-             * @property {Mocker}
-             */
-            mocker : null,
             /**
              * name of viewer mode
              * @property {String}
@@ -173,38 +156,69 @@ export default {
              * @property {String}
              */
             activeClientKey : null,
-            /**
-             * map to mocker event handelrs
-             * @property {Object<String:Object>}
-             */
-            mockerEventHandlers : {},
         };
-    },
-    created() {
-        this.mock = this.value;
     },
     mounted() {
         this.viewerMode = this.mock.options.encoding || 'hex';
         this.registerEventHandler('mock-stop', (key) => this.onMockStop(key));
-        if ( undefined != this.$store.getters.mocks[this.mock.id] ) {
-            this.mocker = this.$store.getters.mocks[this.mock.id];
-            this.addEventListenersToMocker();
-            let clientKeys = Object.keys(this.mocker.clients);
+        if ( null != this.service ) {
+            this.serviceEventOnAll();
+            let clientKeys = Object.keys(this.service.clients);
             this.activeClientKey = clientKeys[0] || null;
         }
     },
     beforeDestroy() {
-        if ( null !== this.mocker ) {
-            this.mocker.off('new-client', this.mockerEventHandlers['new-client']);
-            this.mocker.off('client-data', this.mockerEventHandlers['client-data']);
-            this.mocker.off('client-data-write', this.mockerEventHandlers['client-data-write']);
-            this.mocker.off('client-close', this.mockerEventHandlers['client-close']);
-            this.mocker.off('client-error', this.mockerEventHandlers['client-error']);
-            this.mocker.off('error', this.mockerEventHandlers['error']);
-        }
+        this.serviceEventOffAll();
         this.unregisterAllEventHandlers();
     },
     methods : {
+        /**
+         * add event listeners to mocker
+         */
+        serviceEventOnAll() {
+            this.serviceEventOn('client-new', client => this.handleClientNew(client));
+            this.serviceEventOn('client-data', (client,item) => this.handleClientData(client,item));
+            this.serviceEventOn('client-data-write', (client,item) => this.handleClientData(client,item));
+            this.serviceEventOn('client-close', () => this.$forceUpdate());
+            this.serviceEventOn('client-error', (client, err) => this.handleOnClientError(client, err));
+            this.serviceEventOn('error', err => this.handleOnServerError(err));
+        },
+
+        /** 
+         * start mocker
+         */
+        async start() {
+            this.activeClientKey = null;
+            this.service = new Mocker(this.mock);
+            this.serviceEventOnAll();
+            await this.service.start();
+        },
+
+        /**
+         * stop mocker
+         */
+        async stop() {
+            await this.service.stop();
+        },
+
+        /**
+         * event handler on new client connected.
+         */
+        handleClientNew(client) {
+            if ( null === this.activeClientKey ) {
+                this.activeClientKey = client.key;
+            }
+            this.$forceUpdate();
+        },
+
+        /**
+         * event handler on client receive data
+         */
+        async handleClientData( client,item ) {
+            let viewer = this.$refs[`dataEntryListViewer_${client.key}`][0];
+            viewer.entryItemPush(item);
+        },
+        
         /**
          * event handler on mock stopped.
          * @param {String} key
@@ -216,73 +230,16 @@ export default {
         },
 
         /**
-         * enable mocker setting
-         * @public
-         */
-        setting() {
-            this.$refs.setting.open();
-        },
-
-        /** 
-         * start mocker
-         */
-        async start() {
-            this.mocker = new Mocker(this.mock);
-            this.activeClientKey = null;
-            this.addEventListenersToMocker();
-            await this.mocker.start();
-        },
-
-        /**
-         * add event listeners to mocker
-         */
-        addEventListenersToMocker() {
-            this.mockerEventHandlers['new-client'] = client => this.onNewClient(client);
-            this.mockerEventHandlers['client-data'] = client => this.onClientData(client);
-            this.mockerEventHandlers['client-data-write'] = client => this.onClientData(client);
-            this.mockerEventHandlers['client-close'] = () => this.$forceUpdate();
-            this.mockerEventHandlers['client-error'] = (client, err) => this.handleOnClientError(client, err);
-            this.mockerEventHandlers['error'] = err => this.handleOnServerError(err);
-            
-            this.mocker.on('new-client', this.mockerEventHandlers['new-client']);
-            this.mocker.on('client-data', this.mockerEventHandlers['client-data']);
-            this.mocker.on('client-data-write', this.mockerEventHandlers['client-data-write']);
-            this.mocker.on('client-close', this.mockerEventHandlers['client-close']);
-            this.mocker.on('client-error', this.mockerEventHandlers['client-error']);
-            this.mocker.on('error', this.mockerEventHandlers['error']);
-        },
-
-        /**
-         * stop mocker
-         */
-        async stop() {
-            await this.mocker.stop();
-        },
-
-        /**
-         * get mocker instance
-         * @returns {Mocker}
-         */
-        getMocker() {
-            return this.mocker;
-        },
-
-        /**
          * event handler on manual send button clicked.
          * @param {Object} content
          */
         async actionContentSend( content ) {
             try {
-                await this.mocker.clients[this.activeClientKey].send(content);
+                await this.service.clients[this.activeClientKey].send(content);
             } catch ( e ) {
                 this.$message.error(this.$t('mock.responseFailed',[e.message]));
                 return ;
             }
-            
-            this.$forceUpdate();
-            let viewer = this.$refs[`dataEntryListViewer_${this.activeClientKey}`][0];
-            viewer.$forceUpdate();
-            this.$nextTick(() => viewer.scrollToBottom());
         },
 
         /**
@@ -291,14 +248,6 @@ export default {
         async actionEditorOptionChange() {
             await this.mock.save();
             this.$forceUpdate();
-        },
-
-        /**
-         * format number as file size
-         * @returns {Number}
-         */
-        formatAsFileSize( size ) {
-            return Formatter.asFileSize(size);
         },
 
         /**
@@ -312,65 +261,35 @@ export default {
         },
 
         /**
-         * event handler on new client connected.
-         */
-        onNewClient(client) {
-            if ( null === this.activeClientKey ) {
-                this.activeClientKey = client.key;
-            }
-            this.$forceUpdate();
-        },
-
-        /**
-         * event handler on client receive data
-         */
-        onClientData( client ) {
-            this.$forceUpdate();
-            let viewer = this.$refs[`dataEntryListViewer_${client.key}`][0];
-            viewer.$forceUpdate();
-            this.$nextTick(() => viewer.scrollToBottom());
-        },
-
-        /**
          * disconnect client by given key
          * @param {String} clientKey
          */
-        actionClientDisconnect(clientKey) {
-            let $this = this;
-            this.$confirm({
-                title: this.$t('mock.mockers.tcp.clientDisconnectConfirm'),
-                onOk() {
-                    $this.mocker.clients[clientKey].close();
-                    $this.$forceUpdate();
-                },
-                okText : this.$t('button.ok'),
-                cancelText : this.$t('button.cancel')
-            });
+        async actionClientDisconnect(clientKey) {
+            let confirmMsg = this.$t('mock.mockers.tcp.clientDisconnectConfirm');
+            if ( await this.confirm(confirmMsg) ) {
+                this.service.clients[clientKey].close();
+                this.$forceUpdate();
+            }
         },
 
         /**
          * remove client by given key
          * @param {String} clientKey
          */
-        actionClientRemove(clientKey) {
-            let client = this.mocker.clients[clientKey];
+        async actionClientRemove(clientKey) {
+            let client = this.service.clients[clientKey];
             if ( !client.getIsConnected() ) {
-                delete this.mocker.clients[clientKey];
+                delete this.service.clients[clientKey];
                 this.$forceUpdate();
                 return ;
             }
 
-            let $this = this;
-            this.$confirm({
-                title: this.$t('mock.mockers.tcp.clientRemoveByNotDisconnected'),
-                onOk() {
-                    $this.mocker.clients[clientKey].close();
-                    delete $this.mocker.clients[clientKey];
-                    $this.$forceUpdate();
-                },
-                okText : this.$t('button.ok'),
-                cancelText : this.$t('button.cancel')
-            });
+            let confirmMsg = this.$t('mock.mockers.tcp.clientRemoveByNotDisconnected');
+            if ( await this.confirm(confirmMsg) ) {
+                this.service.clients[clientKey].close();
+                delete this.service.clients[clientKey];
+                this.$forceUpdate();
+            }
         },
 
         /**

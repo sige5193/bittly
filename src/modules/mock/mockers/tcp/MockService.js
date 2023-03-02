@@ -84,7 +84,7 @@ export default class Mocker extends MockServiceBase {
     tcpServerHandleNewClient(socket) {
         let client = new TcpClientConnection(this, socket);
         this.clients[client.key] = client;
-        this.eventManager.trigger('new-client', client);
+        this.eventManager.trigger('client-new', client);
     }
 
     /**

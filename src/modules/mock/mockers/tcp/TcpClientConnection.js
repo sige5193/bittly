@@ -111,7 +111,7 @@ export default class TcpClientConnection {
             entry.name = window.app.$t('mock.response.match.entryNameNotMatch');
         }
         this.dataEntries.push(entry);
-        this.mocker.trigger('client-data', this);
+        this.mocker.trigger('client-data', this, entry);
         await this.sendContentsByMatchedRules(rules);
     }
 
@@ -153,9 +153,9 @@ export default class TcpClientConnection {
         let $this = this;
         return new Promise(( resolve ) => {
             $this.socket.write(entry.data, () => {
-                $this.mocker.trigger('client-data-write', $this);
                 let logData = ('hex'===$this.mocker.options.encoding) ? data.toString('hex') : data.toString();
-                this.mocker.log(`[client ${$this.key}] (send ${$this.mocker.options.encoding}) : `, logData);
+                $this.mocker.log(`[client ${$this.key}] (send ${$this.mocker.options.encoding}) : `, logData);
+                $this.mocker.trigger('client-data-write', $this, entry);
                 resolve();
             });
         });
