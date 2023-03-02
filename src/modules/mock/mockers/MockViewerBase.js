@@ -58,7 +58,7 @@ export default {
          * turn off all event handlers for event service
          */
         serviceEventOffAll() {
-            for ( let eventName in this.mockServiceEventHandlers ) {
+            for ( let eventName in this.serviceEventHandlers ) {
                 let callback = this.serviceEventHandlers[eventName];
                 this.service.off(eventName, callback);
             }

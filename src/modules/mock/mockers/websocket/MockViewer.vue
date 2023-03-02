@@ -74,7 +74,7 @@
           <!-- data entries -->
           <data-entry-list-viewer :ref="`dataEntryListViewer_${client.key}`" class="flex-grow"
             :mode="viewerMode"
-            :entries="client.dataEntries"
+            :init-entries="client.dataEntries"
             :filter="mock.options.filter"
           />
         </a-tab-pane>

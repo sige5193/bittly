@@ -49,6 +49,11 @@ export default {
          * @protected {Object}
          */
         filter : {},
+        /**
+         * list of entries
+         * @property {Array<Object>}
+         */
+        initEntries : [],
     },
     data() {
         return {
@@ -58,6 +63,11 @@ export default {
              */
             entries : [],
         };
+    },
+    created() {
+        for ( let i=0; i<this.initEntries.length; i++ ) {
+            this.entries.push(this.initEntries[i]);
+        }
     },
     computed : {
         /**
