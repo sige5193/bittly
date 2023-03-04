@@ -115,6 +115,10 @@ export default {
          */
         getCompareDataForm() {
             let source = [];
+            if ( undefined === this.comparator.expectData ) {
+                return source;
+            }
+            
             for ( let i=0; i<this.comparator.expectData.length; i++ ) {
                 let item = MyObject.copy(this.comparator.expectData[i]);
                 item.key = `R_${i}`;
