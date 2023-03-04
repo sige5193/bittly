@@ -277,7 +277,10 @@ export default {
                 scale += scaleStep * direction;
             }
             scale = MyNumber.round(scale / scaleStepBase, 5);
-            
+            if ( 0 === scale ) {
+                return ;
+            }
+
             // calculate offset
             let offset = plot.gOffsetY;
             if ( ZOOM_OUT === direction ) {
@@ -329,7 +332,10 @@ export default {
                 scale += scaleStep * direction;
             }
             scale = MyNumber.round(scale / scaleStepBase, 5);
-            
+            if ( 0 === scale ) {
+                return ;
+            }
+
             // calculate offset
             let offset = plot.gOffsetX;
             if ( ZOOM_OUT === direction ) {
