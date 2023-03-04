@@ -120,7 +120,7 @@ export default class BtHandlerElectronBluetoothBle {
         if ( 0 !== data.length ) {
             try {
                 this.com.log(`ble characteristic write : `, data);
-                await this.characteristic.writeWithoutResponse(data);
+                await this.characteristic.writeValueWithoutResponse(data);
             } catch ( e ) {
                 this.device.gatt.disconnect();
                 throw Error(this.com.$t('writeFailed',[e.message]));
