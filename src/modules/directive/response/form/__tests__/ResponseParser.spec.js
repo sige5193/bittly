@@ -32,7 +32,7 @@ describe('@/modules/directive/response/form/ResponseParser.js', () => {
 
         expect(parser.getValueByIndex(0)).toBe('30 31');
         expect(parser.getValueByIndex(2)).toBe('3.3792315273469386e-57');
-        expect(parser.getValueByIndex(3)).toBe('01 3D 3E 3F 40 41 42 43');
+        expect(parser.getValueByIndex(3)).toBe('13D3E3F40414243');
         expect(parser.getValueByIndex(4)).toBe('72623859790382856');
         expect(parser.getValueByIndex(5)).toBe('a');
         expect(parser.getValueByIndex(6)).toBe('');
@@ -75,7 +75,7 @@ describe('@/modules/directive/response/form/ResponseParser.js', () => {
         parser = new ResponseParser(directive, new Uint8Array([0x48, 0x49,0x01]), false);
         parser.parseToLast();
         values = parser.getValues();
-        expect(values[0]).toBe('01');
+        expect(values[0]).toBe('1');
         expect(values[1]).toBe('');
 
         // match two and get the last
@@ -87,8 +87,8 @@ describe('@/modules/directive/response/form/ResponseParser.js', () => {
         parser = new ResponseParser(directive, new Uint8Array([0x48, 0x49,0x01,0x02]), false);
         parser.parseToLast();
         values = parser.getValues();
-        expect(values[0]).toBe('01');
-        expect(values[1]).toBe('02');
+        expect(values[0]).toBe('1');
+        expect(values[1]).toBe('2');
 
         // match none
         directive = new MdbDirective();

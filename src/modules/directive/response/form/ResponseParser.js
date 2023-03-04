@@ -281,19 +281,6 @@ export default class ResponseParser {
 
         let radixMap = {bin:2,oct:8,dec:10,hex:16};
         value = value.toString(radixMap[field.format]).toUpperCase();
-        
-        if ( 'hex' == field.format ) {
-            if ( 0 != value.length%2 ) {
-                value = `0${value}`;
-            }
-            value = value.padStart(field.length * 2,'0');
-            value = value.replace(/../g, item => `${item} `);
-            value = value.trim();
-        } else if ( 'bin' === field.format ) {
-            value = value.padStart(field.length * 8, '0');
-            value = value.replace(/..../g, item => `${item} `);
-            value = value.trim();
-        }
         this.values.push(value);
         return index + dataTypeLength;
     }

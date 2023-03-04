@@ -34,7 +34,7 @@
         </td>
         <td class="pl-1 pr-1 pt-1 data-cell" style="width: 95%;">
           <div 
-            v-for="(attr,index) in formatResponseValues(rowValues)" :key="index" 
+            v-for="(attr,index) in formatTableRowResponseValues(rowValues)" :key="index" 
             class="d-inline-block border mr-1 pr-1 mb-1 rounded"
           >
             <div class="d-inline-block bg-secondary rounded-left pl-1 pr-1 text-white">{{attr.name}}</div>
@@ -130,9 +130,8 @@
               <a-select-option value="hex">HEX</a-select-option>
             </a-select>
 
-            <a-input size="small" class="border-none ml-1"
-              disabled 
-              v-model="values[index]"
+            <a-input size="small" class="border-none ml-1" disabled 
+              :value="formatResponseFormValue(index)"
               :ref="`inputValueUnsigned_${index}`"
             />
           </div>
@@ -475,7 +474,7 @@ export default {
         /**
          * refresh form value
          */
-        updateFormValues() {
+        async updateFormValues() {
             this.values = [];
             if ( null === this.parser ) {
                 this.parser = new ResponseParser(this.directive, this.content, false);
@@ -495,12 +494,45 @@ export default {
                 this.values = this.parser.getValues();
                 this.valuesList = [this.values];
             }
-            this.$forceUpdate();
             
+            this.$forceUpdate();
             if ( 'table' == this.mode ) {
+                await this.$nextTick();
                 let viewerTableContainer = this.$refs.viewerTableContainer;
-                this.$nextTick(() => viewerTableContainer.scrollTop = viewerTableContainer.scrollHeight);
+                viewerTableContainer.scrollTop = viewerTableContainer.scrollHeight;
             }
+        },
+
+        /**
+         * format form value by given index
+         * @param {Number} index
+         * @returns {String}
+         */
+        formatResponseFormValue(index) {
+            let field = this.fields[index];
+            let value = this.values[index];
+            if ( undefined === value ) {
+                return '';
+            }
+
+            // unsigned
+            if ( true === this.$dict.voption('DIRECTIVE_PARAM_DATATYPE',field.type,'unsigned', false) ) {
+                if ( 'hex' == field.format ) {
+                    value = value.padStart(field.length * 2,'0');
+                    value = value.replace(/../g, item => `${item} `);
+                } else if ( 'oct' === field.format ) {
+                    value = value.padStart(field.length * 3, '0');
+                    value = value.replace(/.../g, item => `${item} `);
+                } else if ( 'bin' === field.format ) {
+                    value = value.padStart(field.length * 8, '0');
+                    value = value.replace(/..../g, item => `${item} `);
+                } else if ( 'dec' === field.format ) {
+                    value = Number(value).toLocaleString('en-US');
+                }
+                value = value.trim();
+            }
+
+            return value;
         },
 
         /**
@@ -508,7 +540,7 @@ export default {
          * @param {Object} rowValues
          * @returns {Array}
          */
-        formatResponseValues( rowValues ) {
+        formatTableRowResponseValues( rowValues ) {
             let attributes = [];
             let prefixMap = {bin:'0b',oct:'0o',dec:'',hex:'0x'};
             for ( let i=0; i<this.fields.length-1; i++ ) {
