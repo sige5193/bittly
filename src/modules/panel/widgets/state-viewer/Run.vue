@@ -54,10 +54,20 @@ export default {
          */
         updateWidget() {
             this.stateName = this.$t('panel.widgets.stateViewer.valueNameUnkown');
+            let value = this.value;
+            if ( 'number' === this.widget.valueDataType ) {
+                value = parseInt(value);
+            }
+            
             for ( let i=0; i<this.widget.values.length; i++ ) {
                 let item = this.widget.values[i];
-                if ( item.value == this.value ) {
+                let itemValue = item.value;
+                if ( 'number' === this.widget.valueDataType ) {
+                    itemValue = parseInt(itemValue);
+                }
+                if ( itemValue == value ) {
                     this.stateName = item.name;
+                    break;
                 }
             }
         }

@@ -29,6 +29,14 @@
           <a-radio-button value="small">{{$t('panel.widgets.stateViewer.sizeSmall')}}</a-radio-button>
         </a-radio-group>
       </a-form-item>
+      
+      <!-- value data type -->
+      <a-form-item :label="$t('panel.widgets.stateViewer.valueDataType')">
+        <a-radio-group ref="radioGroupSizeMode" v-model="widget.valueDataType" @change="actionForceUpdate">
+          <a-radio-button value="number">{{$t('panel.widgets.stateViewer.valueDataTypeInteger')}}</a-radio-button>
+          <a-radio-button value="string">{{$t('panel.widgets.stateViewer.valueDataTypeString')}}</a-radio-button>
+        </a-radio-group>
+      </a-form-item>
 
       <!-- options -->
       <a-form-item :label="$t('panel.widgets.stateViewer.valueList')">
@@ -67,6 +75,7 @@ export default {
             this.widget.sizeMode = 'default';
             this.widget.sizeWidth = 250;
             this.widget.values = [{name:'',value:''}];
+            this.widget.valueDataType = 'number';
         },
 
         /**
