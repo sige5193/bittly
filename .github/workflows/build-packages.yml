@@ -88,7 +88,7 @@ jobs:
           --form 'platform="win32"'
           --form 'arch="x64"'
           --form 'filename="latest.yml"'
-          --form 'packname="bittly-$env:appver-x64.exe"'
+          --form "packname=bittly-$env:appver-x64.exe"
           --form 'secret="${{secrets.SERVER_DEPLOY_SECRET}}"'
         env:
           appver: ${{steps.package-json.outputs.version}}
