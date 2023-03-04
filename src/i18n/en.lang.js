@@ -118,7 +118,6 @@ module.exports = {
             dataViewerMergeRecentlyReceiveData : 'Merge Data',
             transDataSize : 'Data Size',
         },
-        toolSerialPortServer : require('../tools/serialport-server/i18n/en.lang.js'),
         toolCalculator : {
             windowTitle : 'Calculators',
             colorRingResistanceValue : 'Color Ring Resistance Value',
@@ -164,7 +163,6 @@ module.exports = {
                 hex : 'Hex',
             },
         },
-        toolWsServer : require('../tools/ws-server/i18n/en.lang.js'),
         errorHandler : {
             title : 'Error',
             reportTip : 'Em ~~~ SO SORRY ! There is something wrong about this app, you can report this by following, I will fix it as soon as possible !  ＞﹏＜',

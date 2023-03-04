@@ -65,20 +65,6 @@ module.exports = {
             title: 'Bittly',
             chunks: ['chunk-vendors', 'chunk-common', 'index']
         },
-        toolTcpServer : {
-          entry: 'src/tools/tcp-server/index.js',
-          template: pageTemplate,
-          filename: 'tool-tcp-server.html',
-          title: 'TCP Server Tool',
-          chunks: ['chunk-vendors', 'chunk-common', 'toolTcpServer']
-        },
-        toolUdpServer : {
-            entry: 'src/tools/udp-server/index.js',
-            template: pageTemplate,
-            filename: 'tool-udp-server.html',
-            title: 'UDP Server Tool',
-            chunks: ['chunk-vendors', 'chunk-common', 'toolUdpServer']
-        },
         toolTerminal : {
             entry: 'src/tools/terminal/index.js',
             template: pageTemplate,
@@ -92,20 +78,6 @@ module.exports = {
             filename: 'tool-calculator.html',
             title: 'Calculator',
             chunks: ['chunk-vendors', 'chunk-common', 'toolCalculator']
-        },
-        toolWebSocketServer : {
-            entry: 'src/tools/ws-server/index.js',
-            template: pageTemplate,
-            filename: 'tool-ws-server.html',
-            title: 'Web Socket Server',
-            chunks: ['chunk-vendors', 'chunk-common', 'toolWebSocketServer']
-        },
-        toolSerialPortServer : {
-            entry: 'src/tools/serialport-server/index.js',
-            template: pageTemplate,
-            filename: 'tool-serialport-server.html',
-            title: 'SerialPort Server',
-            chunks: ['chunk-vendors', 'chunk-common', 'toolSerialPortServer']
         },
     },
 

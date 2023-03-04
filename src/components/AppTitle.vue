@@ -124,26 +124,6 @@ export default {
         menuInit() {
             this.menuAdd('tools', this.$t('app.menu.tool.label'));
             this.menuItemPush('tools', {
-                key:'ToolSerialportServer',
-                title:this.$t('app.menu.tool.serialportServer'),
-                action:()=>this.newWindow('/tool-serialport-server.html')
-            });
-            this.menuItemPush('tools', {
-                key:'ToolTcpServer',
-                title:this.$t('app.menu.tool.tcpServer'),
-                action:()=>this.newWindow('/tool-tcp-server.html')
-            });
-            this.menuItemPush('tools', {
-                key:'ToolUdpServer',
-                title:this.$t('app.menu.tool.udpServer'),
-                action:()=>this.newWindow('/tool-udp-server.html')
-            });
-            this.menuItemPush('tools', {
-                key:'ToolWsServer',
-                title:this.$t('app.menu.tool.wsServer'),
-                action:()=>this.newWindow('/tool-ws-server.html')
-            });
-            this.menuItemPush('tools', {
                 key:'ToolTerminal',
                 title:this.$t('app.menu.tool.terminal'),
                 action:()=>this.newWindow('/tool-terminal.html')

@@ -119,7 +119,6 @@ module.exports = {
             dataViewerMergeRecentlyReceiveData : '合并数据',
             transDataSize : '数据量',
         },
-        toolSerialPortServer : require('../tools/serialport-server/i18n/zh.lang.js'),
         toolCalculator : {
             windowTitle : '常用计算',
             colorRingResistanceValue : '色环电阻阻值计算',
@@ -165,7 +164,6 @@ module.exports = {
                 hex : 'HEX',
             },
         },
-        toolWsServer : require('../tools/ws-server/i18n/zh.lang.js'),
         errorHandler : {
             title : '运行错误',
             reportTip : '额 ~~~ 非常抱歉 ！应用貌似出了点问题，您可以通过以下方式进行反馈，我会尽快修复的  ＞﹏＜',
