@@ -47,6 +47,7 @@ import Common from '../../../utils/Common.js'
 import ProjectMixin from '../../../utils/ProjectMixin.js'
 import NodeRegistry from './node/NodeRegistry.vue'
 import WorkspaceGraph from './WorkspaceGraph.js'
+import WorkspaceGraphCanvasExt from './WorkspaceGraphCanvasExt.js'
 import {LGraphCanvas,LiteGraph} from 'litegraph.js'
 import MdbFunctionalTestcase from '../../../models/MdbFunctionalTestcase.js'
 import MyDate from '../../../utils/datatype/MyDate.js'
@@ -112,6 +113,7 @@ export default {
             };
 
             this.graphCanvas = new LGraphCanvas(this.$refs.graphCanvas, this.graph, {autoresize:true});
+            WorkspaceGraphCanvasExt.extends(this.graphCanvas);
             this.graphCanvas.background_image = false;
             this.graphCanvas.render_canvas_border = false;
             this.graphCanvas.drawBackCanvas();
