@@ -25,6 +25,7 @@ export default class QuickCallLib {
             {func:'crc24',value:'{{@crc24($1,$2,$3,$4)}}',text:$t('directive.quickCallCrc24')},
             {func:'crc32',value:'{{@crc32($1,$2,$3,$4)}}',text:$t('directive.quickCallCrc32')},
             {func:'crcjam',value:'{{@crcjam($1,$2,$3,$4)}}',text:$t('directive.quickCallCrcjam')},
+            {func:'crc32mpeg2',value:'{{@crc32mpeg2($1,$2,$3,$4)}}',text:$t('directive.quickCallCrc32mpeg2')},
             {func:'date',value:'{{@date(format)}}',text:$t('directive.quickCallDate')},
         ];
     }
@@ -158,6 +159,16 @@ export default class QuickCallLib {
      */
     crcjam( ... data ) {
         let crc = this.scriptLib.crc('crcjam', ... data);
+        return crc.toString();
+    }
+
+    /**
+     * crc32mpeg2
+     * @param {Array|Object|String} data 
+     * @returns {Number}
+     */
+    crc32mpeg2( ... data ) {
+        let crc = this.scriptLib.crc('crc32mpeg2', ... data);
         return crc.toString();
     }
 

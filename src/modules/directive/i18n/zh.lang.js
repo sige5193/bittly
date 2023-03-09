@@ -62,6 +62,7 @@ module.exports = {
     quickCallCrc24 : '<DEC> crc24($item, ...) CRC24 校验',
     quickCallCrc32 : '<DEC> crc32($item, ...) CRC32 校验',
     quickCallCrcjam : '<DEC> crcjam($item, ...) CRCJAM 校验',
+    quickCallCrc32mpeg2 : '<DEC> crc32mpeg2($item, ...) CRC MPEG 2 校验',
     quickCallDate : '<TEXT> date(format) 日期格式化',
     statusPopoverTitle : '指令状态',
     statusClear : '清空',

@@ -32,7 +32,7 @@
     "buffer": "^6.0.3",
     "bufferutil": "^4.0.7",
     "core-js": "^3.6.5",
-    "crc": "^4.1.1",
+    "crc": "^4.3.2",
     "echarts": "^5.3.2",
     "echarts-liquidfill": "^3.1.0",
     "electron-updater": "^4.6.5",
