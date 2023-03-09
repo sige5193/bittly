@@ -1,4 +1,5 @@
 import Common from '../../utils/Common.js'
+import MyString from '../../utils/datatype/MyString.js';
 export default class DataComparator {
     /**
      * @constructor
@@ -79,14 +80,19 @@ export default class DataComparator {
      * compare result with format string handler
      */
     compareText( ) {
+        if ( null === this.expectData || undefined === this.expectData ) {
+            return false;
+        }
+
         if ( this.textRegexEnable ) {
             this.matchResult = [];
             let regex = new RegExp(`^${this.expectData}$`, 'gm');
             let match = regex.exec(this.actualData);
             return null != match;
-        } else {
-            return this.expectData == this.actualData;
         }
+
+        let expect = MyString.applyNewLineStyle(this.expectData, this.executor.directive.nlstyle);
+        return expect == this.actualData;
     }
 
     /**
