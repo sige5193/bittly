@@ -176,7 +176,6 @@ export default class WorkspaceGraphCanvasExt {
                 dotY = linePart.y + (lengthPos - preLength) * linePart.direction;
             }
             
-            console.log(dotX, dotY);
             ctx.beginPath();
             ctx.arc(dotX, dotY, 5, 0, 2 * Math.PI);
             ctx.fill();
