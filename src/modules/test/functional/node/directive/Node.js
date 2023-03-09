@@ -85,7 +85,7 @@ export default class Node extends NodeBase{
      * handler on option updated
      */
     async onOptionUpdate() {
-        if ( undefined !== this.options.directiveId ) {
+        if ( !Common.isEmpty(this.options.directiveId) ) {
             this.directive = await MdbDirective.findOne(this.options.directiveId);
             this.title = `${this.$t('name')} ${this.options.title}`;
         }
