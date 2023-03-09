@@ -69,6 +69,10 @@
             {{$t(`test.editModal.comparator${record.comparator}`)}}
           </div>
         </a-table>
+        <text-viewer v-else-if="'text' ==node.options.expectResponseFormat" 
+          :show-blank-chars="true"
+          :content="getExpectTextContent()"
+        ></text-viewer>
         <pre v-else class="border rounded p-1 pre-content"
         >{{node.options.expectResponseValue}}</pre>
 
@@ -80,10 +84,11 @@
         <pre v-else-if="'hex' == node.options.expectResponseFormat"
           class="pre-content border rounded p-1"
         >{{getResponseHexContent()}}</pre>
-        <pre v-else-if="'text' == node.options.expectResponseFormat"
-          class="pre-content border rounded p-1"
-        >{{getResponseTextContent()}}</pre>
-
+        <text-viewer v-else-if="'text' ==node.options.expectResponseFormat" 
+          :show-blank-chars="true"
+          :content="getResponseTextContent()"
+        ></text-viewer>
+        
         <!-- response data comparison -->
         <h6 class="mb-4 mt-4"><strong>{{$t('test.functionalNode.Directive.comparison')}}</strong></h6>
         <a-table v-if="'form' == node.options.expectResponseFormat" bordered
@@ -136,6 +141,7 @@
     </a-drawer>
 </template>
 <script>
+import TextViewer from '../../../../../components/TextViewer.vue'
 import {LiteGraph} from 'litegraph.js'
 import NodeDirective from './Node.js'
 import Common from '../../../../../utils/Common.js'
@@ -146,8 +152,10 @@ import ParameterViewerFile from '../../../../directive/parameters/file/Viewer.vu
 import ResponseFormViewerReadOnly from '../../../../directive/response/form/ViewerReadOnly.vue'
 import NodeExecuteDirective from './Node.js'
 import MyObject from '../../../../../utils/datatype/MyObject.js'
+import MyString from '../../../../../utils/datatype/MyString'
 export default {
     components : {
+        'text-viewer' : TextViewer,
         'parameter-viewer-form' : ParameterViewerForm,
         'parameter-viewer-hex' : ParameterViewerHex,
         'parameter-viewer-text' : ParameterViewerText,
@@ -277,6 +285,17 @@ export default {
             })
         },
         
+        /**
+         * get content of expect data
+         * @returns {String}
+         */
+        getExpectTextContent() {
+            return MyString.applyNewLineStyle(
+                this.node.options.expectResponseValue,
+                this.node.directive.nlstyle
+            );
+        },
+
         /**
          * get response hex content to show actual data
          * @retruns {String}

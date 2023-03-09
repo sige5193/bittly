@@ -1,12 +1,17 @@
 <template>
-  <div class="border p-1 rounded viewer h-100 overflow-auto">
-    <pre ref="textViewer" class="p-1 content mb-0">{{content}}</pre>
-  </div>
+  <text-viewer
+    :content="content"
+    :show-blank-chars="true"
+  ></text-viewer>
 </template>
 <script>
 import Common from '@/utils/Common.js'
+import TextViewer from '../../../../components/TextViewer.vue';
 export default {
     name : 'DirectiveParameterTextViewer',
+    components : {
+        'text-viewer' : TextViewer,
+    },
     props: {
         directive : {},
         /**

@@ -34,4 +34,20 @@ export default class MyString {
         .toString(16)
         .toUpperCase();
     }
+
+    /**
+     * @param {*} content 
+     * @param {*} nlStyle 
+     * @returns 
+     */
+    static applyNewLineStyle( content, nlStyle ) {
+        content = content.replaceAll('\r\n', '\n');
+        content = content.replaceAll('\r', '\n');
+        if ( 'CRLF' == nlStyle ) {
+            content = content.replaceAll('\n', '\r\n');
+        } else if ( 'CR' == nlStyle ) {
+            content = content.replaceAll('\n', '\r');
+        }
+        return content;
+    }
 }
