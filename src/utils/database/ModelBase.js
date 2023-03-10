@@ -577,7 +577,11 @@ export default class ModelBase {
             switch ( this.attrs[key].type ) {
             case 'object' :
             case 'array' :
-                this.attrs[key].value = JSON.parse(value);
+                if ( 'string' === typeof(value) ) {
+                    this.attrs[key].value = JSON.parse(value);
+                } else {
+                    this.attrs[key].value = value;
+                }
                 break;
             default : 
                 this.attrs[key].value = value;

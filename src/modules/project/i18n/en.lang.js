@@ -67,4 +67,13 @@ module.exports = {
     downloadUnableToGetProjectData : 'Failed to get project data',
     downloadFailed : 'Failed to download : {0}',
     downloadSearch : 'Search project',
+    exportCurrent : 'Export Current Project',
+    exportCurrentConfirmMessage : 'Are you sure to export current project ?',
+    import : 'Import',
+    importConfirm : 'Are you sure to import this file as a project ?',
+    importNote : 'This operation would overide existed project',
+    importFailed : 'Failed to import project : {0}',
+    importFileInvalid : 'Import file is invalid',
+    importVersionNotMatch : 'version not matched, Bittly version : {0}, File version : {1}',
+    importSuccess : 'Import success',
 };

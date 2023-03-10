@@ -9,7 +9,9 @@
           <a-icon v-if="index==activeProjectIndex" type="check" /> 
           {{project.name}}
         </a-menu-item>
-        
+        <a-menu-divider />
+        <a-menu-item key="ExportCurrent">{{$t('project.exportCurrent')}}</a-menu-item>
+        <a-menu-item key="Import">{{$t('project.import')}}</a-menu-item>
         <a-menu-divider />
         <a-menu-item key="CreateNew">{{$t('project.create')}}</a-menu-item>
       </a-menu>
@@ -18,6 +20,9 @@
   </div>
 </template>
 <script>
+import Importer from './Importer.js'
+import Exporter from './Exporter.js'
+import Common from '../../utils/Common.js'
 import ModalProjectCreate from './ModalProjectCreate.vue'
 import MdbProject from '../../models/MdbProject.js'
 import ComponentProjectMixin from '../../utils/ComponentProjectMixin.js'
@@ -94,7 +99,10 @@ export default {
          * @private
          */
         async actionHandleMenuItemClicked( event ) {
-            if ( 'CreateNew' == event.key ) {
+            let handler = `handleMenuItem${event.key}`;
+            if ( 'function' == typeof(this[handler]) ) {
+                this[handler]();
+            } else if ( 'CreateNew' == event.key ) {
                 try {
                     let project = await this.$refs.modalCreate.open();
                     await this.refreshProjects();
@@ -103,6 +111,51 @@ export default {
             } else {
                 this.activeProject(event.key);
             }
+        },
+
+        /**
+         * import project
+         * @returns {Promise<void>}
+         */
+        async handleMenuItemImport() {
+            let filepath = await window.dialog.showOpenDialogSync({
+                filters:[{name:'',extensions:['zip']}],
+            });
+            if ( undefined === filepath ) {
+                return;
+            }
+
+            let $this = this;
+            this.$confirm({
+                title: this.$t('project.importConfirm'),
+                content: h => this.$t('project.importNote'),
+                okText : this.$t('button.ok'),
+                cancelText : this.$t('button.cancel'),
+                onOk : async () => {
+                    let handler = new Importer(filepath[0]);
+                    try {
+                        let projectId = await handler.execute();
+                        this.activeProjectById(projectId);
+                        $this.$message.success($this.$t('project.importSuccess'));
+                    } catch ( e ) {
+                        $this.$message.error($this.$t('project.importFailed',[e.message]));
+                    }
+                },
+            });
+        },
+
+        /**
+         * export current project
+         * @returns {Promise<void>}
+         */
+        async handleMenuItemExportCurrent() {
+            if ( ! await Common.confirm(this.$t('project.exportCurrentConfirmMessage')) ) {
+                return ;
+            }
+
+            let projectId = this.$store.getters.projectActivedId;
+            let handler = new Exporter(projectId);
+            await handler.execute();
         },
 
         /**

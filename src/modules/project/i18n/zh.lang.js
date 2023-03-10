@@ -67,4 +67,13 @@ module.exports = {
     downloadUnableToGetProjectData : '项目数据获取失败',
     downloadFailed : '下载失败：{0}',
     downloadSearch : '搜索项目',
+    exportCurrent : '导出当前项目',
+    exportCurrentConfirmMessage : '是否导出当前项目?',
+    import : '导入',
+    importConfirm : '是否导入选中文件 ?',
+    importNote : '当导入项目在本地存在时，会完全覆盖本地项目数据，并且无法撤回',
+    importFailed : '项目导入失败 : {0}',
+    importFileInvalid : '导入文件无效',
+    importVersionNotMatch : '导入文件版本号未匹配, Bittly 版本号 : {0}, 文件版本号 : {1}',
+    importSuccess : '导入成功',
 };
