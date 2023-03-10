@@ -114,15 +114,7 @@ export default {
             let canvasPlotMain =  this.$refs.canvasPlotMain;
             canvasPlotMain.width = canvasPlotMain.clientWidth * devicePixelRatio;
             canvasPlotMain.height = canvasPlotMain.clientHeight * devicePixelRatio;
-            if ( 'create' === action ) {
-                canvasPlotMain.addEventListener("mouseenter", event => this.handleMouseenter(event));
-                canvasPlotMain.addEventListener("mouseleave", event => this.handleMouseleave(event));
-                canvasPlotMain.addEventListener("mousemove", event => this.handleMousemove(event));
-                canvasPlotMain.addEventListener("mousedown", event => this.handleMousedown(event));
-                canvasPlotMain.addEventListener("mouseup", event => this.handleMouseup(event));
-                canvasPlotMain.addEventListener("wheel", event => this.handleWheel(event));
-            }
-
+            
             // init webgl plot
             let plot = new WebglPlot(canvasPlotMain);
             plot.removeAllLines();
@@ -158,6 +150,16 @@ export default {
             plot.update();
             this.axisUpdate();
             this.rectCanvasPlotMain = canvasPlotMain.getBoundingClientRect();
+
+            // bind events
+            if ( 'create' === action ) {
+                canvasPlotMain.addEventListener("mouseenter", event => this.handleMouseenter(event));
+                canvasPlotMain.addEventListener("mouseleave", event => this.handleMouseleave(event));
+                canvasPlotMain.addEventListener("mousemove", event => this.handleMousemove(event));
+                canvasPlotMain.addEventListener("mousedown", event => this.handleMousedown(event));
+                canvasPlotMain.addEventListener("mouseup", event => this.handleMouseup(event));
+                canvasPlotMain.addEventListener("wheel", event => this.handleWheel(event));
+            }
         },
 
         /**
