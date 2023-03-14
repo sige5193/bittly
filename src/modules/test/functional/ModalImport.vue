@@ -195,6 +195,7 @@ export default {
          */
         setupLastNodeAsDirectiveNode(nodeOptions) {
             let lastLinkId = this.import.graphflow.links.at(-1)[0];
+            let nextLinkId = this.import.graphflow.last_link_id - 1;
 
             let node = this.import.lastNode;
             node.type = "Directive";
@@ -205,7 +206,7 @@ export default {
                 {name:this.$t('test.functionalNode.Directive.execute'),type:-1,link:lastLinkId}
             ];
             node.outputs = [
-                {name:this.$t('test.functionalNode.Directive.success'),type:-1,links:null},
+                {name:this.$t('test.functionalNode.Directive.success'),type:-1,links:[nextLinkId]},
                 {name:this.$t('test.functionalNode.Directive.failed'),type:-1,links:null},
                 {name:this.$t('test.functionalNode.Directive.executor'),type:"string",links:null}
             ];
