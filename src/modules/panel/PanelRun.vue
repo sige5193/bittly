@@ -56,7 +56,7 @@
       <!-- widgets -->
       <div ref="widget-panel" class="widget-panel">
         <div v-for="(widget, index) in panel.widgets" :key="index" class="position-absolute" 
-          :style="{top:`${widget.pos.y}px`,left:`${widget.pos.x}px`}"
+          :style="{top:`${widget.pos.y}px`,left:`${widget.pos.x}px`,zIndex:widget.zindex}"
         >
           <component :is="getWidgetComponentName(widget)" 
             :name="widget.name"
