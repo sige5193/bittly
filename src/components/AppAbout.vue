@@ -6,7 +6,7 @@
     <p class="text-center">
       <img style="width:100px;height:100px;" src="../assets/icon.png">
     </p>
-    <p class="text-center"><strong>Bittly</strong> {{packInfo.version}}</p>
+    <p class="text-center"><strong>{{packInfo.name}}</strong> {{packInfo.version}}</p>
     <template v-if="null !== electronInfo">
       <p class="text-center">Electron : {{electronInfo.electronVersion}}</p>
       <p class="text-center">Chrome : {{electronInfo.chromeVersion}}</p>

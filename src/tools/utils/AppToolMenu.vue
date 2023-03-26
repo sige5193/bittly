@@ -22,7 +22,7 @@
     
     <!-- App name -->
     <a-col :span="8" class="text-center">
-      <div class="app-name">Bittly {{appVersion}} - {{tname}}</div>
+      <div class="app-name">{{appName}} {{appVersion}} - {{tname}}</div>
     </a-col>
 
     <!-- other actions -->
@@ -48,6 +48,10 @@ export default {
              * @property {Boolean}
              */
             alwaysOnTopEnable : false,
+            /**
+             * @property {String}
+             */
+            appName : PackageInfo.name,
             /**
              * @property {String}
              */

@@ -57,7 +57,7 @@
 
     <!-- App name -->
     <a-col :span="8" class="text-center white-space-nowrap">
-      <div class="app-name">Bittly {{appVersion}}</div>
+      <div class="app-name">{{appName}} {{appVersion}}</div>
       <div v-if="'browser' == $env.name" class="d-inline-block ml-1" style="vertical-align: sub;height: 28px;">
         <iframe frameborder="0" scrolling="0" width="150" height="20" title="GitHub"
           src="https://ghbtns.com/github-btn.html?user=sige5193&repo=bittly&type=star&count=true" 
@@ -102,6 +102,10 @@ export default {
              * @property {Boolean}
              */
             alwaysOnTopEnable : false,
+            /**
+             * @property {String}
+             */
+            appName : PackageInfo.name,
             /**
              * @property {String}
              */
