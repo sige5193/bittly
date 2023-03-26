@@ -1,5 +1,6 @@
 import Common from '../../utils/Common.js'
 import MyString from '../../utils/datatype/MyString.js';
+import Dictionary from '../../utils/Dictionary.js';
 export default class DataComparator {
     /**
      * @constructor
@@ -138,13 +139,14 @@ export default class DataComparator {
      * @returns {Boolean}
      */
     compareFormItem(expect, index) {
+        debugger
         let expectValue = expect.value;
         let actualValue = this.actualData.getValueByIndex(index);
         if ( undefined == actualValue ) {
             return false;
         }
 
-        if ( window.app.$dict.match('DIRECTIVE_PARAM_DATATYPE','BYTES', expect.type) ) {
+        if ( !Dictionary.match('DIRECTIVE_PARAM_DATATYPE','STRING', expect.type) ) {
             expectValue = expectValue.replaceAll(/\s/g,'');
             actualValue = actualValue.replaceAll(/\s/g,'');
         }
