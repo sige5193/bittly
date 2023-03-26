@@ -90,12 +90,46 @@ export default class NetHandlerTCP {
      * @param {Buffer} data 
      * @returns {Promise<void>}
      */
-    write( data ) {
+    async write( data ) {
+        this.com.log(`write(${data.length}) : ${data.slice(0, 10).toString('hex')} ...`);
+
+        let chunkSize = 1024;
+        let cursor = 0;
+        while ( cursor < data.length ) {
+            let chunk = data.slice(cursor, cursor + chunkSize);
+            await this.writeChunk(chunk);
+            cursor += chunkSize;
+        }
+    }
+
+    /**
+     * write chunk data
+     * @param {Buffer} data 
+     * @returns {Promise<void>}
+     */
+    writeChunk( data ) {
         let $this = this;
-        return new Promise(resolve => {
-            $this.connection.write(data, () => {
-                $this.com.log('write', data);
-                resolve();
+        return new Promise((resolve, reject) => {
+            if ( !$this.connection.writable ) {
+                return reject(Error($this.com.$t('tcpWriteFailed')));
+            }
+
+            let isFlushed = $this.connection.write(data);
+            if ( isFlushed ) {
+                return resolve();
+            }
+            
+            if ( !$this.connection.writableNeedDrain ) {
+                return reject(Error($this.com.$t('tcpWriteFailed')));
+            }
+
+            $this.connection.once('drain', async () => {
+                try {
+                    await $this.writeChunk(data);
+                    resolve();
+                } catch ( e ) {
+                    reject(e);
+                }
             });
         });
     }

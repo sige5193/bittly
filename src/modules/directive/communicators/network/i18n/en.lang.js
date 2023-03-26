@@ -13,4 +13,5 @@ module.exports = {
     udpModeMulticast : 'Multicast',
     udpModeBroadcast : 'Broadcast',
     udpOpenFailed : 'Failed to open udp connection : {0}',
+    tcpWriteFailed : 'Unable to write data to stream',
 };
