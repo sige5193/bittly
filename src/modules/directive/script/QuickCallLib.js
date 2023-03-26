@@ -226,16 +226,7 @@ export default class QuickCallLib {
      * @returns 
      */
     bcc( ... items ) {
-        let buffer = ParameterFormBuildHandler.packItemsToBuffer(this.directive, items);
-        let result = null;
-        for ( let bi=0; bi<buffer.length; bi++ ) {
-            let byte = buffer[bi];
-            if ( null === result ) {
-                result = byte;
-            } else {
-                result ^= byte;
-            }
-        }
+        let result = this.scriptLib.bcc( ... items );
         return result.toString();
     }
 

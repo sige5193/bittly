@@ -303,4 +303,22 @@ export default class Bittly {
         }
         return len + bitLen/8;
     }
+
+    /**
+     * @param  {...any} values 
+     * @returns 
+     */
+    bcc( ... values ) {
+        let buffer = FormBuildHandler.packItemsToBuffer(this.directive, values);
+        let result = null;
+        for ( let bi=0; bi<buffer.length; bi++ ) {
+            let byte = buffer[bi];
+            if ( null === result ) {
+                result = byte;
+            } else {
+                result ^= byte;
+            }
+        }
+        return result;
+    }
 }
