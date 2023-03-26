@@ -95,18 +95,20 @@ export default {
                 displayNotice : true,
             });
 
-            let ports = await navigator.serial.getPorts();
-            for ( let i=0; i<ports.length; i++ ) {
-                let port = ports[i];
-                if ( undefined === port.devName ) {
-                    continue;
+            try {
+                let ports = await navigator.serial.getPorts();
+                for ( let i=0; i<ports.length; i++ ) {
+                    let port = ports[i];
+                    if ( undefined === port.devName ) {
+                        continue;
+                    }
+                    this.devices[port.devName] = port;
                 }
-                this.devices[port.devName] = port;
-            }
-            this.$forceUpdate();
-            if ( options.displayNotice ) {
-                this.$message.info(this.$t('directive.communicator.serialport.webSerialDeviceRefreshed'));
-            }
+                this.$forceUpdate();
+                if ( options.displayNotice ) {
+                    this.$message.info(this.$t('directive.communicator.serialport.webSerialDeviceRefreshed'));
+                }
+            } catch {}
         },
 
         /**
