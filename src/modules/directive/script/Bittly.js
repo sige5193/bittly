@@ -4,6 +4,7 @@ import { Buffer } from 'buffer';
 import MdbDirective from '../../../models/MdbDirective.js';
 import BuildHandler from '../parameters/form/BuildHandler.js';
 import MyDate from '../../../utils/datatype/MyDate.js';
+import Dictionary from '../../../utils/Dictionary.js'
 export default class Bittly {
     /**
      * constructor of lib
@@ -274,5 +275,32 @@ export default class Bittly {
             date = new Date();
         }
         return MyDate.format(date, format);
+    }
+
+    /**
+     * @param  {... Object|Integer} values 
+     * @returns {Integer}
+     */
+    lengthSum( ... values ) {
+        let len = 0;
+        let bitLen = 0;
+        for ( let i=0; i<values.length; i++ ) {
+            let item = values[i];
+            if ( 'number' === typeof(item) ) {
+                len += item;
+            } else if ( 'bits' === item.type ) {
+                bitLen += item.length;
+            } else {
+                let dataTypeLength = Dictionary.voption('DIRECTIVE_PARAM_DATATYPE', item.type, 'length', 0) * 1;
+                if ( 0 === dataTypeLength ) {
+                    throw Error(`unable to calculate the length of data type "${item.type}"`);
+                }
+                len += dataTypeLength;
+            }
+        }
+        if ( 0 !== bitLen%8 ) {
+            throw Error(`unable to convert bits length "${bitLen}" to byte length`);
+        }
+        return len + bitLen/8;
     }
 }

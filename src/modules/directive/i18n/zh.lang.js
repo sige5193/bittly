@@ -64,6 +64,7 @@ module.exports = {
     quickCallCrcjam : '<DEC> crcjam($item, ...) CRCJAM 校验',
     quickCallCrc32mpeg2 : '<DEC> crc32mpeg2($item, ...) CRC MPEG 2 校验',
     quickCallDate : '<TEXT> date(format) 日期格式化',
+    quickCallLengthsum : '<DEC> lengthsum($item, ...) 计算长度',
     statusPopoverTitle : '指令状态',
     statusClear : '清空',
     statusViewerButton : '状态',
