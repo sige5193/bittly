@@ -107,6 +107,7 @@ export default class Node extends NodeBase{
             return this.alert('error', this.$t('directiveNotBinded'));
         }
         
+        let isSuccess = false;
         this.log(`start`);
         try {
             let executor = new DirectiveExecutor(this.directive);
@@ -114,24 +115,24 @@ export default class Node extends NodeBase{
             executor.setCustomParams(this.options.parameterFormat, parameterValue);
             await executor.execute();
             this.executor = executor;
+
+            await Common.msleep(this.options.timeout);
+            let comparator = new DataComparator();
+            comparator.type = this.options.expectResponseFormat;
+            comparator.executor = this.executor;
+            comparator.expectData = this.options.expectResponseValue;
+            comparator.dataLength = this.options.expectDataLength;
+            comparator.textRegexEnable = this.options.expectResponseTextRegexEnable;
+            isSuccess = comparator.compare();
+            
+            this.comparator = comparator;
+            this.btnDirectiveExecute.disabled = false;
+            this.refresh();
         } catch ( e ) {
             this.graph.error(this.$t('directiveError', [e.message]));
             return ;
         }
         
-        await Common.msleep(this.options.timeout);
-        let comparator = new DataComparator();
-        comparator.type = this.options.expectResponseFormat;
-        comparator.executor = this.executor;
-        comparator.expectData = this.options.expectResponseValue;
-        comparator.dataLength = this.options.expectDataLength;
-        comparator.textRegexEnable = this.options.expectResponseTextRegexEnable;
-        let isSuccess = comparator.compare();
-        
-        this.comparator = comparator;
-        this.btnDirectiveExecute.disabled = false;
-        this.refresh();
-
         if ( isSuccess ) {
             this.log(`success`);
             this.setOutputData(2, this.executor);

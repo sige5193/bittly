@@ -1,6 +1,8 @@
 import Common from '../../utils/Common.js'
+import MyNumber from '../../utils/datatype/MyNumber.js';
 import MyString from '../../utils/datatype/MyString.js';
 import Dictionary from '../../utils/Dictionary.js';
+import * as math from 'mathjs'
 export default class DataComparator {
     /**
      * @constructor
@@ -139,21 +141,36 @@ export default class DataComparator {
      * @returns {Boolean}
      */
     compareFormItem(expect, index) {
-        debugger
-        let expectValue = expect.value;
+        if ( 'Ignore' === expect.comparator ) {
+            return true;
+        }
+
         let actualValue = this.actualData.getValueByIndex(index);
         if ( undefined == actualValue ) {
             return false;
         }
 
-        if ( !Dictionary.match('DIRECTIVE_PARAM_DATATYPE','STRING', expect.type) ) {
+        let reverse = 'Not' === expect.comparator.substr(0, 3);
+        let comparator = reverse ? expect.comparator.substr(3) : expect.comparator;
+        
+        if ( 'Between' === comparator ) {
+            let expectRang = {};
+            expectRang.min = expect.value[0];
+            expectRang.max = expect.value[1];
+            let actualNumber = this.getFormItemNumberValueFromActualData(index);
+            let isMatched = math.largerEq(actualNumber, expectRang.min) && math.smallerEq(actualNumber, expectRang.max);
+            return reverse ? !isMatched : isMatched;
+        }
+
+        let expectValue = expect.value;
+        if ( 'string' === typeof(expectValue) 
+        && !Dictionary.match('DIRECTIVE_PARAM_DATATYPE','STRING', expect.type) ) {
             expectValue = expectValue.replaceAll(/\s/g,'');
             actualValue = actualValue.replaceAll(/\s/g,'');
         }
 
         // raw compare (string)
-        switch( expect.comparator ) {
-        case 'Ignore' : return true;
+        switch( comparator ) {
         case 'Equal'  : return expectValue === actualValue;
         case 'NotEqual' : return expectValue !== actualValue;
         case 'Contains' : return -1 != actualValue.indexOf(expectValue);
@@ -161,23 +178,33 @@ export default class DataComparator {
         }
 
         // convert to number and compare
-        let expectNumber = expectValue * 1;
-        let actualNumber = actualValue * 1;
+        let field = this.actualData.directive.responseFormatter.fields[index];
+        let prefix = {bin:'0b',oct:'0',dec:'',hex:'0x'}[field.format];
+        let expectNumber = math.number(`${prefix}${expectValue}`);
+        let actualNumber = this.getFormItemNumberValueFromActualData(index);
         switch ( expect.comparator ) {
-        case 'Greater' : return actualNumber > expectNumber;
-        case 'GreaterOrEqual' : return actualNumber >= expectNumber;
-        case 'Less' : return actualNumber < expectNumber;
-        case 'LessOrEqual' : return actualNumber <= expectNumber;
+        case 'Greater' : return math.larger(actualNumber, expectNumber);
+        case 'GreaterOrEqual' : return math.largerEq(actualNumber, expectNumber);
+        case 'Less' : return math.smaller(actualNumber, expectNumber);
+        case 'LessOrEqual' : return math.smallerEq(actualNumber, expectNumber);
         }
 
-        // handle between 
-        let expectRang = expectValue;
-        switch ( expect.comparator ) {
-        case 'Between' : return actualNumber >= expectRang[0] && actualNumber <= expectRang[1];
-        case 'NotBetween' : return actualNumber < expectRang[0] || actualNumber > expectRang[1];
-        }
-
-        // unable to handle the comparation
         return false;
+    }
+
+    /**
+     * get form item number value from actual data
+     * @param {*} index 
+     * @returns {Number}
+     */
+    getFormItemNumberValueFromActualData( index ) {
+        let actualValue = this.actualData.getValueByIndex(index);
+        if ( undefined == actualValue ) {
+            return false;
+        }
+
+        let field = this.actualData.directive.responseFormatter.fields[index];
+        let prefix = {bin:'0b',oct:'0',dec:'',hex:'0x'}[field.format];
+        return math.number(`${prefix}${actualValue}`);
     }
 }

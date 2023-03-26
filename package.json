@@ -46,6 +46,7 @@
     "jspdf-autotable": "^3.5.23",
     "jszip": "^3.10.1",
     "litegraph.js": "^0.7.10",
+    "mathjs": "^11.7.0",
     "modbus-serial": "git+https://git.sigechen.com/sige/node-modbus-serial.git",
     "mqtt": "^4.3.7",
     "pem": "^1.14.6",

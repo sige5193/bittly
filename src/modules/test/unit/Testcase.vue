@@ -56,7 +56,7 @@
                   <small class="ml-1">[{{$t(`directive.parameter.form.dataType.${param.type}`)}}]</small> : 
                   <a-tag>
                     {{$t(`test.editModal.comparator${param.comparator}`)}}
-                    {{param.prefix}}{{param.value}}
+                    <span v-if="matchDataType(param.value,'string')">{{param.prefix}}</span>{{param.value}}
                   </a-tag>
                 </div>
               </template>
@@ -91,7 +91,7 @@
                     <a-tag :color="resultFormItemMatches[aindex] ? '' : 'red'">
                       {{param.prefix}}{{result.getValueByIndex(aindex)}}
                       {{$t(`test.editModal.comparator${param.comparator}`)}}
-                      {{param.prefix}}{{param.value}}
+                      <span v-if="matchDataType(param.value,'string')">{{param.prefix}}</span>{{param.value}}
                     </a-tag>
                   </div>
                 </template>
@@ -168,6 +168,14 @@ export default {
     },
     methods : {
         /**
+         * @param {any} value
+         * @param {String} typeName 
+         */
+        matchDataType( value, typeName ) {
+            return typeName === typeof(value);
+        },
+
+        /**
          * expand the body
          */
         expand() {
@@ -228,42 +236,41 @@ export default {
                 return false;
             }
             
-            let executor = new DirectiveExecutor(this.directive);
-            executor.setCustomParams(this.testcase.paramFormat, this.testcase.params.value);
             try {
+                let executor = new DirectiveExecutor(this.directive);
+                executor.setCustomParams(this.testcase.paramFormat, this.testcase.params.value);
                 await executor.execute();
+                await Common.msleep(this.testcase.timeout);
+
+                let comparator = new DataComparator();
+                comparator.type = this.testcase.expectFormat;
+                comparator.executor = executor;
+                comparator.expectData = this.testcase.expect.value;
+                let isSuccess = comparator.compare();
+                
+                await this.executeScript(this.testcase.afterScript, 'after');
+                this.resultFormItemMatches = comparator.matchResult;
+                this.resultStatus = isSuccess ? 'success' : 'error';
+                
+                this.result = comparator.actualData;
+                if ( 'hex' == this.testcase.expectFormat ) {
+                    this.result = Common.convertBufferToHexString(this.result);
+                }
+
+                await this.$store.dispatch('closeAllCommunicators');
+                return isSuccess;
             } catch ( e ) {
                 console.log('testcase execute directive failed',e);
                 this.resultStatus = 'error';
                 await this.$store.dispatch('closeAllCommunicators');
+                
                 if ( throwError ) {
                     throw e;
                 } else {
-                    let message = ('string' == typeof(e)) ? e : e.message;
-                    this.$message.error(this.$t('test.directiveExecutorError',[message]));
+                    this.$message.error(this.$t('test.unit.executeFailed',[e.message]));
                     return false;
                 }
             }
-            
-            await Common.msleep(this.testcase.timeout);
-
-            let comparator = new DataComparator();
-            comparator.type = this.testcase.expectFormat;
-            comparator.executor = executor;
-            comparator.expectData = this.testcase.expect.value;
-            let isSuccess = comparator.compare();
-
-            await this.executeScript(this.testcase.afterScript, 'after');
-            this.resultFormItemMatches = comparator.matchResult;
-            this.resultStatus = isSuccess ? 'success' : 'error';
-            
-            this.result = comparator.actualData;
-            if ( 'hex' == this.testcase.expectFormat ) {
-                this.result = Common.convertBufferToHexString(this.result);
-            }
-
-            await this.$store.dispatch('closeAllCommunicators');
-            return isSuccess;
         },
 
         /**
