@@ -282,6 +282,12 @@ export default {
                 parentId = action.node.$vnode.data.props.value;
             }
             
+            // ignore if user drag something like text, image or anything else but 
+            // entry item.
+            if ( undefined === action.dragNode ) {
+                return ;
+            }
+
             let source = action.dragNode.$vnode.data.props;
             let sourceEntry = this.entries[source.value].entry;
             sourceEntry.parentId = parentId;
