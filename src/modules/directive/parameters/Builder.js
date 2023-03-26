@@ -255,12 +255,25 @@ export default class Builder {
                 params = params.split(',');
             }
 
+            let callParams = [];
             // build params array
             for ( let i=0; i<params.length; i++ ) {
                 let paramItem = params[i].trim();
                 if ( '$content' == paramItem ) {
-                    params[i] = requestParams;
-                } else if ( '$' === paramItem[0] ) {
+                    callParams.push(requestParams);
+                } else if ( null !== paramItem.match(/^\$\[\d+-\d+\]$/) ) {
+                    /** example : $[2-5] */
+                    let range = paramItem.substring(2, paramItem.length-1).split('-');
+                    range = {start:range[0]*1, end:range[1]*1};
+                    for ( let index=range.start; index<=range.end; index++ ) {
+                        let paramIndex = index - 1;
+                        if ( undefined === requestParams[paramIndex] ) {
+                            throw Error(window.app.$t('directive.parameter.parameterIndexNotExists', [content, funcName, index]));
+                        }
+                        callParams.push(requestParams[paramIndex]);
+                    }
+                } else if ( null !== paramItem.match(/^\$\d+$/) ) {
+                    /** example : $2 */
                     let index = paramItem.substring(1) * 1 - 1;
                     if ( isNaN(index) ) {
                         throw Error(window.app.$t('directive.parameter.parameterIndexNotAvailable', [content, funcName, paramItem]));
@@ -268,11 +281,13 @@ export default class Builder {
                     if ( undefined === requestParams[index] ) {
                         throw Error(window.app.$t('directive.parameter.parameterIndexNotExists', [content, funcName, index+1]));
                     }
-                    params[i] = requestParams[index];
+                    callParams.push(requestParams[index]);
+                } else {
+                    callParams.push(paramItem);
                 }
             }
             
-            let value = executor.execQuickCall(funcName, params);
+            let value = executor.execQuickCall(funcName, callParams);
             newContent = newContent.replaceAll(match[0], value);
         }
 

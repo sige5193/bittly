@@ -64,6 +64,7 @@ module.exports = {
     quickCallCrcjam : '<DEC> crcjam($item, ...)',
     quickCallCrc32mpeg2 : '<DEC> crc32mpeg2($item, ...)',
     quickCallDate : '<TEXT> date(format)',
+    quickCallLengthsum : '<DEC> lengthsum($item, ...)',
     statusPopoverTitle : 'Directive Status',
     statusClear : 'Clear',
     statusViewerButton : 'Status',

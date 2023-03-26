@@ -27,6 +27,7 @@ export default class QuickCallLib {
             {func:'crcjam',value:'{{@crcjam($1,$2,$3,$4)}}',text:$t('directive.quickCallCrcjam')},
             {func:'crc32mpeg2',value:'{{@crc32mpeg2($1,$2,$3,$4)}}',text:$t('directive.quickCallCrc32mpeg2')},
             {func:'date',value:'{{@date(format)}}',text:$t('directive.quickCallDate')},
+            {func:'lengthsum',value:'{{@lengthsum($1,$2, ...)}}',text:$t('directive.quickCallLengthsum')},
         ];
     }
 
@@ -244,5 +245,17 @@ export default class QuickCallLib {
      */
     date(format) {
         return MyDate.format(new Date(), format);
+    }
+
+    /**
+     * @param  {...any} items 
+     */
+    lengthsum( ... items ) {
+        for ( let i=0; i<items.length; i++ ) {
+            if ( 'string' === typeof(items[i]) ) {
+                items[i] = items[i] * 1;
+            }
+        }
+        return this.scriptLib.lengthSum(... items);
     }
 }
