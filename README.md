@@ -4,12 +4,13 @@
   <br/>
   <p><h3><b>Bittly</b></h3></p>
   <p><b>A testing tool for serial port, network, bluetooth, http, websocket, ... </b></p>
-  
+
   [![Website](https://img.shields.io/website?url=https%3A%2F%2Fbittly.sigechen.com)](https://bittly.sigechen.com)
-  
+  [![Build](https://github.com/sige5193/bittly/actions/workflows/build-packages.yml/badge.svg)](https://github.com/sige5193/bittly/actions/workflows/build-packages.yml)
+
   <p>English | <a href="README.zh.md">简体中文</a></p>
   <br>
-  
+
   <img src="https://res.bittly.sigechen.com/images/bittly-2.gif" alt="Bittly"/>
 </div>
 
