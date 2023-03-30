@@ -274,6 +274,7 @@ module.exports = {
         folderSelectTitle : 'Select Folder',
         folderSelectRootName : 'Root',
         folderSelectIsRequired : 'Please selector the folder',
+        directiveSelectTip : 'Please select the directive',
     },
     script : {
         configTitle : 'Script Config',

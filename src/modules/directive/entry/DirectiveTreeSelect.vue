@@ -7,6 +7,7 @@
     :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
     :tree-data="treeData"
     :load-data="actionLoadTreeData"
+    :placeholder="$t('directive.entry.directiveSelectTip')"
     @change="actionChange"
     @select="actionSelect"
   ></a-tree-select>
