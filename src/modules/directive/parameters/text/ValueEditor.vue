@@ -1,12 +1,11 @@
 <template>
-  <div>
-    <a-textarea auto-size
-      ref="inputText"
-      v-model="content" 
-      :placeholder="$t('directive.parameter.text.editorPlaceholder')"
-      @change="actionContentChange"
-    ></a-textarea>
-  </div>
+  <a-textarea
+    ref="inputText"
+    v-model="content" 
+    :auto-size="{minRows:3,maxRows:5}"
+    :placeholder="$t('directive.parameter.text.editorPlaceholder')"
+    @change="actionContentChange"
+  ></a-textarea>
 </template>
 <script>
 export default {

@@ -1,11 +1,10 @@
 <template>
-  <div>
-    <a-textarea 
-      ref="inputText"
-      v-model="content" 
-      @input="actionContentInput"
-    ></a-textarea>
-  </div>
+  <a-textarea ref="inputHex"
+    v-model="content" 
+    :auto-size="{minRows:3,maxRows:5}"
+    :placeholder="$t('directive.parameter.hex.editorPlaceholder')"
+    @input="actionContentInput"
+  ></a-textarea>
 </template>
 <script>
 export default {
