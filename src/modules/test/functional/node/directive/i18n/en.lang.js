@@ -11,6 +11,7 @@ module.exports = {
     inputs : 'Inputs',
     inputParamsTip : 'E.g. : Param01 Param02 Param03',
     expectResponseContent : 'Expect Response Content',
+    expectResponseEditorRefresh : 'Expect response content editor refreshed.',
     outputs : 'Outputs',
     timeout : 'Timeout',
     btnExecuteInfo : 'Execute Info',

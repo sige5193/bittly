@@ -55,16 +55,19 @@
         <a-tab-pane key="expect-response" :tab="$t('test.expectResponseContent')" class="pl-3 pr-3">
           <!-- response format -->
           <a-form-item :label="$t('test.responseFormat')" labelAlign="left" class="mb-0">
-            <a-select v-model="options.expectResponseFormat" @change="actionExpectFormatChange">
-              <a-select-option value="text">{{$t(`directive.parameter.text.name`)}}</a-select-option>
-              <a-select-option value="hex">{{$t(`directive.parameter.hex.name`)}}</a-select-option>
-              <a-select-option value="form" :disabled="undefined == directive.responseFormatter.fields"
-              >{{$t(`directive.parameter.form.name`)}}</a-select-option>
-            </a-select>
+            <div class="d-flex">
+              <a-select v-model="options.expectResponseFormat" @change="actionExpectFormatChange">
+                <a-select-option value="text">{{$t(`directive.parameter.text.name`)}}</a-select-option>
+                <a-select-option value="hex">{{$t(`directive.parameter.hex.name`)}}</a-select-option>
+                <a-select-option value="form" :disabled="undefined == directive.responseFormatter.fields"
+                >{{$t(`directive.parameter.form.name`)}}</a-select-option>
+              </a-select>
+              <a-button class="ml-1" @click="actionExpectResponseEditorRefresh"><a-icon type="redo" /></a-button>
+            </div>
           </a-form-item>
           
           <!-- form editor -->
-          <response-param-editor-form
+          <response-param-editor-form ref="responseEditor"
             v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','FORM', options.expectResponseFormat)"
             :directive="directive"
             v-model="options.expectResponseValue"
@@ -270,7 +273,19 @@ export default {
          */
         actionFroceUpdate() {
             this.$forceUpdate();
-        }
+        },
+
+        /**
+         * refresh expect response editor
+         * @returns {void}
+         */
+        actionExpectResponseEditorRefresh() {
+            let editor = this.$refs.responseEditor;
+            if ( undefined !== editor && undefined !== editor.refresh ) {
+                editor.refresh();
+            }
+            this.$message.success(this.$t('test.functionalNode.Directive.expectResponseEditorRefresh'));
+        },
     }
 }
 </script>

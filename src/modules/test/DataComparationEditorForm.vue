@@ -5,8 +5,11 @@
     >
       <!-- label -->
       <span slot="label">
-        <a-icon type="edit" />
-        {{item.name}} 
+        <a-icon type="edit" /> 
+        <span class="ml-1 mr-1">
+          <span v-if="0 === item.name.trim().length">${{index+1}}</span> 
+          <span v-else>{{item.name}}</span> 
+        </span>
         <a-tooltip>
           <template slot="title">
             {{$t(`directive.parameter.form.dataType.${item.type}`)}}
@@ -86,37 +89,8 @@ export default {
          * init vmodel
          */
         initVModel() {
-            this.content = [];
-            
-            let formatable = [
-                this.$dict.value('DIRECTIVE_PARAM_DATATYPE','BYTE'),
-                this.$dict.value('DIRECTIVE_PARAM_DATATYPE','UNSIGNED_CHAR'),
-                this.$dict.value('DIRECTIVE_PARAM_DATATYPE','UNSIGNED_SHORT'),
-                this.$dict.value('DIRECTIVE_PARAM_DATATYPE','UNSIGNED_INT'),
-                this.$dict.value('DIRECTIVE_PARAM_DATATYPE','UNSIGNED_LONG'),
-                this.$dict.value('DIRECTIVE_PARAM_DATATYPE','UNISNGED_LONG_LONG'),
-            ];
-
-            let formatPrefix = {};
-            formatPrefix[this.$dict.value('DIRECTIVE_PARAM_BYTE_FORMATTER','BIN')] = '0b';
-            formatPrefix[this.$dict.value('DIRECTIVE_PARAM_BYTE_FORMATTER','OCT')] = '0';
-            formatPrefix[this.$dict.value('DIRECTIVE_PARAM_BYTE_FORMATTER','DEC')] = ' ';
-            formatPrefix[this.$dict.value('DIRECTIVE_PARAM_BYTE_FORMATTER','HEX')] = '0x';
-
             if ( undefined == this.value || null == this.value ) {
-                for ( let i=0; i<this.directive.responseFormatter.fields.length; i++ ) {
-                    let item = this.directive.responseFormatter.fields[i];
-                    this.content.push({
-                        name : item.name,
-                        type : item.type,
-                        value : '',
-                        format : item.format,
-                        comparator : 'Equal',
-                        prefix : -1 == formatable.indexOf(item.type) ? null : formatPrefix[item.format],
-                        length : item.length,
-                    });
-                }
-                this.updateVModel();
+                this.refresh();
             } else {
                 this.content = this.value;
             }
@@ -148,6 +122,41 @@ export default {
         actionContentInput() {
             this.updateVModel();
         },
+
+        /**
+         * refreh  
+         */
+        refresh() {
+            let formatable = [
+                this.$dict.value('DIRECTIVE_PARAM_DATATYPE','BYTE'),
+                this.$dict.value('DIRECTIVE_PARAM_DATATYPE','UNSIGNED_CHAR'),
+                this.$dict.value('DIRECTIVE_PARAM_DATATYPE','UNSIGNED_SHORT'),
+                this.$dict.value('DIRECTIVE_PARAM_DATATYPE','UNSIGNED_INT'),
+                this.$dict.value('DIRECTIVE_PARAM_DATATYPE','UNSIGNED_LONG'),
+                this.$dict.value('DIRECTIVE_PARAM_DATATYPE','UNISNGED_LONG_LONG'),
+            ];
+
+            let formatPrefix = {};
+            formatPrefix[this.$dict.value('DIRECTIVE_PARAM_BYTE_FORMATTER','BIN')] = '0b';
+            formatPrefix[this.$dict.value('DIRECTIVE_PARAM_BYTE_FORMATTER','OCT')] = '0';
+            formatPrefix[this.$dict.value('DIRECTIVE_PARAM_BYTE_FORMATTER','DEC')] = ' ';
+            formatPrefix[this.$dict.value('DIRECTIVE_PARAM_BYTE_FORMATTER','HEX')] = '0x';
+
+            this.content = [];
+            for ( let i=0; i<this.directive.responseFormatter.fields.length; i++ ) {
+                let item = this.directive.responseFormatter.fields[i];
+                this.content.push({
+                    name : item.name,
+                    type : item.type,
+                    value : '',
+                    format : item.format,
+                    comparator : 'Equal',
+                    prefix : -1 == formatable.indexOf(item.type) ? null : formatPrefix[item.format],
+                    length : item.length,
+                });
+            }
+            this.updateVModel();
+        }
     }
 }
 </script>

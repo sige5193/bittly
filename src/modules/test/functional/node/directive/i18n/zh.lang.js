@@ -11,6 +11,7 @@ module.exports = {
     inputs : '输入',
     inputParamsTip : '例如 : 参数1 参数2 参数3',
     expectResponseContent : '期待响应内容',
+    expectResponseEditorRefresh : '期待响应内容已刷新',
     outputs : '输出',
     timeout : '超时',
     btnExecuteInfo : '运行详情',
