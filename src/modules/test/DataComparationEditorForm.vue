@@ -1,14 +1,27 @@
 <template>
-  <div>
-    <a-row v-for="(item, index) in content" :key="index" class="mt-1">
-      <!-- name -->
-      <a-col :span="6" style="line-height:43px;">
-        {{item.name}} [ {{$t(`directive.parameter.form.dataType.${item.type}`)}} ]
-      </a-col>
-      
-      <!-- opertaotr -->
-      <a-col :span="4" class="pr-1" style="line-height:43px;">
-        <a-select v-model="content[index].comparator" class="w-100" @change="actionComparatorChange(index)">
+  <div class="mt-1">
+    <a-form-item v-for="(item, index) in content" :key="index"
+      labelAlign="left" class="mb-0" 
+    >
+      <!-- label -->
+      <span slot="label">
+        <a-icon type="edit" />
+        {{item.name}} 
+        <a-tooltip>
+          <template slot="title">
+            {{$t(`directive.parameter.form.dataType.${item.type}`)}}
+            <span v-if="0 == $dict.voption('DIRECTIVE_PARAM_DATATYPE',item.type,'length',0)">[{{item.length}}]</span>
+          </template>
+          <small><a-icon class="text-muted" type="question-circle" /></small>
+        </a-tooltip>
+      </span>
+
+      <div class="d-flex flex-dir-row">
+        <!-- operator -->
+        <a-select class="mr-1" style="width: 130px;"
+          v-model="content[index].comparator" 
+          @change="actionComparatorChange(index)"
+        >
           <a-select-option value="Ignore">{{$t('test.editModal.comparatorIgnore')}}</a-select-option>
           <a-select-option value="Equal">{{$t('test.editModal.comparatorEqual')}}</a-select-option>
           <a-select-option value="NotEqual">{{$t('test.editModal.comparatorNotEqual')}}</a-select-option>
@@ -21,11 +34,10 @@
           <a-select-option value="Contains">{{$t('test.editModal.comparatorContains')}}</a-select-option>
           <a-select-option value="NotContains">{{$t('test.editModal.comparatorNotContains')}}</a-select-option>
         </a-select>
-      </a-col>
-      
-      <!-- value -->
-      <a-col :span="14" style="line-height: 40px;">
-        <a-input-group compact v-if="-1 != ['Between','NotBetween'].indexOf(content[index].comparator)">
+
+        <!-- expect value editor -->
+        <a-input v-if="'Ignore' === content[index].comparator" disabled/>
+        <a-input-group compact v-else-if="-1 != ['Between','NotBetween'].indexOf(content[index].comparator)">
           <a-input class="w-45" v-model.number="content[index].value[0]"/>
           <a-input class="w-10 text-center" placeholder="~" disabled/>
           <a-input class="w-45" v-model.number="content[index].value[1]"/>
@@ -35,8 +47,8 @@
           v-model="content[index].value" 
           @input="actionContentInput" 
         />
-      </a-col>
-    </a-row>
+      </div>
+    </a-form-item>
   </div>
 </template>
 <script>
@@ -101,8 +113,10 @@ export default {
                         format : item.format,
                         comparator : 'Equal',
                         prefix : -1 == formatable.indexOf(item.type) ? null : formatPrefix[item.format],
+                        length : item.length,
                     });
                 }
+                this.updateVModel();
             } else {
                 this.content = this.value;
             }
