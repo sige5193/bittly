@@ -50,4 +50,20 @@ export default class MyString {
         }
         return content;
     }
+
+    /**
+     * convert string to real string, process '\' escape and CRLF
+     * @param {String} str
+     * @returns {String} 
+     */
+    static convertEscapeStringToRealString( str ) {
+        let real = JSON.stringify(str);
+        real = real.replaceAll('\\\\', '\\');
+        try {
+            real = eval(real);
+        } catch ( e ) {
+            throw Error(window.app.$t('directive.parameter.parseStringFailed', [str, e.message]));
+        }
+        return real;
+    }
 }

@@ -9,13 +9,6 @@
     @ok="actionOk"
   >
     <a-form :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
-      <!-- title -->
-      <a-form-item labelAlign="left" class="pl-3 pr-3 pt-3 mb-0"
-        :label="$t('test.functionalNode.Directive.title')" 
-      >
-        <a-input v-model="options.title"/>
-      </a-form-item>
-
       <!-- directive -->
       <a-form-item labelAlign="left" class="pl-3 pr-3 pt-3 mb-0"
         :label="$t('test.functionalNode.Directive.directive')" 
@@ -30,13 +23,14 @@
         <!-- request parameters -->
         <a-tab-pane key="request-param" class="pl-3 pr-3"
           :tab="$t('test.functionalNode.Directive.requestParameters')" 
+          :disabled="'none' === options.parameterFormat"
         >
-          <template v-if="'none' === options.parameterFormat">
-            <a-empty :description="$t('directive.parameter.none.notRequired')" />
-          </template>
-          <template v-else>
+          <template>
             <a-form-item :label="$t('test.functionalNode.Directive.inputs')" labelAlign="left" class="mb-0">
-              <a-select mode="tags" v-model="options.inputs" @change="actionFroceUpdate"></a-select>
+              <a-select mode="tags" v-model="options.inputs" 
+                :placeholder="$t('test.functionalNode.Directive.inputParamsTip')"
+                @change="actionFroceUpdate"
+              ></a-select>
             </a-form-item>
             <a-form-item :label="$t('test.parameterFormat')" labelAlign="left" class="mb-0">
               <a-select class="w-50" v-model="options.parameterFormat" @change="actionHandleParamFormatChange">
@@ -59,39 +53,48 @@
 
         <!-- response -->
         <a-tab-pane key="expect-response" :tab="$t('test.expectResponseContent')" class="pl-3 pr-3">
+          <!-- response format -->
           <a-form-item :label="$t('test.responseFormat')" labelAlign="left" class="mb-0">
-            <a-select class="w-50" v-model="options.expectResponseFormat" @change="actionExpectFormatChange">
+            <a-select v-model="options.expectResponseFormat" @change="actionExpectFormatChange">
               <a-select-option value="text">{{$t(`directive.parameter.text.name`)}}</a-select-option>
               <a-select-option value="hex">{{$t(`directive.parameter.hex.name`)}}</a-select-option>
               <a-select-option value="form" :disabled="undefined == directive.responseFormatter.fields"
               >{{$t(`directive.parameter.form.name`)}}</a-select-option>
             </a-select>
           </a-form-item>
-          <a-form-item labelAlign="left" class="mb-0"
-            :label="$t('test.functionalNode.Directive.expectResponseContent')" 
+          
+          <!-- form editor -->
+          <response-param-editor-form
+            v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','FORM', options.expectResponseFormat)"
+            :directive="directive"
+            v-model="options.expectResponseValue"
+          ></response-param-editor-form>
+          
+          <!-- text editor -->
+          <a-form-item 
+            v-else-if="$dict.match('DIRECTIVE_PARAM_FORMAT','TEXT', options.expectResponseFormat)" 
+            :label="$t('test.expectResponseContent')" labelAlign="left" class="mb-0"
           >
-            <response-param-editor-form
-              v-if="$dict.match('DIRECTIVE_PARAM_FORMAT','FORM', options.expectResponseFormat)"
-              :directive="directive"
-              v-model="options.expectResponseValue"
-            ></response-param-editor-form>
-            <div v-else-if="$dict.match('DIRECTIVE_PARAM_FORMAT','TEXT', options.expectResponseFormat)">
-              <request-param-editor-text 
-                v-model="options.expectResponseValue"
+            <request-param-editor-text v-model="options.expectResponseValue"
                 @change="actionExpectResponseValueChange"
-              />
-              <a-checkbox v-model="options.expectResponseTextRegexEnable">
-                {{$t('test.functionalNode.Directive.comparisonTextRegexEnable')}}
-              </a-checkbox>
-            </div>
-            <component v-else :is="`request-param-editor-${options.expectResponseFormat}`"
+            />
+            <a-checkbox v-model="options.expectResponseTextRegexEnable">
+              {{$t('test.functionalNode.Directive.comparisonTextRegexEnable')}}
+            </a-checkbox>
+          </a-form-item>
+          
+          <!-- hex editor -->
+          <a-form-item v-else :label="$t('test.expectResponseContent')" labelAlign="left" class="mb-0">
+            <component :is="`request-param-editor-${options.expectResponseFormat}`"
               v-model="options.expectResponseValue"
               @change="actionExpectResponseValueChange"
             ></component>
           </a-form-item>
+          
           <a-form-item :label="$t('test.functionalNode.Directive.expectDataLength')" labelAlign="left" class="mb-0">
             <a-input v-model="options.expectDataLength" @input="actionFroceUpdate"/>
           </a-form-item>
+
           <a-form-item :label="$t('test.functionalNode.Directive.outputs')" labelAlign="left" class="mb-0">
             <a-input :value="options.outputs.join(',')" disabled/>
           </a-form-item>
@@ -208,6 +211,14 @@ export default {
             if ( undefined === this.options.title || 0 === this.options.title.trim().length ) {
                 this.options.title = directive.name;
             }
+
+            // if no parameter required, switch tabs to response editor.
+            if ( 'none' === this.options.parameterFormat ) {
+                this.activeTab = 'expect-response';
+            } else {
+                this.activeTab = 'request-param';
+            }
+
             this.$forceUpdate();
         },
 

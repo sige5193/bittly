@@ -89,12 +89,13 @@ export default class DataComparator {
 
         if ( this.textRegexEnable ) {
             this.matchResult = [];
-            let regex = new RegExp(`^${this.expectData}$`, 'gm');
+            let regex = new RegExp(this.expectData, 'gm');
             let match = regex.exec(this.actualData);
             return null != match;
         }
 
         let expect = MyString.applyNewLineStyle(this.expectData, this.executor.directive.nlstyle);
+        expect = MyString.convertEscapeStringToRealString(expect);
         return expect == this.actualData;
     }
 
@@ -151,9 +152,8 @@ export default class DataComparator {
         }
 
         let reverse = 'Not' === expect.comparator.substr(0, 3);
-        let comparator = reverse ? expect.comparator.substr(3) : expect.comparator;
-        
-        if ( 'Between' === comparator ) {
+        let comparatorGroupName = reverse ? expect.comparator.substr(3) : expect.comparator;
+        if ( 'Between' === comparatorGroupName ) {
             let expectRang = {};
             expectRang.min = expect.value[0];
             expectRang.max = expect.value[1];
@@ -165,12 +165,12 @@ export default class DataComparator {
         let expectValue = expect.value;
         if ( 'string' === typeof(expectValue) 
         && !Dictionary.match('DIRECTIVE_PARAM_DATATYPE','STRING', expect.type) ) {
-            expectValue = expectValue.replaceAll(/\s/g,'');
-            actualValue = actualValue.replaceAll(/\s/g,'');
+            expectValue = expectValue.replaceAll(/\s/g,'').toUpperCase();
+            actualValue = actualValue.replaceAll(/\s/g,'').toUpperCase();
         }
 
         // raw compare (string)
-        switch( comparator ) {
+        switch( expect.comparator ) {
         case 'Equal'  : return expectValue === actualValue;
         case 'NotEqual' : return expectValue !== actualValue;
         case 'Contains' : return -1 != actualValue.indexOf(expectValue);
@@ -180,7 +180,13 @@ export default class DataComparator {
         // convert to number and compare
         let field = this.actualData.directive.responseFormatter.fields[index];
         let prefix = {bin:'0b',oct:'0',dec:'',hex:'0x'}[field.format];
-        let expectNumber = math.number(`${prefix}${expectValue}`);
+        let expectNumber = null;
+        try {
+            expectNumber = math.number(`${prefix}${expectValue}`);
+        } catch {
+            return false;
+        }
+        
         let actualNumber = this.getFormItemNumberValueFromActualData(index);
         switch ( expect.comparator ) {
         case 'Greater' : return math.larger(actualNumber, expectNumber);

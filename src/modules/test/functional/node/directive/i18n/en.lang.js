@@ -9,6 +9,7 @@ module.exports = {
     parameterContent : 'Parameter Content',
     directive : 'Directive',
     inputs : 'Inputs',
+    inputParamsTip : 'E.g. : Param01 Param02 Param03',
     expectResponseContent : 'Expect Response Content',
     outputs : 'Outputs',
     timeout : 'Timeout',

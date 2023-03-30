@@ -99,9 +99,12 @@
         >
           <div slot="name" slot-scope="text, record">{{record.name}}</div>
           <div slot="compare" slot-scope="text, record,index">
-            <a-tag class="mr-0">{{record.prefix}}{{record.value}}</a-tag>
-            {{$t(`test.editModal.comparator${record.comparator}`)}}
             <a-tag>{{record.prefix}}{{node.executor.getResponseAsForm().getValueByIndex(index)}}</a-tag>
+            {{$t(`test.editModal.comparator${record.comparator}`)}}
+            <a-tag class="mr-0">
+              <span v-if="-1 !== record.comparator.indexOf('Between')">{{record.value}}</span>
+              <span v-else>{{record.prefix}}{{record.value}}</span>
+            </a-tag>
           </div>
           <div slot="result" slot-scope="text, record,index">
             <a-tag v-if="node.comparator.matchResult[index]" color="green">成功</a-tag>
