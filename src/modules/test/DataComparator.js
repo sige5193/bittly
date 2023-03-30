@@ -169,6 +169,11 @@ export default class DataComparator {
             actualValue = actualValue.replaceAll(/\s/g,'').toUpperCase();
         }
 
+        // eval content form string
+        if ( Dictionary.match('DIRECTIVE_PARAM_DATATYPE','STRING', expect.type) ) {
+            expectValue = MyString.convertEscapeStringToRealString(expectValue);
+        }
+
         // raw compare (string)
         switch( expect.comparator ) {
         case 'Equal'  : return expectValue === actualValue;
