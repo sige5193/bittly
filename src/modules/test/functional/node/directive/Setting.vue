@@ -25,30 +25,39 @@
           :tab="$t('test.functionalNode.Directive.requestParameters')" 
           :disabled="'none' === options.parameterFormat"
         >
-          <template>
-            <a-form-item :label="$t('test.functionalNode.Directive.inputs')" labelAlign="left" class="mb-0">
-              <a-select mode="tags" v-model="options.inputs" 
-                :placeholder="$t('test.functionalNode.Directive.inputParamsTip')"
-                @change="actionFroceUpdate"
-              ></a-select>
-            </a-form-item>
-            <a-form-item :label="$t('test.parameterFormat')" labelAlign="left" class="mb-0">
-              <a-select class="w-50" v-model="options.parameterFormat" @change="actionHandleParamFormatChange">
+          <a-form-item :label="$t('test.functionalNode.Directive.inputs')" labelAlign="left" class="mb-1">
+            <a-select mode="tags" v-model="options.inputs" 
+              :placeholder="$t('test.functionalNode.Directive.inputParamsTip')"
+              @change="actionFroceUpdate"
+            ></a-select>
+          </a-form-item>
+
+          <a-form-item :label="$t('test.parameterFormat')" labelAlign="left" class="mb-0">
+            <div class="d-flex">
+              <a-select v-model="options.parameterFormat" @change="actionHandleParamFormatChange">
                 <a-select-option value="text">{{$t(`directive.parameter.text.name`)}}</a-select-option>
                 <a-select-option value="hex">{{$t(`directive.parameter.hex.name`)}}</a-select-option>
                 <a-select-option value="form" :disabled="'form' != directive.requestFormat"
                 >{{$t(`directive.parameter.form.name`)}}</a-select-option>
                 <a-select-option value="file">{{$t(`directive.parameter.file.name`)}}</a-select-option>
               </a-select>
-            </a-form-item>
-            <a-form-item labelAlign="left" class="mb-0"
-              :label="$t('test.functionalNode.Directive.parameterContent')"
-            >
-              <component :is="`request-param-editor-${options.parameterFormat}`"
-                :directive="directive" v-model="options.parameterValue"
-              ></component>
-            </a-form-item>
-          </template>
+              <a-button class="ml-1" @click="actionParameterEditorRefresh"><a-icon type="redo" /></a-button>
+            </div>
+          </a-form-item>
+          
+          <request-param-editor-form ref="parameterEditor" 
+            v-if="'form' === options.parameterFormat"
+            :directive="directive" v-model="options.parameterValue"
+          ></request-param-editor-form>
+
+          <a-form-item v-else labelAlign="left" class="mb-0"
+            :label="$t('test.functionalNode.Directive.parameterContent')"
+          >
+            <component
+              :is="`request-param-editor-${options.parameterFormat}`"
+              :directive="directive" v-model="options.parameterValue"
+            ></component>
+          </a-form-item>
         </a-tab-pane>
 
         <!-- response -->
@@ -116,7 +125,7 @@
 <script>
 import NodeDirective from './Node.js'
 import DirectiveTreeSelect from '../../../../directive/entry/DirectiveTreeSelect.vue'
-import RequestParamEditorForm from '../../../../directive/parameters/form/ValueEditor.vue'
+import RequestParamEditorForm from '../../../../directive/parameters/form/ValueEditorFormItem.vue'
 import RequestParamEditorFile from '../../../../directive/parameters/file/ValueEditor.vue'
 import RequestParamEditorText from '../../../../directive/parameters/text/ValueEditor.vue'
 import RequestParamEditorHex from '../../../../directive/parameters/hex/ValueEditor.vue'
@@ -281,6 +290,18 @@ export default {
          */
         actionExpectResponseEditorRefresh() {
             let editor = this.$refs.responseEditor;
+            if ( undefined !== editor && undefined !== editor.refresh ) {
+                editor.refresh();
+            }
+            this.$message.success(this.$t('test.functionalNode.Directive.expectResponseEditorRefresh'));
+        },
+
+        /**
+         * refresh parameter editor
+         * @returns {void}
+         */
+        actionParameterEditorRefresh() {
+            let editor = this.$refs.parameterEditor;
             if ( undefined !== editor && undefined !== editor.refresh ) {
                 editor.refresh();
             }
